@@ -162,54 +162,54 @@ class Proxy
 
     public function start()
     {
+        // setup IPC (inter process communication)
+        $sockets = array();
+        if (!socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $sockets)) {
+            die(socket_strerror(socket_last_error()));
+        }
+        list($writer, $reader) = $sockets;
+
+        // fork proxy
         $this->proxyPid = pcntl_fork();
         $this->pid = posix_getpid();
+
         if ($this->proxyPid == -1) {
             die('could not fork');
         } else if ($this->proxyPid) {
             var_dump('master pid: ' . posix_getpid());
             // wait for proxy
-            sleep(1);
+            socket_read($reader, 1024, PHP_NORMAL_READ);
+            socket_close($reader);
+            socket_close($writer);
         } else {
-            // pcntl_signal(SIGTERM, array($this, 'closeSocket'));
-            pcntl_signal(SIGTERM, SIG_DFL);
-            // pcntl_signal(SIGTERM, 'test');
-
             var_dump('child pid: ' . posix_getpid());
+            // start proxy
             $socket = stream_socket_server($this->socketPath, $errno, $errstr);
             stream_set_blocking($socket, false);
+
+            // notify master
+            if (!socket_write($writer, "started\n", strlen("started\n"))) {
+                die(socket_strerror(socket_last_error()));
+            }
 
             if (!$socket) {
                 echo "$errstr ($errno)<br />\n";
             } else {
-                echo "socket open\n";
                 while ($conn = stream_socket_accept($socket)) {
                     $callback = $this->callback;
                     $callback($conn);
                     fclose($conn);
                 }
-                var_dump(posix_getpid() . ': socket closed ');
-                fclose($socket);
+                // Socket is closed when kill signal from master process is sent
             }
         }
-    }
-
-    public function closeSocket($signal)
-    {
-        var_dump(posix_getpid() . ': socket close ');
-        socket_close($this->socket);
     }
 
     public function stop()
     {
         var_dump(posix_getpid() . ': killing ' . $this->proxyPid);
         posix_kill($this->proxyPid, SIGTERM);
-        pcntl_waitpid($this->proxyPid, $status);
-    }
-
-    public function __destruct()
-    {
-        var_dump(posix_getpid() . ': proxy descruct');
+        pcntl_wait($status);
     }
 }
 
@@ -228,12 +228,19 @@ class StreamWrapper
 
     public function enable()
     {
-        stream_context_set_default(array('http' => array('proxy' => $this->config->getProxySocket())));
+        stream_context_set_default(
+            array(
+                'http' => array('proxy' => $this->config->getProxySocket()),
+                'https' => array('proxy' => $this->config->getProxySocket()),
+                'ftp' => array('proxy' => $this->config->getProxySocket()),
+                'ftps' => array('proxy' => $this->config->getProxySocket()),
+            )
+        );
     }
 
     public function disable()
     {
-        stream_context_set_default(array('http' => array('proxy' => '')));
+        stream_context_set_default(array('http' => array()));
     }
 }
 
@@ -243,3 +250,11 @@ $vcr->turnOn();
 // $vcr->record();
 
 var_dump(file_get_contents('http://dev.bafoeg2go'));
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "http://dev.bafoeg2go");
+curl_setopt($ch, CURLOPT_PROXY, 'tcp://127.0.0.1:8000');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+var_dump(curl_exec($ch));
+curl_close($ch);
+
