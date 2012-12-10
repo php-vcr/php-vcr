@@ -25,6 +25,7 @@ class VCR
     public function __construct(Configuration $config)
     {
         $this->config = $config;
+        $this->cassette = shm_attach(ftok(__FILE__, 'a'), 1024);
     }
 
     public function turnOn()
@@ -48,15 +49,20 @@ class VCR
 
     public function insertCassette($cassetteName)
     {
-        $this->cassette = $cassetteName;
+        shm_put_var($this->cassette, 1, $cassetteName);
+    }
+
+    public function getCurrentCassetteName()
+    {
+        return shm_get_var($this->cassette, 1);
     }
 
     public function handleConnection($connection)
     {
-        if (empty($this->cassette)) {
+        if (strlen($this->getCurrentCassetteName()) == 0) {
             throw new BadMethodCallException('Invalid http request. No cassette inserted.');
         }
-        $path = $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $this->cassette;
+        $path = $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $this->getCurrentCassetteName();
 
         if (file_exists($path)) {
             // playback
@@ -245,16 +251,19 @@ class StreamWrapper
 }
 
 $vcr = new VCR(new Configuration);
-$vcr->insertCassette('bafoeg2go');
 $vcr->turnOn();
-// $vcr->record();
+
+// throw exception
+// var_dump(file_get_contents('http://dev.bafoeg2go'));
+
+$vcr->insertCassette('bafoeg2go');
 
 var_dump(file_get_contents('http://dev.bafoeg2go'));
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "http://dev.bafoeg2go");
-curl_setopt($ch, CURLOPT_PROXY, 'tcp://127.0.0.1:8000');
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-var_dump(curl_exec($ch));
-curl_close($ch);
+// $ch = curl_init();
+// curl_setopt($ch, CURLOPT_URL, "http://dev.bafoeg2go");
+// curl_setopt($ch, CURLOPT_PROXY, 'tcp://127.0.0.1:8000');
+// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+// var_dump(curl_exec($ch));
+// curl_close($ch);
 
