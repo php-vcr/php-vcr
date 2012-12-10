@@ -44,6 +44,7 @@ class VCR
         foreach ($this->libraryHooks as $hook) {
             $hook->disable();
         }
+        shm_remove($this->cassette);
         self::$isOn = false;
     }
 
@@ -54,11 +55,16 @@ class VCR
 
     public function getCurrentCassetteName()
     {
-        return shm_get_var($this->cassette, 1);
+        if (shm_has_var($this->cassette, 1)) {
+            return shm_get_var($this->cassette, 1);
+        }
+
+        return;
     }
 
     public function handleConnection($connection)
     {
+        var_dump($this->getCurrentCassetteName());
         if (strlen($this->getCurrentCassetteName()) == 0) {
             throw new BadMethodCallException('Invalid http request. No cassette inserted.');
         }
