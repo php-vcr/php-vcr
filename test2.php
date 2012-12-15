@@ -64,7 +64,6 @@ class VCR
 
     public function handleConnection($connection)
     {
-        var_dump($this->getCurrentCassetteName());
         if (strlen($this->getCurrentCassetteName()) == 0) {
             throw new BadMethodCallException('Invalid http request. No cassette inserted.');
         }
@@ -73,7 +72,7 @@ class VCR
         if (file_exists($path)) {
             // playback
             $response = file_get_contents($path);
-            echo 'playback';
+            var_dump('playback');
         } else {
             // record
             $request = stream_get_contents($connection);
@@ -83,7 +82,7 @@ class VCR
             $fp = fsockopen($host, 80);
             fwrite($fp, $request);
             $response = stream_get_contents($fp);
-            echo 'record';
+            var_dump('record');
             file_put_contents($path, $response);
         }
 
@@ -175,11 +174,10 @@ class Proxy
     public function start()
     {
         // setup IPC (inter process communication)
-        $sockets = array();
-        if (!socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $sockets)) {
+        $ipcPipes = array();
+        if (!socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $ipcPipes)) {
             die(socket_strerror(socket_last_error()));
         }
-        list($writer, $reader) = $sockets;
 
         // fork proxy
         $this->proxyPid = pcntl_fork();
@@ -188,38 +186,46 @@ class Proxy
         if ($this->proxyPid == -1) {
             die('could not fork');
         } else if ($this->proxyPid) {
-            var_dump('master pid: ' . posix_getpid());
-            // wait for proxy
-            socket_read($reader, 1024, PHP_NORMAL_READ);
-            socket_close($reader);
-            socket_close($writer);
+            // var_dump('master pid: ' . posix_getpid());
+            $this->waitForProxy($ipcPipes);
         } else {
-            var_dump('child pid: ' . posix_getpid());
-            // start proxy
-            $socket = stream_socket_server($this->socketPath, $errno, $errstr);
-            stream_set_blocking($socket, false);
+            // var_dump('child pid: ' . posix_getpid());
+            $this->startProxy($ipcPipes);
+        }
+    }
 
-            // notify master
-            if (!socket_write($writer, "started\n", strlen("started\n"))) {
-                die(socket_strerror(socket_last_error()));
-            }
+    public function waitForProxy(array $ipcPipes)
+    {
+        socket_read($ipcPipes[1], 1024, PHP_NORMAL_READ);
+        socket_close($ipcPipes[1]);
+    }
 
-            if (!$socket) {
-                echo "$errstr ($errno)<br />\n";
-            } else {
-                while ($conn = stream_socket_accept($socket)) {
-                    $callback = $this->callback;
-                    $callback($conn);
-                    fclose($conn);
-                }
-                // Socket is closed when kill signal from master process is sent
+    public function startProxy(array $ipcPipes)
+    {
+        // start proxy
+        $socket = stream_socket_server($this->socketPath, $errno, $errstr);
+        stream_set_blocking($socket, false);
+
+        // notify master
+        if (!socket_write($ipcPipes[0], "done\n", strlen("done\n"))) {
+            die(socket_strerror(socket_last_error()));
+        }
+
+        if (!$socket) {
+            echo "$errstr ($errno)<br />\n";
+        } else {
+            // waiting for connections
+            while ($conn = stream_socket_accept($socket)) {
+                $callback = $this->callback;
+                $callback($conn);
+                fclose($conn);
             }
+            // Socket is closed when kill signal from master process is sent
         }
     }
 
     public function stop()
     {
-        var_dump(posix_getpid() . ': killing ' . $this->proxyPid);
         posix_kill($this->proxyPid, SIGTERM);
         pcntl_wait($status);
     }
