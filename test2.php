@@ -181,7 +181,6 @@ class Proxy
 
         // fork proxy
         $this->proxyPid = pcntl_fork();
-        $this->pid = posix_getpid();
 
         if ($this->proxyPid == -1) {
             die('could not fork');
