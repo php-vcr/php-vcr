@@ -1,14 +1,21 @@
 <?php
 
+error_reporting(E_ALL|E_STRICT);
+
 // Objekte:
 //  - VCR (configuration, cassettes, proxy, libraryHooks)
 //  - Configuration (hooks, cassette_folder, proxyUrl)
-//  - Cassette (name, interactions)
+//  - Cassette (name, request, response)
 //  - Proxy
 //  - LibraryHooks: StreamWrapper, Curl?, Soap, Zlib
-//  - HTTPInteraction (request, response)
 //  - Request (host, port, header, body) -> Symfony?
 //  - Response (header, body, serializable) -> Symfony?
+
+// TODO:
+//  - Introduce Request object
+//  - Intoduce namespaces
+//  - Move classes
+//  - Comments ;-)
 
 
 /**
@@ -16,20 +23,33 @@
  */
 class VCR
 {
+    const RECORD_MODE = 1;
+    const PLAYBACK_MODE = 1;
+
     public static $isOn = false;
     private $cassette;
     private $config;
     private $proxy;
     private $libraryHooks = array();
 
-    public function __construct(Configuration $config)
+    public function __construct($config = null)
     {
-        $this->config = $config;
+        $this->config = $config ?: new Configuration;
         $this->cassette = shm_attach(ftok(__FILE__, 'a'), 1024);
+        if ($this->config->getTurnOnAutomatically()) {
+            $this->turnOn();
+        }
     }
 
+    /**
+     * Initializes VCR and all it's dependencies.
+     * @return void
+     */
     public function turnOn()
     {
+        if (self::$isOn) {
+            return;
+        }
         $this->proxy = $this->createProxy();
         $this->proxy->start();
 
@@ -38,22 +58,39 @@ class VCR
         self::$isOn = true;
     }
 
+    /**
+     * Shuts down VCR and all it's dependencies.
+     * @return void
+     */
     public function turnOff()
     {
-        $this->proxy->stop();
+        if ($this->proxy) {
+            $this->proxy->stop();
+        }
+
+        // disable library hooks
         foreach ($this->libraryHooks as $hook) {
             $hook->disable();
         }
-        shm_remove($this->cassette);
+
+        // delete all shared memory segments
+        if ($this->cassette) {
+            $this->getCurrentCassette()->writeToDisk();
+            shm_remove($this->cassette);
+            $this->cassette = null;
+        }
+
         self::$isOn = false;
     }
 
     public function insertCassette($cassetteName)
     {
-        shm_put_var($this->cassette, 1, $cassetteName);
+        $cassette = new Cassette($cassetteName, $this->config);
+        shm_put_var($this->cassette, 1, $cassette);
+        $cassette->readFromDisk();
     }
 
-    public function getCurrentCassetteName()
+    public function getCurrentCassette()
     {
         if (shm_has_var($this->cassette, 1)) {
             return shm_get_var($this->cassette, 1);
@@ -64,42 +101,30 @@ class VCR
 
     public function handleConnection($connection)
     {
-        if (strlen($this->getCurrentCassetteName()) == 0) {
-            throw new BadMethodCallException('Invalid http request. No cassette inserted.');
+        if ($this->getCurrentCassette() === null) {
+            throw new BadMethodCallException(
+                  'Invalid http request. No cassette inserted. '
+                . ' Please make sure to insert a cassette in your unit-test using '
+                . '$vcr->insertCassette(\'name\'); or annotation @vcr:cassette(\'name\').');
         }
-        $path = $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $this->getCurrentCassetteName();
 
-        if (file_exists($path)) {
-            // playback
-            $response = file_get_contents($path);
-            var_dump('playback');
+        $request = Request::fromConnection($connection);
+        $cassette = $this->getCurrentCassette();
+
+        if ($cassette->hasResponse($request)) {
+            $response = $cassette->playback($request, $connection);
         } else {
-            // record
-            $request = stream_get_contents($connection);
-            $requestId = sha1($request);
-            preg_match('/(CONNECT|Host:) (.*)(\s|\\r)/iU', $request, $matches);
-            $host = $matches[2];
-            $fp = fsockopen($host, 80);
-            fwrite($fp, $request);
-            $response = stream_get_contents($fp);
-            var_dump('record');
-            file_put_contents($path, $response);
+            $response = $request->execute();
+            $cassette->record($request, $response);
         }
 
         fwrite($connection, $response);
-
-        // $request = Request::fromString(stream_get_contents($connection));
-        // $cassette = $this->getCurrentCassette();
-
-        // if ($cassette->hasResponse($request)) {
-        //     $cassette->playback($request);
-        //     fwrite($connection, $cassette->getResponse($request));
-        // } else {
-        //     $response = $this->proxy->executeRequest($request);
-        //     $cassette->recordInteraction(new HTTPInteraction($request, $response));
-        // }
     }
 
+    /**
+     * Factory method which retunrs a proxy object.
+     * @return Proxy HTTP Proxy.
+     */
     private function createProxy()
     {
         $that = $this;
@@ -111,6 +136,10 @@ class VCR
         );
     }
 
+    /**
+     * Factory method which returns all configured library hooks.
+     * @return array Library hooks.
+     */
     private function createLibraryHooks()
     {
         $hooks = array();
@@ -121,11 +150,15 @@ class VCR
         return $hooks;
     }
 
+    /**
+     * Turns off VCR.
+     */
     public function __destruct()
     {
-        $this->turnOff();
+        if (self::$isOn) {
+            $this->turnOff();
+        }
     }
-
 }
 
 
@@ -134,11 +167,17 @@ class VCR
  */
 class Configuration
 {
-    private $cassettePath = 'fixtures';
+    private $cassettePath = 'tests/fixtures';
     private $proxySocket = 'tcp://0.0.0.0:8000';
     private $libraryHooks = array(
         'StreamWrapper'
     );
+    private $turnOnAutomatically = true;
+
+    public function getTurnOnAutomatically()
+    {
+        return $this->turnOnAutomatically;
+    }
 
     public function getCassettePath()
     {
@@ -153,6 +192,105 @@ class Configuration
     public function getProxySocket()
     {
         return $this->proxySocket;
+    }
+}
+
+class Cassette
+{
+    private $name;
+    private $config;
+    private $httpInteractions = array();
+
+    function __construct($name, Configuration $config)
+    {
+        $this->name = $name;
+        $this->config = $config;
+    }
+
+    public function hasResponse(Request $request)
+    {
+        return $this->getResponse($request) !== null;
+    }
+
+    public function playback(Request $request, resource $connection)
+    {
+        $response = $this->getResponse($request);
+        fwrite($connection, $response);
+        return $response;
+    }
+
+    public function record(Request $request, $response)
+    {
+        $this->httpInteractions[$request->getSHA1()] = array($request, $response);
+    }
+
+    /**
+     * Writes all http interactions to disk.
+     * @return void
+     */
+    public function writeToDisk()
+    {
+        file_put_contents($this->getCassettePath(), json_encode($this->httpInteractions));
+    }
+
+    /**
+     * Reads all http interactions from disk.
+     * @return void
+     */
+    public function readFromDisk()
+    {
+        if (file_exists($this->getCassettePath())) {
+            $this->httpInteractions = json_decode(file_get_contents($this->getCassettePath()));
+        }
+    }
+
+    /**
+     * Returns a response for given request or null if not found.
+     *
+     * @param  Request $request Request.
+     * @return string Response for specified request.
+     */
+    private function getResponse(Request $request)
+    {
+        if (isset($this->httpInteractions[$request->getSHA1()])) {
+            return $this->httpInteractions[$request->getSHA1()][1];
+        }
+
+        return null;
+    }
+
+    private function getCassettePath()
+    {
+        return $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $this->name;
+    }
+}
+
+class Request
+{
+    private $request;
+
+    public function __construct($request)
+    {
+        $this->request = $request;
+    }
+
+    public function getSHA1()
+    {
+        return sha1($this->request);
+    }
+
+    public static function fromConnection($connection)
+    {
+        return new Request(stream_get_contents($connection));
+    }
+
+    public function execute()
+    {
+        preg_match('/(CONNECT|Host:) (.*)(\s|\\r)/iU', $this->request, $matches);
+        $host = $matches[2];
+        $fp = fsockopen($host, 80);
+        fwrite($fp, $this->request);
+        return stream_get_contents($fp);
     }
 }
 
@@ -203,10 +341,16 @@ class Proxy
     {
         // start proxy
         $socket = stream_socket_server($this->socketPath, $errno, $errstr);
-        stream_set_blocking($socket, false);
+        // $socket = socket_create_listen(8000);
+        if (!is_resource($socket)) {
+            throw new InvalidArgumentException("Unable to start proxy at {$this->socketPath}."
+            . "Error ({$errno}): {$errstr}");
+        }
+
+        // stream_set_blocking($socket, false);
 
         // notify master
-        if (!socket_write($ipcPipes[0], "done\n", strlen("done\n"))) {
+        if (!socket_write($ipcPipes[0], "success\n", strlen("success\n"))) {
             die(socket_strerror(socket_last_error()));
         }
 
@@ -214,17 +358,20 @@ class Proxy
             echo "$errstr ($errno)<br />\n";
         } else {
             // waiting for connections
-            while ($conn = stream_socket_accept($socket)) {
+            // while ($conn = socket_accept($socket)) {
+            while ($conn = stream_socket_accept($socket, -1)) {
                 $callback = $this->callback;
                 $callback($conn);
                 fclose($conn);
             }
             // Socket is closed when kill signal from master process is sent
+            var_dump('can close socket here');
         }
     }
 
     public function stop()
     {
+        var_dump('killing child process: ' . $this->proxyPid);
         posix_kill($this->proxyPid, SIGTERM);
         pcntl_wait($status);
     }
@@ -247,7 +394,8 @@ class StreamWrapper
     {
         stream_context_set_default(
             array(
-                'http' => array('proxy' => $this->config->getProxySocket()),
+                'http' => array('proxy' => $this->config->getProxySocket(),
+                                'request_fulluri' => true),
                 'https' => array('proxy' => $this->config->getProxySocket()),
                 'ftp' => array('proxy' => $this->config->getProxySocket()),
                 'ftps' => array('proxy' => $this->config->getProxySocket()),
@@ -262,10 +410,10 @@ class StreamWrapper
 }
 
 $vcr = new VCR(new Configuration);
-$vcr->turnOn();
+// $vcr->turnOn();
 
-// throw exception
-// var_dump(file_get_contents('http://dev.bafoeg2go'));
+// // throw exception
+// // var_dump(file_get_contents('http://dev.bafoeg2go'));
 
 $vcr->insertCassette('bafoeg2go');
 
