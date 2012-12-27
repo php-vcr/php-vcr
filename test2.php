@@ -23,9 +23,6 @@ error_reporting(E_ALL|E_STRICT);
  */
 class VCR
 {
-    const RECORD_MODE = 1;
-    const PLAYBACK_MODE = 1;
-
     public static $isOn = false;
     private $cassette;
     private $config;
@@ -75,7 +72,6 @@ class VCR
 
         // delete all shared memory segments
         if ($this->cassette) {
-            $this->getCurrentCassette()->writeToDisk();
             shm_remove($this->cassette);
             $this->cassette = null;
         }
@@ -87,7 +83,6 @@ class VCR
     {
         $cassette = new Cassette($cassetteName, $this->config);
         shm_put_var($this->cassette, 1, $cassette);
-        $cassette->readFromDisk();
     }
 
     public function getCurrentCassette()
@@ -111,14 +106,12 @@ class VCR
         $request = Request::fromConnection($connection);
         $cassette = $this->getCurrentCassette();
 
-        if ($cassette->hasResponse($request)) {
-            $response = $cassette->playback($request, $connection);
-        } else {
+        if (!$cassette->hasResponse($request)) {
             $response = $request->execute();
             $cassette->record($request, $response);
         }
 
-        fwrite($connection, $response);
+        $cassette->playback($request, $connection);
     }
 
     /**
@@ -199,6 +192,7 @@ class Cassette
 {
     private $name;
     private $config;
+    private $hasReadFromDisk = false;
     private $httpInteractions = array();
 
     function __construct($name, Configuration $config)
@@ -209,10 +203,13 @@ class Cassette
 
     public function hasResponse(Request $request)
     {
+        if ($this->hasReadFromDisk === false) {
+            $this->readFromDisk();
+        }
         return $this->getResponse($request) !== null;
     }
 
-    public function playback(Request $request, resource $connection)
+    public function playback(Request $request, $connection)
     {
         $response = $this->getResponse($request);
         fwrite($connection, $response);
@@ -222,6 +219,7 @@ class Cassette
     public function record(Request $request, $response)
     {
         $this->httpInteractions[$request->getSHA1()] = array($request, $response);
+        $this->writeToDisk();
     }
 
     /**
@@ -240,7 +238,7 @@ class Cassette
     public function readFromDisk()
     {
         if (file_exists($this->getCassettePath())) {
-            $this->httpInteractions = json_decode(file_get_contents($this->getCassettePath()));
+            $this->httpInteractions = json_decode(file_get_contents($this->getCassettePath()), true);
         }
     }
 
@@ -281,6 +279,7 @@ class Request
 
     public static function fromConnection($connection)
     {
+        stream_set_timeout($connection, 0);
         return new Request(stream_get_contents($connection));
     }
 
