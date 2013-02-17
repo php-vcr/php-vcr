@@ -11,7 +11,8 @@
 
     "require": {
         "php": ">=5.3.15",
-        "guzzle/http": "3.0.*@dev"
+        "guzzle/http": "3.0.*@dev",
+        "guzzle/plugin-backoff": "3.0.*@dev"
     },
 
     "autoload": {
