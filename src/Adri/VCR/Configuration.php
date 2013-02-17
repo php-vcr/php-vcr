@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\PHPVCR;
+namespace Adri\VCR;
 
 /**
  * Configuration.
@@ -10,8 +10,8 @@ class Configuration
     private $cassettePath = 'tests/fixtures';
 
     private $libraryHooks = array(
-        '\Adri\PHPVCR\LibraryHooks\StreamWrapper',
-        '\Adri\PHPVCR\LibraryHooks\Curl',
+        '\Adri\VCR\LibraryHooks\StreamWrapper',
+        '\Adri\VCR\LibraryHooks\Curl',
     );
 
     private $turnOnAutomatically = true;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\PHPVCR\LibraryHooks;
+namespace Adri\VCR\LibraryHooks;
 
 /**
  * Test if intercepting http/https using stream wrapper works.
@@ -8,7 +8,7 @@ namespace Adri\PHPVCR\LibraryHooks;
 class StreamWrapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Adri\PHPVCR\LibraryHooks\StreamWrapper
+     * @var \Adri\VCR\LibraryHooks\StreamWrapper
      */
     private $streamWrapper;
 

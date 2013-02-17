@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\PHPVCR;
+namespace Adri\VCR;
 
 
 /**

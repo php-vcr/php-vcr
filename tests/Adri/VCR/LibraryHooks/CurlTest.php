@@ -1,8 +1,8 @@
 <?php
 
-namespace Adri\PHPVCR\LibraryHooks;
+namespace Adri\VCR\LibraryHooks;
 
-use Adri\PHPVCR\Response;
+use Adri\VCR\Response;
 
 /**
  * Test if intercepting http/https using stream wrapper works.
@@ -10,7 +10,7 @@ use Adri\PHPVCR\Response;
 class CurlTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Adri\PHPVCR\LibraryHooks\Curl
+     * @var \Adri\VCR\LibraryHooks\Curl
      */
     private $curl;
 
