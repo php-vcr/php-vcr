@@ -10,11 +10,8 @@
     ],
 
     "require": {
-        "php": ">=5.4.0",
-        "guzzle/http": "3.0.*@dev",
-        "guzzle/plugin-history": "3.0.*@dev",
-        "guzzle/plugin-backoff": "3.0.*@dev",
-        "symfony/serializer": "2.3.*@dev"
+        "php": ">=5.3.15",
+        "guzzle/http": "3.0.*@dev"
     },
 
     "autoload": {
