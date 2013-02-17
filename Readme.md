@@ -46,6 +46,13 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 
 There is no release yet, sorry.
 
+``` bash
+git clone git@github.com:adri/phpvc
+cd phpvcr
+composer update
+phpunit tests
+```
+
 ## Dependencies
 
 PHPVCR installs needed (except runkit) depenencies using composer. Dependencies are:
