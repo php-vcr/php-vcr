@@ -1,6 +1,6 @@
 # PHPVCR
 
-This is a port of [VCR](github.com/vcr/vcr) for ruby.
+This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 
 Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.
 
@@ -9,7 +9,7 @@ Record your test suite's HTTP interactions and replay them during future test ru
 * Automatically records and replays your HTTP interactions with minimal setup/configuration code.
 * Supports common http functions and extensions
   following are supported:
-  * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ...
+  * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(),file_get_contents(), ...
   * curl(), curl_multi() using runkit extension
 * Todo: Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
   implement a custom request matcher to handle any need.
@@ -48,7 +48,7 @@ There is no release yet, sorry.
 
 ## Dependencies
 
-PHPVCR installs all needed depenencies using composer. Dependencies are:
+PHPVCR installs needed (except runkit) depenencies using composer. Dependencies are:
 
   * [Guzzle](http://guzzlephp.org)
   * > PHP 5.3
