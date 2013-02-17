@@ -65,7 +65,7 @@ class VCR
     public function handleRequest($request)
     {
         if ($this->getCurrentCassette() === null) {
-            throw new BadMethodCallException(
+            throw new \BadMethodCallException(
                 'Invalid http request. No cassette inserted. '
                 . ' Please make sure to insert a cassette in your unit-test using '
                 . '$vcr->insertCassette(\'name\'); or annotation @vcr:cassette(\'name\').'
@@ -75,11 +75,10 @@ class VCR
         $cassette = $this->getCurrentCassette();
 
         if (!$cassette->hasResponse($request)) {
-            $request->setCLient($this->httpClient);
             $this->disableLibraryHooks();
-            $response = $request->send();
-            $this->enableLibraryHooks();
+            $response = $this->httpClient->send($request);
             $cassette->record($request, $response);
+            $this->enableLibraryHooks();
         }
 
         return $cassette->playback($request);

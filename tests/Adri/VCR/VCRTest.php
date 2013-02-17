@@ -12,7 +12,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         $this->vcr = new VCR;
     }
 
-    public function testHttpStreamWrapper()
+    public function testOneStreamWrapper()
     {
         $this->vcr->insertCassette('wrappertest');
         $result = file_get_contents('http://google.com');
@@ -25,6 +25,13 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         $this->vcr->insertCassette('cassette2');
 
         $this->assertEquals('cassette2', $this->vcr->getCurrentCassette()->getName());
+    }
+
+    public function testThrowExeptions()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->vcr->insertCassette('cassette1');
+        throw new \InvalidArgumentException('test');
     }
 
     public function tearDown()

@@ -20,7 +20,7 @@ class RequsetTest extends \PHPUnit_Framework_TestCase
                 'User-Agent' => array('Unit-Test'),
                 'Host'       => array('example.com')
             ),
-            $this->request->getHeaders()
+            $this->request->getHeaders()->getAll()
         );
     }
 

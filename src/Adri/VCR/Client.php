@@ -13,4 +13,10 @@ class Client
     {
         return $this->client;
     }
+
+    public function send($request)
+    {
+        $response = $this->client->send($request);
+        return new Response($response->getStatusCode(), $response->getHeaders(), $response->getBody());
+    }
 }

@@ -26,10 +26,12 @@ class Curl
 
     private static $handleRequestCallable;
 
+    private static $additionalCurlOpts = array();
+
     private static $overwriteFunctions = array(
         'curl_init'       => array('$url=null', 'init($url)'),
         'curl_exec'       => array('$resource', 'exec($resource)'),
-        'curl_multi_exec' => array('$resource', 'exec($resource)'),
+        // 'curl_multi_exec' => array('$resource', 'exec($resource)'),
         'curl_setopt'     => array('$ch, $option, $value', 'setOpt($ch, $option, $value)'),
     );
 
@@ -55,7 +57,12 @@ class Curl
 
         foreach (self::$overwriteFunctions as $functionName => $mapping) {
             runkit_function_rename($functionName, $functionName . '_original');
-            runkit_function_add($functionName, $mapping[0], 'return ' . __CLASS__ . '::' . $mapping[1] . ';');
+
+            if (function_exists($functionName . '_temp')) {
+                runkit_function_rename($functionName . '_temp', $functionName);
+            } else {
+                runkit_function_add($functionName, $mapping[0], 'return ' . __CLASS__ . '::' . $mapping[1] . ';');
+            }
         }
 
         self::$status = self::ENABLED;
@@ -68,7 +75,7 @@ class Curl
         }
 
         foreach (self::$overwriteFunctions as $functionName => $mapping) {
-            runkit_function_remove($functionName);
+            runkit_function_rename($functionName, $functionName . '_temp');
             runkit_function_rename($functionName . '_original', $functionName);
         }
 
@@ -77,13 +84,12 @@ class Curl
 
     public static function init($url = null)
     {
-        self::$request = new Request(null, $url);
+        self::$request = new Request('GET', $url);
         return \curl_init_original($url);
     }
 
     public static function exec($ch)
     {
-        $info = curl_getinfo($ch);
         $handleRequestCallable = self::$handleRequestCallable;
 
         $response = $handleRequestCallable(self::$request);
@@ -97,19 +103,43 @@ class Curl
 
     public static function setOpt($ch, $option, $value)
     {
-        // echo "{$option} = {$value}\n";
-
-        if ($option === CURLOPT_URL) {
-           self::$request->setUrl($value);
+        // die( "{$option} = {$value}\n" );
+        switch ($option) {
+            case CURLOPT_URL:
+                self::$request->setUrl($value);
+                break;
+            case CURLOPT_RETURNTRANSFER:
+                self::$returnTransfer = true;
+                break;
+            case CURLOPT_FOLLOWLOCATION:
+                self::$request->getParams()->set('redirect.disable', !$value);
+                break;
+            case CURLOPT_MAXREDIRS:
+                self::$request->getParams()->set('redirect.max', $value);
+                break;
+            case CURLOPT_POST:
+                if ($value == true) {
+                    self::$request->setMethod('POST');
+                }
+                break;
+            case CURLOPT_POSTFIELDS:
+                foreach ($value as $key => $value) {
+                    self::$request->setPostField($key, $value);
+                }
+                break;
+            case CURLOPT_HTTPHEADER:
+                $headers = array();
+                foreach ($value as $header) {
+                    list($key, $val) = explode(': ', $header, 2);
+                    $headers[$key] = $val;
+                }
+                self::$request->addHeaders($headers);
+                break;
+            default:
+                self::$request->getCurlOptions()->set($option, $value);
+                break;
         }
 
-        if ($option === CURLOPT_RETURNTRANSFER && $value == true) {
-           self::$returnTransfer = true;
-        }
-
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        // self::$request
         \curl_setopt_original($ch, $option, $value);
     }
 
