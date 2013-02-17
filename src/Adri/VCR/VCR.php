@@ -85,11 +85,9 @@ class VCR
         return $cassette->playback($request);
     }
 
-    // todo: do not use external libs
     public function createHttpClient()
     {
-        $client = new \Guzzle\Http\Client();
-        return $client;
+        return new Client();
     }
 
     /**

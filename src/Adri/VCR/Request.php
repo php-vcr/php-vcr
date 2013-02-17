@@ -20,11 +20,12 @@ class Request
             return false;
         }
 
-        // foreach ($this->request->attributes as $key => $pattern) {
-        //     if (!preg_match('#'.str_replace('#', '\\#', $pattern).'#', $request->attributes->get($key))) {
-        //         return false;
-        //     }
-        // }
+        $requestHeaders = $request->getHeaders();
+        foreach ($this->request->getHeaders() as $key => $pattern) {
+            if (!preg_match('#'.str_replace('#', '\\#', $pattern[0]).'#', $requestHeaders[$key][0])) {
+                return false;
+            }
+        }
 
         if (null !== $this->request->getPath()) {
             $path = str_replace('#', '\\#', $this->request->getPath());
@@ -48,9 +49,9 @@ class Request
         return new Response($response->getStatusCode(), $response->getHeaders(), $response->getBody());
     }
 
-    public function setClient($client)
+    public function setClient(Client $client)
     {
-        $this->request->setClient($client);
+        $this->request->setClient($client->getClient());
     }
 
     public function setUrl($url)
@@ -61,6 +62,11 @@ class Request
     public function getMethod()
     {
         return $this->request->getMethod();
+    }
+
+    public function getHeaders()
+    {
+        return $this->request->getHeaders()->getAll();
     }
 
     public function getPath()

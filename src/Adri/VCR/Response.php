@@ -19,14 +19,18 @@ class Response
     public function toArray()
     {
         return array(
-            $this->response->getStatusCode(),
-            $this->response->getHeaders()->getAll(),
-            $this->response->getBody(true)
+            'status'  => $this->response->getStatusCode(),
+            'headers' => $this->response->getHeaders()->getAll(),
+            'body'    => $this->response->getBody(true)
         );
     }
 
     public static function fromArray(array $response)
     {
-        return new Response($response[0], $response[1], $response[2]);
+        return new Response(
+            $response['status'],
+            $response['headers'],
+            $response['body']
+        );
     }
 }
