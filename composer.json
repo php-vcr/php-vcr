@@ -1,0 +1,23 @@
+{
+    "name": "adri/phpvcr",
+    "description": "Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.",
+
+    "authors": [
+        {
+            "name": "Adrian Philipp",
+            "email": "mail@adrian-philipp.com"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.4.0",
+        "guzzle/http": "3.0.*@dev",
+        "guzzle/plugin-history": "3.0.*@dev",
+        "guzzle/plugin-backoff": "3.0.*@dev",
+        "symfony/serializer": "2.3.*@dev"
+    },
+
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}

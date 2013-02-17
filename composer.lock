@@ -1,0 +1,456 @@
+{
+    "hash": "bcabb56798c7ed9a5ea29d29be92f35f",
+    "packages": [
+        {
+            "name": "guzzle/common",
+            "version": "v3.0.7",
+            "target-dir": "Guzzle/Common",
+            "source": {
+                "type": "git",
+                "url": "git://github.com/guzzle/common.git",
+                "reference": "v3.0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/guzzle/common/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2",
+                "symfony/event-dispatcher": ">=2.1"
+            },
+            "time": "2012-12-19 23:06:35",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Guzzle\\Common": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Common libraries used by Guzzle",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "collection",
+                "common",
+                "event",
+                "exception"
+            ]
+        },
+        {
+            "name": "guzzle/http",
+            "version": "v3.0.7",
+            "target-dir": "Guzzle/Http",
+            "source": {
+                "type": "git",
+                "url": "git://github.com/guzzle/http.git",
+                "reference": "v3.0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/guzzle/http/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "guzzle/common": "self.version",
+                "guzzle/parser": "self.version",
+                "guzzle/stream": "self.version",
+                "php": ">=5.3.2"
+            },
+            "time": "2012-12-14 00:49:17",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Guzzle\\Http": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "HTTP libraries used by Guzzle",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "client",
+                "curl",
+                "http",
+                "http client"
+            ]
+        },
+        {
+            "name": "guzzle/log",
+            "version": "v3.0.7",
+            "target-dir": "Guzzle/Log",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/log",
+                "reference": "v3.0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/guzzle/log/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "suggest": {
+                "guzzle/http": "v3.0.7"
+            },
+            "time": "2012-12-07 16:45:11",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Guzzle\\Log": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle log adapter component",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "adapter",
+                "log"
+            ]
+        },
+        {
+            "name": "guzzle/parser",
+            "version": "v3.0.7",
+            "target-dir": "Guzzle/Parser",
+            "source": {
+                "type": "git",
+                "url": "git://github.com/guzzle/parser.git",
+                "reference": "v3.0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/guzzle/parser/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "time": "2012-12-07 16:45:11",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Guzzle\\Parser": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Interchangeable parsers used by Guzzle",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "URI Template",
+                "cookie",
+                "http",
+                "message",
+                "url"
+            ]
+        },
+        {
+            "name": "guzzle/plugin-backoff",
+            "version": "v3.0.7",
+            "target-dir": "Guzzle/Plugin/Backoff",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/plugin-backoff",
+                "reference": "v3.0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/guzzle/plugin-backoff/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
+                "shasum": ""
+            },
+            "require": {
+                "guzzle/http": "self.version",
+                "guzzle/log": "self.version",
+                "php": ">=5.3.2"
+            },
+            "time": "2012-12-07 16:45:11",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Guzzle\\Plugin\\Backoff": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle backoff retry plugins",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "plugin"
+            ]
+        },
+        {
+            "name": "guzzle/plugin-history",
+            "version": "v3.0.7",
+            "target-dir": "Guzzle/Plugin/History",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/plugin-history",
+                "reference": "v3.0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/guzzle/plugin-history/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
+                "shasum": ""
+            },
+            "require": {
+                "guzzle/http": "self.version",
+                "php": ">=5.3.2"
+            },
+            "time": "2012-12-07 16:45:11",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Guzzle\\Plugin\\History": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle history plugin",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "plugin"
+            ]
+        },
+        {
+            "name": "guzzle/stream",
+            "version": "v3.0.7",
+            "target-dir": "Guzzle/Stream",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/stream",
+                "reference": "v3.0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/guzzle/stream/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
+                "shasum": ""
+            },
+            "require": {
+                "guzzle/common": "self.version",
+                "php": ">=5.3.2"
+            },
+            "time": "2012-12-07 16:45:11",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Guzzle\\Stream": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle stream wrapper component",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "component",
+                "stream"
+            ]
+        },
+        {
+            "name": "symfony/event-dispatcher",
+            "version": "v2.1.7",
+            "target-dir": "Symfony/Component/EventDispatcher",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/EventDispatcher",
+                "reference": "v2.1.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/symfony/EventDispatcher/archive/v2.1.7.zip",
+                "reference": "v2.1.7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/dependency-injection": "2.1.*"
+            },
+            "suggest": {
+                "symfony/dependency-injection": "2.1.*",
+                "symfony/http-kernel": "2.1.*"
+            },
+            "time": "2013-01-11 00:31:43",
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\EventDispatcher": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony EventDispatcher Component",
+            "homepage": "http://symfony.com"
+        },
+        {
+            "name": "symfony/serializer",
+            "version": "dev-master",
+            "target-dir": "Symfony/Component/Serializer",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Serializer",
+                "reference": "7e37c64bbcfeba25bac1911883fceb7dc367c2f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Serializer/zipball/7e37c64bbcfeba25bac1911883fceb7dc367c2f4",
+                "reference": "7e37c64bbcfeba25bac1911883fceb7dc367c2f4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "time": "2013-01-31 21:39:01",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Serializer\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Serializer Component",
+            "homepage": "http://symfony.com"
+        }
+    ],
+    "packages-dev": null,
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "guzzle/http": 20,
+        "guzzle/plugin-history": 20,
+        "guzzle/plugin-backoff": 20,
+        "symfony/serializer": 20
+    }
+}
