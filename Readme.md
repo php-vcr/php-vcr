@@ -28,7 +28,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->vcr = new VCR;
+        $this->vcr = new Adri\VCR;
     }
 
     public function testHttpStreamWrapper()
