@@ -87,6 +87,62 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
     }
 
+    public function testShouldPostFieldsAsString()
+    {
+        $testClass = $this;
+        $curlHook = $this->createCurl(function($request) use($testClass) {
+            $testClass->assertEquals(
+                array('para1' => 'val1', 'para2' => 'val2'),
+                $request->getPostFields()->getAll(),
+                'Post query string was not parsed and set correctly.'
+            );
+            return new Response(200);
+        });
+        $curlHook->enable();
+
+        $ch = curl_init('http://google.com');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, 'para1=val1&para2=val2');
+        curl_exec($ch);
+        curl_close($ch);
+        $curlHook->disable();
+    }
+
+    public function testShouldPostFieldsAsArray()
+    {
+        $testClass = $this;
+        $curlHook = $this->createCurl(function($request) use($testClass) {
+            $testClass->assertEquals(
+                array('para1' => 'val1', 'para2' => 'val2'),
+                $request->getPostFields()->getAll(),
+                'Post query string was not parsed and set correctly.'
+            );
+            return new Response(200);
+        });
+        $curlHook->enable();
+
+        $ch = curl_init('http://google.com');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array('para1' => 'val1', 'para2' => 'val2'));
+        curl_exec($ch);
+        curl_close($ch);
+        $curlHook->disable();
+    }
+
+    public function testShouldCurlInfo()
+    {
+        $testClass = $this;
+        $curlHook = $this->createCurl(function($request) use($testClass) {
+            return new Response(200);
+        });
+        $curlHook->enable();
+
+        $ch = curl_init('http://google.com');
+        curl_exec($ch);
+        curl_close($ch);
+
+        $this->assertEquals(200, curl_getinfo($ch, CURLINFO_HTTP_CODE), 'HTTP status not set.');
+        $curlHook->disable();
+    }
+
     public function testShouldNotThrowErrorWhenDisabledTwice()
     {
         $curlHook = $this->createCurl();

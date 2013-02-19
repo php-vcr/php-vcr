@@ -7,31 +7,31 @@ use Adri\VCR\Request;
 use Adri\VCR\Response;
 
 /**
+ * Library hook for curl functions.
  */
 class Curl
 {
-    /**
-     * @var Response
-     */
-    private $response;
-
     const ENABLED = 'ENABLED';
     const DISABLED = 'DISABLED';
 
     private static $status = self::DISABLED;
 
-    private static $returnTransfer = false;
-
+    /**
+     * @var Request
+     */
     private static $request;
+
+    /**
+     * @var Response
+     */
+    private static $response;
 
     private static $handleRequestCallable;
 
-    private static $additionalCurlOpts = array();
-
     private static $overwriteFunctions = array(
-        'curl_init'       => array('$url=null', 'init($url)'),
+        'curl_init'       => array('$url = null', 'init($url)'),
         'curl_exec'       => array('$resource', 'exec($resource)'),
-        // 'curl_multi_exec' => array('$resource', 'exec($resource)'),
+        'curl_getinfo'    => array('$resource, $option = 0', 'getinfo($resource, $option)'),
         'curl_setopt'     => array('$ch, $option, $value', 'setOpt($ch, $option, $value)'),
     );
 
@@ -91,16 +91,28 @@ class Curl
     public static function exec($ch)
     {
         $handleRequestCallable = self::$handleRequestCallable;
-        $response = $handleRequestCallable(self::$request);
+        self::$response = $handleRequestCallable(self::$request);
 
         if (static::getCurlOption(CURLOPT_FILE) !== null) {
             $fp = static::getCurlOption(CURLOPT_FILE);
-            fwrite($fp, $response->getBody());
+            fwrite($fp, self::$response->getBody());
             fflush($fp);
         } else if (static::getCurlOption(CURLOPT_RETURNTRANSFER) == true) {
-            return $response->getBody(true);
+            return self::$response->getBody(true);
         } else {
-            echo $response->getBody(true);
+            echo self::$response->getBody(true);
+        }
+    }
+
+    public static function getinfo($ch, $option)
+    {
+        switch ($option) {
+            case CURLINFO_HTTP_CODE:
+                return self::$response->getStatusCode();
+                break;
+            default:
+                echo "Todo: {$option} ";
+                break;
         }
     }
 
@@ -128,6 +140,10 @@ class Curl
                 }
                 break;
             case CURLOPT_POSTFIELDS:
+                // check for file @
+                if (is_string($value)) {
+                    parse_str($value, $value);
+                }
                 foreach ($value as $key => $value) {
                     self::$request->setPostField($key, $value);
                 }

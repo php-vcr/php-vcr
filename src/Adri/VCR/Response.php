@@ -2,32 +2,20 @@
 
 namespace Adri\VCR;
 
-class Response
+class Response extends \Guzzle\Http\Message\Response
 {
-    protected $response;
-
-    public function __construct($statusCode, $headers = null, $body = null)
-    {
-        $this->response = new \Guzzle\Http\Message\Response($statusCode, $headers, $body);
-    }
-
-    public function getBody($asString = false)
-    {
-        return $this->response->getBody($asString);
-    }
-
     public function toArray()
     {
         return array(
-            'status'  => $this->response->getStatusCode(),
-            'headers' => $this->response->getHeaders()->getAll(),
-            'body'    => $this->response->getBody(true)
+            'status'  => $this->getStatusCode(),
+            'headers' => $this->getHeaders()->getAll(),
+            'body'    => $this->getBody(true)
         );
     }
 
     public static function fromArray(array $response)
     {
-        return new Response(
+        return new static(
             $response['status'],
             $response['headers'],
             $response['body']
