@@ -59,7 +59,7 @@ PHPVCR installs needed (except runkit) depenencies using composer. Dependencies 
 
   * [Guzzle](http://guzzlephp.org)
   * > PHP 5.3
-  * (optional) runkit extension if you want to intercept curl
+  * (optional) runkit extension with `runkit.internal_override=1` in php.ini if you want to intercept curl
 
 ## Run tests
 
