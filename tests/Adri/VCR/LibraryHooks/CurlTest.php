@@ -9,60 +9,109 @@ use Adri\VCR\Response;
  */
 class CurlTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \Adri\VCR\LibraryHooks\Curl
-     */
-    private $curl;
+    public $expected = 'example response body';
 
-    public $expected = 'example response';
-
-    public function setUp()
+    public function testShouldInterceptCallWhenEnabled()
     {
-        $testClass = $this;
-        $this->curl = new Curl(function($request) use($testClass) {
-            return new Response(200, null, $testClass->expected);
-        });
-    }
+        $curlHook = $this->createCurl();
+        $curlHook->enable();
 
-    public function testEnable()
-    {
-        $this->curl->enable();
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://google.com/");
+        $ch = curl_init("http://google.com/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $actual = curl_exec($ch);
         curl_close($ch);
 
-        $this->assertEquals($this->expected, $actual);
+        $curlHook->disable();
+        $this->assertEquals($this->expected, $actual, 'Response was not returned.');
     }
 
-    public function testDisable()
+    public function testShouldNotInterceptCallWhenNotEnabled()
     {
-        $this->curl->disable();
+        $testClass = $this;
+        $curlHook = $this->createCurl(function($request) use($testClass) {
+            $testClass->fail("This request should not have been intercepted.");
+        });
+
+        $ch = curl_init("https://google.com/");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($ch);
+        curl_close($ch);
+    }
+
+    public function testShouldNotInterceptCallWhenDisabled()
+    {
+        $testClass = $this;
+        $curlHook = $this->createCurl(function($request) use($testClass) {
+            $testClass->fail("This request should not have been intercepted.");
+        });
+        $curlHook->enable();
+        $curlHook->disable();
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://google.com/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $actual = curl_exec($ch);
+        curl_exec($ch);
+        curl_close($ch);
+    }
+
+    public function testShouldWriteFileOnFileDownload()
+    {
+        $curlHook = $this->createCurl();
+        $curlHook->enable();
+        file_put_contents('tests/fixtures/test', '');
+
+        $ch = curl_init("https://google.com/");
+        curl_setopt($ch, CURLOPT_FILE, fopen('tests/fixtures/test', 'w'));
+        curl_exec($ch);
         curl_close($ch);
 
-        $this->assertNotEquals($this->expected, $actual);
+        $curlHook->disable();
+        $this->assertEquals($this->expected, file_get_contents('tests/fixtures/test'), 'Response was not written in file.');
+        file_put_contents('tests/fixtures/test', '');
     }
 
-    public function testDisableTwice()
+    public function testShouldEchoResponseIfReturnTransferFalse()
     {
-        $this->curl->disable();
-        $this->curl->disable();
+        $curlHook = $this->createCurl();
+        $curlHook->enable();
+
+        $ch = curl_init("http://google.com/");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+        ob_start();
+        curl_exec($ch);
+        $actual = ob_get_contents();
+        ob_end_clean();
+        curl_close($ch);
+
+        $curlHook->disable();
+        $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
     }
 
-    public function testEnableTwice()
+    public function testShouldNotThrowErrorWhenDisabledTwice()
     {
-        $this->curl->enable();
-        $this->curl->enable();
+        $curlHook = $this->createCurl();
+        $curlHook->disable();
+        $curlHook->disable();
     }
 
-    public function tearDown()
+    public function testShouldNotThrowErrorWhenEnabledTwice()
     {
+        $curlHook = $this->createCurl();
+        $curlHook->enable();
+        $curlHook->enable();
+    }
+
+    /**
+     * @return \Adri\VCR\LibraryHooks\Curl
+     */
+    private function createCurl($handleRequestCallback = null)
+    {
+        if (is_null($handleRequestCallback)) {
+            $testClass = $this;
+            $handleRequestCallback = function($request) use($testClass) {
+                return new Response(200, null, $testClass->expected);
+            };
+        }
+        return new Curl($handleRequestCallback);
     }
 }

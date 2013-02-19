@@ -1,6 +1,4 @@
-<phpunit backupGlobals="true"
-         backupStaticAttributes="false"
-         bootstrap="tests/bootstrap.php"
+<phpunit bootstrap="tests/bootstrap.php"
          cacheTokens="true"
          colors="true"
          convertErrorsToExceptions="true"
@@ -20,7 +18,7 @@
          verbose="true">
 
     <testsuites>
-        <directory>tests</directory>>
+        <directory>./tests</directory>>
     </testsuites>
 
 </phpunit>

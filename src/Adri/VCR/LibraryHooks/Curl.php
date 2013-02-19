@@ -91,14 +91,22 @@ class Curl
     public static function exec($ch)
     {
         $handleRequestCallable = self::$handleRequestCallable;
-
         $response = $handleRequestCallable(self::$request);
 
-        if (self::$returnTransfer === true) {
+        if (static::getCurlOption(CURLOPT_FILE) !== null) {
+            $fp = static::getCurlOption(CURLOPT_FILE);
+            fwrite($fp, $response->getBody());
+            fflush($fp);
+        } else if (static::getCurlOption(CURLOPT_RETURNTRANSFER) == true) {
             return $response->getBody(true);
         } else {
             echo $response->getBody(true);
         }
+    }
+
+    protected static function getCurlOption($option)
+    {
+        return self::$request->getCurlOptions()->get($option);
     }
 
     public static function setOpt($ch, $option, $value)
@@ -107,9 +115,6 @@ class Curl
         switch ($option) {
             case CURLOPT_URL:
                 self::$request->setUrl($value);
-                break;
-            case CURLOPT_RETURNTRANSFER:
-                self::$returnTransfer = true;
                 break;
             case CURLOPT_FOLLOWLOCATION:
                 self::$request->getParams()->set('redirect.disable', !$value);

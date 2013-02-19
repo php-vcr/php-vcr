@@ -1,1 +1,0 @@
-[{"request":{"method":"GET","url":"https:\/\/example.com\/","headers":{"Host":["example.com"],"User-Agent":["Guzzle\/3.0.7 curl\/7.24.0 PHP\/5.3.15"]}},"response":{"status":200,"headers":[],"body":"sometest"}}]
