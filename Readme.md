@@ -8,39 +8,85 @@ Record your test suite's HTTP interactions and replay them during future test ru
 
 * Automatically records and replays your HTTP interactions with minimal setup/configuration code.
 * Supports common http functions and extensions
-  following are supported:
-  * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(),file_get_contents(), ...
-  * curl(), curl_multi() using runkit extension
-* Todo: Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
-  implement a custom request matcher to handle any need.
-* Todo: The same request can receive different responses in different tests--just use different cassettes.
+  * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(),file_get_contents(), ... without any modification
+  * curl(), curl_multi() using [runkit extension](http://www.php.net/manual/en/book.runkit.php) and `runkit.internal_override=1` in your php.ini
+  * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) using your own wrapper class
+* The same request can receive different responses in different tests--just use different cassettes.
+* Disables all HTTP requests that you don't explicitly allow (except SoapClient if not configured).
+* Todo: Automatically re-records cassettes on a configurable regular interval to keep them fresh and current.
+* Todo: Supports PHPUnit annotations
 * Todo: The recorded requests and responses are stored on disk in a serialization format of your choice
   (currently YAML and JSON are built in, and you can easily implement your own custom serializer)
   and can easily be inspected and edited.
-* Todo: Automatically re-records cassettes on a configurable regular interval to keep them fresh and current.
-* Todo: Disables all HTTP requests that you don't explicitly allow.
-* Todo: Supports PHPUnit annotations
+* Todo: Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
+  implement a custom request matcher to handle any need.
 
 ## Usage example
+
+Using annotations:
 
 ``` php
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
+        // Initialize VCR
         $this->vcr = new Adri\VCR;
     }
 
-    public function testHttpStreamWrapper()
+    public function testNoCassetteUsed()
     {
-        $this->vcr->insertCassette('example');
-        // some http call, for example:
+        // Now all HTTP requests will be intercepted, an exception is thrown
+        // if you don't provide a @VCR:useCassette($name) annotation, example:
+        $this->setExpectedException('\BadMethodCallException');
+        file_get_contents('http://example.com');
+    }
+
+    /**
+     * You can use a test method annotation...
+     * @VCR:useCassette('example')
+     */
+    public function testUsingAnnotation()
+    {
+        // Following request will be recorded once and replayed in furture test runs
         $result = file_get_contents('http://example.com');
         $this->assertNotEmpty($result);
+    }
+}
+```
+
+Using inline method calls:
+
+``` php
+class VCRTest extends \PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
+        // Initialize VCR
+        $this->vcr = new Adri\VCR;
+    }
+
+    public function testUsingInlineMethodCall()
+    {
+        // .... or use an inline method call
+        $this->vcr->useCassette('example');
+
+        // Following request will be recorded once and replayed in furture test runs
+        $result = file_get_contents('http://example.com');
+        $this->assertNotEmpty($result);
+
+    }
+
+    public function tearDown()
+    {
+        // When using inline method calls, make sure to clean up after every test
+        // This is not needed when using annotations
+        $this->vcr->ejectCassette();
     }
 
 }
 ```
+
 
 ## Installation
 
@@ -57,8 +103,8 @@ phpunit tests
 
 PHPVCR installs needed (except runkit) depenencies using composer. Dependencies are:
 
-  * [Guzzle](http://guzzlephp.org)
-  * > PHP 5.3
+  * PHP 5.3+
+  * HTTP library [Guzzle](http://guzzlephp.org)
   * (optional) runkit extension with `runkit.internal_override=1` in php.ini if you want to intercept curl
 
 ## Run tests
@@ -66,6 +112,13 @@ PHPVCR installs needed (except runkit) depenencies using composer. Dependencies 
 ``` php
 phpunit ./tests
 ```
+
+## Changelog
+
+ * 2013-02-20 Added Soap support
+ * 2013-02-19 Curl hook fixes, more tests
+ * 2013-02-18 First prototype
+
 ## Copyright
 Copyright (c) 2013 Adrian Philipp. Released under the terms of the MIT license. See LICENSE for details.
 
