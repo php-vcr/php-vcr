@@ -12,6 +12,7 @@ class Configuration
     private $libraryHooks = array(
         '\Adri\VCR\LibraryHooks\StreamWrapper',
         '\Adri\VCR\LibraryHooks\Curl',
+        // '\Adri\VCR\LibraryHooks\Soap',
     );
 
     private $turnOnAutomatically = true;
