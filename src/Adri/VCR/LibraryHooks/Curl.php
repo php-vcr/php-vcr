@@ -9,11 +9,8 @@ use Adri\VCR\Response;
 /**
  * Library hook for curl functions.
  */
-class Curl
+class Curl implements LibraryHookInterface
 {
-    const ENABLED = 'ENABLED';
-    const DISABLED = 'DISABLED';
-
     private static $status = self::DISABLED;
 
     /**
@@ -27,6 +24,8 @@ class Curl
     private static $response;
 
     private static $handleRequestCallable;
+
+    private static $additionalCurlOpts = array();
 
     private static $overwriteFunctions = array(
         'curl_init'       => array('$url = null', 'init($url)'),
@@ -93,14 +92,17 @@ class Curl
         $handleRequestCallable = self::$handleRequestCallable;
         self::$response = $handleRequestCallable(self::$request);
 
-        if (static::getCurlOption(CURLOPT_FILE) !== null) {
-            $fp = static::getCurlOption(CURLOPT_FILE);
-            fwrite($fp, self::$response->getBody());
+        $responseBody = (string) self::$response->getBody(true);
+
+        if (isset(static::$additionalCurlOpts[CURLOPT_FILE])) {
+            $fp = static::$additionalCurlOpts[CURLOPT_FILE];
+            fwrite($fp, $responseBody);
             fflush($fp);
+            static::$additionalCurlOpts[CURLOPT_FILE] = null;
         } else if (static::getCurlOption(CURLOPT_RETURNTRANSFER) == true) {
-            return self::$response->getBody(true);
+            return $responseBody;
         } else {
-            echo self::$response->getBody(true);
+            echo $responseBody;
         }
     }
 
@@ -110,8 +112,19 @@ class Curl
             case CURLINFO_HTTP_CODE:
                 return self::$response->getStatusCode();
                 break;
+            case CURLINFO_SIZE_DOWNLOAD:
+                return self::$response->getHeader('Content-Length');
+                break;
+            case CURLFTPMETHOD_NOCWD:
+                break;
             default:
-                echo "Todo: {$option} ";
+                $info = self::$response->getInfo($option);
+                if (!is_null($info)) {
+                    return $info;
+                }
+                $constants = get_defined_constants(true);
+                $info = array_flip($constants['curl']);
+                die("Todo: {$info[$option]} ({$option}) ");
                 break;
         }
     }
@@ -155,6 +168,9 @@ class Curl
                     $headers[$key] = $val;
                 }
                 self::$request->addHeaders($headers);
+                break;
+            case CURLOPT_FILE:
+                self::$additionalCurlOpts[CURLOPT_FILE] = $value;
                 break;
             default:
                 self::$request->getCurlOptions()->set($option, $value);

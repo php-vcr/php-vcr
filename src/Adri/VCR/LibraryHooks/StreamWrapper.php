@@ -9,7 +9,7 @@ use Adri\VCR\Response;
 /**
  * StreamWrapper.
  */
-class StreamWrapper
+class StreamWrapper implements LibraryHookInterface
 {
     private static $handleRequestCallable ;
 
