@@ -14,15 +14,15 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 
     public function testOneStreamWrapper()
     {
-        $this->vcr->insertCassette('wrappertest');
+        $this->vcr->useCassette('wrappertest');
         $result = file_get_contents('http://google.com');
         $this->assertNotEmpty($result);
     }
 
     public function testInsertMultipleCassettes()
     {
-        $this->vcr->insertCassette('cassette1');
-        $this->vcr->insertCassette('cassette2');
+        $this->vcr->useCassette('cassette1');
+        $this->vcr->useCassette('cassette2');
 
         $this->assertEquals('cassette2', $this->vcr->getCurrentCassette()->getName());
     }
@@ -30,7 +30,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     public function testThrowExeptions()
     {
         $this->setExpectedException('InvalidArgumentException');
-        $this->vcr->insertCassette('cassette1');
+        $this->vcr->useCassette('cassette1');
         throw new \InvalidArgumentException('test');
     }
 

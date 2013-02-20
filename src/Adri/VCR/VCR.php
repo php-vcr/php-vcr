@@ -52,7 +52,7 @@ class VCR
         self::$isOn = false;
     }
 
-    public function insertCassette($cassetteName)
+    public function useCassette($cassetteName)
     {
         $this->cassette = new Cassette($cassetteName, $this->config);
     }
@@ -68,7 +68,7 @@ class VCR
             throw new \BadMethodCallException(
                 'Invalid http request. No cassette inserted. '
                 . ' Please make sure to insert a cassette in your unit-test using '
-                . '$vcr->insertCassette(\'name\'); or annotation @vcr:cassette(\'name\').'
+                . '$vcr->urlCassette(\'name\'); or annotation @vcr:cassette(\'name\').'
             );
         }
 
