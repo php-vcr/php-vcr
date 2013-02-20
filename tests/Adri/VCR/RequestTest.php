@@ -17,10 +17,10 @@ class RequsetTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'User-Agent' => array('Unit-Test'),
-                'Host'       => array('example.com')
+                'User-Agent' => 'Unit-Test',
+                'Host'       => 'example.com'
             ),
-            $this->request->getHeaders()->getAll()
+            $this->request->getHeaders()
         );
     }
 

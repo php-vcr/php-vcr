@@ -2,8 +2,6 @@
 
 namespace Adri\VCR;
 
-use \Symfony\Component\HttpFoundation\RequestMatcher;
-
 class Cassette
 {
     protected $name;

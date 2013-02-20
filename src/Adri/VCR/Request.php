@@ -14,8 +14,8 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
             return false;
         }
 
-        $requestHeaders = $request->getHeaders()->getAll();
-        foreach ($this->getHeaders()->getAll() as $key => $pattern) {
+        $requestHeaders = $request->getHeaders();
+        foreach ($this->getHeaders() as $key => $pattern) {
             if (!preg_match('#'.str_replace('#', '\\#', $pattern[0]).'#', $requestHeaders[$key][0])) {
                 return false;
             }
@@ -31,6 +31,11 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
 
         if (null !== $this->getHost()
            && !preg_match('#'.str_replace('#', '\\#', $this->getHost()).'#i', $request->getHost())) {
+            return false;
+        }
+
+        if (null !== $this->getPostFields()->toArray()
+          && $this->getPostFields()->toArray() != $request->getPostFields()->toArray() ) {
             return false;
         }
 
@@ -51,18 +56,44 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
     public function toArray()
     {
         return array(
-            'method'  => $this->getMethod(),
-            'url'     => $this->getUrl(),
-            'headers' => $this->getHeaders()->getAll(),
+            'method'      => $this->getMethod(),
+            'url'         => $this->getUrl(),
+            'headers'     => $this->getHeaders(),
+            'body'        => $this->getBody(),
+            'post_files'  => (array) $this->getPostFiles(),
+            'post_fields' => (array) $this->getPostFields(),
         );
+    }
+
+    public function getHeaders($asObjects = false)
+    {
+        if ($asObjects === true) {
+            return $this->getHeaders($asObjects);
+        }
+
+        $headers = array();
+        foreach (parent::getHeaders()->getAll() as $key => $value) {
+            $headers[$key] = $value[0];
+        }
+        return $headers;
     }
 
     public static function fromArray(array $request)
     {
-        return new Request(
+        $requestObject = new Request(
             $request['method'],
             $request['url'],
             $request['headers']
         );
+
+        if (isset($request['post_fields']) && is_array($request['post_fields'])) {
+            $requestObject->addPostFields($request['post_fields']);
+        }
+
+        if (isset($request['post_files']) && is_array($request['post_files'])) {
+            $requestObject->addPostFiles($request['post_files']);
+        }
+
+        return $requestObject;
     }
 }

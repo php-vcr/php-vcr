@@ -58,16 +58,18 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     {
         $curlHook = $this->createCurl();
         $curlHook->enable();
-        file_put_contents('tests/fixtures/test', '');
 
         $ch = curl_init("https://google.com/");
-        curl_setopt($ch, CURLOPT_FILE, fopen('tests/fixtures/test', 'w'));
+        $fp = fopen('php://temp/test_file', 'w');
+        curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_exec($ch);
         curl_close($ch);
+        rewind($fp);
+        $actual = fread($fp, 1024);
+        fclose($fp);
 
         $curlHook->disable();
-        $this->assertEquals($this->expected, file_get_contents('tests/fixtures/test'), 'Response was not written in file.');
-        file_put_contents('tests/fixtures/test', '');
+        $this->assertEquals($this->expected, $actual, 'Response was not written in file.');
     }
 
     public function testShouldEchoResponseIfReturnTransferFalse()
