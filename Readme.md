@@ -1,4 +1,4 @@
-# PHPVCR
+# PHP-VCR
 
 This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 
@@ -6,20 +6,21 @@ Record your test suite's HTTP interactions and replay them during future test ru
 
 ## Features
 
-* Automatically records and replays your HTTP interactions with minimal setup/configuration code.
+* Automatically records and replays your HTTP(s) interactions with minimal setup/configuration code.
 * Supports common http functions and extensions
-  * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(),file_get_contents(), ... without any modification
-  * curl(), curl_multi() using [runkit extension](http://www.php.net/manual/en/book.runkit.php) and `runkit.internal_override=1` in your php.ini
+  * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification
   * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) using your own wrapper class
+  * curl(),  using [runkit extension](http://www.php.net/manual/en/book.runkit.php) and `runkit.internal_override=1` in your php.ini
+  * Todo: curl_multi()
 * The same request can receive different responses in different tests--just use different cassettes.
 * Disables all HTTP requests that you don't explicitly allow (except SoapClient if not configured).
-* Todo: Automatically re-records cassettes on a configurable regular interval to keep them fresh and current.
-* Todo: Supports PHPUnit annotations
+* Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
+  implement a custom request matcher to handle any need.
 * Todo: The recorded requests and responses are stored on disk in a serialization format of your choice
   (currently YAML and JSON are built in, and you can easily implement your own custom serializer)
   and can easily be inspected and edited.
-* Todo: Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
-  implement a custom request matcher to handle any need.
+* Todo: Supports PHPUnit annotations
+* Todo: Automatically re-records cassettes on a configurable regular interval to keep them fresh and current.
 
 ## Usage example
 
@@ -93,19 +94,22 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 There is no release yet, sorry.
 
 ``` bash
-git clone git@github.com:adri/phpvc
-cd phpvcr
+git clone git@github.com:adri/php-vc
+cd php-vcr
 composer update
 phpunit tests
 ```
 
 ## Dependencies
 
-PHPVCR installs needed (except runkit) depenencies using composer. Dependencies are:
+PHP-VCR depends on:
 
   * PHP 5.3+
+  * Curl extension
   * HTTP library [Guzzle](http://guzzlephp.org)
   * (optional) runkit extension with `runkit.internal_override=1` in php.ini if you want to intercept curl
+
+Composer installs all depenencies except extensions like curl or runkit.
 
 ## Run tests
 
@@ -115,6 +119,9 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2013-02-21 Added custom request matcher
+ * 2013-02-21 Added json storage which uses less memory
+ * 2013-02-21 Added support for binary data
  * 2013-02-20 Added Soap support
  * 2013-02-19 Curl hook fixes, more tests
  * 2013-02-18 First prototype
