@@ -4,41 +4,19 @@ namespace Adri\VCR;
 
 class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
 {
-
-    /**
-     * Adapted from https://github.com/symfony/HttpFoundation/blob/master/RequestMatcher.php
-     */
-    public function matches(Request $request)
+    public function matches(Request $request, array $requestMatchers)
     {
-        if ($this->getMethod() !== $request->getMethod()) {
-            return false;
-        }
+        foreach ($requestMatchers as $matcher) {
+            if (!is_callable($matcher)) {
+                throw new \BadFunctionCallException(
+                    'Matcher could not be executed.' . print_r($matcher, true)
+                );
+            }
 
-        $requestHeaders = $request->getHeaders();
-        foreach ($this->getHeaders() as $key => $pattern) {
-            if (!preg_match('#'.str_replace('#', '\\#', $pattern[0]).'#', $requestHeaders[$key][0])) {
+            if (call_user_func_array($matcher, array($this, $request)) === false) {
                 return false;
             }
         }
-
-        if (null !== $this->getPath()) {
-            $path = str_replace('#', '\\#', $this->getPath());
-
-            if (!preg_match('#'.$path.'#', rawurldecode($request->getPath()))) {
-                return false;
-            }
-        }
-
-        if (null !== $this->getHost()
-           && !preg_match('#'.str_replace('#', '\\#', $this->getHost()).'#i', $request->getHost())) {
-            return false;
-        }
-
-        if (null !== $this->getPostFields()->toArray()
-          && $this->getPostFields()->toArray() != $request->getPostFields()->toArray() ) {
-            return false;
-        }
-
         return true;
     }
 
@@ -61,7 +39,7 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
             'headers'     => $this->getHeaders(),
             'body'        => $this->getBody(),
             'post_files'  => (array) $this->getPostFiles(),
-            'post_fields' => (array) $this->getPostFields(),
+            'post_fields' => (array) $this->getPostFields()->toArray(),
         );
     }
 
@@ -86,11 +64,11 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
             $request['headers']
         );
 
-        if (isset($request['post_fields']) && is_array($request['post_fields'])) {
+        if (is_array($request['post_fields']) && !empty($request['post_fields'])) {
             $requestObject->addPostFields($request['post_fields']);
         }
 
-        if (isset($request['post_files']) && is_array($request['post_files'])) {
+        if (is_array($request['post_files']) && !empty($request['post_files'])) {
             $requestObject->addPostFiles($request['post_files']);
         }
 
