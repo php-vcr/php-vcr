@@ -2,18 +2,47 @@
 
 namespace Adri\VCR\Storage;
 
-class Json implements \Iterator
+use Adri\VCR\Assertion;
+use Adri\VCR\Request;
+use Adri\VCR\Response;
+
+class Json implements StorageInterface
 {
     const STATUS_IN_OBJECT = true;
     const STATUS_NOT_IN_OBJECT = false;
 
     private $handle;
+    private $filePath;
     private $currentJson;
     private $isEOF = false;
 
-    public function __construct($fileHandle)
+    public function __construct($filePath)
     {
-        $this->handle = $fileHandle;
+        if (!file_exists($filePath)) {
+            file_put_contents($filePath, '[]');
+        }
+
+        Assertion::file($filePath, "Specified path '{$filePath}' is not a file.");
+        Assertion::readable($filePath, "Specified file '{$filePath}' must be readable.");
+        Assertion::writeable($filePath, "Specified path '{$filePath}' must be writeable.");
+
+        $this->handle = fopen($filePath, 'r+');
+        $this->filePath = $filePath;
+    }
+
+    public function storeRecording(Request $request, Response $response)
+    {
+         $recording = array(
+            'request'  => $request->toArray(),
+            'response' => $response->toArray()
+        );
+
+        fseek($this->handle, -1, SEEK_END);
+        if (filesize($this->filePath) > 2) {
+            fwrite($this->handle, ',');
+        }
+        fwrite($this->handle, json_encode($recording) . ']');
+        fflush($this->handle);
     }
 
     public function current()
@@ -77,6 +106,11 @@ class Json implements \Iterator
             $this->next();
         }
         return !$this->isEOF;
+    }
+
+    public function __destruct()
+    {
+        fclose($this->handle);
     }
 
 }

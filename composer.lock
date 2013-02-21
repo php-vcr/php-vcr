@@ -1,5 +1,5 @@
 {
-    "hash": "0ed94c8a3f564cefbac6e7e6bb17b63b",
+    "hash": "6603f77ab4503aa5e662009923f4dbb3",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -335,6 +335,36 @@
             ]
         },
         {
+            "name": "mikey179/vfsStream",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikey179/vfsStream.git",
+                "reference": "9d7699efea1b5a2cff3b72aefcee82ae5bd887e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/9d7699efea1b5a2cff3b72aefcee82ae5bd887e9",
+                "reference": "9d7699efea1b5a2cff3b72aefcee82ae5bd887e9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2013-02-08 22:24:30",
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "org\\bovigo\\vfs\\": "src/main/php"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "homepage": "http://vfs.bovigo.org/"
+        },
+        {
             "name": "symfony/event-dispatcher",
             "version": "v2.1.7",
             "target-dir": "Symfony/Component/EventDispatcher",
@@ -392,6 +422,7 @@
     "stability-flags": {
         "guzzle/http": 20,
         "guzzle/plugin-backoff": 20,
-        "beberlei/assert": 20
+        "beberlei/assert": 20,
+        "mikey179/vfsstream": 20
     }
 }

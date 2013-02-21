@@ -10,14 +10,14 @@ class Cassette
     protected $name;
     protected $config;
     protected $hasReadFromDisk = false;
-    protected $recordings;
+    protected $storage;
     protected $cassetteHandle;
 
     function __construct($name, Configuration $config)
     {
         $this->name = $name;
         $this->config = $config;
-        $this->readFromDisk();
+        $this->storage = $this->createStorage();
     }
 
     public function hasResponse(Request $request)
@@ -33,7 +33,7 @@ class Cassette
      */
     public function playback(Request $request)
     {
-        foreach ($this->recordings as $recording) {
+        foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
             if ($storedRequest->matches($request, $this->getRequestMatchers())) {
                 return Response::fromArray($recording['response']);
@@ -49,32 +49,7 @@ class Cassette
             return;
         }
 
-        $recording = array(
-            'request'  => $request->toArray(),
-            'response' => $response->toArray()
-        );
-
-        fseek($this->cassetteHandle, -1, SEEK_END);
-        if (filesize($this->getCassettePath()) > 2) {
-            fwrite($this->cassetteHandle, ',');
-        }
-        fwrite($this->cassetteHandle, json_encode($recording) . ']');
-        fflush($this->cassetteHandle);
-    }
-
-    /**
-     * Reads all http interactions from disk.
-     * @return void
-     * @todo move o storage class
-     */
-    public function readFromDisk()
-    {
-        if (!file_exists($this->getCassettePath())) {
-            file_put_contents($this->getCassettePath(), '[]');
-        }
-
-        $this->cassetteHandle = fopen($this->getCassettePath(), 'r+');
-        $this->recordings = new Storage\Json($this->cassetteHandle);
+        $this->storage->storeRecording($request, $response);
     }
 
     public function getName()
@@ -82,14 +57,15 @@ class Cassette
         return $this->name;
     }
 
-    public function __destruct()
-    {
-        fclose($this->cassetteHandle);
-    }
-
     protected function getCassettePath()
     {
         return $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $this->name;
+    }
+
+    public function createStorage()
+    {
+        // $class = $this->config->getStorageClass();
+        return new Storage\Json($this->getCassettePath());
     }
 
     public function getRequestMatchers()

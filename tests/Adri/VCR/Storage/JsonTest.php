@@ -2,17 +2,20 @@
 
 namespace Adri\VCR\Storage;
 
+use org\bovigo\vfs\vfsStream;
+
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class JsonObjectIteratorTest extends \PHPUnit_Framework_TestCase
+class JsonTest extends \PHPUnit_Framework_TestCase
 {
     private $handle;
 
     public function setUp()
     {
-        $this->handle = fopen('php://temp/json_object', 'rw');
-        $this->jsonObject = new Json($this->handle);
+        vfsStream::setup('test');
+        $this->filePath = vfsStream::url('test/json_test');
+        $this->jsonObject = new Json($this->filePath);
     }
 
     public function testIterateOneObject()
@@ -73,7 +76,7 @@ class JsonObjectIteratorTest extends \PHPUnit_Framework_TestCase
 
     private function iterateAndTest($json, $expected, $message)
     {
-        fwrite($this->handle, $json);
+        file_put_contents($this->filePath, $json);
 
         $actual = array();
         foreach ($this->jsonObject as $object) {
@@ -81,10 +84,5 @@ class JsonObjectIteratorTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals($expected, $actual, $message);
-    }
-
-    public function tearDown()
-    {
-        fclose($this->handle);
     }
 }
