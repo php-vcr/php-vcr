@@ -1,6 +1,44 @@
 {
-    "hash": "c42ad87dd846a16cd7032bcc8ed7c5cf",
+    "hash": "0ed94c8a3f564cefbac6e7e6bb17b63b",
     "packages": [
+        {
+            "name": "beberlei/assert",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/assert.git",
+                "reference": "d76458b2ee96fad6459127d804c1538b995b5376"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/d76458b2ee96fad6459127d804c1538b995b5376",
+                "reference": "d76458b2ee96fad6459127d804c1538b995b5376",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*"
+            },
+            "time": "2013-02-02 13:17:41",
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Assert": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                }
+            ],
+            "description": "Thin assertion library for input validation in business models.",
+            "keywords": [
+                "assert",
+                "assertion",
+                "validation"
+            ]
+        },
         {
             "name": "guzzle/common",
             "version": "v3.0.7",
@@ -353,6 +391,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "guzzle/http": 20,
-        "guzzle/plugin-backoff": 20
+        "guzzle/plugin-backoff": 20,
+        "beberlei/assert": 20
     }
 }

@@ -64,6 +64,8 @@ class Configuration
 
     public function addRequestMatcher($name, $callback)
     {
+        Assertion::minLength($name, 1, "A request matchers name must be at least one character long. Found '{$name}'");
+        Assertion::isCallable($callback, "Request matcher '{$name}' is not callable.");
         $this->availableRequestMatchers[$name] = $callback;
         return $this;
     }
@@ -79,6 +81,7 @@ class Configuration
 
     public function setCassettePath($cassettePath)
     {
+        Assertion::file($cassettePath, 'Cassette path does not exist.');
         $this->cassettePath = $cassettePath;
         return $this;
     }

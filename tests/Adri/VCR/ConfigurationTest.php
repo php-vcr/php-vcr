@@ -24,6 +24,22 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testAddRequestMatcherFailsWithNoName()
+    {
+        $this->setExpectedException('Adri\VCR\VCRException');
+        $expected = function($first, $second) {
+            return true;
+        };
+        $actual = $this->config->addRequestMatcher('', $expected);
+    }
+
+
+    public function testAddRequestMatcherFailsWithWrongCallback()
+    {
+        $this->setExpectedException('Adri\VCR\VCRException', "Request matcher 'example' is not callable.");
+        $actual = $this->config->addRequestMatcher('example', array());
+    }
+
     public function testAddRequestMatchers()
     {
         $expected = function($first, $second) {

@@ -13,7 +13,8 @@
         "php": ">=5.3.15",
         "ext-curl": "*",
         "guzzle/http": "3.0.*@dev",
-        "guzzle/plugin-backoff": "3.0.*@dev"
+        "guzzle/plugin-backoff": "3.0.*@dev",
+        "beberlei/assert": "dev-master"
     },
 
     "autoload": {
