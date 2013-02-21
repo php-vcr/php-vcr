@@ -74,7 +74,7 @@ class Cassette
         }
 
         $this->cassetteHandle = fopen($this->getCassettePath(), 'r+');
-        $this->recordings = new JsonObjectIterator($this->cassetteHandle);
+        $this->recordings = new Storage\Json($this->cassetteHandle);
     }
 
     public function getName()

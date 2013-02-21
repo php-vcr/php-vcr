@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\VCR;
+namespace Adri\VCR\Storage;
 
 /**
  * Test integration of PHPVCR with PHPUnit.
@@ -12,7 +12,7 @@ class JsonObjectIteratorTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->handle = fopen('php://temp/json_object', 'rw');
-        $this->jsonObject = new JsonObjectIterator($this->handle);
+        $this->jsonObject = new Json($this->handle);
     }
 
     public function testIterateOneObject()

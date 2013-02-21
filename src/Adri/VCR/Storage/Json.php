@@ -1,8 +1,8 @@
 <?php
 
-namespace Adri\VCR;
+namespace Adri\VCR\Storage;
 
-class JsonObjectIterator implements \Iterator
+class Json implements \Iterator
 {
     const STATUS_IN_OBJECT = true;
     const STATUS_NOT_IN_OBJECT = false;
