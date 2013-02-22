@@ -16,10 +16,11 @@ Record your test suite's HTTP interactions and replay them during future test ru
 * Disables all HTTP requests that you don't explicitly allow (except SoapClient if not configured).
 * Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
   implement a custom request matcher to handle any need.
-* Todo: The recorded requests and responses are stored on disk in a serialization format of your choice
+* The recorded requests and responses are stored on disk in a serialization format of your choice
   (currently YAML and JSON are built in, and you can easily implement your own custom serializer)
-  and can easily be inspected and edited.
-* Todo: Supports PHPUnit annotations
+* Todo: Recorded requests and responses can easily be inspected and edited.
+* Todo: Supports PHPUnit annotations.
+* Todo: Automatically filters confidential or private information like passwords, auth tokens and emails.
 * Todo: Automatically re-records cassettes on a configurable regular interval to keep them fresh and current.
 
 ## Usage example
