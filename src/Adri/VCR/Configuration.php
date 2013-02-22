@@ -16,6 +16,12 @@ class Configuration
         // '\Adri\VCR\LibraryHooks\Soap',
     );
 
+    private $enabledStorage = 'yaml';
+    private $availableStorages = array(
+        'json' => '\Adri\VCR\Storage\Json',
+        'yaml' => '\Adri\VCR\Storage\Yaml',
+    );
+
     private $enabledRequestMatchers;
     private $availableRequestMatchers = array(
         'method'      => array('\Adri\VCR\RequestMatcher', 'matchMethod'),
@@ -83,6 +89,13 @@ class Configuration
     {
         Assertion::file($cassettePath, 'Cassette path does not exist.');
         $this->cassettePath = $cassettePath;
+        return $this;
+    }
+
+    public function setStorage($storageName)
+    {
+        Assertion::inArray($storageName, $this->availableStorages, "Storage '{$storageName}' not found.");
+        $this->enabledStorage = $storageName;
         return $this;
     }
 }

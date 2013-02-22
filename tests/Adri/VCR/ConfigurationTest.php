@@ -49,4 +49,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertContains($expected, $this->config->getRequestMatchers());
     }
 
+    public function testSetStorageInvalidName()
+    {
+        $this->setExpectedException('Adri\VCR\VCRException');
+        $this->config->setStorage('Does not exist');
+    }
+
 }
