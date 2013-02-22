@@ -74,6 +74,23 @@ class JsonTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testStoreRecording()
+    {
+        $expected = array(
+            'request' => 'some request',
+            'response' => 'some response'
+        );
+
+        $this->jsonObject->storeRecording($expected);
+
+        $actual = array();
+        foreach ($this->jsonObject as $recording) {
+            $actual[] = $recording;
+        }
+
+        $this->assertEquals($expected, $actual[0], 'Storing and reading a recording failed.');
+    }
+
     private function iterateAndTest($json, $expected, $message)
     {
         file_put_contents($this->filePath, $json);

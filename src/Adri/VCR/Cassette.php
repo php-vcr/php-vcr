@@ -49,7 +49,12 @@ class Cassette
             return;
         }
 
-        $this->storage->storeRecording($request, $response);
+        $recording = array(
+            'request'  => $request->toArray(),
+            'response' => $response->toArray()
+        );
+
+        $this->storage->storeRecording($recording);
     }
 
     public function getName()

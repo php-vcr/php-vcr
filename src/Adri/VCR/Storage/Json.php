@@ -3,8 +3,6 @@
 namespace Adri\VCR\Storage;
 
 use Adri\VCR\Assertion;
-use Adri\VCR\Request;
-use Adri\VCR\Response;
 
 class Json implements StorageInterface
 {
@@ -30,13 +28,8 @@ class Json implements StorageInterface
         $this->filePath = $filePath;
     }
 
-    public function storeRecording(Request $request, Response $response)
+    public function storeRecording(array $recording)
     {
-         $recording = array(
-            'request'  => $request->toArray(),
-            'response' => $response->toArray()
-        );
-
         fseek($this->handle, -1, SEEK_END);
         if (filesize($this->filePath) > 2) {
             fwrite($this->handle, ',');
