@@ -15,7 +15,15 @@
         "guzzle/http": "3.0.*@dev",
         "guzzle/plugin-backoff": "3.0.*@dev",
         "beberlei/assert": "dev-master",
+        "symfony/yaml": "2.3.*@dev"
+    },
+
+    "require-dev": {
         "mikey179/vfsStream": "dev-master"
+    },
+
+    "suggest": {
+        "ext-runkit": "*"
     },
 
     "autoload": {

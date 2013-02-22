@@ -119,6 +119,7 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2013-02-22 Added YAML support
  * 2013-02-21 Added custom request matcher
  * 2013-02-21 Added json storage which uses less memory
  * 2013-02-21 Added support for binary data
