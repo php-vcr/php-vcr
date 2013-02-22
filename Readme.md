@@ -96,7 +96,7 @@ There is no release yet, sorry.
 ``` bash
 git clone git@github.com:adri/php-vc
 cd php-vcr
-composer update
+composer install -dev
 phpunit tests
 ```
 
@@ -107,6 +107,8 @@ PHP-VCR depends on:
   * PHP 5.3+
   * Curl extension
   * HTTP library [Guzzle](http://guzzlephp.org)
+  * [symfony/yaml](https://github.com/symfony/yaml)
+  * [beberlei/assert](https://github.com/beberlei/assert)
   * (optional) runkit extension with `runkit.internal_override=1` in php.ini if you want to intercept curl
 
 Composer installs all depenencies except extensions like curl or runkit.
@@ -114,6 +116,7 @@ Composer installs all depenencies except extensions like curl or runkit.
 ## Run tests
 
 ``` php
+composer update -dev
 phpunit ./tests
 ```
 
@@ -121,7 +124,7 @@ phpunit ./tests
 
  * 2013-02-22 Added YAML support
  * 2013-02-21 Added custom request matcher
- * 2013-02-21 Added json storage which uses less memory
+ * 2013-02-21 Added JSON storage which uses less memory
  * 2013-02-21 Added support for binary data
  * 2013-02-20 Added Soap support
  * 2013-02-19 Curl hook fixes, more tests
