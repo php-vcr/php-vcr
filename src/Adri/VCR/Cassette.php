@@ -2,8 +2,9 @@
 
 namespace Adri\VCR;
 
+use Adri\VCR\Storage\StorageInterface;
+
 /**
- * Todo: Extract Storage class, Iterator, appendRecord, readFromDisk
  */
 class Cassette
 {
@@ -13,11 +14,11 @@ class Cassette
     protected $storage;
     protected $cassetteHandle;
 
-    function __construct($name, Configuration $config)
+    function __construct($name, Configuration $config, StorageInterface $storage)
     {
         $this->name = $name;
         $this->config = $config;
-        $this->storage = $this->createStorage();
+        $this->storage = $storage;
     }
 
     public function hasResponse(Request $request)
@@ -62,18 +63,7 @@ class Cassette
         return $this->name;
     }
 
-    protected function getCassettePath()
-    {
-        return $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $this->name;
-    }
-
-    public function createStorage()
-    {
-        // $class = $this->config->getStorageClass();
-        return new Storage\Json($this->getCassettePath());
-    }
-
-    public function getRequestMatchers()
+    protected function getRequestMatchers()
     {
         return $this->config->getRequestMatchers();
     }

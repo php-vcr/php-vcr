@@ -2,6 +2,7 @@
 
 namespace Adri\VCR;
 
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Test integration of PHPVCR with PHPUnit.
@@ -10,7 +11,8 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->cassette = new Cassette('test', new Configuration);
+        vfsStream::setup('test');
+        $this->cassette = new Cassette('test', new Configuration(), new Storage\Yaml(vfsStream::url('test/json_test')));
     }
 
     public function testRecordAndPlaybackRequest()

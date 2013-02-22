@@ -56,6 +56,11 @@ class Configuration
         ));
     }
 
+    public function getStorage()
+    {
+        return $this->availableStorages[$this->enabledStorage];
+    }
+
     public function getRequestMatchers()
     {
         if (is_null($this->enabledRequestMatchers)) {

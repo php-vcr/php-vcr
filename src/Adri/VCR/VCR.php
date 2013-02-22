@@ -54,7 +54,11 @@ class VCR
 
     public function useCassette($cassetteName)
     {
-        $this->cassette = new Cassette($cassetteName, $this->config);
+        // todo check if there is already a cassette
+        $filePath = $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $cassetteName;
+        $storage = $this->createStorage($filePath);
+
+        $this->cassette = new Cassette($cassetteName, $this->config, $storage);
     }
 
     public function getCurrentCassette()
@@ -87,6 +91,12 @@ class VCR
     public function createHttpClient()
     {
         return new Client();
+    }
+
+    protected function createStorage($filePath)
+    {
+        $class = $this->config->getStorage();
+        return new $class($filePath);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Adri\VCR;
 
-
 /**
  * Test integration of PHPVCR with PHPUnit.
  */

@@ -1,1 +1,21 @@
-[{"request":{"method":"GET","url":"http:\/\/google.com\/","headers":{"Host":"google.com","User-Agent":"Guzzle\/3.0.7 curl\/7.24.0 PHP\/5.3.15","Content-Length":0},"body":null,"post_files":[],"post_fields":[]},"response":{"status":301,"headers":{"Location":"http:\/\/www.google.com\/","Content-Type":"text\/html; charset=UTF-8","Date":"Thu, 21 Feb 2013 00:54:05 GMT","Expires":"Sat, 23 Mar 2013 00:54:05 GMT","Cache-Control":"public, max-age=2592000","Server":"gws","Content-Length":"219","X-XSS-Protection":"1; mode=block","X-Frame-Options":"SAMEORIGIN"},"body":"<HTML><HEAD><meta http-equiv=\"content-type\" content=\"text\/html;charset=utf-8\">\n<TITLE>301 Moved<\/TITLE><\/HEAD><BODY>\n<H1>301 Moved<\/H1>\nThe document has moved\n<A HREF=\"http:\/\/www.google.com\/\">here<\/A>.\r\n<\/BODY><\/HTML>\r\n","curl_info":[]}}]
+-
+    request:
+        method: GET
+        url: 'http://google.com/'
+        headers:
+            Host: google.com
+            User-Agent: 'Guzzle/3.0.7 curl/7.24.0 PHP/5.3.15'
+            Content-Length: 0
+        body: null
+        post_files: {  }
+        post_fields: {  }
+    response:
+        status: 307
+        headers:
+            Server: 'Hughes Technologies Embedded Server'
+            Location: 'https://secure.zenbu.net.nz:443/login/?gw_address=10.10.24.1&gw_port=2060&gw_id=ZenBu10242&url=http%3A//google.com/&mac=00:26:08:E6:82:E7'
+            Date: 'Fri, 22 Feb 2013 07:07:57 GMT'
+            Connection: close
+            Content-Type: text/html
+        body: "<html>\n<head>\n<title>Redirection</title>\n<meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>\n<style>\nbody {\n  margin: 10px 10px 0 10px; \n  font-family : bitstream vera sans, sans-serif;\n  color: #666666;\n}\na {\n  color: #666666;\n}\na:active {\n  color: #666666;\n}\na:link {\n  color: #666666;\n}\na:visited {\n  color: #666666;\n}\n#header {\n  min-height: 60px;\n  background-color: #00aaee;\n  padding: 15px;\n  margin: 0px;\n  font-size: 20px;\n  text-align: center;\n  vertical-align: middle;\n  border: 2px solid #666666;\n  border-bottom: 0;\n}\n#header h2 {\n  margin: 15px;\n  text-align: center;\n  vertical-align: middle;\n  color: #ffffff;\n}\n#menu {\n  width: 200px;\n  float: right;\n  background-color: #00aaee;\n  border: 2px solid #666666;\n  font-size: 80%;\n  min-height: 300px;\n}\n#menu h2 {\n  margin: 0;\n  background-color: #fea800;\n  text-align: center;\n  color: #ffffff;\n}\n#copyright {\n}\n#content {\n  padding: 20px;\n  border: 2px solid #666666;\n  margin: 0px;\n  min-height: 300px;\n}\n</style>\n</head>\n<body>\n<div id=\"header\"><h2>\n    Redirection\n</h2></div>\n<div id=\"menu\">\n    <h2>Info</h2>\n    <ul>\n    <li>Version: 1.2.18\n    <li>Zone ID: ZenBu10242\n    </ul>\n    <br>\n    <h2>Menu</h2>\n    <ul>\n    <li><a href='http://10.10.24.1:2060/zenbu_gw/status'>Zenbu Gateway Status</a>\n    <li><a href='http://10.10.24.1:2060/zenbu_gw/about'>About Zenbu Gateway</a>\n    <li><a href='http://www.zenbu.net.nz'>Zenbu's homepage</a>\n    </ul>\n</div>\n<div id=\"content\">\n<h2>Redirection</h2>\nPlease <a href='https://secure.zenbu.net.nz:443/login/?gw_address=10.10.24.1&gw_port=2060&gw_id=ZenBu10242&url=http%3A//google.com/&mac=00:26:08:E6:82:E7'>click here</a> to login</div>\n<div id=\"copyright\" style='margin-top:4px;text-align:center;font-size:0.9em;'>\n[&nbsp; Copyright &copy; Zenbu Networks Limited\n&nbsp; | &nbsp;(09)2823691\n&nbsp; | &nbsp;support@zenbu.net.nz\n&nbsp; | &nbsp;http://www.zenbu.net.nz\n &nbsp;]</div>\n</body>\n</html>\n"
+        curl_info: {  }
