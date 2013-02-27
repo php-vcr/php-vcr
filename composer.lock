@@ -336,17 +336,17 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.1.7",
+            "version": "v2.1.8",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/EventDispatcher",
-                "reference": "v2.1.7"
+                "url": "https://github.com/symfony/EventDispatcher.git",
+                "reference": "v2.1.8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/EventDispatcher/archive/v2.1.7.zip",
-                "reference": "v2.1.7",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.1.8",
+                "reference": "v2.1.8",
                 "shasum": ""
             },
             "require": {
@@ -359,7 +359,7 @@
                 "symfony/dependency-injection": "2.1.*",
                 "symfony/http-kernel": "2.1.*"
             },
-            "time": "2013-01-11 00:31:43",
+            "time": "2013-02-11 11:26:14",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -438,18 +438,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikey179/vfsStream.git",
-                "reference": "9d7699efea1b5a2cff3b72aefcee82ae5bd887e9"
+                "reference": "06f7338e87b0b4469d28215e57417cd3ff70488b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/9d7699efea1b5a2cff3b72aefcee82ae5bd887e9",
-                "reference": "9d7699efea1b5a2cff3b72aefcee82ae5bd887e9",
+                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/06f7338e87b0b4469d28215e57417cd3ff70488b",
+                "reference": "06f7338e87b0b4469d28215e57417cd3ff70488b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2013-02-08 22:24:30",
+            "time": "2013-02-26 22:07:16",
             "type": "library",
             "autoload": {
                 "psr-0": {

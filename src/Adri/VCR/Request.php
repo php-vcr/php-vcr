@@ -33,14 +33,14 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
 
     public function toArray()
     {
-        return array(
+        return array_filter(array(
             'method'      => $this->getMethod(),
             'url'         => $this->getUrl(),
             'headers'     => $this->getHeaders(),
             'body'        => $this->getBody(),
             'post_files'  => (array) $this->getPostFiles(),
             'post_fields' => (array) $this->getPostFields()->toArray(),
-        );
+        ));
     }
 
     public function getHeaders($asObjects = false)
@@ -64,11 +64,11 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
             $request['headers']
         );
 
-        if (is_array($request['post_fields']) && !empty($request['post_fields'])) {
+        if (isset($request['post_fields']) && is_array($request['post_fields']) && !empty($request['post_fields'])) {
             $requestObject->addPostFields($request['post_fields']);
         }
 
-        if (is_array($request['post_files']) && !empty($request['post_files'])) {
+        if (isset($request['post_files']) && is_array($request['post_files']) && !empty($request['post_files'])) {
             $requestObject->addPostFiles($request['post_files']);
         }
 

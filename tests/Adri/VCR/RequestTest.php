@@ -36,8 +36,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                     'Host' => 'example.com',
                     'Content-Type' => 'application/x-www-form-urlencoded'
                     ),
-                'body'        => null,
-                'post_files'  => array(),
                 'post_fields' => array('para1' => 'val1'),
             ),
             $this->request->toArray()

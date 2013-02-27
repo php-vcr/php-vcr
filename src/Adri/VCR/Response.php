@@ -13,12 +13,12 @@ class Response extends \Guzzle\Http\Message\Response
            $body = base64_encode($body);
         }
 
-        return array(
+        return array_filter(array(
             'status'    => $this->getStatusCode(),
             'headers'   => $this->getHeaders(),
             'body'      => $body,
             'curl_info' => $this->getInfo()
-        );
+        ));
     }
 
     public function getHeaders($asObjects = false)
@@ -37,7 +37,7 @@ class Response extends \Guzzle\Http\Message\Response
 
     public static function fromArray(array $response)
     {
-        $body = $response['body'];
+        $body = isset($response['body']) ? $response['body'] : null;
 
         // Base64 decode when binary
         if (isset($response['headers']['Content-Type'])
@@ -46,8 +46,8 @@ class Response extends \Guzzle\Http\Message\Response
         }
 
         $responseObject = new static(
-            $response['status'],
-            $response['headers'],
+            isset($response['status']) ? $response['status'] : 200,
+            isset($response['headers']) ? $response['headers'] : array(),
             $body
         );
 
