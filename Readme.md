@@ -33,7 +33,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         // Initialize VCR
-        $this->vcr = new \VCR;
+        VCR::init();
     }
 
     public function testNoCassetteUsed()
@@ -65,13 +65,13 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         // Initialize VCR
-        $this->vcr = new \VCR;
+        VCR::init();
     }
 
     public function testUsingInlineMethodCall()
     {
         // .... or use an inline method call
-        $this->vcr->useCassette('example');
+        VCR::useCassette('example');
 
         // Following request will be recorded once and replayed in furture test runs
         $result = file_get_contents('http://example.com');
@@ -83,7 +83,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     {
         // When using inline method calls, make sure to clean up after every test
         // This is not needed when using annotations
-        $this->vcr->ejectCassette();
+        VCR::eject();
     }
 
 }
@@ -116,8 +116,10 @@ Composer installs all depenencies except extensions like curl or runkit.
 
 ## Run tests
 
+In order to run all tests you need to get development dependencies using composer:
+
 ``` php
-composer update -dev
+composer install -dev
 phpunit ./tests
 ```
 
