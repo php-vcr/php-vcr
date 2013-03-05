@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\VCR;
+namespace VCR;
 
 class Response extends \Guzzle\Http\Message\Response
 {

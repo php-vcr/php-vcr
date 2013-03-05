@@ -1,8 +1,8 @@
 <?php
 
-namespace Adri\VCR\Storage;
+namespace VCR\Storage;
 
-use Adri\VCR\Assertion;
+use \VCR\Assertion;
 
 class Json implements StorageInterface
 {

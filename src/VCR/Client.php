@@ -1,5 +1,5 @@
 <?php
-namespace Adri\VCR;
+namespace VCR;
 
 class Client
 {

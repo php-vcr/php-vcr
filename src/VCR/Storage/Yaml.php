@@ -1,11 +1,11 @@
 <?php
 
-namespace Adri\VCR\Storage;
+namespace VCR\Storage;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
 
-use Adri\VCR\Assertion;
+use \VCR\Assertion;
 
 class Yaml implements StorageInterface
 {

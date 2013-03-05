@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\VCR;
+namespace VCR;
 
 /**
  * Configuration.
@@ -11,25 +11,25 @@ class Configuration
 
     private $enabledLibraryHooks;
     private $availableLibraryHooks = array(
-        '\Adri\VCR\LibraryHooks\StreamWrapper',
-        '\Adri\VCR\LibraryHooks\Curl',
-        // '\Adri\VCR\LibraryHooks\Soap',
+        '\VCR\LibraryHooks\StreamWrapper',
+        '\VCR\LibraryHooks\Curl',
+        // '\VCR\LibraryHooks\Soap',
     );
 
     private $enabledStorage = 'yaml';
     private $availableStorages = array(
-        'json' => '\Adri\VCR\Storage\Json',
-        'yaml' => '\Adri\VCR\Storage\Yaml',
+        'json' => '\VCR\Storage\Json',
+        'yaml' => '\VCR\Storage\Yaml',
     );
 
     private $enabledRequestMatchers;
     private $availableRequestMatchers = array(
-        'method'      => array('\Adri\VCR\RequestMatcher', 'matchMethod'),
-        'url'         => array('\Adri\VCR\RequestMatcher', 'matchUrl'),
-        'host'        => array('\Adri\VCR\RequestMatcher', 'matchHost'),
-        'headers'     => array('\Adri\VCR\RequestMatcher', 'matchHeaders'),
-        'body'        => array('\Adri\VCR\RequestMatcher', 'matchBody'),
-        'post_fields' => array('\Adri\VCR\RequestMatcher', 'matchPostFields'),
+        'method'      => array('\VCR\RequestMatcher', 'matchMethod'),
+        'url'         => array('\VCR\RequestMatcher', 'matchUrl'),
+        'host'        => array('\VCR\RequestMatcher', 'matchHost'),
+        'headers'     => array('\VCR\RequestMatcher', 'matchHeaders'),
+        'body'        => array('\VCR\RequestMatcher', 'matchBody'),
+        'post_fields' => array('\VCR\RequestMatcher', 'matchPostFields'),
     );
 
     private $turnOnAutomatically = true;

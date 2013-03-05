@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\VCR;
+namespace VCR;
 
 /**
  *
@@ -17,8 +17,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $actual = $this->config->enableRequestMatchers(array('body', 'headers'));
         $this->assertEquals(
             array(
-                array('\Adri\VCR\RequestMatcher', 'matchHeaders'),
-                array('\Adri\VCR\RequestMatcher', 'matchBody'),
+                array('\VCR\RequestMatcher', 'matchHeaders'),
+                array('\VCR\RequestMatcher', 'matchBody'),
             ),
             $this->config->getRequestMatchers()
         );
@@ -26,7 +26,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testAddRequestMatcherFailsWithNoName()
     {
-        $this->setExpectedException('Adri\VCR\VCRException');
+        $this->setExpectedException('\VCR\VCRException');
         $expected = function($first, $second) {
             return true;
         };
@@ -36,7 +36,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testAddRequestMatcherFailsWithWrongCallback()
     {
-        $this->setExpectedException('Adri\VCR\VCRException', "Request matcher 'example' is not callable.");
+        $this->setExpectedException('\VCR\VCRException', "Request matcher 'example' is not callable.");
         $actual = $this->config->addRequestMatcher('example', array());
     }
 
@@ -51,14 +51,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetStorageInvalidName()
     {
-        $this->setExpectedException('Adri\VCR\VCRException');
+        $this->setExpectedException('\VCR\VCRException');
         $this->config->setStorage('Does not exist');
     }
 
     public function testGetStorag()
     {
         $class = $this->config->getStorage();
-        $this->assertTrue(in_array("Adri\VCR\Storage\StorageInterface", class_implements($class)));
+        $this->assertTrue(in_array("\VCR\Storage\StorageInterface", class_implements($class)));
     }
 
 }

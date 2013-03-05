@@ -19,7 +19,9 @@
     },
 
     "require-dev": {
-        "mikey179/vfsStream": "dev-master"
+        "mikey179/vfsStream": "dev-master",
+        "guzzle/plugin-mock": "3.0.*@dev",
+        "fabpot/goutte": "1.0.*@dev"
     },
 
     "suggest": {

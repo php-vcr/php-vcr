@@ -1,8 +1,8 @@
 <?php
 
-namespace Adri\VCR;
+namespace VCR;
 
-use Adri\VCR\Storage\StorageInterface;
+use \VCR\Storage\StorageInterface;
 
 /**
  */

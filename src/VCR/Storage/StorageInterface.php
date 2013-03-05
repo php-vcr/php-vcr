@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\VCR\Storage;
+namespace VCR\Storage;
 
 interface StorageInterface extends \Iterator
 {

@@ -33,7 +33,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         // Initialize VCR
-        $this->vcr = new Adri\VCR;
+        $this->vcr = new \VCR;
     }
 
     public function testNoCassetteUsed()
@@ -65,7 +65,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         // Initialize VCR
-        $this->vcr = new Adri\VCR;
+        $this->vcr = new \VCR;
     }
 
     public function testUsingInlineMethodCall()

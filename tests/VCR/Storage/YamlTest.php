@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\VCR\Storage;
+namespace VCR\Storage;
 
 use org\bovigo\vfs\vfsStream;
 

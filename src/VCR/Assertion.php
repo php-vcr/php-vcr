@@ -1,11 +1,11 @@
 <?php
-namespace Adri\VCR;
+namespace VCR;
 
 use Assert\Assertion as BaseAssertion;
 
 class Assertion extends BaseAssertion
 {
-    protected static $exceptionClass = 'Adri\VCR\VCRException';
+    protected static $exceptionClass = '\VCR\VCRException';
 
     const INVALID_CALLABLE = 910;
 

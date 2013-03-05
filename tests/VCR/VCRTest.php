@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\VCR;
+namespace VCR;
 
 /**
  * Test integration of PHPVCR with PHPUnit.
@@ -44,6 +44,12 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::init();
         VCR::useCassette('some_name');
         $this->assertEquals('some_name', VCR::getInstance()->getCurrentCassette()->getName());
+    }
+
+    public function testUseStaticCallsSetConfiguration()
+    {
+        VCR::init()->setCassettePath('tests');
+        $this->assertEquals('tests', VCR::getInstance()->getConfiguration()->getCassettePath());
     }
 
     public function tearDown()

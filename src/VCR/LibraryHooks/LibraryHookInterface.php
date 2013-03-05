@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\VCR\LibraryHooks;
+namespace VCR\LibraryHooks;
 
 /**
  * Library hook interface.

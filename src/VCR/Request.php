@@ -1,6 +1,6 @@
 <?php
 
-namespace Adri\VCR;
+namespace VCR;
 
 class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
 {

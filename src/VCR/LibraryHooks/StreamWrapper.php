@@ -1,10 +1,10 @@
 <?php
 
-namespace Adri\VCR\LibraryHooks;
+namespace VCR\LibraryHooks;
 
-use Adri\VCR\Configuration;
-use Adri\VCR\Request;
-use Adri\VCR\Response;
+use \VCR\Configuration;
+use \VCR\Request;
+use \VCR\Response;
 
 /**
  * StreamWrapper.
