@@ -7,35 +7,51 @@ namespace Adri\VCR;
  */
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        $this->vcr = new VCR;
-    }
 
     public function testOneStreamWrapper()
     {
-        $this->vcr->useCassette('wrappertest');
-        $result = file_get_contents('http://google.com');
+        $this->vcr = new VCR;
+        $this->vcr->insertCassette('wrappertest');
+        $result = file_get_contents('http://127.0.0.1');
         $this->assertNotEmpty($result);
     }
 
     public function testInsertMultipleCassettes()
     {
-        $this->vcr->useCassette('cassette1');
-        $this->vcr->useCassette('cassette2');
+        $this->vcr = new VCR;
+        $this->vcr->insertCassette('cassette1');
+        $this->vcr->insertCassette('cassette2');
 
         $this->assertEquals('cassette2', $this->vcr->getCurrentCassette()->getName());
     }
 
     public function testThrowExeptions()
     {
+        $this->vcr = new VCR;
         $this->setExpectedException('InvalidArgumentException');
-        $this->vcr->useCassette('cassette1');
+        $this->vcr->insertCassette('cassette1');
         throw new \InvalidArgumentException('test');
+    }
+
+    public function testUseStaticCallsNotInitialized()
+    {
+        $this->setExpectedException('\BadMethodCallException');
+        VCR::useCassette('some_name');
+    }
+
+    public function testUseStaticCallsUseCassette()
+    {
+        VCR::init();
+        VCR::useCassette('some_name');
+        $this->assertEquals('some_name', VCR::getInstance()->getCurrentCassette()->getName());
     }
 
     public function tearDown()
     {
-        $this->vcr->turnOff();
+        if (isset($this->vcr)) {
+            $this->vcr->turnOff();
+        } else if (VCR::getInstance()) {
+            VCR::getInstance()->turnOff();
+        }
     }
 }

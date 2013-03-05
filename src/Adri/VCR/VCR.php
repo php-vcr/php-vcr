@@ -8,6 +8,7 @@ namespace Adri\VCR;
 class VCR
 {
     public static $isOn = false;
+    protected static $instance;
     protected $cassette;
     protected $httpClient;
     protected $config;
@@ -46,19 +47,28 @@ class VCR
     public function turnOff()
     {
         $this->disableLibraryHooks();
-
-        unset($this->cassette);
+        $this->ejectCassette();
 
         self::$isOn = false;
     }
 
-    public function useCassette($cassetteName)
+    public function ejectCassette()
+    {
+        unset($this->cassette);
+    }
+
+    public function insertCassette($cassetteName)
     {
         // todo check if there is already a cassette
         $filePath = $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $cassetteName;
         $storage = $this->createStorage($filePath);
 
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
+    }
+
+    public function getConfiguration()
+    {
+        return $this->config;
     }
 
     public function getCurrentCassette()
@@ -91,6 +101,38 @@ class VCR
     public function createHttpClient()
     {
         return new Client();
+    }
+
+    public static function init()
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new self();
+        }
+
+        return self::$instance->getConfiguration();
+    }
+
+    public static function useCassette($cassetteName)
+    {
+        if (is_null(self::$instance)) {
+            throw new \BadMethodCallException('VCR is not initialized, please call VCR::init() in a setup method.');
+        }
+
+        return self::$instance->insertCassette($cassetteName);
+    }
+
+    public static function eject()
+    {
+        if (is_null(self::$instance)) {
+            throw new \BadMethodCallException('VCR is not initialized, please call VCR::init() in a setup method.');
+        }
+
+        return self::$instance->ejectCassette();
+    }
+
+    public static function getInstance()
+    {
+        return self::$instance;
     }
 
     protected function createStorage($filePath)
