@@ -16,7 +16,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $curlHook = $this->createCurl();
         $curlHook->enable();
 
-        $ch = curl_init("http://google.com/");
+        $ch = curl_init('http://127.0.0.1/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $actual = curl_exec($ch);
         curl_close($ch);
@@ -29,10 +29,10 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     {
         $testClass = $this;
         $curlHook = $this->createCurl(function($request) use($testClass) {
-            $testClass->fail("This request should not have been intercepted.");
+            $testClass->fail('This request should not have been intercepted.');
         });
 
-        $ch = curl_init("https://google.com/");
+        $ch = curl_init('http://127.0.0.1/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
         curl_close($ch);
@@ -42,13 +42,13 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     {
         $testClass = $this;
         $curlHook = $this->createCurl(function($request) use($testClass) {
-            $testClass->fail("This request should not have been intercepted.");
+            $testClass->fail('This request should not have been intercepted.');
         });
         $curlHook->enable();
         $curlHook->disable();
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://google.com/");
+        curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
         curl_close($ch);
@@ -59,7 +59,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $curlHook = $this->createCurl();
         $curlHook->enable();
 
-        $ch = curl_init("https://google.com/");
+        $ch = curl_init('https://127.0.0.1/');
         $fp = fopen('php://temp/test_file', 'w');
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_exec($ch);
@@ -77,7 +77,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $curlHook = $this->createCurl();
         $curlHook->enable();
 
-        $ch = curl_init("http://google.com/");
+        $ch = curl_init('http://127.0.0.1/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
         ob_start();
         curl_exec($ch);
@@ -102,7 +102,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         });
         $curlHook->enable();
 
-        $ch = curl_init('http://google.com');
+        $ch = curl_init('http://127.0.0.1');
         curl_setopt($ch, CURLOPT_POSTFIELDS, 'para1=val1&para2=val2');
         curl_exec($ch);
         curl_close($ch);
@@ -122,26 +122,39 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         });
         $curlHook->enable();
 
-        $ch = curl_init('http://google.com');
+        $ch = curl_init('http://127.0.0.1');
         curl_setopt($ch, CURLOPT_POSTFIELDS, array('para1' => 'val1', 'para2' => 'val2'));
         curl_exec($ch);
         curl_close($ch);
         $curlHook->disable();
     }
 
-    public function testShouldCurlInfo()
+    public function testShouldReturnCurlInfoStatusCode()
     {
-        $testClass = $this;
-        $curlHook = $this->createCurl(function($request) use($testClass) {
-            return new Response(200);
-        });
+        $curlHook = $this->createCurl();
         $curlHook->enable();
 
-        $ch = curl_init('http://google.com');
+        $ch = curl_init('http://127.0.0.1');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
         curl_close($ch);
 
         $this->assertEquals(200, curl_getinfo($ch, CURLINFO_HTTP_CODE), 'HTTP status not set.');
+        $curlHook->disable();
+    }
+
+    public function testShouldReturnCurlInfoAll()
+    {
+        $curlHook = $this->createCurl();
+        $curlHook->enable();
+
+        $ch = curl_init('http://127.0.0.1');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($ch);
+        curl_close($ch);
+
+        $this->assertTrue(is_array(curl_getinfo($ch)), 'curl_getinfo() should return an array.');
+        $this->assertEquals(19, count(curl_getinfo($ch)), 'curl_getinfo() should return 19 values.');
         $curlHook->disable();
     }
 

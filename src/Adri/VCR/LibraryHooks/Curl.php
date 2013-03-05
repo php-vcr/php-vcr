@@ -30,7 +30,7 @@ class Curl implements LibraryHookInterface
     private static $overwriteFunctions = array(
         'curl_init'       => array('$url = null', 'init($url)'),
         'curl_exec'       => array('$resource', 'exec($resource)'),
-        'curl_getinfo'    => array('$resource, $option = 0', 'getinfo($resource, $option)'),
+        'curl_getinfo'    => array('$resource, $option = 0', 'getInfo($resource, $option)'),
         'curl_setopt'     => array('$ch, $option, $value', 'setOpt($ch, $option, $value)'),
     );
 
@@ -106,27 +106,46 @@ class Curl implements LibraryHookInterface
         }
     }
 
-    public static function getinfo($ch, $option)
+    public static function getInfo($ch, $option = 0)
     {
-        switch ($option) {
-            case CURLINFO_HTTP_CODE:
-                return self::$response->getStatusCode();
-                break;
-            case CURLINFO_SIZE_DOWNLOAD:
-                return self::$response->getHeader('Content-Length');
-                break;
-            case CURLFTPMETHOD_NOCWD:
-                break;
-            default:
-                $info = self::$response->getInfo($option);
-                if (!is_null($info)) {
-                    return $info;
-                }
-                $constants = get_defined_constants(true);
-                $info = array_flip($constants['curl']);
-                die("Todo: {$info[$option]} ({$option}) ");
-                break;
+        $info = array(
+            // CURLFTPMETHOD_NOCWD              => null,
+            CURLINFO_HTTP_CODE               => self::$response->getStatusCode(),
+            CURLINFO_EFFECTIVE_URL           => self::$response->getInfo($option),
+            CURLINFO_FILETIME                => self::$response->getInfo($option),
+            CURLINFO_TOTAL_TIME              => self::$response->getInfo($option),
+            CURLINFO_NAMELOOKUP_TIME         => self::$response->getInfo($option),
+            CURLINFO_CONNECT_TIME            => self::$response->getInfo($option),
+            CURLINFO_PRETRANSFER_TIME        => self::$response->getInfo($option),
+            CURLINFO_STARTTRANSFER_TIME      => self::$response->getInfo($option),
+            CURLINFO_REDIRECT_TIME           => self::$response->getInfo($option),
+            CURLINFO_SIZE_UPLOAD             => self::$response->getInfo($option),
+            CURLINFO_SIZE_DOWNLOAD           => self::$response->getHeader('Content-Length'),
+            CURLINFO_SPEED_DOWNLOAD          => self::$response->getInfo($option),
+            CURLINFO_SPEED_UPLOAD            => self::$response->getInfo($option),
+            CURLINFO_HEADER_SIZE             => self::$response->getInfo($option),
+            CURLINFO_HEADER_OUT              => self::$response->getInfo($option),
+            CURLINFO_REQUEST_SIZE            => self::$response->getInfo($option),
+            CURLINFO_SSL_VERIFYRESULT        => self::$response->getInfo($option),
+            CURLINFO_CONTENT_LENGTH_DOWNLOAD => self::$response->getInfo($option),
+            CURLINFO_CONTENT_LENGTH_UPLOAD   => self::$response->getInfo($option),
+        );
+
+        if ($option === 0)  {
+            return $info;
         }
+
+        if (isset($info[$option])) {
+            return $info[$option];
+        }
+
+        if (!is_null(self::$response->getInfo($option))) {
+            return self::$response->getInfo($option);
+        }
+
+        $constants = get_defined_constants(true);
+        $constantNames = array_flip($constants['curl']);
+        die("Todo: {$constantNames[$option]} ({$option}) ");
     }
 
     protected static function getCurlOption($option)
