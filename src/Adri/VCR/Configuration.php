@@ -92,7 +92,7 @@ class Configuration
 
     public function setCassettePath($cassettePath)
     {
-        Assertion::file($cassettePath, 'Cassette path does not exist.');
+        Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' does not exist.");
         $this->cassettePath = $cassettePath;
         return $this;
     }
