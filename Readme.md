@@ -1,4 +1,4 @@
-# PHP-VCR
+![PHP-VCR](https://dl.dropbox.com/u/13186339/blog/php-vcr.png)
 
 This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 
