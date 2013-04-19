@@ -95,9 +95,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 There is no release yet, sorry.
 
 ``` bash
-git clone git@github.com:adri/php-vc
+git clone git@github.com:adri/php-vcr
 cd php-vcr
-composer install -dev
+composer install --dev
 phpunit tests
 ```
 
