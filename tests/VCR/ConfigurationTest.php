@@ -55,10 +55,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config->setStorage('Does not exist');
     }
 
-    public function testGetStorag()
+    public function testGetStorage()
     {
         $class = $this->config->getStorage();
-        $this->assertTrue(in_array("\VCR\Storage\StorageInterface", class_implements($class)));
+        $this->assertTrue(in_array("VCR\Storage\StorageInterface", class_implements($class)) || in_array("\VCR\Storage\StorageInterface", class_implements($class)));
     }
 
 }
