@@ -30,11 +30,11 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             array(
                 'method'      => 'GET',
-                'url'         => 'http://example.com/',
+                'url'         => 'http://example.com',
                 'headers'     => array(
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    'Content-Type' => 'application/x-www-form-urlencoded'
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8'
                     ),
                 'post_fields' => array('para1' => 'val1'),
             ),
