@@ -119,7 +119,7 @@ Composer installs all depenencies except extensions like curl or runkit.
 In order to run all tests you need to get development dependencies using composer:
 
 ``` php
-composer install -dev
+composer install --dev
 phpunit ./tests
 ```
 
