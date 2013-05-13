@@ -11,6 +11,13 @@ class CurlTest extends \PHPUnit_Framework_TestCase
 {
     public $expected = 'example response body';
 
+    public function setUp()
+    {
+        if (ini_get('runkit.internal_override') !== '1') {
+            $this->markTestSkipped('This test requires runkit.internal_override set to 1.');
+        }
+    }
+
     public function testShouldInterceptCallWhenEnabled()
     {
         $curlHook = $this->createCurl();
