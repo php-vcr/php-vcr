@@ -48,22 +48,25 @@ class VCR
     {
         $this->disableLibraryHooks();
         $this->ejectCassette();
-
         self::$isOn = false;
     }
 
     public function ejectCassette()
     {
-        unset($this->cassette);
+        $this->cassette = null;
     }
 
     public function insertCassette($cassetteName)
     {
-        // todo check if there is already a cassette
+        if (!is_null($this->cassette)) {
+            $this->ejectCassette();
+        }
+
         $filePath = $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $cassetteName;
         $storage = $this->createStorage($filePath);
 
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
+        $this->enableLibraryHooks();
     }
 
     public function getConfiguration()
@@ -71,31 +74,24 @@ class VCR
         return $this->config;
     }
 
-    public function getCurrentCassette()
-    {
-        return $this->cassette;
-    }
-
     public function handleRequest($request)
     {
-        if ($this->getCurrentCassette() === null) {
+        if ($this->cassette === null) {
             throw new \BadMethodCallException(
-                'Invalid http request. No cassette inserted. '
-                . ' Please make sure to insert a cassette in your unit-test using '
-                . '$vcr->urlCassette(\'name\'); or annotation @vcr:cassette(\'name\').'
+                "Invalid http request. No cassette inserted. "
+                . "Please make sure to insert a cassette in your unit test using "
+                . "VCR::useCassette('name');"
             );
         }
 
-        $cassette = $this->getCurrentCassette();
-
-        if (!$cassette->hasResponse($request)) {
+        if (!$this->cassette->hasResponse($request)) {
             $this->disableLibraryHooks();
             $response = $this->httpClient->send($request);
-            $cassette->record($request, $response);
+            $this->cassette->record($request, $response);
             $this->enableLibraryHooks();
         }
 
-        return $cassette->playback($request);
+        return $this->cassette->playback($request);
     }
 
     public function createHttpClient()
@@ -115,19 +111,19 @@ class VCR
     public static function useCassette($cassetteName)
     {
         if (is_null(self::$instance)) {
-            throw new \BadMethodCallException('VCR is not initialized, please call VCR::init() in a setup method.');
+            throw new \BadMethodCallException('VCR is not initialized, please call VCR::init() in a setUp method.');
         }
 
-        return self::$instance->insertCassette($cassetteName);
+        self::$instance->insertCassette($cassetteName);
     }
 
     public static function eject()
     {
         if (is_null(self::$instance)) {
-            throw new \BadMethodCallException('VCR is not initialized, please call VCR::init() in a setup method.');
+            throw new \BadMethodCallException('VCR is not initialized, please call VCR::init() in a setUp method.');
         }
 
-        return self::$instance->ejectCassette();
+        self::$instance->ejectCassette();
     }
 
     public static function getInstance()

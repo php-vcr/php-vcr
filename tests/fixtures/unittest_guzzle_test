@@ -1,0 +1,15 @@
+
+-
+    request:
+        method: GET
+        url: 'http://example.com'
+        headers:
+            Host: example.com
+            Content-Length: 0
+    response:
+        status: 302
+        headers:
+            Location: 'http://example.iana.org'
+            Server: BigIP
+            Connection: Keep-Alive
+            Content-Length: 'This is a guzzle test dummy.'
