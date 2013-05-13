@@ -8,6 +8,9 @@ namespace VCR;
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @runkit
+     */
     public function testOneStreamWrapper()
     {
         $this->vcr = new VCR;
@@ -16,6 +19,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($result);
     }
 
+    /**
+     * @runkit
+     */
     public function testInsertMultipleCassettes()
     {
         $this->vcr = new VCR;
@@ -25,6 +31,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('cassette2', $this->vcr->getCurrentCassette()->getName());
     }
 
+    /**
+     * @runkit
+     */
     public function testThrowExeptions()
     {
         $this->vcr = new VCR;
@@ -39,6 +48,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::useCassette('some_name');
     }
 
+    /**
+     * @runkit
+     */
     public function testUseStaticCallsUseCassette()
     {
         VCR::init();
@@ -46,6 +58,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('some_name', VCR::getInstance()->getCurrentCassette()->getName());
     }
 
+    /**
+     * @runkit
+     */
     public function testUseStaticCallsSetConfiguration()
     {
         VCR::init()->setCassettePath('tests');

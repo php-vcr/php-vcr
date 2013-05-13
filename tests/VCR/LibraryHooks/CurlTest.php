@@ -11,13 +11,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
 {
     public $expected = 'example response body';
 
-    public function setUp()
-    {
-        if (ini_get('runkit.internal_override') !== '1') {
-            $this->markTestSkipped('This test requires runkit.internal_override set to 1.');
-        }
-    }
-
+    /**
+     * @runkit
+     */
     public function testShouldInterceptCallWhenEnabled()
     {
         $curlHook = $this->createCurl();
@@ -32,6 +28,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not returned.');
     }
 
+    /**
+     * @runkit
+     */
     public function testShouldNotInterceptCallWhenNotEnabled()
     {
         $testClass = $this;
@@ -45,6 +44,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         curl_close($ch);
     }
 
+    /**
+     * @runkit
+     */
     public function testShouldNotInterceptCallWhenDisabled()
     {
         $testClass = $this;
@@ -61,6 +63,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         curl_close($ch);
     }
 
+    /**
+     * @runkit
+     */
     public function testShouldWriteFileOnFileDownload()
     {
         $curlHook = $this->createCurl();
@@ -79,6 +84,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written in file.');
     }
 
+    /**
+     * @runkit
+     */
     public function testShouldEchoResponseIfReturnTransferFalse()
     {
         $curlHook = $this->createCurl();
@@ -96,6 +104,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
     }
 
+    /**
+     * @runkit
+     */
     public function testShouldPostFieldsAsString()
     {
         $testClass = $this;
@@ -116,6 +127,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $curlHook->disable();
     }
 
+    /**
+     * @runkit
+     */
     public function testShouldPostFieldsAsArray()
     {
         $testClass = $this;
@@ -136,6 +150,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $curlHook->disable();
     }
 
+    /**
+     * @runkit
+     */
     public function testShouldReturnCurlInfoStatusCode()
     {
         $curlHook = $this->createCurl();
@@ -150,6 +167,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $curlHook->disable();
     }
 
+    /**
+     * @runkit
+     */
     public function testShouldReturnCurlInfoAll()
     {
         $curlHook = $this->createCurl();
@@ -165,6 +185,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $curlHook->disable();
     }
 
+    /**
+     * @runkit
+     */
     public function testShouldNotThrowErrorWhenDisabledTwice()
     {
         $curlHook = $this->createCurl();
