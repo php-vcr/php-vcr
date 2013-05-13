@@ -34,10 +34,10 @@ class RequestMatcher
 
     public static function matchHeaders(Request $first, Request $second)
     {
-        $secondHeaders = $second->getHeaders();
-        foreach ($first->getHeaders() as $key => $pattern) {
-            if (!isset($secondHeaders[$key])
-                || !preg_match('#'.str_replace('#', '\\#', $pattern[0]).'#', $secondHeaders[$key][0])) {
+        $firstHeaders = $first->getHeaders();
+        foreach ($second->getHeaders() as $key => $pattern) {
+            if (!isset($firstHeaders[$key])
+                || !preg_match('#'.str_replace('#', '\\#', $pattern[0]).'#', $firstHeaders[$key][0])) {
                 return false;
             }
         }
