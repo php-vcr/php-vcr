@@ -12,6 +12,34 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config = new Configuration;
     }
 
+    public function testGetLibraryHooks()
+    {
+        $this->assertEquals(
+            array(
+                '\VCR\LibraryHooks\StreamWrapper',
+                '\VCR\LibraryHooks\Curl'
+            ),
+            $this->config->getLibraryHooks()
+        );
+    }
+
+    public function testEnableLibraryHooks()
+    {
+        $this->config->enableLibraryHooks(array('stream_wrapper'));
+        $this->assertEquals(
+            array(
+                '\VCR\LibraryHooks\StreamWrapper',
+            ),
+            $this->config->getLibraryHooks()
+        );
+    }
+
+    public function testEnableLibraryHooksFailsWithWrongHookName()
+    {
+        $this->setExpectedException('InvalidArgumentException', "Library hooks don't exist: non_existing");
+        $this->config->enableLibraryHooks(array('non_existing'));
+    }
+
     public function testEnableRequestMatchers()
     {
         $actual = $this->config->enableRequestMatchers(array('body', 'headers'));

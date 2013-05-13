@@ -11,9 +11,9 @@ class Configuration
 
     private $enabledLibraryHooks;
     private $availableLibraryHooks = array(
-        '\VCR\LibraryHooks\StreamWrapper',
-        '\VCR\LibraryHooks\Curl',
-        // '\VCR\LibraryHooks\Soap',
+        'stream_wrapper' => '\VCR\LibraryHooks\StreamWrapper',
+        'curl' => '\VCR\LibraryHooks\Curl',
+        // 'soap' => '\VCR\LibraryHooks\Soap',
     );
 
     private $enabledStorage = 'yaml';
@@ -54,6 +54,15 @@ class Configuration
             $this->availableLibraryHooks,
             array_flip($this->enabledLibraryHooks)
         ));
+    }
+
+    public function enableLibraryHooks(array $hooks)
+    {
+        $invalidHooks = array_diff($hooks, array_keys($this->availableLibraryHooks));
+        if ($invalidHooks) {
+            throw new \InvalidArgumentException("Library hooks don't exist: " . join(', ', $invalidHooks));
+        }
+        $this->enabledLibraryHooks = $hooks;
     }
 
     public function getStorage()
