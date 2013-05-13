@@ -12,7 +12,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     public $expected = 'example response body';
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldInterceptCallWhenEnabled()
     {
@@ -29,7 +29,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldNotInterceptCallWhenNotEnabled()
     {
@@ -45,7 +45,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldNotInterceptCallWhenDisabled()
     {
@@ -64,7 +64,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldWriteFileOnFileDownload()
     {
@@ -85,7 +85,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldEchoResponseIfReturnTransferFalse()
     {
@@ -105,7 +105,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldPostFieldsAsString()
     {
@@ -128,7 +128,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldPostFieldsAsArray()
     {
@@ -151,7 +151,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldReturnCurlInfoStatusCode()
     {
@@ -168,7 +168,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldReturnCurlInfoAll()
     {
@@ -186,7 +186,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldNotThrowErrorWhenDisabledTwice()
     {
@@ -195,6 +195,9 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         $curlHook->disable();
     }
 
+    /**
+     * @group runkit
+     */
     public function testShouldNotThrowErrorWhenEnabledTwice()
     {
         $curlHook = $this->createCurl();

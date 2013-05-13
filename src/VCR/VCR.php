@@ -99,13 +99,14 @@ class VCR
         return new Client();
     }
 
-    public static function init()
+    public static function init($config = null)
     {
-        if (is_null(self::$instance)) {
-            self::$instance = new self();
+        if (!is_null(self::$instance)) {
+           self::$instance->turnOff();
+           self::$instance = null;
         }
 
-        return self::$instance->getConfiguration();
+        self::$instance = new self($config);
     }
 
     public static function useCassette($cassetteName)

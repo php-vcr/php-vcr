@@ -15,13 +15,18 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldInterceptStreamWrapper()
     {
-        VCR::init();
+        $config = new Configuration();
+        $config->enableLibraryHooks(array('stream_wrapper'));
+        VCR::init($config);
         VCR::useCassette('unittest_streamwrapper_test');
         $result = file_get_contents('http://google.com');
         $this->assertEquals('This is a stream wrapper test dummy.', $result, 'Stream wrapper call was not intercepted.');
         VCR::eject();
     }
 
+    /**
+     * @group runkit
+     */
     public function testShouldInterceptCurl()
     {
         VCR::init();
@@ -35,7 +40,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldInterceptGuzzleLibrary()
     {
@@ -61,7 +66,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testInsertMultipleCassettes()
     {
@@ -74,7 +79,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @runkit
+     * @group runkit
      */
     public function testThrowExeptions()
     {
@@ -84,13 +89,14 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         throw new \InvalidArgumentException('test');
     }
 
-
     /**
-     * @runkit
+     * @group runkit
      */
     public function testShouldSetAConfiguration()
     {
-        VCR::init()->setCassettePath('tests');
+        $config = new Configuration();
+        $config->setCassettePath('tests');
+        VCR::init($config);
         $this->assertEquals('tests', VCR::getInstance()->getConfiguration()->getCassettePath());
     }
 }
