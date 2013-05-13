@@ -1,4 +1,5 @@
 ![PHP-VCR](https://dl.dropbox.com/u/13186339/blog/php-vcr.png)
+[![Build Status](https://travis-ci.org/adri/php-vcr.png?branch=master)](https://travis-ci.org/adri/php-vcr)
 
 This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 
