@@ -60,7 +60,10 @@ class VCRTest extends \PHPUnit_Framework_TestCase
             "Invalid http request. No cassette inserted. Please make sure to insert "
             . "a cassette in your unit test using VCR::useCassette('name');"
         );
-        VCR::init();
+
+        $config = new Configuration();
+        $config->enableLibraryHooks(array('stream_wrapper'));
+        VCR::init($config);
         // If there is no cassette inserted, a request should throw an exception
         file_get_contents('http://example.com');
     }
