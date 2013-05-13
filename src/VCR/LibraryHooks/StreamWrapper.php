@@ -11,7 +11,7 @@ use \VCR\Response;
  */
 class StreamWrapper implements LibraryHookInterface
 {
-    private static $handleRequestCallable ;
+    private static $handleRequestCallback;
 
     private $position;
 
@@ -20,13 +20,13 @@ class StreamWrapper implements LibraryHookInterface
      */
     private $response;
 
-    public function __construct(\Closure $handleRequestCallable = null)
+    public function __construct(\Closure $handleRequestCallback = null)
     {
-        if (!is_null($handleRequestCallable)) {
-            if (!is_callable($handleRequestCallable)) {
+        if (!is_null($handleRequestCallback)) {
+            if (!is_callable($handleRequestCallback)) {
                 throw new \InvalidArgumentException('No valid callback for handling requests defined.');
             }
-            self::$handleRequestCallable = $handleRequestCallable;
+            self::$handleRequestCallback = $handleRequestCallback;
         }
     }
 
@@ -47,8 +47,8 @@ class StreamWrapper implements LibraryHookInterface
 
     function stream_open($path, $mode, $options, &$opened_path)
     {
-        $handleRequestCallable = self::$handleRequestCallable;
-        $this->response = $handleRequestCallable(new Request('GET', $path));
+        $handleRequestCallback = self::$handleRequestCallback;
+        $this->response = $handleRequestCallback(new Request('GET', $path));
 
         return $this->response->getBody();
     }

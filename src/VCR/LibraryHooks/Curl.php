@@ -23,7 +23,7 @@ class Curl implements LibraryHookInterface
      */
     private static $response;
 
-    private static $handleRequestCallable;
+    private static $handleRequestCallback;
 
     private static $additionalCurlOpts = array();
 
@@ -34,17 +34,17 @@ class Curl implements LibraryHookInterface
         'curl_setopt'     => array('$ch, $option, $value', 'setOpt($ch, $option, $value)'),
     );
 
-    public function __construct(\Closure $handleRequestCallable = null)
+    public function __construct(\Closure $handleRequestCallback = null)
     {
         if (!function_exists('runkit_function_redefine')) {
             throw new \BadMethodCallException('For curl support you need to install runkit extension.');
         }
 
-        if (!is_null($handleRequestCallable)) {
-            if (!is_callable($handleRequestCallable)) {
+        if (!is_null($handleRequestCallback)) {
+            if (!is_callable($handleRequestCallback)) {
                 throw new \InvalidArgumentException('No valid callback for handling requests defined.');
             }
-            self::$handleRequestCallable = $handleRequestCallable;
+            self::$handleRequestCallback = $handleRequestCallback;
         }
     }
 
@@ -89,8 +89,8 @@ class Curl implements LibraryHookInterface
 
     public static function exec($ch)
     {
-        $handleRequestCallable = self::$handleRequestCallable;
-        self::$response = $handleRequestCallable(self::$request);
+        $handleRequestCallback = self::$handleRequestCallback;
+        self::$response = $handleRequestCallback(self::$request);
 
         $responseBody = (string) self::$response->getBody(true);
 

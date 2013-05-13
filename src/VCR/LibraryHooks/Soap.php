@@ -23,7 +23,7 @@ class Soap implements LibraryHookInterface
      */
     private static $response;
 
-    private static $handleRequestCallable;
+    private static $handleRequestCallback;
 
     private static $overwriteMethods = array(
         'SoapClient::__doRequest' => array(
@@ -31,17 +31,17 @@ class Soap implements LibraryHookInterface
             'doRequest($request, $location, $action, $version, $one_way)'),
     );
 
-    public function __construct(\Closure $handleRequestCallable = null)
+    public function __construct(\Closure $handleRequestCallback = null)
     {
         if (!function_exists('runkit_function_redefine')) {
             throw new \BadMethodCallException('For soap support you need to install runkit extension.');
         }
 
-        if (!is_null($handleRequestCallable)) {
-            if (!is_callable($handleRequestCallable)) {
+        if (!is_null($handleRequestCallback)) {
+            if (!is_callable($handleRequestCallback)) {
                 throw new \InvalidArgumentException('No valid callback for handling requests defined.');
             }
-            self::$handleRequestCallable = $handleRequestCallable;
+            self::$handleRequestCallback = $handleRequestCallback;
         }
     }
 
@@ -83,8 +83,8 @@ class Soap implements LibraryHookInterface
     public static function doRequest($request, $location, $action, $version , $one_way = 0)
     {
         var_dump($request, $location, $action, $version, $one_way);
-        $handleRequestCallable = self::$handleRequestCallable;
-        // self::$response = $handleRequestCallable(self::$request);
+        $handleRequestCallback = self::$handleRequestCallback;
+        // self::$response = $handleRequestCallback(self::$request);
 
         // echo self::$response->getBody(true);
     }

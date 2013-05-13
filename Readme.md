@@ -25,68 +25,37 @@ Record your test suite's HTTP interactions and replay them during future test ru
 
 ## Usage example
 
-Using annotations:
-
-``` php
-class VCRTest extends \PHPUnit_Framework_TestCase
-{
-    public function setUp()
-    {
-        // Initialize VCR
-        VCR::init();
-    }
-
-    public function testNoCassetteUsed()
-    {
-        // Now all HTTP requests will be intercepted, an exception is thrown
-        // if you don't provide a @VCR:useCassette($name) annotation, example:
-        $this->setExpectedException('\BadMethodCallException');
-        file_get_contents('http://example.com');
-    }
-
-    /**
-     * You can use a test method annotation...
-     * @VCR:useCassette('example')
-     */
-    public function testUsingAnnotation()
-    {
-        // Following request will be recorded once and replayed in furture test runs
-        $result = file_get_contents('http://example.com');
-        $this->assertNotEmpty($result);
-    }
-}
-```
-
 Using inline method calls:
 
 ``` php
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    public function testShouldInterceptStreamWrapper()
     {
-        // Initialize VCR
         VCR::init();
-    }
 
-    public function testUsingInlineMethodCall()
-    {
-        // .... or use an inline method call
+        // Record requests and responses in cassette file 'example'
         VCR::useCassette('example');
 
-        // Following request will be recorded once and replayed in furture test runs
+        // Following request will be recorded once and replayed in future test runs
         $result = file_get_contents('http://example.com');
         $this->assertNotEmpty($result);
 
-    }
-
-    public function tearDown()
-    {
-        // When using inline method calls, make sure to clean up after every test
-        // This is not needed when using annotations
+        // To stop recording requests, eject the cassette
         VCR::eject();
     }
 
-}
+    public function testShouldThrowExceptionIfNoCasettePresent()
+    {
+        $this->setExpectedException(
+            'BadMethodCallException',
+            "Invalid http request. No cassette inserted. Please make sure to insert "
+            . "a cassette in your unit test using VCR::useCassette('name');"
+        );
+        VCR::init();
+        // If there is no cassette inserted, a request should throw an exception
+        file_get_contents('http://example.com');
+    }}
 ```
 
 

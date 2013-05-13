@@ -10,7 +10,7 @@ interface LibraryHookInterface
     const ENABLED = 'ENABLED';
     const DISABLED = 'DISABLED';
 
-    public function __construct(\Closure $handleRequestCallable = null);
+    public function __construct(\Closure $handleRequestCallback = null);
 
     public function enable();
 
