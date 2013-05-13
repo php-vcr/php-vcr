@@ -85,21 +85,21 @@ class Configuration
     {
         $invalidMatchers = array_diff($matchers, array_keys($this->availableRequestMatchers));
         if ($invalidMatchers) {
-            throw new \InvalidArgumentException('Request matches do not exist: ' . join(', ', $invalidMatchers));
+            throw new \InvalidArgumentException("Request matchers don't exist: " . join(', ', $invalidMatchers));
         }
         $this->enabledRequestMatchers = $matchers;
     }
 
     public function setCassettePath($cassettePath)
     {
-        Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' does not exist.");
+        Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' doesn't exist.");
         $this->cassettePath = $cassettePath;
         return $this;
     }
 
     public function setStorage($storageName)
     {
-        Assertion::inArray($storageName, $this->availableStorages, "Storage '{$storageName}' not found.");
+        Assertion::inArray($storageName, $this->availableStorages, "Storage '{$storageName}' not available.");
         $this->enabledStorage = $storageName;
         return $this;
     }
