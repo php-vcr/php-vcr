@@ -199,4 +199,9 @@ class Curl implements LibraryHookInterface
         \curl_setopt_original($ch, $option, $value);
     }
 
+    public function __destruct()
+    {
+        self::$handleRequestCallback = null;
+    }
+
 }

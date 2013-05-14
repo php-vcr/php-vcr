@@ -88,4 +88,9 @@ class Soap implements LibraryHookInterface
         // echo self::$response->getBody(true);
     }
 
+    public function __destruct()
+    {
+        self::$handleRequestCallback = null;
+    }
+
 }

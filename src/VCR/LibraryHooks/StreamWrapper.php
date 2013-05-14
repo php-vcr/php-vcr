@@ -118,4 +118,9 @@ class StreamWrapper implements LibraryHookInterface
     {
         return false;
     }
+
+    public function __destruct()
+    {
+        self::$handleRequestCallback = null;
+    }
 }
