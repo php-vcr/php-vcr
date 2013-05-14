@@ -5,6 +5,7 @@ namespace VCR\LibraryHooks;
 use \VCR\Configuration;
 use \VCR\Request;
 use \VCR\Response;
+use \VCR\Assertion;
 
 /**
  * Library hook for curl functions.
@@ -34,22 +35,20 @@ class Curl implements LibraryHookInterface
         'curl_setopt'     => array('$ch, $option, $value', 'setOpt($ch, $option, $value)'),
     );
 
-    public function __construct(\Closure $handleRequestCallback = null)
+    public function __construct()
     {
         if (!function_exists('runkit_function_redefine')) {
             throw new \BadMethodCallException('For curl support you need to install runkit extension.');
         }
 
-        if (!is_null($handleRequestCallback)) {
-            if (!is_callable($handleRequestCallback)) {
-                throw new \InvalidArgumentException('No valid callback for handling requests defined.');
-            }
-            self::$handleRequestCallback = $handleRequestCallback;
-        }
+        self::$handleRequestCallback = null;
     }
 
-    public function enable()
+    public function enable(\Closure $handleRequestCallback)
     {
+        Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
+        self::$handleRequestCallback = $handleRequestCallback;
+
         if (self::$status == self::ENABLED) {
             return;
         }
@@ -79,6 +78,7 @@ class Curl implements LibraryHookInterface
         }
 
         self::$status = self::DISABLED;
+        self::$handleRequestCallback = null;
     }
 
     public static function init($url = null)

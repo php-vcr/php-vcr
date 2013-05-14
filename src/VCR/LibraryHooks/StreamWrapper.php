@@ -5,6 +5,7 @@ namespace VCR\LibraryHooks;
 use \VCR\Configuration;
 use \VCR\Request;
 use \VCR\Response;
+use \VCR\Assertion;
 
 /**
  * StreamWrapper.
@@ -20,18 +21,14 @@ class StreamWrapper implements LibraryHookInterface
      */
     private $response;
 
-    public function __construct(\Closure $handleRequestCallback = null)
+    public function __construct()
     {
-        if (!is_null($handleRequestCallback)) {
-            if (!is_callable($handleRequestCallback)) {
-                throw new \InvalidArgumentException('No valid callback for handling requests defined.');
-            }
-            self::$handleRequestCallback = $handleRequestCallback;
-        }
     }
 
-    public function enable()
+    public function enable(\Closure $handleRequestCallback)
     {
+        Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
+        self::$handleRequestCallback = $handleRequestCallback;
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', __CLASS__, STREAM_IS_URL);
 
@@ -41,8 +38,10 @@ class StreamWrapper implements LibraryHookInterface
 
     public function disable()
     {
+        self::$handleRequestCallback = null;
         stream_wrapper_restore('http');
         stream_wrapper_restore('https');
+
     }
 
     function stream_open($path, $mode, $options, &$opened_path)

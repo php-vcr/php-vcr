@@ -9,27 +9,30 @@ class Configuration
 {
     private $cassettePath = 'tests/fixtures';
 
+    // All are enabled by default
     private $enabledLibraryHooks;
     private $availableLibraryHooks = array(
         'stream_wrapper' => '\VCR\LibraryHooks\StreamWrapper',
-        'curl' => '\VCR\LibraryHooks\Curl',
-        // 'soap' => '\VCR\LibraryHooks\Soap',
+        'curl'           => '\VCR\LibraryHooks\Curl',
+        // 'soap'        => '\VCR\LibraryHooks\Soap',
     );
 
+    // Yaml by default
     private $enabledStorage = 'yaml';
     private $availableStorages = array(
-        'json' => '\VCR\Storage\Json',
-        'yaml' => '\VCR\Storage\Yaml',
+        'json'           => '\VCR\Storage\Json',
+        'yaml'           => '\VCR\Storage\Yaml',
     );
 
+    // All are enabled by default
     private $enabledRequestMatchers;
     private $availableRequestMatchers = array(
-        'method'      => array('\VCR\RequestMatcher', 'matchMethod'),
-        'url'         => array('\VCR\RequestMatcher', 'matchUrl'),
-        'host'        => array('\VCR\RequestMatcher', 'matchHost'),
-        'headers'     => array('\VCR\RequestMatcher', 'matchHeaders'),
-        'body'        => array('\VCR\RequestMatcher', 'matchBody'),
-        'post_fields' => array('\VCR\RequestMatcher', 'matchPostFields'),
+        'method'         => array('\VCR\RequestMatcher', 'matchMethod'),
+        'url'            => array('\VCR\RequestMatcher', 'matchUrl'),
+        'host'           => array('\VCR\RequestMatcher', 'matchHost'),
+        'headers'        => array('\VCR\RequestMatcher', 'matchHeaders'),
+        'body'           => array('\VCR\RequestMatcher', 'matchBody'),
+        'post_fields'    => array('\VCR\RequestMatcher', 'matchPostFields'),
     );
 
     private $turnOnAutomatically = true;

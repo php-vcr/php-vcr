@@ -1,0 +1,91 @@
+<?php
+
+namespace VCR;
+
+class VCRFactory
+{
+    /**
+     * @var Configuration
+     **/
+    protected $config;
+
+    protected $mapping = array();
+
+    protected static $instance;
+
+    protected function __construct($config = null)
+    {
+        $this->config = $config ?: $this->getOrCreate('Configuration');
+    }
+
+    protected function createConfiguration()
+    {
+        return new Configuration();
+    }
+
+    protected function createVideorecorder()
+    {
+        return new Videorecorder(
+            $this->getOrCreate('Configuration'),
+            $this->getOrCreate('Client'),
+            $this
+        );
+    }
+
+    protected function createClient()
+    {
+        return new Client();
+    }
+
+    protected function createStorage($filePath)
+    {
+        $class = $this->config->getStorage();
+        return new $class($filePath);
+    }
+
+    protected function create_VCR_LibraryHooks_Curl()
+    {
+        return new LibraryHooks\Curl();
+    }
+
+    protected function create_VCR_LibraryHooks_Soap()
+    {
+        return new LibraryHooks\Soap();
+    }
+
+    protected function create_VCR_LibraryHooks_StreamWrapper()
+    {
+        return new LibraryHooks\StreamWrapper();
+    }
+
+    public static function getInstance($config = null)
+    {
+        if (!self::$instance) {
+            self::$instance = new self($config);
+        }
+
+        return self::$instance;
+    }
+
+    public static function get($className, $params = array())
+    {
+        return self::getInstance()->getOrCreate($className, $params);
+    }
+
+    public function getOrCreate($className, $params = array())
+    {
+        $key = $className . join('-', $params);
+        if (!isset($this->mapping[$key])) {
+            $callback = array($this, $this->getMethodName($className));
+            $this->mapping[$key] = call_user_func_array($callback, $params);
+        }
+
+        return $this->mapping[$key];
+    }
+
+    protected function getMethodName($className, $params = array())
+    {
+        return 'create' . str_replace('\\', '_', $className);
+    }
+
+}

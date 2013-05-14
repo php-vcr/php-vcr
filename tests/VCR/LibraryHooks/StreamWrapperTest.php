@@ -19,18 +19,16 @@ class StreamWrapperTest extends \PHPUnit_Framework_TestCase
     public function testEnable()
     {
         $testClass = $this;
-        $this->streamWrapper = new StreamWrapper(function($request) use($testClass) {
+        $this->streamWrapper = new StreamWrapper();
+        $this->streamWrapper->enable(function($request) use($testClass) {
             // var_dump($request);
         });
-        $this->streamWrapper->enable();
     }
 
     public function testDisable()
     {
         $testClass = $this;
-        $this->streamWrapper = new StreamWrapper(function($request) use($testClass) {
-            // var_dump($request);
-        });
+        $this->streamWrapper = new StreamWrapper();
         $this->streamWrapper->disable();
     }
 

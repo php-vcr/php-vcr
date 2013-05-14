@@ -9,16 +9,16 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 {
     public function testUseStaticCallsNotInitialized()
     {
-        $this->setExpectedException('\BadMethodCallException');
-        VCR::useCassette('some_name');
+        VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
+        $this->setExpectedException('\VCR\VCRException');
+        VCR::insertCassette('some_name');
     }
 
     public function testShouldInterceptStreamWrapper()
     {
-        $config = new Configuration();
-        $config->enableLibraryHooks(array('stream_wrapper'));
-        VCR::init($config);
-        VCR::useCassette('unittest_streamwrapper_test');
+        VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
+        VCR::turnOn();
+        VCR::insertCassette('unittest_streamwrapper_test');
         $result = file_get_contents('http://google.com');
         $this->assertEquals('This is a stream wrapper test dummy.', $result, 'Stream wrapper call was not intercepted.');
         VCR::eject();
@@ -29,8 +29,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldInterceptCurl()
     {
-        VCR::init();
-        VCR::useCassette('unittest_curl_test');
+        VCR::configure()->enableLibraryHooks(array('curl'));
+        VCR::turnOn();
+        VCR::insertCassette('unittest_curl_test');
         $ch = curl_init('http://google.com/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
@@ -45,8 +46,8 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     public function testShouldInterceptGuzzleLibrary()
     {
         $this->markTestSkipped('Not working yet.');
-        VCR::init();
-        VCR::useCassette('unittest_guzzle_test');
+        VCR::turnOn();
+        VCR::insertCassette('unittest_guzzle_test');
         $client = new \Guzzle\Http\Client();
         $response = $client->get('http://google.com')->send();
         $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
@@ -58,12 +59,11 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(
             'BadMethodCallException',
             "Invalid http request. No cassette inserted. Please make sure to insert "
-            . "a cassette in your unit test using VCR::useCassette('name');"
+            . "a cassette in your unit test using VCR::insertCassette('name');"
         );
 
-        $config = new Configuration();
-        $config->enableLibraryHooks(array('stream_wrapper'));
-        VCR::init($config);
+        VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
+        VCR::turnOn();
         // If there is no cassette inserted, a request should throw an exception
         file_get_contents('http://example.com');
     }
@@ -74,11 +74,10 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     public function testInsertMultipleCassettes()
     {
         $this->markTestSkipped();
-        VCR::init();
-        VCR::useCassette('unittest_cassette1');
-        VCR::useCassette('unittest_cassette2');
-
-        // $this->assertEquals('cassette2', VCR::get()->getName());
+        VCR::turnOn();
+        VCR::insertCassette('unittest_cassette1');
+        VCR::insertCassette('unittest_cassette2');
+        // TODO: Check of cassette was changed
     }
 
     /**
@@ -86,9 +85,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
      */
     public function testThrowExeptions()
     {
-        VCR::init();
+        VCR::turnOn();
         $this->setExpectedException('InvalidArgumentException');
-        VCR::useCassette('unittest_cassette1');
+        VCR::insertCassette('unittest_cassette1');
         throw new \InvalidArgumentException('test');
     }
 
@@ -97,9 +96,15 @@ class VCRTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldSetAConfiguration()
     {
-        $config = new Configuration();
-        $config->setCassettePath('tests');
-        VCR::init($config);
-        $this->assertEquals('tests', VCR::getInstance()->getConfiguration()->getCassettePath());
+        VCR::configure()->setCassettePath('tests');
+        VCR::turnOn();
+        $this->assertEquals('tests', VCR::configure()->getCassettePath());
     }
+
+    // public function test()
+    // {
+    //     VCRFactory::returnOn('VCR\Storage\Json', $storageMock);
+    //     VCR::turnOn();
+    // }
+
 }

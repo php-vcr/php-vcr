@@ -5,6 +5,7 @@ namespace VCR\LibraryHooks;
 use \VCR\Configuration;
 use \VCR\Request;
 use \VCR\Response;
+use \VCR\Assertion;
 
 /**
  * Library hook for curl functions.
@@ -31,22 +32,18 @@ class Soap implements LibraryHookInterface
             'doRequest($request, $location, $action, $version, $one_way)'),
     );
 
-    public function __construct(\Closure $handleRequestCallback = null)
+    public function __construct()
     {
         if (!function_exists('runkit_function_redefine')) {
             throw new \BadMethodCallException('For soap support you need to install runkit extension.');
         }
-
-        if (!is_null($handleRequestCallback)) {
-            if (!is_callable($handleRequestCallback)) {
-                throw new \InvalidArgumentException('No valid callback for handling requests defined.');
-            }
-            self::$handleRequestCallback = $handleRequestCallback;
-        }
     }
 
-    public function enable()
+    public function enable(\Closure $handleRequestCallback)
     {
+        Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
+        self::$handleRequestCallback = $handleRequestCallback;
+
         if (self::$status == self::ENABLED) {
             return;
         }
@@ -70,6 +67,8 @@ class Soap implements LibraryHookInterface
         if (self::$status == self::DISABLED) {
             return;
         }
+
+        self::$handleRequestCallback = null;
 
         // foreach (self::$overwriteMethods as $identifier => $mapping) {
         //     list($className, $methodName) = explode('::', $identifier);

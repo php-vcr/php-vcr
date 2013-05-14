@@ -2,25 +2,46 @@
 
 namespace VCR;
 
+
 /**
- * Factory.
+ * Singleton interface to a VCR
  */
 class VCR
 {
-    public static $isOn = false;
-    protected static $instance;
-    protected $cassette;
-    protected $httpClient;
-    protected $config;
-    protected $libraryHooks = array();
-
-    public function __construct($config = null)
+    public static function __callStatic($method, $parameters)
     {
-        $this->config = $config ?: new Configuration;
+        $instance = VCRFactory::get('Videorecorder');
+        return call_user_func_array(array($instance, $method), $parameters);
+    }
+}
 
-        if ($this->config->getTurnOnAutomatically()) {
-            $this->turnOn();
-        }
+class Videorecorder
+{
+    /**
+     * @var Configuration
+     */
+    protected $config;
+
+    /**
+     * @var Client
+     */
+    protected $client;
+
+    /**
+     * @var Cassette
+     */
+    protected $cassette;
+
+    /**
+     * @var boolean
+     */
+    public $isOn = false;
+
+    public function __construct(Configuration $config, Client $client, VCRFactory $factory)
+    {
+        $this->config = $config;
+        $this->client = $client;
+        $this->factory = $factory;
     }
 
     /**
@@ -29,15 +50,12 @@ class VCR
      */
     public function turnOn()
     {
-        if (self::$isOn) {
-            return;
+        if ($this->isOn) {
+            $this->turnOff();
         }
 
-        $this->libraryHooks = $this->createLibraryHooks();
         $this->enableLibraryHooks();
-        $this->httpClient = $this->createHttpClient();
-
-        self::$isOn = true;
+        $this->isOn = true;
     }
 
     /**
@@ -46,30 +64,35 @@ class VCR
      */
     public function turnOff()
     {
-        $this->disableLibraryHooks();
-        $this->ejectCassette();
-        self::$isOn = false;
+        if ($this->isOn) {
+            $this->disableLibraryHooks();
+            $this->eject();
+            $this->isOn = false;
+        }
     }
 
-    public function ejectCassette()
+    public function eject()
     {
+        Assertion::true($this->isOn, 'Please turn on VCR before ejecting a cassette, use: VCR::turnOn().');
         $this->cassette = null;
     }
 
     public function insertCassette($cassetteName)
     {
+        Assertion::true($this->isOn, 'Please turn on VCR before inserting a cassette, use: VCR::turnOn().');
+
         if (!is_null($this->cassette)) {
-            $this->ejectCassette();
+            $this->eject();
         }
 
         $filePath = $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $cassetteName;
-        $storage = $this->createStorage($filePath);
+        $storage = $this->factory->get('Storage', array($filePath));
 
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
         $this->enableLibraryHooks();
     }
 
-    public function getConfiguration()
+    public function configure()
     {
         return $this->config;
     }
@@ -80,13 +103,13 @@ class VCR
             throw new \BadMethodCallException(
                 "Invalid http request. No cassette inserted. "
                 . "Please make sure to insert a cassette in your unit test using "
-                . "VCR::useCassette('name');"
+                . "VCR::insertCassette('name');"
             );
         }
 
         if (!$this->cassette->hasResponse($request)) {
             $this->disableLibraryHooks();
-            $response = $this->httpClient->send($request);
+            $response = $this->client->send($request);
             $this->cassette->record($request, $response);
             $this->enableLibraryHooks();
         }
@@ -94,77 +117,22 @@ class VCR
         return $this->cassette->playback($request);
     }
 
-    public function createHttpClient()
-    {
-        return new Client();
-    }
-
-    public static function init($config = null)
-    {
-        if (!is_null(self::$instance)) {
-           self::$instance->turnOff();
-           self::$instance = null;
-        }
-
-        self::$instance = new self($config);
-    }
-
-    public static function useCassette($cassetteName)
-    {
-        if (is_null(self::$instance)) {
-            throw new \BadMethodCallException('VCR is not initialized, please call VCR::init() in a setUp method.');
-        }
-
-        self::$instance->insertCassette($cassetteName);
-    }
-
-    public static function eject()
-    {
-        if (is_null(self::$instance)) {
-            throw new \BadMethodCallException('VCR is not initialized, please call VCR::init() in a setUp method.');
-        }
-
-        self::$instance->ejectCassette();
-    }
-
-    public static function getInstance()
-    {
-        return self::$instance;
-    }
-
-    protected function createStorage($filePath)
-    {
-        $class = $this->config->getStorage();
-        return new $class($filePath);
-    }
-
-    /**
-     * Factory method which returns all configured library hooks.
-     * @return array Library hooks.
-     */
-    protected function createLibraryHooks()
-    {
-        $hooks = array();
-        $self = $this;
-        foreach ($this->config->getLibraryHooks() as $hookName) {
-            $hooks[] = new $hookName(function(Request $request) use($self) {
-                return $self->handleRequest($request);
-            });
-        }
-        return $hooks;
-    }
-
     protected function disableLibraryHooks()
     {
-        foreach ($this->libraryHooks as $hook) {
+        foreach ($this->config->getLibraryHooks() as $hookClass) {
+            $hook = $this->factory->get($hookClass);
             $hook->disable();
         }
     }
 
     protected function enableLibraryHooks()
     {
-        foreach ($this->libraryHooks as $hook) {
-            $hook->enable();
+        $self = $this;
+        foreach ($this->config->getLibraryHooks() as $hookClass) {
+            $hook = $this->factory->get($hookClass);
+            $hook->enable(function(Request $request) use($self) {
+                return $self->handleRequest($request);
+            });
         }
     }
 
@@ -173,7 +141,7 @@ class VCR
      */
     public function __destruct()
     {
-        if (self::$isOn) {
+        if ($this->isOn) {
             $this->turnOff();
         }
     }

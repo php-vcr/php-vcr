@@ -33,10 +33,10 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 {
     public function testShouldInterceptStreamWrapper()
     {
-        VCR::init();
+        VCR::turnOn();
 
         // Record requests and responses in cassette file 'example'
-        VCR::useCassette('example');
+        VCR::insertCassette('example');
 
         // Following request will be recorded once and replayed in future test runs
         $result = file_get_contents('http://example.com');
@@ -51,9 +51,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(
             'BadMethodCallException',
             "Invalid http request. No cassette inserted. Please make sure to insert "
-            . "a cassette in your unit test using VCR::useCassette('name');"
+            . "a cassette in your unit test using VCR::insertCassette('name');"
         );
-        VCR::init();
+        VCR::turnOn();
         // If there is no cassette inserted, a request should throw an exception
         file_get_contents('http://example.com');
     }}

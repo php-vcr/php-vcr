@@ -16,6 +16,7 @@ class Json implements StorageInterface
 
     public function __construct($filePath)
     {
+        // Todo: should this be automatically created?
         if (!file_exists($filePath)) {
             file_put_contents($filePath, '[]');
         }
