@@ -23,16 +23,18 @@ Record your test suite's HTTP interactions and replay them during future test ru
 * Todo: Supports PHPUnit annotations.
 * Todo: Automatically filters confidential or private information like passwords, auth tokens and emails.
 * Todo: Automatically re-records cassettes on a configurable regular interval to keep them fresh and current.
+* Todo: Has a good documentation ;-)
 
 ## Usage example
 
-Using inline method calls:
+Using static method calls:
 
 ``` php
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
     public function testShouldInterceptStreamWrapper()
     {
+        // After turning on the VCR will intercept all requests
         VCR::turnOn();
 
         // Record requests and responses in cassette file 'example'
@@ -44,6 +46,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 
         // To stop recording requests, eject the cassette
         VCR::eject();
+
+        // Turn off VCR to stop intercepting requests
+        VCR::turnOff();
     }
 
     public function testShouldThrowExceptionIfNoCasettePresent()
@@ -54,7 +59,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
             . "a cassette in your unit test using VCR::insertCassette('name');"
         );
         VCR::turnOn();
-        // If there is no cassette inserted, a request should throw an exception
+        // If there is no cassette inserted, a request throws an exception
         file_get_contents('http://example.com');
     }}
 ```
@@ -82,7 +87,7 @@ PHP-VCR depends on:
   * [beberlei/assert](https://github.com/beberlei/assert)
   * (optional) runkit extension with `runkit.internal_override=1` in php.ini if you want to intercept curl
 
-Composer installs all depenencies except extensions like curl or runkit.
+Composer installs all dependencies except extensions like curl or runkit.
 
 ## Run tests
 
@@ -95,6 +100,7 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2013-05-14 Easier API (static method calls)
  * 2013-02-22 Added YAML support
  * 2013-02-21 Added custom request matcher
  * 2013-02-21 Added JSON storage which uses less memory
