@@ -22,8 +22,7 @@
 
     "require-dev": {
         "mikey179/vfsStream": "dev-master",
-        "guzzle/plugin-mock": "3.4.*@dev",
-        "adri/phpunit-testlistener-vcr": "*"
+        "guzzle/plugin-mock": "3.4.*@dev"
     },
 
     "suggest": {
