@@ -61,9 +61,28 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::turnOn();
         // If there is no cassette inserted, a request throws an exception
         file_get_contents('http://example.com');
-    }}
+    }
+}
 ```
 
+You can use annotations in PHPUnit by using [phpunit-testlistener-vcr](https://github.com/adri/phpunit-testlistener-vcr):
+``` php
+class VCRTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @vcr unittest_annotation_test
+     */
+    public function testInterceptsWithAnnotations()
+    {
+        // Requests are intercepted and stored into  tests/fixtures/unittest_annotation_test.
+        $result = file_get_contents('http://google.com');
+
+        $this->assertEquals('This is a annotation test dummy.', $result, 'Call was not intercepted (using annotations).');
+
+        // VCR is automatically turned on and off.
+    }
+}
+```
 
 ## Installation
 
@@ -100,6 +119,7 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2013-05-15 Adds PHPUnit annotations using [phpunit-testlistener-vcr](https://github.com/adri/phpunit-testlistener-vcr)
  * 2013-05-14 Easier API (static method calls)
  * 2013-02-22 Added YAML support
  * 2013-02-21 Added custom request matcher
