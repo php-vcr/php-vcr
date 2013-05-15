@@ -35,13 +35,6 @@ class Configuration
         'post_fields'    => array('\VCR\RequestMatcher', 'matchPostFields'),
     );
 
-    private $turnOnAutomatically = true;
-
-    public function getTurnOnAutomatically()
-    {
-        return $this->turnOnAutomatically;
-    }
-
     public function getCassettePath()
     {
         return $this->cassettePath;
