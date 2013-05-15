@@ -19,8 +19,8 @@ Record your test suite's HTTP interactions and replay them during future test ru
   implement a custom request matcher to handle any need.
 * The recorded requests and responses are stored on disk in a serialization format of your choice
   (currently YAML and JSON are built in, and you can easily implement your own custom serializer)
+* Supports PHPUnit annotations.
 * Todo: Recorded requests and responses can easily be inspected and edited.
-* Todo: Supports PHPUnit annotations.
 * Todo: Automatically filters confidential or private information like passwords, auth tokens and emails.
 * Todo: Automatically re-records cassettes on a configurable regular interval to keep them fresh and current.
 * Todo: Has a good documentation ;-)
@@ -119,6 +119,7 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2013-05-15 Release 1.0.0
  * 2013-05-15 Adds PHPUnit annotations using [phpunit-testlistener-vcr](https://github.com/adri/phpunit-testlistener-vcr)
  * 2013-05-14 Easier API (static method calls)
  * 2013-02-22 Added YAML support
