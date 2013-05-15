@@ -2,6 +2,7 @@
     "name": "adri/php-vcr",
     "description": "Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.",
     "version": "1.0.0",
+    "license": "MIT",
 
     "authors": [
         {
