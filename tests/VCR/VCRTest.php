@@ -25,16 +25,6 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @vcr unittest_annotation_test
-     */
-    public function testShouldInterceptWithAnnotations()
-    {
-        VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
-        $result = file_get_contents('http://google.com');
-        $this->assertEquals('This is a annotation test dummy.', $result, 'Stream wrapper call was not intercepted.');
-    }
-
-    /**
      * @group runkit
      */
     public function testShouldInterceptCurl()
