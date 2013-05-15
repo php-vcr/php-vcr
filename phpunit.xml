@@ -21,4 +21,8 @@
         <directory>./tests</directory>>
     </testsuites>
 
+    <listeners>
+        <listener class="PHPUnit_Util_Log_VCR" file="PHPUnit/Util/Log/VCR.php"></listener>
+    </listeners>
+
 </phpunit>
