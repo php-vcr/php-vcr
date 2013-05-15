@@ -86,13 +86,13 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 
 ## Installation
 
-There is no release yet, sorry.
+Add php-vcr to your `composer.json`.
 
+``` json
+  "adri/php-vcr": "dev-master"
+``` 
 ``` bash
-git clone git@github.com:adri/php-vcr
-cd php-vcr
-composer install --dev
-phpunit tests
+composer install
 ```
 
 ## Dependencies
