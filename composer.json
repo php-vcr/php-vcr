@@ -1,5 +1,5 @@
 {
-    "name": "adri/phpvcr",
+    "name": "adri/php-vcr",
     "description": "Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.",
 
     "authors": [
@@ -20,7 +20,8 @@
 
     "require-dev": {
         "mikey179/vfsStream": "dev-master",
-        "guzzle/plugin-mock": "3.4.*@dev"
+        "guzzle/plugin-mock": "3.4.*@dev",
+        "adri/phpunit-testlistener-vcr": "*"
     },
 
     "suggest": {
