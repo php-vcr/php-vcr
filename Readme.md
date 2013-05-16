@@ -1,5 +1,8 @@
 ![PHP-VCR](https://dl.dropbox.com/u/13186339/blog/php-vcr.png)
+
 [![Build Status](https://travis-ci.org/adri/php-vcr.png?branch=master)](https://travis-ci.org/adri/php-vcr)
+[![Build Status](http://www.versioneye.com/package/php--adri--php-vcr/badge.png
+)](http://www.versioneye.com/package/php--adri--php-vcr)
 
 This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 
@@ -90,7 +93,7 @@ Add php-vcr to your `composer.json`.
 
 ``` json
   "adri/php-vcr": "dev-master"
-``` 
+```
 ``` bash
 composer install
 ```
