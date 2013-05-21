@@ -17,7 +17,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             array(
                 '\VCR\LibraryHooks\StreamWrapper',
-                '\VCR\LibraryHooks\Curl'
+                '\VCR\LibraryHooks\CurlRunkit'
             ),
             $this->config->getLibraryHooks()
         );

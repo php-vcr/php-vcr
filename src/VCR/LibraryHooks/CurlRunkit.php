@@ -10,7 +10,7 @@ use \VCR\Assertion;
 /**
  * Library hook for curl functions.
  */
-class Curl implements LibraryHookInterface
+class CurlRunkit implements LibraryHookInterface
 {
     private static $status = self::DISABLED;
 

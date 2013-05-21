@@ -13,7 +13,7 @@ class Configuration
     private $enabledLibraryHooks;
     private $availableLibraryHooks = array(
         'stream_wrapper' => '\VCR\LibraryHooks\StreamWrapper',
-        'curl'           => '\VCR\LibraryHooks\Curl',
+        'curl'           => '\VCR\LibraryHooks\CurlRunkit',
         // 'soap'        => '\VCR\LibraryHooks\Soap',
     );
 
