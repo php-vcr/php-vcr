@@ -3,24 +3,21 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "1b05d9dbd8beedbd8c4c418a8719b6f2",
+    "hash": "5d1304a9050922995b2caccf91040031",
     "packages": [
         {
             "name": "beberlei/assert",
-            "version": "dev-master",
+            "version": "v1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beberlei/assert.git",
-                "reference": "d76458b2ee96fad6459127d804c1538b995b5376"
+                "reference": "v1.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beberlei/assert/zipball/d76458b2ee96fad6459127d804c1538b995b5376",
-                "reference": "d76458b2ee96fad6459127d804c1538b995b5376",
+                "url": "https://github.com/beberlei/assert/zipball/v1.2",
+                "reference": "v1.2",
                 "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*"
             },
             "type": "library",
             "autoload": {
@@ -41,7 +38,7 @@
                 "assertion",
                 "validation"
             ],
-            "time": "2013-02-02 13:17:41"
+            "time": "2012-07-23 13:22:31"
         },
         {
             "name": "guzzle/common",
@@ -532,7 +529,6 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "beberlei/assert": 20,
         "mikey179/vfsstream": 20
     },
     "platform": {

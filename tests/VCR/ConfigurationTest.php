@@ -54,7 +54,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testAddRequestMatcherFailsWithNoName()
     {
-        $this->setExpectedException('\VCR\VCRException');
+        $this->setExpectedException('Assert\AssertionFailedException', "A request matchers name must be at least one character long. Found ''");
         $expected = function($first, $second) {
             return true;
         };
@@ -79,7 +79,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetStorageInvalidName()
     {
-        $this->setExpectedException('\VCR\VCRException');
+        $this->setExpectedException('Assert\AssertionFailedException', "Storage 'Does not exist' not available.");
+        // $this->setExpectedException('\VCR\VCRException');
         $this->config->setStorage('Does not exist');
     }
 
