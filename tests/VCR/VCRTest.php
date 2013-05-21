@@ -10,9 +10,8 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     public function testUseStaticCallsNotInitialized()
     {
         VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
-        // $this->setExpectedException('\VCR\VCRException');
         $this->setExpectedException(
-            'Assert\AssertionFailedException',
+            'VCR\VCRException',
             'Please turn on VCR before inserting a cassette, use: VCR::turnOn()'
         );
         VCR::insertCassette('some_name');

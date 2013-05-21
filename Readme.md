@@ -1,8 +1,7 @@
 ![PHP-VCR](https://dl.dropbox.com/u/13186339/blog/php-vcr.png)
 
 [![Build Status](https://travis-ci.org/adri/php-vcr.png?branch=master)](https://travis-ci.org/adri/php-vcr)
-[![Build Status](http://www.versioneye.com/package/php--adri--php-vcr/version/dev-master/badge.png
-)](http://www.versioneye.com/package/php--adri--php-vcr/version/dev-master)
+[![Build Status](http://www.versioneye.com/user/projects/51512860926e440002004378/badge.png)](http://www.versioneye.com/package/php--adri--php-vcr/version/dev-master)
 
 This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 

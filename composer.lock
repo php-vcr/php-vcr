@@ -7,17 +7,20 @@
     "packages": [
         {
             "name": "beberlei/assert",
-            "version": "v1.2",
+            "version": "v1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beberlei/assert.git",
-                "reference": "v1.2"
+                "reference": "v1.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/beberlei/assert/zipball/v1.2",
-                "reference": "v1.2",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/v1.3",
+                "reference": "v1.3",
                 "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*"
             },
             "type": "library",
             "autoload": {
@@ -38,7 +41,7 @@
                 "assertion",
                 "validation"
             ],
-            "time": "2012-07-23 13:22:31"
+            "time": "2013-02-02 13:17:41"
         },
         {
             "name": "guzzle/common",
