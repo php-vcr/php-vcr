@@ -10,10 +10,11 @@ class Configuration
     private $cassettePath = 'tests/fixtures';
 
     // All are enabled by default
-    private $enabledLibraryHooks;
+    private $enabledLibraryHooks = array('stream_wrapper', 'curl_runkit');
     private $availableLibraryHooks = array(
         'stream_wrapper' => '\VCR\LibraryHooks\StreamWrapper',
-        'curl'           => '\VCR\LibraryHooks\CurlRunkit',
+        'curl_runkit'    => '\VCR\LibraryHooks\CurlRunkit',
+        'curl_rewrite'   => '\VCR\LibraryHooks\CurlRewrite',
         // 'soap'        => '\VCR\LibraryHooks\Soap',
     );
 
