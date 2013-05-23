@@ -13,29 +13,46 @@ use \VCR\Util\CurlHelper;
  */
 class CurlRunkit implements LibraryHookInterface
 {
-    private static $status = self::DISABLED;
+    /**
+     * @var \Closure Callback which will be executed when a request is intercepted.
+     */
+    protected static $handleRequestCallback;
 
     /**
-     * @var Request
+     * @var string Current status of this hook, either enabled or disabled.
      */
-    private static $requests = array();
+    protected static $status = self::DISABLED;
 
     /**
-     * @var Response
+     * @var Request[] All requests which have been intercepted.
      */
-    private static $responses = array();
+    protected static $requests = array();
 
-    private static $handleRequestCallback;
+    /**
+     * @var Response[] All responses which have been intercepted.
+     */
+    protected static $responses = array();
 
-    private static $curlOptions = array();
+    /**
+     * @var array[] Additinal curl options, which are not stored within a request.
+     */
+    protected static $curlOptions = array();
 
-    private static $overwriteFunctions = array(
+    /**
+     * @var array Defines curl functions to overwrite with method calls to this class.
+     */
+    protected static $overwriteFunctions = array(
         'curl_init'       => array('$url = null', 'init($url)'),
         'curl_exec'       => array('$resource', 'exec($resource)'),
         'curl_getinfo'    => array('$resource, $option = 0', 'getInfo($resource, $option)'),
         'curl_setopt'     => array('$ch, $option, $value', 'setOpt($ch, $option, $value)'),
     );
 
+    /**
+     * Initializes a new curl libraryhook using ext-runkit.
+     *
+     * @throws \BadMethodCallException When runkit is not available.
+     */
     public function __construct()
     {
         if (!function_exists('runkit_function_redefine')) {
@@ -45,6 +62,9 @@ class CurlRunkit implements LibraryHookInterface
         self::$handleRequestCallback = null;
     }
 
+    /**
+     * @inherit
+     */
     public function enable(\Closure $handleRequestCallback)
     {
         Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
@@ -67,6 +87,9 @@ class CurlRunkit implements LibraryHookInterface
         self::$status = self::ENABLED;
     }
 
+    /**
+     * @inherit
+     */
     public function disable()
     {
         if (self::$status == self::DISABLED) {

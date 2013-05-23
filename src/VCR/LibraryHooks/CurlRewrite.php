@@ -45,11 +45,6 @@ class CurlRewrite implements LibraryHookInterface
     {
         Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
         self::$handleRequestCallback = $handleRequestCallback;
-
-        if (self::$status == self::ENABLED) {
-            return;
-        }
-
         self::$status = self::ENABLED;
     }
 
@@ -58,10 +53,6 @@ class CurlRewrite implements LibraryHookInterface
      */
     public function disable()
     {
-        if (self::$status == self::DISABLED) {
-            return;
-        }
-
         self::$status = self::DISABLED;
         self::$handleRequestCallback = null;
     }
