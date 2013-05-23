@@ -5,20 +5,42 @@ namespace VCR\LibraryHooks;
 use \VCR\Request;
 use \VCR\Response;
 use \VCR\Assertion;
+use \VCR\Util\CurlHelper;
 
 /**
- * Library hook for curl functions.
+ * Library hook for curl functions using include-overwrite.
  */
 class CurlRewrite implements LibraryHookInterface
 {
 
+    /**
+     * @var \Closure Callback which will be executed when a request is intercepted.
+     */
     protected static $handleRequestCallback;
-    protected static $status;
-    protected static $request;
-    protected static $response;
-    protected static $additionalCurlOpts = array();
 
+    /**
+     * @var string Current status of this hook, either enabled or disabled.
+     */
+    protected static $status = self::DISABLED;
 
+    /**
+     * @var Request[] All requests which have been intercepted.
+     */
+    protected static $requests = array();
+
+    /**
+     * @var Response[] All responses which have been intercepted.
+     */
+    protected static $responses = array();
+
+    /**
+     * @var array[] Additinal curl options, which are not stored within a request.
+     */
+    protected static $curlOptions = array();
+
+    /**
+     * @inherit
+     */
     public function enable(\Closure $handleRequestCallback)
     {
         Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
@@ -31,6 +53,9 @@ class CurlRewrite implements LibraryHookInterface
         self::$status = self::ENABLED;
     }
 
+    /**
+     * @inherit
+     */
     public function disable()
     {
         if (self::$status == self::DISABLED) {
@@ -41,127 +66,53 @@ class CurlRewrite implements LibraryHookInterface
         self::$handleRequestCallback = null;
     }
 
-
-    public static function curl_init($url = null)
+    public static function __callStatic($method, $args)
     {
-        self::$request = new Request('GET', $url);
-        return \curl_init($url);
-    }
-
-    public static function curl_exec($resource)
-    {
+        // Call original when disabled
         if (self::$status == self::DISABLED) {
-            return curl_exec($resource);
+            return call_user_func_array($method, $args);
         }
 
+        $localMethod = str_replace('curl_', '', $method);
+        return call_user_func_array(array(__CLASS__, $localMethod), $args);
+    }
+
+    public static function init($url = null)
+    {
+        $ch = \curl_init($url);
+        self::$requests[(int) $ch] = new Request('GET', $url);
+        return $ch;
+    }
+
+    public static function exec($ch)
+    {
+        //  workaround for this?
         $handleRequestCallback = self::$handleRequestCallback;
-        self::$response = $handleRequestCallback(self::$request);
+        self::$responses[(int) $ch] = $handleRequestCallback(self::$requests[(int) $ch]);
 
-        $responseBody = (string) self::$response->getBody(true);
-
-        if (isset(static::$additionalCurlOpts[CURLOPT_FILE])) {
-            $fp = static::$additionalCurlOpts[CURLOPT_FILE];
-            fwrite($fp, $responseBody);
-            fflush($fp);
-            static::$additionalCurlOpts[CURLOPT_FILE] = null;
-        } else if (static::getCurlOption(CURLOPT_RETURNTRANSFER) == true) {
-            return $responseBody;
-        } else {
-            echo $responseBody;
-        }
-    }
-
-    public static function curl_getinfo($resource, $option = 0)
-    {
-        $info = array(
-            // CURLFTPMETHOD_NOCWD              => null,
-            CURLINFO_HTTP_CODE               => self::$response->getStatusCode(),
-            CURLINFO_EFFECTIVE_URL           => self::$response->getInfo($option),
-            CURLINFO_FILETIME                => self::$response->getInfo($option),
-            CURLINFO_TOTAL_TIME              => self::$response->getInfo($option),
-            CURLINFO_NAMELOOKUP_TIME         => self::$response->getInfo($option),
-            CURLINFO_CONNECT_TIME            => self::$response->getInfo($option),
-            CURLINFO_PRETRANSFER_TIME        => self::$response->getInfo($option),
-            CURLINFO_STARTTRANSFER_TIME      => self::$response->getInfo($option),
-            CURLINFO_REDIRECT_TIME           => self::$response->getInfo($option),
-            CURLINFO_SIZE_UPLOAD             => self::$response->getInfo($option),
-            CURLINFO_SIZE_DOWNLOAD           => self::$response->getHeader('Content-Length'),
-            CURLINFO_SPEED_DOWNLOAD          => self::$response->getInfo($option),
-            CURLINFO_SPEED_UPLOAD            => self::$response->getInfo($option),
-            CURLINFO_HEADER_SIZE             => self::$response->getInfo($option),
-            CURLINFO_HEADER_OUT              => self::$response->getInfo($option),
-            CURLINFO_REQUEST_SIZE            => self::$response->getInfo($option),
-            CURLINFO_SSL_VERIFYRESULT        => self::$response->getInfo($option),
-            CURLINFO_CONTENT_LENGTH_DOWNLOAD => self::$response->getInfo($option),
-            CURLINFO_CONTENT_LENGTH_UPLOAD   => self::$response->getInfo($option),
+        return CurlHelper::handleOutput(
+            self::$responses[(int) $ch],
+            self::$curlOptions[(int) $ch]
         );
-
-        if ($option === 0)  {
-            return $info;
-        }
-
-        if (isset($info[$option])) {
-            return $info[$option];
-        }
-
-        if (!is_null(self::$response->getInfo($option))) {
-            return self::$response->getInfo($option);
-        }
-
-        $constants = get_defined_constants(true);
-        $constantNames = array_flip($constants['curl']);
-        die("Todo: {$constantNames[$option]} ({$option}) ");
     }
 
-    public static function curl_setopt($ch, $option, $value)
+    public static function getinfo($ch, $option = 0)
     {
-        switch ($option) {
-            case CURLOPT_URL:
-                self::$request->setUrl($value);
-                break;
-            case CURLOPT_FOLLOWLOCATION:
-                self::$request->getParams()->set('redirect.disable', !$value);
-                break;
-            case CURLOPT_MAXREDIRS:
-                self::$request->getParams()->set('redirect.max', $value);
-                break;
-            case CURLOPT_POST:
-                if ($value == true) {
-                    self::$request->setMethod('POST');
-                }
-                break;
-            case CURLOPT_POSTFIELDS:
-                // check for file @
-                if (is_string($value)) {
-                    parse_str($value, $value);
-                }
-                foreach ($value as $key => $value) {
-                    self::$request->setPostField($key, $value);
-                }
-                break;
-            case CURLOPT_HTTPHEADER:
-                $headers = array();
-                foreach ($value as $header) {
-                    list($key, $val) = explode(': ', $header, 2);
-                    $headers[$key] = $val;
-                }
-                self::$request->addHeaders($headers);
-                break;
-            case CURLOPT_FILE:
-                self::$additionalCurlOpts[CURLOPT_FILE] = $value;
-                break;
-            default:
-                self::$request->getCurlOptions()->set($option, $value);
-                break;
+        return CurlHelper::getCurlOptionFromResponse(
+            self::$responses[(int) $ch],
+            $option
+        );
+    }
+
+    public static function setopt($ch, $option, $value)
+    {
+        CurlHelper::setCurlOptionOnRequest(self::$requests[(int) $ch], $option, $value);
+
+        if (!isset(static::$curlOptions[(int) $ch])) {
+            static::$curlOptions[(int) $ch] = array();
         }
+        static::$curlOptions[(int) $ch][$option] = $value;
 
         \curl_setopt($ch, $option, $value);
     }
-
-
-    protected static function getCurlOption($option)
-    {
-        return self::$request->getCurlOptions()->get($option);
-    }
-
 }
