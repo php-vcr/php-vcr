@@ -43,21 +43,6 @@ class VCRFactory
         return new $class($filePath);
     }
 
-    protected function create_VCR_LibraryHooks_Curl()
-    {
-        return new LibraryHooks\Curl();
-    }
-
-    protected function create_VCR_LibraryHooks_Soap()
-    {
-        return new LibraryHooks\Soap();
-    }
-
-    protected function create_VCR_LibraryHooks_StreamWrapper()
-    {
-        return new LibraryHooks\StreamWrapper();
-    }
-
     public static function getInstance($config = null)
     {
         if (!self::$instance) {
@@ -75,12 +60,19 @@ class VCRFactory
     public function getOrCreate($className, $params = array())
     {
         $key = $className . join('-', $params);
-        if (!isset($this->mapping[$key])) {
-            $callback = array($this, $this->getMethodName($className));
-            $this->mapping[$key] = call_user_func_array($callback, $params);
+
+        if (isset($this->mapping[$key])) {
+            return $this->mapping[$key];
         }
 
-        return $this->mapping[$key];
+        if (method_exists($this, $this->getMethodName($className))) {
+            $callback = array($this, $this->getMethodName($className));
+            $instance =  call_user_func_array($callback, $params);
+        } else {
+            $instance = new $className;
+        }
+
+        return $this->mapping[$key] = $instance;
     }
 
     protected function getMethodName($className, $params = array())
