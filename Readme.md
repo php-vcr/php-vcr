@@ -121,6 +121,7 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2013-06-05 Release 1.0.3: Added curl_rewrite (in addition to curl_runkit) to overwrite curl functions.
  * 2013-05-15 Release 1.0.0
  * 2013-05-15 Adds PHPUnit annotations using [phpunit-testlistener-vcr](https://github.com/adri/phpunit-testlistener-vcr)
  * 2013-05-14 Easier API (static method calls)
