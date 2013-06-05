@@ -16,8 +16,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'User-Agent' => 'Unit-Test',
-                'Host'       => 'example.com'
+                'user-agent' => 'Unit-Test',
+                'host'       => 'example.com'
             ),
             $this->request->getHeaders()
         );
@@ -32,9 +32,9 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'method'      => 'GET',
                 'url'         => 'http://example.com',
                 'headers'     => array(
-                    'User-Agent' => 'Unit-Test',
-                    'Host' => 'example.com',
-                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8'
+                    'user-agent' => 'Unit-Test',
+                    'host' => 'example.com',
+                    'content-type' => 'application/x-www-form-urlencoded; charset=utf-8'
                     ),
                 'post_fields' => array('para1' => 'val1'),
             ),

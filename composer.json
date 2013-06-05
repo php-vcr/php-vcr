@@ -13,15 +13,16 @@
     "require": {
         "php": ">=5.3.15",
         "ext-curl": "*",
-        "guzzle/http": "3.5.*",
-        "guzzle/plugin-backoff": "3.5.*",
+        "guzzle/http": "3.6.*",
+        "guzzle/plugin-backoff": "3.6.*",
         "beberlei/assert": "1.*",
         "symfony/yaml": "2.*"
     },
 
     "require-dev": {
         "mikey179/vfsStream": "dev-master",
-        "guzzle/plugin-mock": "3.5.*"
+        "behat/behat": "2.4.*@stable",
+        "guzzle/plugin-mock": "3.6.*"
     },
 
     "suggest": {

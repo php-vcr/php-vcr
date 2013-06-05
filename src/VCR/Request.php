@@ -50,7 +50,8 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
         }
 
         $headers = array();
-        foreach (parent::getHeaders()->getAll() as $key => $value) {
+        foreach (parent::getHeaders()->getAll() as $key => $header){
+            $value = $header->toArray();
             $headers[$key] = $value[0];
         }
         return $headers;
