@@ -32,7 +32,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldInterceptCurl()
     {
-        VCR::configure()->enableLibraryHooks(array('curl'));
+        VCR::configure()->enableLibraryHooks(array('curl_runkit'));
         VCR::turnOn();
         VCR::insertCassette('unittest_curl_test');
         $ch = curl_init('http://google.com/');
