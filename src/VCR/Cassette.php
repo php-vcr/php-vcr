@@ -10,7 +10,6 @@ class Cassette
 {
     protected $name;
     protected $config;
-    protected $hasReadFromDisk = false;
     protected $storage;
     protected $cassetteHandle;
 
