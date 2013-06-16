@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/adri/php-vcr.png?branch=master)](https://travis-ci.org/adri/php-vcr)
 [![Dependency Status](http://www.versioneye.com/user/projects/51512860926e440002004378/badge.png)](http://www.versioneye.com/user/projects/51512860926e440002004378)
+[![Coverage Status](https://coveralls.io/repos/adri/php-vcr/badge.png?branch=master)](https://coveralls.io/r/adri/php-vcr?branch=master)
 
 This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 
