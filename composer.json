@@ -13,8 +13,8 @@
     "require": {
         "php": ">=5.3.15",
         "ext-curl": "*",
-        "guzzle/http": "3.6.*",
-        "guzzle/plugin-backoff": "3.6.*",
+        "guzzle/http": "3.7.*",
+        "guzzle/plugin-backoff": "3.7.*",
         "beberlei/assert": "1.*",
         "symfony/yaml": "2.*"
     },
@@ -22,7 +22,7 @@
     "require-dev": {
         "mikey179/vfsStream": "dev-master",
         "behat/behat": "2.4.*@stable",
-        "guzzle/plugin-mock": "3.6.*"
+        "guzzle/plugin-mock": "3.7.*"
     },
 
     "suggest": {
