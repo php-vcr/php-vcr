@@ -8,6 +8,8 @@ This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 
 Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.
 
+Disclaimer: Doing this in PHP is not as easy as in programming languages which support monkey patching (I'm looking at you, Ruby) – this project is not yet fully tested, so please use at your own risk!
+
 ## Features
 
 * Automatically records and replays your HTTP(s) interactions with minimal setup/configuration code.
@@ -122,6 +124,7 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2013-07-22 Release 1.0.4: Updates dependencies.
  * 2013-06-05 Release 1.0.3: Added curl_rewrite (in addition to curl_runkit) to overwrite curl functions.
  * 2013-05-15 Release 1.0.0
  * 2013-05-15 Adds PHPUnit annotations using [phpunit-testlistener-vcr](https://github.com/adri/phpunit-testlistener-vcr)
