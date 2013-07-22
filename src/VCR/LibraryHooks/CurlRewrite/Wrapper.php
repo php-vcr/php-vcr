@@ -14,11 +14,16 @@ class Wrapper
     protected $wrapper;
 
     protected static $whitelistPaths = array();
+    protected static $blacklistPaths = array();
 
-    public static function interceptIncludes($whitelistPaths = null)
+    public static function interceptIncludes($whitelistPaths = null, $blacklistPaths = null)
     {
         if (is_array($whitelistPaths)) {
             self::$whitelistPaths = $whitelistPaths;
+        }
+
+        if (is_array($blacklistPaths)) {
+            self::$blacklistPaths = $blacklistPaths;
         }
         stream_wrapper_unregister('file');
         stream_wrapper_register('file', __CLASS__);
@@ -62,7 +67,7 @@ class Wrapper
     {
         $returnValue = $this->wrapper->stream_open($uri, $mode, $options, $opened_path);
 
-        if ($this->isWhitelisted($uri) && $this->isPhpFile($uri)) {
+        if ($this->isWhitelisted($uri) && !$this->isBlacklisted($uri) && $this->isPhpFile($uri)) {
             stream_filter_append($this->wrapper->handle, Filter::NAME, STREAM_FILTER_READ);
         }
 
@@ -80,10 +85,19 @@ class Wrapper
         return false;
     }
 
+    protected function isBlacklisted($uri)
+    {
+        foreach (self::$blacklistPaths as $path) {
+            if (strpos($uri, $path) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected function isPhpFile($uri)
     {
         return pathinfo($uri, PATHINFO_EXTENSION) === 'php';
     }
-
-
 }
