@@ -8,10 +8,10 @@ class Filter extends \PHP_User_Filter
     const REWRITE_CLASS = '\VCR\LibraryHooks\CurlRewrite';
 
     private static $replacements = array(
-        'curl_init'    => '\VCR\LibraryHooks\CurlRewrite::curl_init',
-        'curl_exec'    => '\VCR\LibraryHooks\CurlRewrite::curl_exec',
-        'curl_getinfo' => '\VCR\LibraryHooks\CurlRewrite::curl_getinfo',
-        'curl_setopt'  => '\VCR\LibraryHooks\CurlRewrite::curl_setopt'
+        'curl_init('    => '\VCR\LibraryHooks\CurlRewrite::curl_init(',
+        'curl_exec('    => '\VCR\LibraryHooks\CurlRewrite::curl_exec(',
+        'curl_getinfo(' => '\VCR\LibraryHooks\CurlRewrite::curl_getinfo(',
+        'curl_setopt('  => '\VCR\LibraryHooks\CurlRewrite::curl_setopt('
     );
 
     public static function register()
@@ -38,7 +38,5 @@ class Filter extends \PHP_User_Filter
             $code
         );
     }
-
-
 }
 Filter::register();
