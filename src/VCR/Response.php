@@ -28,8 +28,8 @@ class Response extends \Guzzle\Http\Message\Response
         }
 
         $headers = array();
-        foreach (parent::getHeaders() as $key => $value) {
-            $values = $value->toArray();
+        foreach (parent::getHeaders() as $key => $header) {
+            $values = $header->toArray();
             $headers[$header->getName()] = $values[0];
         }
 
