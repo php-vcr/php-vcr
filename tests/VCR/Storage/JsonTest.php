@@ -9,7 +9,9 @@ use org\bovigo\vfs\vfsStream;
  */
 class JsonTest extends \PHPUnit_Framework_TestCase
 {
-    private $handle;
+    protected $handle;
+    protected $filePath;
+    protected $jsonObject;
 
     public function setUp()
     {

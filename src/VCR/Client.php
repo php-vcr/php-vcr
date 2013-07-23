@@ -3,6 +3,7 @@ namespace VCR;
 
 class Client
 {
+    protected $client;
 
     function __construct()
     {

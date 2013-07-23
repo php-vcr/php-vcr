@@ -7,6 +7,8 @@ namespace VCR;
  */
 class RequestTest extends \PHPUnit_Framework_TestCase
 {
+    protected $request;
+
     public function setUp()
     {
         $this->request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
@@ -22,7 +24,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             $this->request->getHeaders()
         );
     }
-
 
     public function testStorePostFields()
     {

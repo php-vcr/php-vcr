@@ -4,6 +4,12 @@ namespace VCR;
 
 /**
  * Singleton interface to a VCR
+ *
+ * @method VCR\Configuration configure()
+ * @method void insertCassette(string cassetteName)
+ * @method void turnOn()
+ * @method void turnOff()
+ * @method void eject()
  */
 class VCR
 {

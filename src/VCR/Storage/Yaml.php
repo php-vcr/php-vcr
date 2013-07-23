@@ -15,6 +15,8 @@ class Yaml implements StorageInterface
     private $handle;
     private $filePath;
     private $recording;
+    private $yamlDumper;
+    private $yamlParser;
     private $isEOF = false;
     private $valid = true;
 
