@@ -17,7 +17,7 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
   * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification
   * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) using your own wrapper class
   * curl(),  using [runkit extension](http://www.php.net/manual/en/book.runkit.php) and `runkit.internal_override=1` in your php.ini
-  * Todo: curl_multi()
+  * Todo: curl_multi() (experimental support)
 * The same request can receive different responses in different tests--just use different cassettes.
 * Disables all HTTP requests that you don't explicitly allow (except SoapClient if not configured).
 * Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
