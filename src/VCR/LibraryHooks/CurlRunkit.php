@@ -39,6 +39,13 @@ class CurlRunkit implements LibraryHookInterface
     protected static $curlOptions = array();
 
     /**
+     * All curl handles which belong to curl_multi handles.
+     */
+    protected static $multiHandles = array();
+
+    protected static $multiExecLastCh;
+
+    /**
      * @var array Defines curl functions to overwrite with method calls to this class.
      */
     protected static $overwriteFunctions = array(
@@ -46,6 +53,12 @@ class CurlRunkit implements LibraryHookInterface
         'curl_exec'       => array('$resource', 'exec($resource)'),
         'curl_getinfo'    => array('$resource, $option = 0', 'getInfo($resource, $option)'),
         'curl_setopt'     => array('$ch, $option, $value', 'setOpt($ch, $option, $value)'),
+        'curl_setopt_array' => array('$ch, $options', 'setOptArray($ch, $options)'),
+        'curl_multi_add_handle' => array('$mh, $ch', 'multiAddHandle($mh, $ch)'),
+        'curl_multi_remove_handle' => array('$mh, $ch', 'multiRemoveHandle($mh, $ch)'),
+        'curl_multi_exec' => array('$mh, &$still_running', 'multiExec($mh, $still_running)'),
+        'curl_multi_info_read' => array('$mh', 'multiInfoRead($mh)')
+
     );
 
     /**
@@ -112,6 +125,53 @@ class CurlRunkit implements LibraryHookInterface
         return $ch;
     }
 
+    public static function multiAddHandle($mh, $ch)
+    {
+        if (isset(self::$multiHandles[(int) $mh])) {
+            self::$multiHandles[(int) $mh][] = (int) $ch;
+        } else {
+            self::$multiHandles[(int) $mh] = array((int) $ch);
+        }
+        // return \curl_multi_add_handle_original($mh, $ch);
+    }
+
+    public static function multiRemoveHandle($mh, $ch)
+    {
+        if (isset(self::$multiHandles[(int) $mh][(int) $ch])) {
+            unset(self::$multiHandles[(int) $mh][(int) $ch]);
+        }
+        // return \curl_multi_remove_handle_original($mh, $ch);
+    }
+
+    public static function multiExec($mh, &$still_running)
+    {
+        if (isset(self::$multiHandles[(int) $mh])) {
+            foreach (self::$multiHandles[(int) $mh] as $ch) {
+                if (!isset(self::$responses[(int) $ch])) {
+                    self::$multiExecLastCh = $ch;
+                    self::exec($ch);
+                }
+            }
+        }
+        // return \curl_multi_exec($mh, $still_running);
+        return CURLM_OK;
+    }
+
+    public static function multiInfoRead($mh)
+    {
+        if (self::$multiExecLastCh) {
+            $info = array(
+                'msg' => CURLMSG_DONE,
+                'handle' => self::$multiExecLastCh,
+                'result' => CURLE_OK
+            );
+            self::$multiExecLastCh = null;
+            return $info;
+        }
+
+        return false;
+    }
+
     public static function exec($ch)
     {
         $handleRequestCallback = self::$handleRequestCallback;
@@ -119,7 +179,8 @@ class CurlRunkit implements LibraryHookInterface
 
         return CurlHelper::handleOutput(
             self::$responses[(int) $ch],
-            self::$curlOptions[(int) $ch]
+            self::$curlOptions[(int) $ch],
+            $ch
         );
     }
 
@@ -141,6 +202,13 @@ class CurlRunkit implements LibraryHookInterface
         static::$curlOptions[(int) $ch][$option] = $value;
 
         \curl_setopt_original($ch, $option, $value);
+    }
+
+    public static function setOptArray($ch, $options)
+    {
+        foreach ($options as $option => $value) {
+            static::setOpt($ch, $option, $value);
+        }
     }
 
     public function __destruct()

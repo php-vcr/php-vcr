@@ -32,16 +32,25 @@ class CurlHelper
         CURLINFO_CONTENT_LENGTH_UPLOAD
     );
 
-    public static function handleOutput(Response $response, array $curlOptions)
+    public static function handleOutput(Response $response, array $curlOptions, $ch)
     {
+        if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
+            $headers = $response->getRawHeaders();
+            call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $headers);
+        }
+
+        $body = (string) $response->getBody(true);
+
         if (isset($curlOptions[CURLOPT_FILE])) {
             $fp = $curlOptions[CURLOPT_FILE];
-            fwrite($fp, (string) $response->getBody());
+            fwrite($fp, $body);
             fflush($fp);
         } elseif (isset($curlOptions[CURLOPT_RETURNTRANSFER]) && $curlOptions[CURLOPT_RETURNTRANSFER] == true) {
-            return (string) $response->getBody();
+            return $body;
+        } elseif (isset($curlOptions[CURLOPT_WRITEFUNCTION])) {
+            call_user_func($curlOptions[CURLOPT_WRITEFUNCTION], $ch, $body);
         } else {
-            echo (string) $response->getBody();
+            echo $body;
         }
     }
 
@@ -106,13 +115,19 @@ class CurlHelper
             case CURLOPT_HTTPHEADER:
                 $headers = array();
                 foreach ($value as $header) {
-                    list($key, $val) = explode(': ', $header, 2);
-                    $headers[$key] = $val;
+                    $headerParts = explode(': ', $header, 2);
+                    if (isset($headerParts[1])) {
+                        $headers[$headerParts[0]] = $headerParts[1];
+                    }
                 }
                 $request->addHeaders($headers);
                 break;
             case CURLOPT_FILE:
                 $additionalCurlOpts[CURLOPT_FILE] = $value;
+                break;
+            case CURLOPT_WRITEFUNCTION:
+            case CURLOPT_HEADERFUNCTION:
+                // Ignore writer and header functions
                 break;
             default:
                 $request->getCurlOptions()->set($option, $value);

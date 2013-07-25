@@ -83,7 +83,8 @@ class CurlRewrite implements LibraryHookInterface
 
         return CurlHelper::handleOutput(
             self::$responses[(int) $ch],
-            self::$curlOptions[(int) $ch]
+            self::$curlOptions[(int) $ch],
+            $ch
         );
     }
 
