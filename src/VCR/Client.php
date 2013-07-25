@@ -17,7 +17,11 @@ class Client
 
     public function send($request)
     {
-        $response = $this->client->send($request);
+        try {
+            $response = $this->client->send($request);
+        } catch (BadResponseException $e) {
+            $response = $e->getResponse();
+        }
         return new Response($response->getStatusCode(), $response->getHeaders(), $response->getBody());
     }
 }
