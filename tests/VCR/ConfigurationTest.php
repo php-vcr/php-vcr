@@ -72,7 +72,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $actual = $this->config->addRequestMatcher('', $expected);
     }
 
-
     public function testAddRequestMatcherFailsWithWrongCallback()
     {
         $this->setExpectedException('\VCR\VCRException', "Request matcher 'example' is not callable.");
@@ -100,4 +99,21 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(in_array("VCR\Storage\StorageInterface", class_implements($class)));
     }
 
+    public function testWhitelist()
+    {
+        $expected = array('Tux', 'Gnu');
+
+        $this->config->setWhiteList($expected);
+
+        $this->assertEquals($expected, $this->config->getWhiteList());
+    }
+
+    public function testBlacklist()
+    {
+        $expected = array('Tux', 'Gnu');
+
+        $this->config->setBlackList($expected);
+
+        $this->assertEquals($expected, $this->config->getBlackList());
+    }
 }
