@@ -1,8 +1,8 @@
 <?php
 
-namespace VCR\LibraryHooks\CurlRewrite;
-
-require_once __DIR__ . '/Filter.php';
+namespace VCR\Util;
+use VCR\Configuration;
+use VCR\LibraryHooks\FilterInterface;
 
 
 /**
@@ -14,34 +14,59 @@ require_once __DIR__ . '/Filter.php';
  * @license    http://www.opensource.org/licenses/mit-license.html
  * @link       http://antecedent.github.com/patchwork
  */
-class Wrapper
+class StreamProcessor
 {
     const STREAM_OPEN_FOR_INCLUDE = 128;
 
-    protected static $whitelistPaths = array();
-    protected static $blacklistPaths = array();
+    /** @var FilterInterface[] $filters */
+    protected $filters = array();
 
-    public static function interceptIncludes($whitelistPaths = null, $blacklistPaths = null)
+    /**
+     * @var bool
+     */
+    protected $isIntercepting = false;
+
+
+    /**
+     * @param Configuration $configuration
+     */
+    public function __construct(Configuration $configuration)
     {
-        if (is_array($whitelistPaths)) {
-            self::$whitelistPaths = $whitelistPaths;
-        }
-
-        if (is_array($blacklistPaths)) {
-            self::$blacklistPaths = $blacklistPaths;
-        }
-        stream_wrapper_unregister('file');
-        stream_wrapper_register('file', __CLASS__);
+        $this->configuration = $configuration;
     }
 
-    public static function restore()
+    /**
+     * Registers current class as the PHP file stream wrapper.
+     */
+    public function intercept()
+    {
+        if (!$this->isIntercepting) {
+
+            $this->isIntercepting = true;
+
+            stream_wrapper_unregister('file');
+            stream_wrapper_register('file', __CLASS__);
+        }
+    }
+
+    /**
+     * Restores the original file stream wrapper status.
+     */
+    public function restore()
     {
         stream_wrapper_restore('file');
     }
 
+    /**
+     * Determines that the provided url is member of a url whitelist.
+     *
+     * @param string $uri
+     *
+     * @return bool
+     */
     protected function isWhitelisted($uri)
     {
-        foreach (self::$whitelistPaths as $path) {
+        foreach ($this->configuration->getWhiteList() as $path) {
             if (strpos($uri, $path) !== false) {
                 return true;
             }
@@ -50,9 +75,16 @@ class Wrapper
         return false;
     }
 
+    /**
+     * Determines that the provided url is member of a url blacklist.
+     *
+     * @param string $uri
+     *
+     * @return bool
+     */
     protected function isBlacklisted($uri)
     {
-        foreach (self::$blacklistPaths as $path) {
+        foreach ($this->configuration->getBlackList() as $path) {
             if (strpos($uri, $path) !== false) {
                 return true;
             }
@@ -61,11 +93,29 @@ class Wrapper
         return false;
     }
 
+    /**
+     * Determines that the provided uri leads to a PHP file.
+     *
+     * @todo What about PHP files with extensions:
+     *   - .inc
+     *   - .php(\d)*
+     *   - ...
+     *
+     * @param string $uri
+     *
+     * @return bool
+     */
     protected function isPhpFile($uri)
     {
         return pathinfo($uri, PATHINFO_EXTENSION) === 'php';
     }
 
+    /**
+     *
+     * @param string $uri
+     *
+     * @return bool
+     */
     protected function shouldProcess($uri)
     {
         return $this->isWhitelisted($uri) && !$this->isBlacklisted($uri) && $this->isPhpFile($uri);
@@ -73,7 +123,7 @@ class Wrapper
 
     public function stream_open($path, $mode, $options, &$openedPath)
     {
-        self::restore();
+        $this->restore();
 
         if (isset($this->context)) {
             $this->resource = fopen($path, $mode, $options, $this->context);
@@ -82,10 +132,10 @@ class Wrapper
         }
 
         if ($options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
-            stream_filter_append($this->resource, Filter::NAME, STREAM_FILTER_READ);
+            $this->appendFiltersToStream($this->resource);
         }
 
-        self::interceptIncludes();
+        $this->intercept();
         return $this->resource !== false;
     }
 
@@ -126,9 +176,9 @@ class Wrapper
 
     public function url_stat($path, $flags)
     {
-        self::restore();
+        $this->restore();
         $result = @stat($path);
-        self::interceptIncludes();
+        $this->intercept();
         return $result;
     }
 
@@ -140,13 +190,13 @@ class Wrapper
 
     public function dir_opendir($path, $options)
     {
-        self::restore();
+        $this->restore();
         if (isset($this->context)) {
             $this->resource = opendir($path, $this->context);
         } else {
             $this->resource = opendir($path);
         }
-        self::interceptIncludes();
+        $this->intercept();
         return $this->resource !== false;
     }
 
@@ -163,37 +213,37 @@ class Wrapper
 
     public function mkdir($path, $mode, $options)
     {
-        self::restore();
+        $this->restore();
         if (isset($this->context)) {
             $result = mkdir($path, $mode, $options, $this->context);
         } else {
             $result = mkdir($path, $mode, $options);
         }
-        self::interceptIncludes();
+        $this->intercept();
         return $result;
     }
 
     public function rename($path_from, $path_to)
     {
-        self::restore();
+        $this->restore();
         if (isset($this->context)) {
             $result = rename($path_from, $path_to, $this->context);
         } else {
             $result = rename($path_from, $path_to);
         }
-        self::interceptIncludes();
+        $this->intercept();
         return $result;
     }
 
     public function rmdir($path, $options)
     {
-        self::restore();
+        $this->restore();
         if (isset($this->context)) {
             $result = rmdir($path, $this->context);
         } else {
             $result = rmdir($path);
         }
-        self::interceptIncludes();
+        $this->intercept();
         return $result;
     }
 
@@ -230,19 +280,19 @@ class Wrapper
 
     public function unlink($path)
     {
-        self::restore();
+        $this->restore();
         if (isset($this->context)) {
             $result = unlink($path, $this->context);
         } else {
             $result = unlink($path);
         }
-        self::interceptIncludes();
+        $this->intercept();
         return $result;
     }
 
     public function stream_metadata($path, $option, $value)
     {
-        self::restore();
+        $this->restore();
         switch ($option) {
             case STREAM_META_TOUCH:
                 if (empty($value)) {
@@ -263,12 +313,43 @@ class Wrapper
                 $result = chmod($path, $value);
                 break;
         }
-        self::interceptIncludes();
+        $this->intercept();
         return $result;
     }
 
     public function stream_truncate($new_size)
     {
         return ftruncate($this->resource, $new_size);
+    }
+
+    /**
+     * @param FilterInterface $filter
+     */
+    public function appendFilter(FilterInterface $filter)
+    {
+        $this->filters[$filter::NAME] = $filter;
+    }
+
+    /**
+     * @param FilterInterface $filter
+     */
+    public function detachFilter(FilterInterface $filter)
+    {
+        if (!empty($this->filters[$filter::NAME])) {
+            unset($this->filters[$filter::NAME]);
+        }
+    }
+
+    /**
+     * Appends the current set of php_user_filter to the provided stream.
+     *
+     * @param resource $stream
+     */
+    protected function appendFiltersToStream($stream)
+    {
+        foreach ($this->filters as $filter) {
+
+            stream_filter_append($stream, $filter::NAME, STREAM_FILTER_READ);
+        }
     }
 }

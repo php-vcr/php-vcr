@@ -17,7 +17,7 @@ $loader->addClassMap(
     )
 );
 
-\VCR\LibraryHooks\CurlRewrite\Wrapper::interceptIncludes(
+\VCR\Util\StreamProcessor::interceptIncludes(
     array(
         'tests/VCR/LibraryHooks/CurlRewriteTest'
     )
