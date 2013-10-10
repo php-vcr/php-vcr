@@ -49,7 +49,6 @@ class CurlRewrite implements LibraryHookInterface
      */
     private $processor;
 
-
     /**
      *
      * @throws \BadMethodCallException in case the Soap extension is not installed.
@@ -92,6 +91,24 @@ class CurlRewrite implements LibraryHookInterface
         self::$handleRequestCallback = null;
 
         $this->status = self::DISABLED;
+    }
+
+    /**
+     * Calls default curl functions if library hook is disabled.
+     *
+     * @param  string $method [description]
+     * @param  array $args   [description]
+     * @return mixed Curl function return type.
+     */
+    public static function __callStatic($method, $args)
+    {
+        // Call original when disabled
+        if (self::$status == self::DISABLED) {
+            return call_user_func_array($method, $args);
+        }
+
+        $localMethod = str_replace('curl_', '', $method);
+        return call_user_func_array(array(__CLASS__, $localMethod), $args);
     }
 
     public static function init($url = null)
