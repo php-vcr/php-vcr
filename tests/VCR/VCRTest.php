@@ -2,11 +2,18 @@
 
 namespace VCR;
 
+
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class VCRTest extends \PHPUnit_Framework_TestCase
+class VCRTest extends VCR_TestCase
 {
+
+    public function setup()
+    {
+        $this->skipTestIfRunkitUnavailable();
+    }
+
     public function testUseStaticCallsNotInitialized()
     {
         VCR::configure()->enableLibraryHooks(array('stream_wrapper'));

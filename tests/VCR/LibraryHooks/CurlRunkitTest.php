@@ -2,14 +2,22 @@
 
 namespace VCR\LibraryHooks;
 
-use \VCR\Response;
+use VCR\Response;
+use VCR\VCR_TestCase;
 
 /**
  * Test if intercepting http/https using stream wrapper works.
  */
-class CurlRunkitTest extends \PHPUnit_Framework_TestCase
+class CurlRunkitTest extends VCR_TestCase
 {
     public $expected = 'example response body';
+
+
+    public function setup()
+    {
+        $this->skipTestIfRunkitUnavailable();
+    }
+
 
     /**
      * @group runkit
