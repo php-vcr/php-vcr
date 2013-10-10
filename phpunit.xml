@@ -6,16 +6,14 @@
          convertWarningsToExceptions="true"
          forceCoversAnnotation="false"
          mapTestClassNameToCoveredClassName="false"
-         printerClass="PHPUnit_TextUI_ResultPrinter"
          processIsolation="false"
          stopOnError="false"
          stopOnFailure="false"
          stopOnIncomplete="false"
          stopOnSkipped="false"
          testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
-         strict="false"
-         debug="true"
-         verbose="true">
+         strict="true"
+>
 
     <testsuites>
         <testsuite>
