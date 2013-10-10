@@ -25,7 +25,7 @@ class StreamProcessor
     protected static $configuration;
 
     /** @var FilterInterface[] $filters */
-    protected $filters = array();
+    protected static $filters = array();
 
     /**
      * @var bool
@@ -341,7 +341,7 @@ class StreamProcessor
      */
     public function appendFilter(FilterInterface $filter)
     {
-        $this->filters[$filter::NAME] = $filter;
+        static::$filters[$filter::NAME] = $filter;
     }
 
     /**
@@ -349,8 +349,8 @@ class StreamProcessor
      */
     public function detachFilter(FilterInterface $filter)
     {
-        if (!empty($this->filters[$filter::NAME])) {
-            unset($this->filters[$filter::NAME]);
+        if (!empty(static::$filters[$filter::NAME])) {
+            unset(static::$filters[$filter::NAME]);
         }
     }
 
@@ -361,8 +361,7 @@ class StreamProcessor
      */
     protected function appendFiltersToStream($stream)
     {
-        foreach ($this->filters as $filter) {
-
+        foreach (static::$filters as $filter) {
             stream_filter_append($stream, $filter::NAME, STREAM_FILTER_READ);
         }
     }
