@@ -18,7 +18,9 @@
          verbose="true">
 
     <testsuites>
-        <directory>./tests</directory>>
+        <testsuite>
+            <directory>./tests</directory>>
+        </testsuite>
     </testsuites>
 
 </phpunit>
