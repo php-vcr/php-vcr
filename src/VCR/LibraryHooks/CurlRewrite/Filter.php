@@ -2,34 +2,24 @@
 
 namespace VCR\LibraryHooks\CurlRewrite;
 
-class Filter extends \PHP_User_Filter
+use VCR\LibraryHooks\AbstractFilter;
+
+class Filter extends AbstractFilter
 {
     const NAME = 'vcr_curl_rewrite';
-    const REWRITE_CLASS = '\VCR\LibraryHooks\CurlRewrite';
 
-    private static $replacements = array(
+    private $replacements = array(
         'curl_init('    => '\VCR\LibraryHooks\CurlRewrite::curl_init(',
         'curl_exec('    => '\VCR\LibraryHooks\CurlRewrite::curl_exec(',
         'curl_getinfo(' => '\VCR\LibraryHooks\CurlRewrite::curl_getinfo(',
         'curl_setopt('  => '\VCR\LibraryHooks\CurlRewrite::curl_setopt('
     );
 
-    public static function register()
-    {
-        stream_filter_register(self::NAME, __CLASS__);
-    }
-
-    function filter($in, $out, &$consumed, $closing)
-    {
-        while ($bucket = stream_bucket_make_writeable($in)) {
-            $bucket->data = $this->transformCode($bucket->data);
-            // var_dump($bucket->data);
-            $consumed += $bucket->datalen;
-            stream_bucket_append($out, $bucket);
-        }
-        return PSFS_PASS_ON;
-    }
-
+    /**
+     * @param string $code
+     *
+     * @return mixed
+     */
     public function transformCode($code)
     {
         return str_replace(
@@ -39,4 +29,3 @@ class Filter extends \PHP_User_Filter
         );
     }
 }
-Filter::register();

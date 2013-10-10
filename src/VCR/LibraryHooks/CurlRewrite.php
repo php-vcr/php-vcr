@@ -2,10 +2,11 @@
 
 namespace VCR\LibraryHooks;
 
-use \VCR\Request;
-use \VCR\Response;
-use \VCR\Assertion;
-use \VCR\Util\CurlHelper;
+use VCR\Request;
+use VCR\Response;
+use VCR\Assertion;
+use VCR\Util\CurlHelper;
+use VCR\Util\StreamProcessor;
 
 /**
  * Library hook for curl functions using include-overwrite.
@@ -21,7 +22,7 @@ class CurlRewrite implements LibraryHookInterface
     /**
      * @var string Current status of this hook, either enabled or disabled.
      */
-    protected static $status = self::DISABLED;
+    protected $status = self::DISABLED;
 
     /**
      * @var Request[] All requests which have been intercepted.
@@ -39,33 +40,58 @@ class CurlRewrite implements LibraryHookInterface
     protected static $curlOptions = array();
 
     /**
-     * @inherit
+     * @var FilterInterface
+     */
+    private $filter;
+
+    /**
+     * @var \VCR\Util\StreamProcessor
+     */
+    private $processor;
+
+
+    /**
+     *
+     * @throws \BadMethodCallException in case the Soap extension is not installed.
+     */
+    public function __construct(FilterInterface $filter, StreamProcessor $processor)
+    {
+        $this->processor = $processor;
+        $this->filter = $filter;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function enable(\Closure $handleRequestCallback)
     {
         Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
+
+        if ($this->status == self::ENABLED) {
+            return;
+        }
+
+        $this->filter->register();
+        $this->processor->appendFilter($this->filter);
+        $this->processor->intercept();
+
         self::$handleRequestCallback = $handleRequestCallback;
-        self::$status = self::ENABLED;
+
+        $this->status = self::ENABLED;
     }
 
     /**
-     * @inherit
+     * @inheritDoc
      */
     public function disable()
     {
-        self::$status = self::DISABLED;
-        self::$handleRequestCallback = null;
-    }
-
-    public static function __callStatic($method, $args)
-    {
-        // Call original when disabled
-        if (self::$status == self::DISABLED) {
-            return call_user_func_array($method, $args);
+        if ($this->status == self::DISABLED) {
+            return;
         }
 
-        $localMethod = str_replace('curl_', '', $method);
-        return call_user_func_array(array(__CLASS__, $localMethod), $args);
+        self::$handleRequestCallback = null;
+
+        $this->status = self::DISABLED;
     }
 
     public static function init($url = null)
