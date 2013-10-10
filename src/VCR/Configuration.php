@@ -15,7 +15,7 @@ class Configuration
         'stream_wrapper' => '\VCR\LibraryHooks\StreamWrapper',
         'curl_runkit'    => '\VCR\LibraryHooks\CurlRunkit',
         'curl_rewrite'   => '\VCR\LibraryHooks\CurlRewrite',
-        // 'soap'        => '\VCR\LibraryHooks\Soap',
+        'soap'        => '\VCR\LibraryHooks\Soap',
     );
 
     // Yaml by default
@@ -53,8 +53,9 @@ class Configuration
         ));
     }
 
-    public function enableLibraryHooks(array $hooks)
+    public function enableLibraryHooks($hooks)
     {
+        $hooks = is_array($hooks) ? $hooks : array($hooks);
         $invalidHooks = array_diff($hooks, array_keys($this->availableLibraryHooks));
         if ($invalidHooks) {
             throw new \InvalidArgumentException("Library hooks don't exist: " . join(', ', $invalidHooks));
