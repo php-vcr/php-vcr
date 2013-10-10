@@ -22,7 +22,7 @@ class CurlRewrite implements LibraryHookInterface
     /**
      * @var string Current status of this hook, either enabled or disabled.
      */
-    protected $status = self::DISABLED;
+    protected static $status = self::DISABLED;
 
     /**
      * @var Request[] All requests which have been intercepted.
@@ -66,7 +66,7 @@ class CurlRewrite implements LibraryHookInterface
     {
         Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
 
-        if ($this->status == self::ENABLED) {
+        if (static::$status == self::ENABLED) {
             return;
         }
 
@@ -76,7 +76,7 @@ class CurlRewrite implements LibraryHookInterface
 
         self::$handleRequestCallback = $handleRequestCallback;
 
-        $this->status = self::ENABLED;
+        static::$status = self::ENABLED;
     }
 
     /**
@@ -84,13 +84,13 @@ class CurlRewrite implements LibraryHookInterface
      */
     public function disable()
     {
-        if ($this->status == self::DISABLED) {
+        if (static::$status == self::DISABLED) {
             return;
         }
 
         self::$handleRequestCallback = null;
 
-        $this->status = self::DISABLED;
+        static::$status = self::DISABLED;
     }
 
     /**
@@ -103,7 +103,7 @@ class CurlRewrite implements LibraryHookInterface
     public static function __callStatic($method, $args)
     {
         // Call original when disabled
-        if (self::$status == self::DISABLED) {
+        if (static::$status == self::DISABLED) {
             return call_user_func_array($method, $args);
         }
 
