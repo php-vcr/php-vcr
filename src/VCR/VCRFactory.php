@@ -3,6 +3,7 @@
 namespace VCR;
 
 use VCR\LibraryHooks\CurlRewrite;
+use VCR\LibraryHooks\CurlRewrite\Filter as CurlRewriteFilter;
 use VCR\LibraryHooks\Soap;
 use VCR\Util\StreamProcessor;
 
@@ -60,19 +61,18 @@ class VCRFactory
         return new $class($filePath);
     }
 
-    protected function createSoap()
+    protected function createVCRLibraryHooksSoap()
     {
         return new Soap(
-            $this->getOrCreate('Soap\\Filter'),
+            $this->getOrCreate('VCR\\LibraryHooks\\Soap\\Filter'),
             $this->getOrCreate('Util\\StreamProcessor')
         );
     }
 
-
-    protected function createCurlRewrite()
+    protected function createVCRLibraryHooksCurlRewrite()
     {
         return new CurlRewrite(
-            $this->getOrCreate('CurlRewrite\\Filter'),
+            $this->getOrCreate('VCR\\LibraryHooks\\CurlRewrite\\Filter'),
             $this->getOrCreate('Util\\StreamProcessor')
         );
     }
