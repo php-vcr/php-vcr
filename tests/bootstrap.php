@@ -20,4 +20,5 @@ $loader->addClassMap(
 \VCR\VCR::configure()
     ->enableLibraryHooks(array('curl_rewrite', 'soap'));
 \VCR\VCR::turnOn();
+\VCR\VCR::turnOff();
 
