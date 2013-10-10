@@ -34,6 +34,17 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testEnableSingleLibraryHook()
+    {
+        $this->config->enableLibraryHooks('stream_wrapper');
+        $this->assertEquals(
+            array(
+                '\VCR\LibraryHooks\StreamWrapper',
+            ),
+            $this->config->getLibraryHooks()
+        );
+    }
+
     public function testEnableLibraryHooksFailsWithWrongHookName()
     {
         $this->setExpectedException('InvalidArgumentException', "Library hooks don't exist: non_existing");
