@@ -15,7 +15,7 @@ abstract class AbstractFilter extends \PHP_User_Filter implements FilterInterfac
     {
         if (!$this->isRegistered) {
 
-            $this->isRegistered = stream_filter_register(static::NAME, __CLASS__);
+            $this->isRegistered = stream_filter_register(static::NAME, get_called_class());
         }
 
         return $this->isRegistered;

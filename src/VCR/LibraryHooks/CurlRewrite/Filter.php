@@ -8,7 +8,7 @@ class Filter extends AbstractFilter
 {
     const NAME = 'vcr_curl_rewrite';
 
-    private $replacements = array(
+    private static $replacements = array(
         'curl_init('    => '\VCR\LibraryHooks\CurlRewrite::curl_init(',
         'curl_exec('    => '\VCR\LibraryHooks\CurlRewrite::curl_exec(',
         'curl_getinfo(' => '\VCR\LibraryHooks\CurlRewrite::curl_getinfo(',
@@ -20,7 +20,7 @@ class Filter extends AbstractFilter
      *
      * @return mixed
      */
-    public function transformCode($code)
+    protected function transformCode($code)
     {
         return str_replace(
             array_keys(self::$replacements),
