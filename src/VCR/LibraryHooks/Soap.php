@@ -34,8 +34,8 @@ class Soap implements LibraryHookInterface
 
     public function __construct()
     {
-        if (!function_exists('runkit_function_redefine')) {
-            throw new \BadMethodCallException('For soap support you need to install runkit extension.');
+        if (!class_exists('\SoapClient')) {
+            throw new \BadMethodCallException('For soap support you need to install the soap extension.');
         }
     }
 
