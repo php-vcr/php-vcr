@@ -74,7 +74,13 @@ class StreamProcessor
      */
     protected function isWhitelisted($uri)
     {
-        foreach (static::$configuration->getWhiteList() as $path) {
+        $whiteList = static::$configuration->getWhiteList();
+
+        if (empty($whiteList)) {
+            return true;
+        }
+
+        foreach ($whiteList as $path) {
             if (strpos($uri, $path) !== false) {
                 return true;
             }
