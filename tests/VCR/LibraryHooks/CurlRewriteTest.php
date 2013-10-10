@@ -21,9 +21,6 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         $this->curlHook = new CurlRewrite(new Filter(), new StreamProcessor($this->config));
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldInterceptCallWhenEnabled()
     {
         $this->curlHook->enable($this->getTestCallback());
@@ -37,9 +34,6 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not returned.');
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldNotInterceptCallWhenNotEnabled()
     {
         $this->markTestSkipped('Uses internet connection, find another way to test this.');
@@ -52,9 +46,6 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         curl_close($ch);
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldNotInterceptCallWhenDisabled()
     {
         $testClass = $this;
@@ -70,9 +61,6 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         curl_close($ch);
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldWriteFileOnFileDownload()
     {
         $this->curlHook->enable($this->getTestCallback());
@@ -90,9 +78,6 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written in file.');
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldEchoResponseIfReturnTransferFalse()
     {
         $this->curlHook->enable($this->getTestCallback());
@@ -109,9 +94,6 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldPostFieldsAsString()
     {
         $testClass = $this;
@@ -131,9 +113,6 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         $this->curlHook->disable();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldPostFieldsAsArray()
     {
         $testClass = $this;
@@ -153,9 +132,6 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         $this->curlHook->disable();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldReturnCurlInfoStatusCode()
     {
         $this->curlHook->enable($this->getTestCallback());
@@ -163,15 +139,13 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         $ch = curl_init('http://127.0.0.1');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
+        $infoHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        $this->assertEquals(200, curl_getinfo($ch, CURLINFO_HTTP_CODE), 'HTTP status not set.');
+        $this->assertEquals(200, $infoHttpCode, 'HTTP status not set.');
         $this->curlHook->disable();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldReturnCurlInfoAll()
     {
         $this->curlHook->enable($this->getTestCallback());
@@ -179,25 +153,20 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         $ch = curl_init('http://127.0.0.1');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
+        $info = curl_getinfo($ch);
         curl_close($ch);
 
-        $this->assertTrue(is_array(curl_getinfo($ch)), 'curl_getinfo() should return an array.');
-        $this->assertEquals(19, count(curl_getinfo($ch)), 'curl_getinfo() should return 19 values.');
+        $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
+        $this->assertEquals(19, count($info), 'curl_getinfo() should return 19 values.');
         $this->curlHook->disable();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldNotThrowErrorWhenDisabledTwice()
     {
         $this->curlHook->disable();
         $this->curlHook->disable();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldNotThrowErrorWhenEnabledTwice()
     {
         $this->curlHook->enable($this->getTestCallback());
