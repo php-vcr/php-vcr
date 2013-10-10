@@ -6,13 +6,14 @@ use \VCR\Configuration;
 use \VCR\Request;
 use \VCR\Response;
 use \VCR\Assertion;
+use VCR\Util\StreamProcessor;
 
 /**
  * Library hook for curl functions.
  */
 class Soap implements LibraryHookInterface
 {
-    private static $status = self::DISABLED;
+    private $status = self::DISABLED;
 
     /**
      * @var Request
@@ -26,65 +27,78 @@ class Soap implements LibraryHookInterface
 
     private static $handleRequestCallback;
 
-    private static $overwriteMethods = array(
-        'SoapClient::__doRequest' => array(
-            '$request, $location, $action, $version, $one_way = 0',
-            'doRequest($request, $location, $action, $version, $one_way)'),
-    );
+    /**
+     * @var FilterInterface
+     */
+    private $filter;
 
-    public function __construct()
+    /**
+     * @var \VCR\Util\StreamProcessor
+     */
+    private $processor;
+
+
+    /**
+     *
+     * @throws \BadMethodCallException in case the Soap extension is not installed.
+     */
+    public function __construct(FilterInterface $filter, StreamProcessor $processor)
     {
         if (!class_exists('\SoapClient')) {
             throw new \BadMethodCallException('For soap support you need to install the soap extension.');
         }
+
+        $this->processor = $processor;
+        $this->filter = $filter;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * @param callable $handleRequestCallback
+     */
     public function enable(\Closure $handleRequestCallback)
     {
         Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
         self::$handleRequestCallback = $handleRequestCallback;
 
-        if (self::$status == self::ENABLED) {
+        if ($this->status == self::ENABLED) {
             return;
         }
 
-        // foreach (self::$overwriteMethods as $identifier => $mapping) {
-        //     list($className, $methodName) = explode('::', $identifier);
-        //     runkit_method_rename($className, $methodName, $methodName . '_original');
+        $this->filter->register();
+        $this->processor->appendFilter($this->filter);
+        $this->processor->intercept();
 
-        //     if (method_exists($className, $methodName . '_temp')) {
-        //         runkit_method_rename($className, $methodName . '_temp', $methodName);
-        //     } else {
-        //         runkit_method_add($className, $methodName, $mapping[0], 'return ' . __CLASS__ . '::' . $mapping[1] . ';');
-        //     }
-        // }
 
-        self::$status = self::ENABLED;
+        $this->status = self::ENABLED;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * @return null
+     */
     public function disable()
     {
-        if (self::$status == self::DISABLED) {
+        if ($this->status == self::DISABLED) {
             return;
         }
 
         self::$handleRequestCallback = null;
 
-        // foreach (self::$overwriteMethods as $identifier => $mapping) {
-        //     list($className, $methodName) = explode('::', $identifier);
-        //     runkit_method_rename($className, $methodName, $methodName . '_temp');
-        //     runkit_method_rename($className, $methodName . '_original', $methodName);
-        // }
-
-        self::$status = self::DISABLED;
+        $this->status = self::DISABLED;
     }
 
     public static function doRequest($request, $location, $action, $version , $one_way = 0)
     {
-        var_dump($request, $location, $action, $version, $one_way);
-        $handleRequestCallback = self::$handleRequestCallback;
-        // self::$response = $handleRequestCallback(self::$request);
 
+
+        var_dump(__METHOD__, $request, $location, $action, $version, $one_way);
+
+
+        // $handleRequestCallback = self::$handleRequestCallback;
+        // self::$response = $handleRequestCallback(self::$request);
         // echo self::$response->getBody(true);
     }
 
