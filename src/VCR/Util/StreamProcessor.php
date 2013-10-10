@@ -1,6 +1,7 @@
 <?php
 
 namespace VCR\Util;
+
 use VCR\Configuration;
 use VCR\LibraryHooks\FilterInterface;
 
@@ -18,6 +19,11 @@ class StreamProcessor
 {
     const STREAM_OPEN_FOR_INCLUDE = 128;
 
+    /**
+     * @var Configuration
+     */
+    protected static $configuration;
+
     /** @var FilterInterface[] $filters */
     protected $filters = array();
 
@@ -26,13 +32,15 @@ class StreamProcessor
      */
     protected $isIntercepting = false;
 
-
     /**
+     *
      * @param Configuration $configuration
      */
-    public function __construct(Configuration $configuration)
+    public function __construct($configuration = null)
     {
-        $this->configuration = $configuration;
+        if ($configuration) {
+            static::$configuration = $configuration;
+        }
     }
 
     /**
@@ -66,7 +74,7 @@ class StreamProcessor
      */
     protected function isWhitelisted($uri)
     {
-        foreach ($this->configuration->getWhiteList() as $path) {
+        foreach (static::$configuration->getWhiteList() as $path) {
             if (strpos($uri, $path) !== false) {
                 return true;
             }
@@ -84,7 +92,7 @@ class StreamProcessor
      */
     protected function isBlacklisted($uri)
     {
-        foreach ($this->configuration->getBlackList() as $path) {
+        foreach (static::$configuration->getBlackList() as $path) {
             if (strpos($uri, $path) !== false) {
                 return true;
             }
