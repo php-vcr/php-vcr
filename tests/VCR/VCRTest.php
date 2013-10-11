@@ -9,10 +9,6 @@ namespace VCR;
 class VCRTest extends VCR_TestCase
 {
 
-    public function setup()
-    {
-        $this->skipTestIfRunkitUnavailable();
-    }
 
     public function testUseStaticCallsNotInitialized()
     {
@@ -39,6 +35,7 @@ class VCRTest extends VCR_TestCase
      */
     public function testShouldInterceptCurl()
     {
+        $this->skipTestIfRunkitUnavailable();
         VCR::configure()->enableLibraryHooks(array('curl_runkit'));
         VCR::turnOn();
         VCR::insertCassette('unittest_curl_test');
@@ -50,21 +47,18 @@ class VCRTest extends VCR_TestCase
         VCR::eject();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldInterceptGuzzleLibrary()
     {
-        $this->markTestSkipped('Not working yet.');
+        VCR::configure()->enableLibraryHooks(array('curl_rewrite'));
         VCR::turnOn();
         VCR::insertCassette('unittest_guzzle_test');
         $client = new \Guzzle\Http\Client();
-        $response = $client->get('http://google.com')->send();
+        $response = $client->get('http://example.com')->send();
         $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
         VCR::eject();
     }
 
-    public function testShouldThrowExceptionIfNoCasettePresent()
+    public function testShouldThrowExceptionIfNoCassettePresent()
     {
         $this->setExpectedException(
             'BadMethodCallException',
@@ -78,9 +72,6 @@ class VCRTest extends VCR_TestCase
         file_get_contents('http://example.com');
     }
 
-    /**
-     * @group runkit
-     */
     public function testInsertMultipleCassettes()
     {
         $this->markTestSkipped();
@@ -90,10 +81,7 @@ class VCRTest extends VCR_TestCase
         // TODO: Check of cassette was changed
     }
 
-    /**
-     * @group runkit
-     */
-    public function testThrowExeptions()
+    public function testDoesNotBlockThrowingExceptions()
     {
         VCR::turnOn();
         $this->setExpectedException('InvalidArgumentException');
@@ -101,20 +89,10 @@ class VCRTest extends VCR_TestCase
         throw new \InvalidArgumentException('test');
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldSetAConfiguration()
     {
         VCR::configure()->setCassettePath('tests');
         VCR::turnOn();
         $this->assertEquals('tests', VCR::configure()->getCassettePath());
     }
-
-    // public function test()
-    // {
-    //     VCRFactory::returnOn('VCR\Storage\Json', $storageMock);
-    //     VCR::turnOn();
-    // }
-
 }

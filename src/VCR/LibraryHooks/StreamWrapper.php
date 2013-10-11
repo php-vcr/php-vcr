@@ -49,7 +49,7 @@ class StreamWrapper implements LibraryHookInterface
         $handleRequestCallback = self::$handleRequestCallback;
         $this->response = $handleRequestCallback(new Request('GET', $path));
 
-        return $this->response->getBody();
+        return (string) $this->response->getBody();
     }
 
     function stream_read($count)
