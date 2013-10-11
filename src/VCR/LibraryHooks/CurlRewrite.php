@@ -131,6 +131,53 @@ class CurlRewrite implements LibraryHookInterface
         );
     }
 
+    public static function multiAddHandle($mh, $ch)
+    {
+        if (isset(self::$multiHandles[(int) $mh])) {
+            self::$multiHandles[(int) $mh][] = (int) $ch;
+        } else {
+            self::$multiHandles[(int) $mh] = array((int) $ch);
+        }
+        // return \curl_multi_add_handle_original($mh, $ch);
+    }
+
+    public static function multiRemoveHandle($mh, $ch)
+    {
+        if (isset(self::$multiHandles[(int) $mh][(int) $ch])) {
+            unset(self::$multiHandles[(int) $mh][(int) $ch]);
+        }
+        // return \curl_multi_remove_handle_original($mh, $ch);
+    }
+
+    public static function multiExec($mh, &$still_running)
+    {
+        if (isset(self::$multiHandles[(int) $mh])) {
+            foreach (self::$multiHandles[(int) $mh] as $ch) {
+                if (!isset(self::$responses[(int) $ch])) {
+                    self::$multiExecLastCh = $ch;
+                    self::exec($ch);
+                }
+            }
+        }
+        // return \curl_multi_exec($mh, $still_running);
+        return CURLM_OK;
+    }
+
+    public static function multiInfoRead($mh)
+    {
+        if (self::$multiExecLastCh) {
+            $info = array(
+                'msg' => CURLMSG_DONE,
+                'handle' => self::$multiExecLastCh,
+                'result' => CURLE_OK
+            );
+            self::$multiExecLastCh = null;
+            return $info;
+        }
+
+        return false;
+    }
+
     public static function getinfo($ch, $option = 0)
     {
         return CurlHelper::getCurlOptionFromResponse(
