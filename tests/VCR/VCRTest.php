@@ -9,7 +9,6 @@ namespace VCR;
 class VCRTest extends VCR_TestCase
 {
 
-
     public function testUseStaticCallsNotInitialized()
     {
         VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
@@ -49,11 +48,12 @@ class VCRTest extends VCR_TestCase
 
     public function testShouldInterceptGuzzleLibrary()
     {
+        $this->markTestSkipped('Not yet implemented.');
         VCR::configure()->enableLibraryHooks(array('curl_rewrite'));
         VCR::turnOn();
         VCR::insertCassette('unittest_guzzle_test');
         $client = new \Guzzle\Http\Client();
-        $response = $client->get('http://example.com')->send();
+        $response = $client->get('http://google.com')->send();
         $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
         VCR::eject();
     }
