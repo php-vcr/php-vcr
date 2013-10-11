@@ -115,6 +115,7 @@ class CurlRewrite implements LibraryHookInterface
         }
 
         $localMethod = str_replace('curl_', '', $method);
+        $localMethod = preg_replace('/_(.?)/e',"strtoupper('$1')", $localMethod);
         return call_user_func_array(array(__CLASS__, $localMethod), $args);
     }
 

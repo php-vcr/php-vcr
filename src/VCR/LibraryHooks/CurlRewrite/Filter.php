@@ -13,10 +13,10 @@ class Filter extends AbstractFilter
         'curl_exec('    => '\VCR\LibraryHooks\CurlRewrite::curl_exec(',
         'curl_getinfo(' => '\VCR\LibraryHooks\CurlRewrite::curl_getinfo(',
         'curl_setopt('  => '\VCR\LibraryHooks\CurlRewrite::curl_setopt(',
-        'curl_multi_add_handle('    => '\VCR\LibraryHooks\CurlRewrite::multiAddHandle(',
-        'curl_multi_remove_handle(' => '\VCR\LibraryHooks\CurlRewrite::multiRemoveHandle(',
-        'curl_multi_exec('          => '\VCR\LibraryHooks\CurlRewrite::multiExec(',
-        'curl_multi_info_read('     => '\VCR\LibraryHooks\CurlRewrite::multiInfoRead('
+        'curl_multi_add_handle('    => '\VCR\LibraryHooks\CurlRewrite::curl_multi_add_handle(',
+        'curl_multi_remove_handle(' => '\VCR\LibraryHooks\CurlRewrite::curl_multi_remove_handle(',
+        'curl_multi_exec('          => '\VCR\LibraryHooks\CurlRewrite::curl_multi_exec(',
+        'curl_multi_info_read('     => '\VCR\LibraryHooks\CurlRewrite::curl_multi_info_read('
     );
 
     /**
