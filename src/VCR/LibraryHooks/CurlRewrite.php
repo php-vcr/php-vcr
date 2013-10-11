@@ -40,6 +40,13 @@ class CurlRewrite implements LibraryHookInterface
     protected static $curlOptions = array();
 
     /**
+     * All curl handles which belong to curl_multi handles.
+     */
+    protected static $multiHandles = array();
+
+    protected static $multiExecLastCh;
+
+    /**
      * @var FilterInterface
      */
     private $filter;
@@ -120,7 +127,6 @@ class CurlRewrite implements LibraryHookInterface
 
     public static function exec($ch)
     {
-        //  workaround for this?
         $handleRequestCallback = self::$handleRequestCallback;
         self::$responses[(int) $ch] = $handleRequestCallback(self::$requests[(int) $ch]);
 
@@ -138,7 +144,6 @@ class CurlRewrite implements LibraryHookInterface
         } else {
             self::$multiHandles[(int) $mh] = array((int) $ch);
         }
-        // return \curl_multi_add_handle_original($mh, $ch);
     }
 
     public static function multiRemoveHandle($mh, $ch)
@@ -146,7 +151,6 @@ class CurlRewrite implements LibraryHookInterface
         if (isset(self::$multiHandles[(int) $mh][(int) $ch])) {
             unset(self::$multiHandles[(int) $mh][(int) $ch]);
         }
-        // return \curl_multi_remove_handle_original($mh, $ch);
     }
 
     public static function multiExec($mh, &$still_running)
@@ -159,7 +163,6 @@ class CurlRewrite implements LibraryHookInterface
                 }
             }
         }
-        // return \curl_multi_exec($mh, $still_running);
         return CURLM_OK;
     }
 
