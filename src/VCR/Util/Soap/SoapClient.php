@@ -3,17 +3,22 @@
 namespace VCR\Util\Soap;
 
 
+use VCR\LibraryHooks\LibraryHookInterface;
+use VCR\LibraryHooks\LibraryHooksException;
 use VCR\Request;
 use VCR\VCRFactory;
-use VCR\LibraryHooks\LibraryHooksException;
 
 class SoapClient extends \SoapClient
 {
+    /**
+     * @var \VCR\LibraryHooks\LibraryHookInterface;
+     */
+    protected $soapHook;
 
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
         $response = '';
-        $soap = VCRFactory::get('VCR\\LibraryHooks\\Soap');
+        $soap = $this->getLibraryHook();
 
         try {
             $response = $soap->doRequest($request, $location, $action, $version, $one_way = 0);
@@ -31,5 +36,19 @@ class SoapClient extends \SoapClient
         }
 
         return $response;
+    }
+
+    public function setLibraryHook(LibraryHookInterface $hook )
+    {
+        $this->soapHook = $hook;
+    }
+
+    public function getLibraryHook()
+    {
+        if (empty($this->soapHook)) {
+            $this->soapHook = VCRFactory::get('VCR\\LibraryHooks\\Soap');
+        }
+
+        return $this->soapHook;
     }
 }
