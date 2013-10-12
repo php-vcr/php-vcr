@@ -5,10 +5,18 @@ namespace VCR\LibraryHooks;
 
 abstract class AbstractFilter extends \PHP_User_Filter implements FilterInterface
 {
+    const NAME = 'vcr_abstract_filter';
 
+    /**
+     * Flag to signalize the current filter is registered.
+     *
+     * @var bool
+     */
     protected $isRegistered = false;
 
     /**
+     * Attaches the current filter to a stream.
+     *
      * @return bool true on success or false on failure.
      */
     public function register()
@@ -22,6 +30,8 @@ abstract class AbstractFilter extends \PHP_User_Filter implements FilterInterfac
     }
 
     /**
+     * Applies the current filter to a provided stream.
+     *
      * @param resource $in
      * @param resource $out
      * @param int $consumed
