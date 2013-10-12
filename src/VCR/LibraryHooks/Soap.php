@@ -15,14 +15,12 @@ use VCR\Util\StreamProcessor;
 class Soap implements LibraryHookInterface
 {
     /**
-     * @var Request
+     * @var string
      */
-    private static $request;
-    /**
-     * @var Response
-     */
-    private static $response;
     private static $handleRequestCallback;
+    /**
+     * @var string
+     */
     private $status = self::DISABLED;
     /**
      * @var FilterInterface
@@ -34,6 +32,9 @@ class Soap implements LibraryHookInterface
     private $processor;
 
     /**
+     * @param FilterInterface $filter
+     * @param StreamProcessor $processor
+     *
      * @throws \BadMethodCallException in case the Soap extension is not installed.
      */
     public function __construct(FilterInterface $filter, StreamProcessor $processor)
@@ -46,9 +47,9 @@ class Soap implements LibraryHookInterface
         $this->filter = $filter;
     }
 
-    public static function doRequest($request, $location, $action, $version, $one_way = 0)
+    public function doRequest($request, $location, $action, $version, $one_way = 0)
     {
-        if (self::DISABLED) {
+        if ($this->status === self::DISABLED) {
             throw new LibraryHooksException(
                 'Hook must be enabled.',
                 LibraryHooksException::HookDisabled
@@ -58,16 +59,16 @@ class Soap implements LibraryHookInterface
         $request = new Request('POST', $location);
         $request->addHeader('SoapAction', $action);
         $request->setBody($request);
+        $request->addHeader('Content-Type', 'application/soap+xml');
 
         $handleRequestCallback = self::$handleRequestCallback;
         $response = $handleRequestCallback($request);
-        echo (string)$response->getBody(true);
+
+        return (string)$response->getBody(true);
     }
 
     /**
      * @inheritDoc
-     *
-     * @param callable $handleRequestCallback
      */
     public function enable(\Closure $handleRequestCallback)
     {
@@ -88,7 +89,6 @@ class Soap implements LibraryHookInterface
 
     /**
      * @inheritDoc
-     * @return null
      */
     public function disable()
     {

@@ -15,11 +15,17 @@ class SoapTest extends \PHPUnit_Framework_TestCase
 {
     public $expected = 'example response body';
 
+    protected $config;
+
+    /** @var  Soap $soapHook */
+    protected $soapHook;
+
     public function setup()
     {
         $this->config = new Configuration();
         $this->soapHook = new Soap(new Filter(), new StreamProcessor($this->config));
     }
+
 
     public function testShouldInterceptCallWhenEnabled()
     {
@@ -29,10 +35,22 @@ class SoapTest extends \PHPUnit_Framework_TestCase
         $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
 
         $this->soapHook->disable();
-        $this->assertEquals($this->expected, $actual, 'Response was not returned.');
+        $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
+    }
+
+    public function testShouldNotInterceptCallWhenDisabled()
+    {
+        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
+
+        $this->soapHook->disable();
+
+        $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+        $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
     }
 
     /**
+     * @param null $handleRequestCallback
+     *
      * @return \callable
      */
     protected function getTestCallback($handleRequestCallback = null)
