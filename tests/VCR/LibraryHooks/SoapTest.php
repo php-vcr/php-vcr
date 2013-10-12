@@ -13,7 +13,7 @@ use VCR\Util\StreamProcessor;
  */
 class SoapTest extends \PHPUnit_Framework_TestCase
 {
-    public $expected = 'example response body';
+    public $expected = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetCityWeatherByZIPResponse xmlns="http://ws.cdyne.com/WeatherWS/"><GetCityWeatherByZIPResult><Success>true</Success></GetCityWeatherByZIPResult></GetCityWeatherByZIPResponse></soap:Body></soap:Envelope>';
 
     protected $config;
 
@@ -32,17 +32,21 @@ class SoapTest extends \PHPUnit_Framework_TestCase
         $this->soapHook->enable($this->getTestCallback());
 
         $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
+        $client->setLibraryHook($this->soapHook);
         $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
 
         $this->soapHook->disable();
         $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
+        $this->assertEquals(true, $actual->GetCityWeatherByZIPResult->Success, 'Response was not returned.');
     }
 
     public function testShouldNotInterceptCallWhenDisabled()
     {
-        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
-
+        $this->markTestSkipped('Uses internet connection, find another way to test this.');
         $this->soapHook->disable();
+
+        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
+        $client->setLibraryHook($this->soapHook);
 
         $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
         $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
