@@ -117,8 +117,13 @@ class CurlRewrite implements LibraryHookInterface
             return call_user_func_array($method, $args);
         }
 
+        if ($method === 'curl_multi_exec') {
+            return self::multiExec($args[0], $args[1]);
+        }
+
         $localMethod = str_replace('curl_', '', $method);
         $localMethod = preg_replace('/_(.?)/e',"strtoupper('$1')", $localMethod);
+
         return call_user_func_array(array(__CLASS__, $localMethod), $args);
     }
 
