@@ -18,7 +18,8 @@ $loader->addClassMap(
 );
 
 \VCR\VCR::configure()
-    ->enableLibraryHooks(array('curl_rewrite', 'soap'));
+    ->enableLibraryHooks(array('curl_rewrite', 'soap'))
+    ->setBlackList(array('PHPUnit', 'tests'));
 \VCR\VCR::turnOn();
 \VCR\VCR::turnOff();
 
