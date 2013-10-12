@@ -50,10 +50,9 @@ class StreamProcessor
     {
         if (!$this->isIntercepting) {
 
-            $this->isIntercepting = true;
-
             stream_wrapper_unregister('file');
-            stream_wrapper_register('file', __CLASS__);
+
+            $this->isIntercepting = stream_wrapper_register('file', __CLASS__);
         }
     }
 
