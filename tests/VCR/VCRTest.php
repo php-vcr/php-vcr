@@ -24,7 +24,7 @@ class VCRTest extends VCR_TestCase
         VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
         VCR::turnOn();
         VCR::insertCassette('unittest_streamwrapper_test');
-        $result = file_get_contents('http://google.com');
+        $result = file_get_contents('http://example.com');
         $this->assertEquals('This is a stream wrapper test dummy.', $result, 'Stream wrapper call was not intercepted.');
         VCR::eject();
         VCR::turnOff();
@@ -39,7 +39,7 @@ class VCRTest extends VCR_TestCase
         VCR::configure()->enableLibraryHooks(array('curl_runkit'));
         VCR::turnOn();
         VCR::insertCassette('unittest_curl_test');
-        $ch = curl_init('http://google.com/');
+        $ch = curl_init('http://example.com/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
         curl_close($ch);
@@ -55,7 +55,7 @@ class VCRTest extends VCR_TestCase
         VCR::turnOn();
         VCR::insertCassette('unittest_guzzle_test');
         $client = new \Guzzle\Http\Client();
-        $response = $client->get('http://google.com')->send();
+        $response = $client->get('http://example.com')->send();
         $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
         VCR::eject();
         VCR::turnOff();
