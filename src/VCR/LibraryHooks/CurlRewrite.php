@@ -111,6 +111,9 @@ class CurlRewrite implements LibraryHookInterface
     {
         // Call original when disabled
         if (static::$status == self::DISABLED) {
+            if ($method === 'curl_multi_exec') {
+                return curl_multi_exec($args[0], $args[1]);
+            }
             return call_user_func_array($method, $args);
         }
 
