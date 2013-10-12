@@ -17,14 +17,12 @@ class SoapClient extends \SoapClient
 
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
-        $response = '';
         $soap = $this->getLibraryHook();
 
         try {
-            $response = $soap->doRequest($request, $location, $action, $version, $one_way = 0);
+            $response = $soap->doRequest($request, $location, $action, $version, $one_way);
 
         } catch (LibraryHooksException $e) {
-            // libraryHook disabled
 
             if (LibraryHooksException::HookDisabled === $e->getCode()) {
 

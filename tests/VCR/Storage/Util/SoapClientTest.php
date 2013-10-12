@@ -3,6 +3,7 @@
 namespace VCR\Storage\Util;
 
 
+use VCR\LibraryHooks\LibraryHooksException;
 use VCR\Util\Soap\SoapClient;
 use VCR\VCR_TestCase;
 
@@ -44,6 +45,51 @@ class SoapClientTest extends VCR_TestCase
             $expected,
             $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, 1)
         );
+    }
+
+    public function testDoRequestHookDisabled()
+    {
+        $hook = $this->getLibraryHookMock();
+        $hook
+            ->expects($this->once())
+            ->method('doRequest')
+            ->will(
+                $this->throwException(
+                    new LibraryHooksException(
+                        'hook not enabled.',
+                        LibraryHooksException::HookDisabled
+                    )
+                )
+            );
+
+        $client = new SoapClient(self::WSDL);
+        $client->setLibraryHook($hook);
+
+        $this->assertNull(
+            $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, 1)
+        );
+    }
+
+    public function testDoRequestExpectingException()
+    {
+        $exception = '\LogicException';
+
+        $hook = $this->getLibraryHookMock();
+        $hook
+            ->expects($this->once())
+            ->method('doRequest')
+            ->will(
+                $this->throwException(
+                    new \LogicException('hook not enabled.')
+                )
+            );
+
+        $client = new SoapClient(self::WSDL);
+        $client->setLibraryHook($hook);
+
+        $this->setExpectedException($exception);
+
+        $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, 1);
     }
 
     public function testLibraryHook()
