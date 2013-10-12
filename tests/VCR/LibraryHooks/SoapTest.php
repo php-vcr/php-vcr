@@ -25,8 +25,8 @@ class SoapTest extends \PHPUnit_Framework_TestCase
     {
         $this->soapHook->enable($this->getTestCallback());
 
-        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version'   => SOAP_1_2));
-        $response = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
+        $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
 
         $this->soapHook->disable();
         $this->assertEquals($this->expected, $actual, 'Response was not returned.');
@@ -34,7 +34,14 @@ class SoapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldNotInterceptCallWhenNotEnabled()
     {
-        $this->markTestSkipped('not yet done');
+        $this->markTestSkipped('uses internet connection, howto?');
+        $this->soapHook->disable();
+
+        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version'   => SOAP_1_2));
+        $response = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+
+        $this->soapHook->disable();
+        $this->assertEquals($this->expected, $actual, 'Response was not returned.');
     }
 
     public function testShouldNotInterceptCallWhenDisabled()
