@@ -171,6 +171,7 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
     {
         $this->curlHook->enable($this->getTestCallback());
         $this->curlHook->enable($this->getTestCallback());
+        $this->curlHook->disable();
     }
 
     /**
