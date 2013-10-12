@@ -1,17 +1,8 @@
 <phpunit bootstrap="tests/bootstrap.php"
-         cacheTokens="true"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         forceCoversAnnotation="false"
-         mapTestClassNameToCoveredClassName="false"
-         processIsolation="false"
-         stopOnError="false"
-         stopOnFailure="false"
-         stopOnIncomplete="false"
-         stopOnSkipped="false"
-         testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
          strict="true"
 >
 
