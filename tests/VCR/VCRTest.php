@@ -27,6 +27,7 @@ class VCRTest extends VCR_TestCase
         $result = file_get_contents('http://google.com');
         $this->assertEquals('This is a stream wrapper test dummy.', $result, 'Stream wrapper call was not intercepted.');
         VCR::eject();
+        VCR::turnOff();
     }
 
     /**
@@ -44,6 +45,7 @@ class VCRTest extends VCR_TestCase
         curl_close($ch);
         $this->assertEquals('This is a curl test dummy.', $result, 'Curl call was not intercepted.');
         VCR::eject();
+        VCR::turnOff();
     }
 
     public function testShouldInterceptGuzzleLibrary()
@@ -56,6 +58,22 @@ class VCRTest extends VCR_TestCase
         $response = $client->get('http://google.com')->send();
         $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
         VCR::eject();
+        VCR::turnOff();
+    }
+
+    public function testShouldInterceptSoapLibrary()
+    {
+        VCR::configure()->enableLibraryHooks(array('soap'));
+        VCR::turnOn();
+        VCR::insertCassette('unittest_soap_test');
+
+        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
+        $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+        $temperature = $actual->GetCityWeatherByZIPResult->Temperature;
+
+        $this->assertEquals('1337', $temperature, 'Soap call was not intercepted.');
+        VCR::eject();
+        VCR::turnOff();
     }
 
     public function testShouldThrowExceptionIfNoCassettePresent()
@@ -70,6 +88,7 @@ class VCRTest extends VCR_TestCase
         VCR::turnOn();
         // If there is no cassette inserted, a request should throw an exception
         file_get_contents('http://example.com');
+        VCR::turnOff();
     }
 
     public function testInsertMultipleCassettes()
@@ -94,5 +113,6 @@ class VCRTest extends VCR_TestCase
         VCR::configure()->setCassettePath('tests');
         VCR::turnOn();
         $this->assertEquals('tests', VCR::configure()->getCassettePath());
+        VCR::turnOff();
     }
 }
