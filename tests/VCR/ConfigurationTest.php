@@ -16,8 +16,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                '\VCR\LibraryHooks\StreamWrapper',
-                '\VCR\LibraryHooks\CurlRunkit',
+                'VCR\LibraryHooks\StreamWrapper',
+                'VCR\LibraryHooks\CurlRunkit',
             ),
             $this->config->getLibraryHooks()
         );
@@ -28,7 +28,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config->enableLibraryHooks(array('stream_wrapper'));
         $this->assertEquals(
             array(
-                '\VCR\LibraryHooks\StreamWrapper',
+                'VCR\LibraryHooks\StreamWrapper',
             ),
             $this->config->getLibraryHooks()
         );
@@ -39,7 +39,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config->enableLibraryHooks('stream_wrapper');
         $this->assertEquals(
             array(
-                '\VCR\LibraryHooks\StreamWrapper',
+                'VCR\LibraryHooks\StreamWrapper',
             ),
             $this->config->getLibraryHooks()
         );
@@ -56,8 +56,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $actual = $this->config->enableRequestMatchers(array('body', 'headers'));
         $this->assertEquals(
             array(
-                array('\VCR\RequestMatcher', 'matchHeaders'),
-                array('\VCR\RequestMatcher', 'matchBody'),
+                array('VCR\RequestMatcher', 'matchHeaders'),
+                array('VCR\RequestMatcher', 'matchBody'),
             ),
             $this->config->getRequestMatchers()
         );
@@ -74,7 +74,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testAddRequestMatcherFailsWithWrongCallback()
     {
-        $this->setExpectedException('\VCR\VCRException', "Request matcher 'example' is not callable.");
+        $this->setExpectedException('VCR\VCRException', "Request matcher 'example' is not callable.");
         $actual = $this->config->addRequestMatcher('example', array());
     }
 
