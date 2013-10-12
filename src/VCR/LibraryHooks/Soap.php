@@ -2,10 +2,11 @@
 
 namespace VCR\LibraryHooks;
 
-use \VCR\Configuration;
-use \VCR\Request;
-use \VCR\Response;
-use \VCR\Assertion;
+use VCR\Assertion;
+use VCR\Configuration;
+use VCR\LibraryHooks\LibraryHooksException;
+use VCR\Request;
+use VCR\Response;
 use VCR\Util\StreamProcessor;
 
 /**
@@ -13,33 +14,26 @@ use VCR\Util\StreamProcessor;
  */
 class Soap implements LibraryHookInterface
 {
-    private $status = self::DISABLED;
-
     /**
      * @var Request
      */
     private static $request;
-
     /**
      * @var Response
      */
     private static $response;
-
     private static $handleRequestCallback;
-
+    private $status = self::DISABLED;
     /**
      * @var FilterInterface
      */
     private $filter;
-
     /**
      * @var \VCR\Util\StreamProcessor
      */
     private $processor;
 
-
     /**
-     *
      * @throws \BadMethodCallException in case the Soap extension is not installed.
      */
     public function __construct(FilterInterface $filter, StreamProcessor $processor)
@@ -50,6 +44,24 @@ class Soap implements LibraryHookInterface
 
         $this->processor = $processor;
         $this->filter = $filter;
+    }
+
+    public static function doRequest($request, $location, $action, $version, $one_way = 0)
+    {
+        if (self::DISABLED) {
+            throw new LibraryHooksException(
+                'Hook must be enabled.',
+                LibraryHooksException::HookDisabled
+            );
+        }
+
+        $request = new Request('POST', $location);
+        $request->addHeader('SoapAction', $action);
+        $request->setBody($request);
+
+        $handleRequestCallback = self::$handleRequestCallback;
+        $response = $handleRequestCallback($request);
+        echo (string)$response->getBody(true);
     }
 
     /**
@@ -76,7 +88,6 @@ class Soap implements LibraryHookInterface
 
     /**
      * @inheritDoc
-     *
      * @return null
      */
     public function disable()
@@ -88,18 +99,6 @@ class Soap implements LibraryHookInterface
         self::$handleRequestCallback = null;
 
         $this->status = self::DISABLED;
-    }
-
-    public static function doRequest($request, $location, $action, $version , $one_way = 0)
-    {
-
-
-        var_dump(__METHOD__, $request, $location, $action, $version, $one_way);
-
-
-        // $handleRequestCallback = self::$handleRequestCallback;
-        // self::$response = $handleRequestCallback(self::$request);
-        // echo self::$response->getBody(true);
     }
 
     public function __destruct()
