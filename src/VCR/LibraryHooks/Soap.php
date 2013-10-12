@@ -56,15 +56,14 @@ class Soap implements LibraryHookInterface
             );
         }
 
-        $request = new Request('POST', $location);
-        $request->addHeader('SoapAction', $action);
-        $request->setBody($request);
-        $request->addHeader('Content-Type', 'application/soap+xml');
+        $vcrRequest = new Request('POST', $location);
+        $vcrRequest->addHeader('Content-Type', 'application/soap+xml; charset=utf-8; action="' . $action . '"');
+        $vcrRequest->setBody($request);
 
         $handleRequestCallback = self::$handleRequestCallback;
-        $response = $handleRequestCallback($request);
+        $response = $handleRequestCallback($vcrRequest);
 
-        return (string)$response->getBody(true);
+        return (string) $response->getBody(true);
     }
 
     /**
