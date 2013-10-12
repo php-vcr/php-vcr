@@ -209,4 +209,13 @@ class CurlRewrite implements LibraryHookInterface
 
         \curl_setopt($ch, $option, $value);
     }
+
+    public static function setoptArray($ch, $options)
+    {
+        if (is_array($options)) {
+            foreach ($options as $option => $value) {
+                static::setopt($ch, $option, $value);
+            }
+        }
+    }
 }
