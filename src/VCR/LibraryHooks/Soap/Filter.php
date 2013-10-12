@@ -9,8 +9,8 @@ class Filter extends AbstractFilter
     const NAME = 'vcr_soap';
 
     private static $replacements = array(
-        'new \VCR\LibraryHooks\Soap(',
-        'extends \VCR\LibraryHooks\Soap',
+        'new \VCR\Util\Soap\SoapClient(',
+        'extends \VCR\Util\Soap\SoapClient',
     );
 
     private static $patterns = array(

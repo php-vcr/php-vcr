@@ -24,11 +24,11 @@ class FilterTest extends VCR_TestCase
     {
         return array(
             'new \SoapClient' => array(
-                'new \VCR\LibraryHooks\Soap(',
+                'new \VCR\Util\Soap\SoapClient(',
                 'new \SoapClient('
             ),
             'new SoapClient' => array(
-                'new \VCR\LibraryHooks\Soap(',
+                'new \VCR\Util\Soap\SoapClient(',
                 'new SoapClient('
             ),
             'new SoapClientExtended' => array(
