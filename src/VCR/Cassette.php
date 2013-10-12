@@ -2,7 +2,7 @@
 
 namespace VCR;
 
-use \VCR\Storage\StorageInterface;
+use VCR\Storage\StorageInterface;
 
 /**
  */

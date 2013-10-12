@@ -2,11 +2,11 @@
 
 namespace VCR\LibraryHooks;
 
-use \VCR\Configuration;
-use \VCR\Request;
-use \VCR\Response;
-use \VCR\Assertion;
-use \VCR\Util\CurlHelper;
+use VCR\Configuration;
+use VCR\Request;
+use VCR\Response;
+use VCR\Assertion;
+use VCR\Util\CurlHelper;
 
 /**
  * Library hook for curl functions.

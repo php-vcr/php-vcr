@@ -2,8 +2,8 @@
 
 namespace VCR\Util;
 
-use \VCR\Request;
-use \VCR\Response;
+use VCR\Request;
+use VCR\Response;
 
 /**
 * CUrlhelper

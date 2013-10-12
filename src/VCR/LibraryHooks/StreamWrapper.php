@@ -2,10 +2,10 @@
 
 namespace VCR\LibraryHooks;
 
-use \VCR\Configuration;
-use \VCR\Request;
-use \VCR\Response;
-use \VCR\Assertion;
+use VCR\Configuration;
+use VCR\Request;
+use VCR\Response;
+use VCR\Assertion;
 
 /**
  * StreamWrapper.

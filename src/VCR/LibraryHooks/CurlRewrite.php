@@ -52,7 +52,7 @@ class CurlRewrite implements LibraryHookInterface
     private $filter;
 
     /**
-     * @var \VCR\Util\StreamProcessor
+     * @var VCR\Util\StreamProcessor
      */
     private $processor;
 
