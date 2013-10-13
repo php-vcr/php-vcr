@@ -1,8 +1,8 @@
 ![PHP-VCR](https://dl.dropbox.com/u/13186339/blog/php-vcr.png)
 
-[![Build Status](https://travis-ci.org/adri/php-vcr.png?branch=master)](https://travis-ci.org/adri/php-vcr)
-[![Dependency Status](http://www.versioneye.com/user/projects/51512860926e440002004378/badge.png)](http://www.versioneye.com/user/projects/51512860926e440002004378)
-[![Coverage Status](https://coveralls.io/repos/adri/php-vcr/badge.png?branch=master)](https://coveralls.io/r/adri/php-vcr?branch=master)
+[![Build Status](https://travis-ci.org/php-vcr/php-vcr.png?branch=master)](https://travis-ci.org/php-vcr/php-vcr)
+[![Dependency Status](http://www.versioneye.com/user/projects/525a6160632bac1e35000001/badge.png)](http://www.versioneye.com/user/projects/525a6160632bac1e35000001)
+[![Coverage Status](https://coveralls.io/repos/php-vcr/php-vcr/badge.png?branch=master)](https://coveralls.io/r/php-vcr/php-vcr?branch=master)
 
 This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 
@@ -69,7 +69,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 }
 ```
 
-You can use annotations in PHPUnit by using [phpunit-testlistener-vcr](https://github.com/adri/phpunit-testlistener-vcr):
+You can use annotations in PHPUnit by using [phpunit-testlistener-vcr](https://github.com/php-vcr/phpunit-testlistener-vcr):
 ``` php
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
@@ -127,7 +127,7 @@ phpunit ./tests
  * 2013-07-22 Release 1.0.4: Updates dependencies.
  * 2013-06-05 Release 1.0.3: Added curl_rewrite (in addition to curl_runkit) to overwrite curl functions.
  * 2013-05-15 Release 1.0.0
- * 2013-05-15 Adds PHPUnit annotations using [phpunit-testlistener-vcr](https://github.com/adri/phpunit-testlistener-vcr)
+ * 2013-05-15 Adds PHPUnit annotations using [phpunit-testlistener-vcr](https://github.com/php-vcr/phpunit-testlistener-vcr)
  * 2013-05-14 Easier API (static method calls)
  * 2013-02-22 Added YAML support
  * 2013-02-21 Added custom request matcher
