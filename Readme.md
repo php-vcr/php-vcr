@@ -93,7 +93,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 Add php-vcr to your `composer.json`.
 
 ``` json
-  "adri/php-vcr": "dev-master"
+  "php-vcr/php-vcr": "dev-master"
 ```
 ``` bash
 composer install
