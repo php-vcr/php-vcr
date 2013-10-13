@@ -16,8 +16,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                '\VCR\LibraryHooks\StreamWrapper',
-                '\VCR\LibraryHooks\CurlRunkit',
+                'VCR\LibraryHooks\StreamWrapper',
+                'VCR\LibraryHooks\CurlRewrite',
+                'VCR\LibraryHooks\Soap',
             ),
             $this->config->getLibraryHooks()
         );
@@ -28,7 +29,18 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config->enableLibraryHooks(array('stream_wrapper'));
         $this->assertEquals(
             array(
-                '\VCR\LibraryHooks\StreamWrapper',
+                'VCR\LibraryHooks\StreamWrapper',
+            ),
+            $this->config->getLibraryHooks()
+        );
+    }
+
+    public function testEnableSingleLibraryHook()
+    {
+        $this->config->enableLibraryHooks('stream_wrapper');
+        $this->assertEquals(
+            array(
+                'VCR\LibraryHooks\StreamWrapper',
             ),
             $this->config->getLibraryHooks()
         );
@@ -45,8 +57,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $actual = $this->config->enableRequestMatchers(array('body', 'headers'));
         $this->assertEquals(
             array(
-                array('\VCR\RequestMatcher', 'matchHeaders'),
-                array('\VCR\RequestMatcher', 'matchBody'),
+                array('VCR\RequestMatcher', 'matchHeaders'),
+                array('VCR\RequestMatcher', 'matchBody'),
             ),
             $this->config->getRequestMatchers()
         );
@@ -61,10 +73,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $actual = $this->config->addRequestMatcher('', $expected);
     }
 
-
     public function testAddRequestMatcherFailsWithWrongCallback()
     {
-        $this->setExpectedException('\VCR\VCRException', "Request matcher 'example' is not callable.");
+        $this->setExpectedException('VCR\VCRException', "Request matcher 'example' is not callable.");
         $actual = $this->config->addRequestMatcher('example', array());
     }
 
@@ -89,4 +100,21 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(in_array("VCR\Storage\StorageInterface", class_implements($class)));
     }
 
+    public function testWhitelist()
+    {
+        $expected = array('Tux', 'Gnu');
+
+        $this->config->setWhiteList($expected);
+
+        $this->assertEquals($expected, $this->config->getWhiteList());
+    }
+
+    public function testBlacklist()
+    {
+        $expected = array('Tux', 'Gnu');
+
+        $this->config->setBlackList($expected);
+
+        $this->assertEquals($expected, $this->config->getBlackList());
+    }
 }

@@ -1,20 +1,19 @@
+
 -
     request:
         method: GET
-        url: 'http://google.com'
+        url: 'http://example.com'
         headers:
-            Host: google.com
-            Content-Length: 0
+            host: example.com
+            content-length: 0
     response:
-        status: 301
+        status: 200
         headers:
-            Location: 'http://www.google.com/'
-            Content-Type: 'text/html; charset=UTF-8'
-            Date: 'Mon, 13 May 2013 07:49:33 GMT'
-            Expires: 'Wed, 12 Jun 2013 07:49:33 GMT'
-            Cache-Control: 'public, max-age=2592000'
-            Server: gws
-            Content-Length: '219'
-            X-XSS-Protection: '1; mode=block'
-            X-Frame-Options: SAMEORIGIN
+            Accept-Ranges: bytes
+            Cache-Control: max-age=604800
+            Content-Type: text/html
+            Date: 'Sat, 12 Oct 2013 19:40:38 GMT'
+            Expires: 'Sat, 19 Oct 2013 19:40:38 GMT'
+            Last-Modified: 'Fri, 09 Aug 2013 23:54:35 GMT'
+            Content-Length: '1270'
         body: "This is a stream wrapper test dummy."

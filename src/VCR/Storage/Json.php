@@ -2,7 +2,7 @@
 
 namespace VCR\Storage;
 
-use \VCR\Assertion;
+use VCR\Assertion;
 
 class Json implements StorageInterface
 {

@@ -2,8 +2,8 @@
 
 namespace VCR\Util;
 
-use \VCR\Request;
-use \VCR\Response;
+use VCR\Request;
+use VCR\Response;
 
 /**
 * CUrlhelper
@@ -130,6 +130,10 @@ class CurlHelper
                 // Ignore writer and header functions
                 break;
             default:
+                $constants = get_defined_constants(true);
+                $constantNames = array_flip($constants['curl']);
+                // TODO: Handle all missing curl options
+                // var_dump("Todo: {$constantNames[$option]} ({$option}): {$value}");
                 $request->getCurlOptions()->set($option, $value);
                 break;
         }

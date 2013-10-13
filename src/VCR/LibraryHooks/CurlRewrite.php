@@ -2,10 +2,11 @@
 
 namespace VCR\LibraryHooks;
 
-use \VCR\Request;
-use \VCR\Response;
-use \VCR\Assertion;
-use \VCR\Util\CurlHelper;
+use VCR\Request;
+use VCR\Response;
+use VCR\Assertion;
+use VCR\Util\CurlHelper;
+use VCR\Util\StreamProcessor;
 
 /**
  * Library hook for curl functions using include-overwrite.
@@ -39,32 +40,88 @@ class CurlRewrite implements LibraryHookInterface
     protected static $curlOptions = array();
 
     /**
-     * @inherit
+     * All curl handles which belong to curl_multi handles.
+     */
+    protected static $multiHandles = array();
+
+    protected static $multiExecLastCh;
+
+    /**
+     * @var FilterInterface
+     */
+    private $filter;
+
+    /**
+     * @var VCR\Util\StreamProcessor
+     */
+    private $processor;
+
+    /**
+     *
+     * @throws \BadMethodCallException in case the Soap extension is not installed.
+     */
+    public function __construct(FilterInterface $filter, StreamProcessor $processor)
+    {
+        $this->processor = $processor;
+        $this->filter = $filter;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function enable(\Closure $handleRequestCallback)
     {
         Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
+
+        if (static::$status == self::ENABLED) {
+            return;
+        }
+
+        $this->filter->register();
+        $this->processor->appendFilter($this->filter);
+        $this->processor->intercept();
+
         self::$handleRequestCallback = $handleRequestCallback;
-        self::$status = self::ENABLED;
+
+        static::$status = self::ENABLED;
     }
 
     /**
-     * @inherit
+     * @inheritDoc
      */
     public function disable()
     {
-        self::$status = self::DISABLED;
+        if (static::$status == self::DISABLED) {
+            return;
+        }
+
         self::$handleRequestCallback = null;
+
+        static::$status = self::DISABLED;
     }
 
+    /**
+     * Calls default curl functions if library hook is disabled.
+     *
+     * @param  string $method [description]
+     * @param  array $args   [description]
+     * @return mixed Curl function return type.
+     */
     public static function __callStatic($method, $args)
     {
         // Call original when disabled
-        if (self::$status == self::DISABLED) {
+        if (static::$status == self::DISABLED) {
+            if ($method === 'curl_multi_exec') {
+                return curl_multi_exec($args[0], $args[1]);
+            }
             return call_user_func_array($method, $args);
         }
 
-        $localMethod = str_replace('curl_', '', $method);
+        if ($method === 'curl_multi_exec') {
+            return self::multiExec($args[0], $args[1]);
+        }
+
+        $localMethod = static::buildLocalMethodName($method);
         return call_user_func_array(array(__CLASS__, $localMethod), $args);
     }
 
@@ -77,7 +134,6 @@ class CurlRewrite implements LibraryHookInterface
 
     public static function exec($ch)
     {
-        //  workaround for this?
         $handleRequestCallback = self::$handleRequestCallback;
         self::$responses[(int) $ch] = $handleRequestCallback(self::$requests[(int) $ch]);
 
@@ -86,6 +142,50 @@ class CurlRewrite implements LibraryHookInterface
             self::$curlOptions[(int) $ch],
             $ch
         );
+    }
+
+    public static function multiAddHandle($mh, $ch)
+    {
+        if (isset(self::$multiHandles[(int) $mh])) {
+            self::$multiHandles[(int) $mh][] = (int) $ch;
+        } else {
+            self::$multiHandles[(int) $mh] = array((int) $ch);
+        }
+    }
+
+    public static function multiRemoveHandle($mh, $ch)
+    {
+        if (isset(self::$multiHandles[(int) $mh][(int) $ch])) {
+            unset(self::$multiHandles[(int) $mh][(int) $ch]);
+        }
+    }
+
+    public static function multiExec($mh, &$still_running)
+    {
+        if (isset(self::$multiHandles[(int) $mh])) {
+            foreach (self::$multiHandles[(int) $mh] as $ch) {
+                if (!isset(self::$responses[(int) $ch])) {
+                    self::$multiExecLastCh = $ch;
+                    self::exec($ch);
+                }
+            }
+        }
+        return CURLM_OK;
+    }
+
+    public static function multiInfoRead($mh)
+    {
+        if (self::$multiExecLastCh) {
+            $info = array(
+                'msg' => CURLMSG_DONE,
+                'handle' => self::$multiExecLastCh,
+                'result' => CURLE_OK
+            );
+            self::$multiExecLastCh = null;
+            return $info;
+        }
+
+        return false;
     }
 
     public static function getinfo($ch, $option = 0)
@@ -106,5 +206,29 @@ class CurlRewrite implements LibraryHookInterface
         static::$curlOptions[(int) $ch][$option] = $value;
 
         \curl_setopt($ch, $option, $value);
+    }
+
+    public static function setoptArray($ch, $options)
+    {
+        if (is_array($options)) {
+            foreach ($options as $option => $value) {
+                static::setopt($ch, $option, $value);
+            }
+        }
+    }
+
+    protected static function buildLocalMethodName($method) {
+        $localMethod = str_replace('curl_', '', $method);
+
+        // CamalCase. Example: multi_exec -> multiExec
+        $localMethod = preg_replace_callback(
+            '/_(.?)/',
+            function($matches) {
+                return strtoupper($matches[0]);
+            },
+            $localMethod
+        );
+
+        return $localMethod;
     }
 }

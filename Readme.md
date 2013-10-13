@@ -15,9 +15,8 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 * Automatically records and replays your HTTP(s) interactions with minimal setup/configuration code.
 * Supports common http functions and extensions
   * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification
-  * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) using your own wrapper class
-  * curl(),  using [runkit extension](http://www.php.net/manual/en/book.runkit.php) and `runkit.internal_override=1` in your php.ini
-  * Todo: curl_multi() (experimental support)
+  * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) by adding `\VCR\VCR\turnOn();` in your `tests/boostrap.php`
+  * curl(), either using [runkit extension](http://www.php.net/manual/en/book.runkit.php) and `runkit.internal_override=1` in your php.ini or by adding `\VCR\VCR\turnOn();` in your `tests/boostrap.php`
 * The same request can receive different responses in different tests--just use different cassettes.
 * Disables all HTTP requests that you don't explicitly allow (except SoapClient if not configured).
 * Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
@@ -124,6 +123,7 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2013-07-22 Release 1.0.5: Fixed SOAP support, refactorings.
  * 2013-07-22 Release 1.0.4: Updates dependencies.
  * 2013-06-05 Release 1.0.3: Added curl_rewrite (in addition to curl_runkit) to overwrite curl functions.
  * 2013-05-15 Release 1.0.0
