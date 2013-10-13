@@ -13,7 +13,7 @@ class Cassette
     protected $storage;
     protected $cassetteHandle;
 
-    function __construct($name, Configuration $config, StorageInterface $storage)
+    public function __construct($name, Configuration $config, StorageInterface $storage)
     {
         $this->name = $name;
         $this->config = $config;

@@ -217,7 +217,8 @@ class CurlRewrite implements LibraryHookInterface
         }
     }
 
-    protected static function buildLocalMethodName($method) {
+    protected static function buildLocalMethodName($method)
+    {
         $localMethod = str_replace('curl_', '', $method);
 
         // CamalCase. Example: multi_exec -> multiExec

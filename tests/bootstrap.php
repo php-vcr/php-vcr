@@ -22,4 +22,3 @@ $loader->addClassMap(
     ->setBlackList(array('Soap/FilterTest'));
 \VCR\VCR::turnOn();
 \VCR\VCR::turnOff();
-

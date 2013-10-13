@@ -44,7 +44,7 @@ class StreamWrapper implements LibraryHookInterface
 
     }
 
-    function stream_open($path, $mode, $options, &$opened_path)
+    public function stream_open($path, $mode, $options, &$opened_path)
     {
         $handleRequestCallback = self::$handleRequestCallback;
         $this->response = $handleRequestCallback(new Request('GET', $path));
@@ -52,24 +52,24 @@ class StreamWrapper implements LibraryHookInterface
         return (string) $this->response->getBody();
     }
 
-    function stream_read($count)
+    public function stream_read($count)
     {
         $ret = substr($this->response->getBody(), $this->position, $count);
         $this->position += strlen($ret);
         return $ret;
     }
 
-    function stream_write($data)
+    public function stream_write($data)
     {
         throw new \BadMethodCall('No writing possible');
     }
 
-    function stream_tell()
+    public function stream_tell()
     {
         return $this->position;
     }
 
-    function stream_eof()
+    public function stream_eof()
     {
         return $this->position >= strlen($this->response->getBody());
     }
@@ -79,7 +79,7 @@ class StreamWrapper implements LibraryHookInterface
         return array();
     }
 
-    function stream_seek($offset, $whence)
+    public function stream_seek($offset, $whence)
     {
         switch ($whence) {
             case SEEK_SET:
@@ -114,7 +114,7 @@ class StreamWrapper implements LibraryHookInterface
         }
     }
 
-    function stream_metadata($path, $option, $var)
+    public function stream_metadata($path, $option, $var)
     {
         return false;
     }

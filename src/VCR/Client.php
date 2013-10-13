@@ -5,7 +5,7 @@ class Client
 {
     protected $client;
 
-    function __construct()
+    public function __construct()
     {
         $this->client = new \Guzzle\Http\Client();
     }
