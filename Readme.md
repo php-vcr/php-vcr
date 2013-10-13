@@ -123,7 +123,7 @@ phpunit ./tests
 
 ## Changelog
 
- * 2013-07-22 Release 1.0.5: Fixed SOAP support, refactorings.
+ * 2013-10-13 Release 1.0.5: Fixed SOAP support, refactorings.
  * 2013-07-22 Release 1.0.4: Updates dependencies.
  * 2013-06-05 Release 1.0.3: Added curl_rewrite (in addition to curl_runkit) to overwrite curl functions.
  * 2013-05-15 Release 1.0.0
