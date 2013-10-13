@@ -5,7 +5,7 @@ use Assert\Assertion as BaseAssertion;
 
 class Assertion extends BaseAssertion
 {
-    protected static $exceptionClass = '\VCR\VCRException';
+    protected static $exceptionClass = 'VCR\VCRException';
 
     const INVALID_CALLABLE = 910;
 

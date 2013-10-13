@@ -2,10 +2,10 @@
 
 namespace VCR\LibraryHooks;
 
-use \VCR\Configuration;
-use \VCR\Request;
-use \VCR\Response;
-use \VCR\Assertion;
+use VCR\Configuration;
+use VCR\Request;
+use VCR\Response;
+use VCR\Assertion;
 
 /**
  * StreamWrapper.
@@ -49,7 +49,7 @@ class StreamWrapper implements LibraryHookInterface
         $handleRequestCallback = self::$handleRequestCallback;
         $this->response = $handleRequestCallback(new Request('GET', $path));
 
-        return $this->response->getBody();
+        return (string) $this->response->getBody();
     }
 
     function stream_read($count)

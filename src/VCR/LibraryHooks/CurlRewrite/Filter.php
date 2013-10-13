@@ -2,41 +2,43 @@
 
 namespace VCR\LibraryHooks\CurlRewrite;
 
-class Filter extends \PHP_User_Filter
+use VCR\LibraryHooks\AbstractFilter;
+
+class Filter extends AbstractFilter
 {
     const NAME = 'vcr_curl_rewrite';
-    const REWRITE_CLASS = '\VCR\LibraryHooks\CurlRewrite';
 
     private static $replacements = array(
-        'curl_init('    => '\VCR\LibraryHooks\CurlRewrite::curl_init(',
-        'curl_exec('    => '\VCR\LibraryHooks\CurlRewrite::curl_exec(',
-        'curl_getinfo(' => '\VCR\LibraryHooks\CurlRewrite::curl_getinfo(',
-        'curl_setopt('  => '\VCR\LibraryHooks\CurlRewrite::curl_setopt('
+        '\VCR\LibraryHooks\CurlRewrite::curl_init(',
+        '\VCR\LibraryHooks\CurlRewrite::curl_exec(',
+        '\VCR\LibraryHooks\CurlRewrite::curl_getinfo(',
+        '\VCR\LibraryHooks\CurlRewrite::curl_setopt(',
+        '\VCR\LibraryHooks\CurlRewrite::curl_setopt_array(',
+        '\VCR\LibraryHooks\CurlRewrite::curl_multi_add_handle(',
+        '\VCR\LibraryHooks\CurlRewrite::curl_multi_remove_handle(',
+        '\VCR\LibraryHooks\CurlRewrite::curl_multi_exec(',
+        '\VCR\LibraryHooks\CurlRewrite::curl_multi_info_read('
     );
 
-    public static function register()
-    {
-        stream_filter_register(self::NAME, __CLASS__);
-    }
+    private static $patterns = array(
+        '@curl_init\s*\(@i',
+        '@curl_exec\s*\(@i',
+        '@curl_getinfo\s*\(@i',
+        '@curl_setopt\s*\(@i',
+        '@curl_setopt_array\s*\(@i',
+        '@curl_multi_add_handle\s*\(@i',
+        '@curl_multi_remove_handle\s*\(@i',
+        '@curl_multi_exec\s*\(@i',
+        '@curl_multi_info_read\s*\(@i',
+    );
 
-    function filter($in, $out, &$consumed, $closing)
+    /**
+     * @param string $code
+     *
+     * @return mixed
+     */
+    protected function transformCode($code)
     {
-        while ($bucket = stream_bucket_make_writeable($in)) {
-            $bucket->data = $this->transformCode($bucket->data);
-            // var_dump($bucket->data);
-            $consumed += $bucket->datalen;
-            stream_bucket_append($out, $bucket);
-        }
-        return PSFS_PASS_ON;
-    }
-
-    public function transformCode($code)
-    {
-        return str_replace(
-            array_keys(self::$replacements),
-            array_values(self::$replacements),
-            $code
-        );
+        return preg_replace(self::$patterns, self::$replacements, $code);
     }
 }
-Filter::register();
