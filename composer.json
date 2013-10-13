@@ -20,7 +20,6 @@
 
     "require-dev": {
         "mikey179/vfsStream": "dev-master",
-        "behat/behat": "2.4.*@stable",
         "guzzle/plugin-mock": "3.7.*",
         "satooshi/php-coveralls": "dev-master",
         "lapistano/proxy-object": "dev-master"

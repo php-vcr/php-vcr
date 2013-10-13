@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "0bb6bad60947bb6e567ad46758438343",
+    "hash": "c91c2d7c7d2a84dff420b288bc2658ee",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -140,7 +140,7 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
@@ -194,7 +194,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
@@ -241,134 +241,6 @@
         }
     ],
     "packages-dev": [
-        {
-            "name": "behat/behat",
-            "version": "v2.4.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Behat/Behat.git",
-                "reference": "f1d2964667cf4b21bb6c2c1564f26829a6954155"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Behat/zipball/f1d2964667cf4b21bb6c2c1564f26829a6954155",
-                "reference": "f1d2964667cf4b21bb6c2c1564f26829a6954155",
-                "shasum": ""
-            },
-            "require": {
-                "behat/gherkin": "~2.2.9",
-                "php": ">=5.3.1",
-                "symfony/config": "~2.0",
-                "symfony/console": "~2.0",
-                "symfony/dependency-injection": "~2.0",
-                "symfony/event-dispatcher": "~2.0",
-                "symfony/finder": "~2.0",
-                "symfony/translation": "~2.0",
-                "symfony/yaml": "~2.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~3.7.19"
-            },
-            "suggest": {
-                "behat/mink-extension": "for integration with Mink testing framework",
-                "behat/symfony2-extension": "for integration with Symfony2 web framework",
-                "behat/yii-extension": "for integration with Yii web framework"
-            },
-            "bin": [
-                "bin/behat"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "2.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Behat\\Behat": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Konstantin Kudryashov",
-                    "email": "ever.zet@gmail.com",
-                    "homepage": "http://everzet.com"
-                }
-            ],
-            "description": "Scenario-oriented BDD framework for PHP 5.3",
-            "homepage": "http://behat.org/",
-            "keywords": [
-                "BDD",
-                "Behat",
-                "Symfony2"
-            ],
-            "time": "2013-06-06 10:46:48"
-        },
-        {
-            "name": "behat/gherkin",
-            "version": "v2.2.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Behat/Gherkin.git",
-                "reference": "cca2c477921ca38578d6e9759ea5e450f29c2d8f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/cca2c477921ca38578d6e9759ea5e450f29c2d8f",
-                "reference": "cca2c477921ca38578d6e9759ea5e450f29c2d8f",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.1",
-                "symfony/finder": ">=2.0,<2.4-dev"
-            },
-            "require-dev": {
-                "symfony/config": ">=2.0,<2.4-dev",
-                "symfony/translation": ">=2.0,<2.4-dev",
-                "symfony/yaml": ">=2.0,<2.4-dev"
-            },
-            "suggest": {
-                "symfony/config": "If you want to use Config component to manage resources",
-                "symfony/translation": "If you want to use Symfony2 translations adapter",
-                "symfony/yaml": "If you want to parse features, represented in YAML files"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "2.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Behat\\Gherkin": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Konstantin Kudryashov",
-                    "email": "ever.zet@gmail.com",
-                    "homepage": "http://everzet.com"
-                }
-            ],
-            "description": "Gherkin DSL parser for PHP 5.3",
-            "homepage": "http://behat.org/",
-            "keywords": [
-                "BDD",
-                "Behat",
-                "DSL",
-                "Symfony2",
-                "parser"
-            ],
-            "time": "2013-03-02 10:38:40"
-        },
         {
             "name": "lapistano/proxy-object",
             "version": "dev-master",
@@ -452,13 +324,13 @@
             "version": "1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-fig/log.git",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
+                "url": "https://github.com/php-fig/log",
+                "reference": "1.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "url": "https://github.com/php-fig/log/archive/1.0.0.zip",
+                "reference": "1.0.0",
                 "shasum": ""
             },
             "type": "library",
@@ -557,7 +429,7 @@
         },
         {
             "name": "symfony/config",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Config",
             "source": {
                 "type": "git",
@@ -605,7 +477,7 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
@@ -657,64 +529,8 @@
             "time": "2013-09-25 06:04:15"
         },
         {
-            "name": "symfony/dependency-injection",
-            "version": "v2.3.5",
-            "target-dir": "Symfony/Component/DependencyInjection",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/DependencyInjection.git",
-                "reference": "1370fae4bbfbd9d2163b26050d352985ba041c31"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/1370fae4bbfbd9d2163b26050d352985ba041c31",
-                "reference": "1370fae4bbfbd9d2163b26050d352985ba041c31",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "symfony/config": "~2.2",
-                "symfony/yaml": "~2.0"
-            },
-            "suggest": {
-                "symfony/config": "",
-                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
-                "symfony/yaml": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.3-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Symfony\\Component\\DependencyInjection\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony DependencyInjection Component",
-            "homepage": "http://symfony.com",
-            "time": "2013-09-19 09:45:20"
-        },
-        {
             "name": "symfony/filesystem",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Filesystem",
             "source": {
                 "type": "git",
@@ -760,55 +576,8 @@
             "time": "2013-09-19 09:45:20"
         },
         {
-            "name": "symfony/finder",
-            "version": "v2.3.5",
-            "target-dir": "Symfony/Component/Finder",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/Finder.git",
-                "reference": "a175521f680b178e63c5d0ab87c6b046c0990c3f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/a175521f680b178e63c5d0ab87c6b046c0990c3f",
-                "reference": "a175521f680b178e63c5d0ab87c6b046c0990c3f",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.3-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Symfony\\Component\\Finder\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Finder Component",
-            "homepage": "http://symfony.com",
-            "time": "2013-09-19 09:45:20"
-        },
-        {
             "name": "symfony/stopwatch",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Stopwatch",
             "source": {
                 "type": "git",
@@ -852,61 +621,6 @@
             "description": "Symfony Stopwatch Component",
             "homepage": "http://symfony.com",
             "time": "2013-09-19 09:45:20"
-        },
-        {
-            "name": "symfony/translation",
-            "version": "v2.3.5",
-            "target-dir": "Symfony/Component/Translation",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/Translation.git",
-                "reference": "609dbde849d6a02be3f4a7ae29841d1d3db64d87"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Translation/zipball/609dbde849d6a02be3f4a7ae29841d1d3db64d87",
-                "reference": "609dbde849d6a02be3f4a7ae29841d1d3db64d87",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "symfony/config": "~2.0",
-                "symfony/yaml": "~2.2"
-            },
-            "suggest": {
-                "symfony/config": "",
-                "symfony/yaml": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.3-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Symfony\\Component\\Translation\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Translation Component",
-            "homepage": "http://symfony.com",
-            "time": "2013-09-19 09:45:20"
         }
     ],
     "aliases": [
@@ -915,7 +629,6 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "mikey179/vfsstream": 20,
-        "behat/behat": 0,
         "satooshi/php-coveralls": 20,
         "lapistano/proxy-object": 20
     },
