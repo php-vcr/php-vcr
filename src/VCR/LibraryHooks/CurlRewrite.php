@@ -121,9 +121,7 @@ class CurlRewrite implements LibraryHookInterface
             return self::multiExec($args[0], $args[1]);
         }
 
-        $localMethod = str_replace('curl_', '', $method);
-        $localMethod = preg_replace('/_(.?)/e',"strtoupper('$1')", $localMethod);
-
+        $localMethod = static::buildLocalMethodName($method);
         return call_user_func_array(array(__CLASS__, $localMethod), $args);
     }
 
@@ -217,5 +215,20 @@ class CurlRewrite implements LibraryHookInterface
                 static::setopt($ch, $option, $value);
             }
         }
+    }
+
+    protected static function buildLocalMethodName($method) {
+        $localMethod = str_replace('curl_', '', $method);
+
+        // CamalCase. Example: multi_exec -> multiExec
+        $localMethod = preg_replace_callback(
+            '/_(.?)/',
+            function($matches) {
+                return strtoupper($matches[0]);
+            },
+            $localMethod
+        );
+
+        return $localMethod;
     }
 }
