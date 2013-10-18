@@ -175,6 +175,23 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider curlMethodsProvider
+     */
+    public function testBuildLocalMethodName($expected, $method)
+    {
+        $this->assertEquals($expected, CurlRewriteProxy::buildLocalMethodName($method));
+    }
+    public function curlMethodsProvider()
+    {
+        return array(
+            'curl_multi_add_handler' => array('multiAddHandler', 'curl_multi_add_handler'),
+            'curl_add_handler' => array('addHandler', 'curl_add_handler'),
+            'not a curl function' => array('exec', 'curl_exec'),
+        );
+    }
+
+
+    /**
      * @return \callable
      */
     protected function getTestCallback($handleRequestCallback = null)
@@ -185,3 +202,12 @@ class CurlRewriteTest extends \PHPUnit_Framework_TestCase
         };
     }
 }
+
+
+ class CurlRewriteProxy extends CurlRewrite
+ {
+     public static function buildLocalMethodName($method)
+    {
+        return parent::buildLocalMethodName($method);
+    }
+ }
