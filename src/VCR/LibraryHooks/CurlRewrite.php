@@ -225,7 +225,7 @@ class CurlRewrite implements LibraryHookInterface
         $localMethod = preg_replace_callback(
             '/_(.?)/',
             function($matches) {
-                return strtoupper($matches[0]);
+                return strtoupper($matches[1]);
             },
             $localMethod
         );
