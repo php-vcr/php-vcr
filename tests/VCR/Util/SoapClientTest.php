@@ -1,6 +1,6 @@
 <?php
 
-namespace VCR\Storage\Util;
+namespace VCR\Util;
 
 
 use VCR\LibraryHooks\LibraryHooksException;
