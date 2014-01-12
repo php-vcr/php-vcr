@@ -12,15 +12,15 @@
 
     "require": {
         "ext-curl": "*",
-        "guzzle/http": "3.7.*",
-        "guzzle/plugin-backoff": "3.7.*",
+        "guzzle/http": "3.8.*",
+        "guzzle/plugin-backoff": "3.8.*",
         "beberlei/assert": "1.*",
         "symfony/yaml": "2.*"
     },
 
     "require-dev": {
         "mikey179/vfsStream": "dev-master",
-        "guzzle/plugin-mock": "3.7.*",
+        "guzzle/plugin-mock": "3.8.*",
         "satooshi/php-coveralls": "dev-master",
         "lapistano/proxy-object": "dev-master"
     },
