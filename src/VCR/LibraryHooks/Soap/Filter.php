@@ -15,7 +15,7 @@ class Filter extends AbstractFilter
 
     private static $patterns = array(
         '@new\s+\\\?SoapClient\W*\(@i',
-        '@extends\s+SoapClient\W*@i',
+        '@extends\s+\\\?SoapClient@i',
     );
 
     /**
