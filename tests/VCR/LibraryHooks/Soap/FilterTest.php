@@ -31,6 +31,14 @@ class FilterTest extends VCR_TestCase
                 'new \VCR\Util\Soap\SoapClient(',
                 'new SoapClient('
             ),
+            'extends \SoapClient' => array(
+                'extends \VCR\Util\Soap\SoapClient',
+                'extends \SoapClient'
+            ),
+            'extends \SoapClient with linebreak' => array(
+                "extends \VCR\Util\Soap\SoapClient\n",
+                "extends \SoapClient\n"
+            ),
             'new SoapClientExtended' => array(
                 'new SoapClientExtended(',
                 'new SoapClientExtended('

@@ -36,7 +36,7 @@ class Configuration
         'post_fields' => array('VCR\RequestMatcher', 'matchPostFields'),
     );
     private $whiteList = array();
-    private $blackList = array('src/VCR/LibraryHooks/');
+    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/Soap/SoapClient');
 
     /**
      *
