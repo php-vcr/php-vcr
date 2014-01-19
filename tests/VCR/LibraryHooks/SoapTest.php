@@ -29,7 +29,7 @@ class SoapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldInterceptCallWhenEnabled()
     {
-        $this->soapHook->enable($this->getTestCallback());
+        $this->soapHook->enable($this->getContentCheckCallback());
 
         $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
         $client->setLibraryHook($this->soapHook);
@@ -52,16 +52,56 @@ class SoapTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
     }
 
+    public function testShouldHandleSOAPVersion11()
+    {
+        $expectedHeader = 'text/xml; charset=utf-8; action="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP"';
+        $this->soapHook->enable($this->getHeaderCheckCallback($expectedHeader));
+
+        $client = new \SoapClient(
+            'http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL',
+            array('soap_version' => SOAP_1_1)
+        );
+        $client->setLibraryHook($this->soapHook);
+        $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+    }
+
+    public function testShouldHandleSOAPVersion12()
+    {
+        $expectedHeader = 'application/soap+xml; charset=utf-8; action="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP"';
+        $this->soapHook->enable($this->getHeaderCheckCallback($expectedHeader));
+
+        $client = new \SoapClient(
+            'http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL',
+            array('soap_version' => SOAP_1_2)
+        );
+        $client->setLibraryHook($this->soapHook);
+        $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+    }
+
     /**
      * @param null $handleRequestCallback
      *
      * @return \callable
      */
-    protected function getTestCallback($handleRequestCallback = null)
+    protected function getContentCheckCallback()
     {
         $testClass = $this;
-        return function($request) use($testClass) {
+        return function () use ($testClass) {
             return new Response(200, null, $testClass->expected);
+        };
+    }
+
+    /**
+     * @param null $handleRequestCallback
+     *
+     * @return \callable
+     */
+    protected function getHeaderCheckCallback($expectedHeader)
+    {
+        $test = $this;
+        return function ($request) use ($test, $expectedHeader) {
+            $test->assertEquals($expectedHeader, $request->getHeader('Content-Type'));
+            return new Response(200, null, '');
         };
     }
 }
