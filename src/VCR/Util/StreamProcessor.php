@@ -190,7 +190,11 @@ class StreamProcessor
     public function url_stat($path, $flags)
     {
         $this->restore();
-        $result = @stat($path);
+        try {
+            $result = @stat($path);
+        } catch (Exception $e) {
+            $result = false;
+        }
         $this->intercept();
         return $result;
     }
