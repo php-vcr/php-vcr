@@ -192,8 +192,13 @@ class StreamProcessor
         $this->restore();
         try {
             $result = @stat($path);
-        } catch (Exception $e) {
-            $result = false;
+        } catch (\ErrorException $e) {
+            // PHPUnit running in process isolation (processIsolation="true")
+            // throws an \ErrorException for any PHP warning.
+
+            // In this case we surpress errors.
+            // See https://github.com/php-vcr/php-vcr/pull/35 for more information.
+            return;
         }
         $this->intercept();
         return $result;
