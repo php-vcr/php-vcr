@@ -192,7 +192,7 @@ class StreamProcessor
         $this->restore();
         try {
             $result = @stat($path);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $result = false;
         }
         $this->intercept();
