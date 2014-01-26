@@ -16,7 +16,6 @@ class Json implements StorageInterface
 
     public function __construct($filePath)
     {
-        // Todo: should this be automatically created?
         if (!file_exists($filePath)) {
             file_put_contents($filePath, '[]');
         }
@@ -42,10 +41,6 @@ class Json implements StorageInterface
     public function current()
     {
         return $this->currentJson;
-        // $firstChar = fgetc($this->handle);
-        // if ($firstChar !== '[') {
-        //     throw new \InvalidArgumentException('File has to start with [, like a json array.');
-        // }
     }
 
     public function key()

@@ -83,7 +83,7 @@ class CurlHelper
 
         $constants = get_defined_constants(true);
         $constantNames = array_flip($constants['curl']);
-        die("Todo: {$constantNames[$option]} ({$option}) ");
+        throw new \BadMethodCallException("Not implemented: {$constantNames[$option]} ({$option}) ");
     }
 
     public static function setCurlOptionOnRequest(Request $request, $option, $value)
@@ -122,18 +122,11 @@ class CurlHelper
                 }
                 $request->addHeaders($headers);
                 break;
-            case CURLOPT_FILE:
-                $additionalCurlOpts[CURLOPT_FILE] = $value;
-                break;
             case CURLOPT_WRITEFUNCTION:
             case CURLOPT_HEADERFUNCTION:
                 // Ignore writer and header functions
                 break;
             default:
-                $constants = get_defined_constants(true);
-                $constantNames = array_flip($constants['curl']);
-                // TODO: Handle all missing curl options
-                // var_dump("Todo: {$constantNames[$option]} ({$option}): {$value}");
                 $request->getCurlOptions()->set($option, $value);
                 break;
         }

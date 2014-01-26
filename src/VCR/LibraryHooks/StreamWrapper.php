@@ -2,7 +2,6 @@
 
 namespace VCR\LibraryHooks;
 
-use VCR\Configuration;
 use VCR\Request;
 use VCR\Response;
 use VCR\Assertion;

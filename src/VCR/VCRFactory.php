@@ -3,7 +3,6 @@
 namespace VCR;
 
 use VCR\LibraryHooks\CurlRewrite;
-use VCR\LibraryHooks\CurlRewrite\Filter as CurlRewriteFilter;
 use VCR\LibraryHooks\Soap;
 use VCR\Util\StreamProcessor;
 

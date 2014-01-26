@@ -2,7 +2,6 @@
 
 namespace VCR\LibraryHooks;
 
-use VCR\Configuration;
 use VCR\Request;
 use VCR\Response;
 use VCR\Assertion;
@@ -76,7 +75,7 @@ class CurlRunkit implements LibraryHookInterface
     }
 
     /**
-     * @inherit
+     * @inheritdoc
      */
     public function enable(\Closure $handleRequestCallback)
     {
@@ -101,7 +100,7 @@ class CurlRunkit implements LibraryHookInterface
     }
 
     /**
-     * @inherit
+     * @inheritdoc
      */
     public function disable()
     {
@@ -132,7 +131,6 @@ class CurlRunkit implements LibraryHookInterface
         } else {
             self::$multiHandles[(int) $mh] = array((int) $ch);
         }
-        // return \curl_multi_add_handle_original($mh, $ch);
     }
 
     public static function multiRemoveHandle($mh, $ch)
@@ -140,7 +138,6 @@ class CurlRunkit implements LibraryHookInterface
         if (isset(self::$multiHandles[(int) $mh][(int) $ch])) {
             unset(self::$multiHandles[(int) $mh][(int) $ch]);
         }
-        // return \curl_multi_remove_handle_original($mh, $ch);
     }
 
     public static function multiExec($mh, &$still_running)
@@ -153,7 +150,6 @@ class CurlRunkit implements LibraryHookInterface
                 }
             }
         }
-        // return \curl_multi_exec($mh, $still_running);
         return CURLM_OK;
     }
 

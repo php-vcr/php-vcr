@@ -109,11 +109,6 @@ class StreamProcessor
     /**
      * Determines that the provided uri leads to a PHP file.
      *
-     * @todo What about PHP files with extensions:
-     *   - .inc
-     *   - .php(\d)*
-     *   - ...
-     *
      * @param string $uri
      *
      * @return bool
@@ -187,7 +182,7 @@ class StreamProcessor
         return ftell($this->resource);
     }
 
-    public function url_stat($path, $flags)
+    public function url_stat($path)
     {
         $this->restore();
         try {
@@ -210,7 +205,7 @@ class StreamProcessor
         return true;
     }
 
-    public function dir_opendir($path, $options)
+    public function dir_opendir($path)
     {
         $this->restore();
         if (isset($this->context)) {
@@ -257,7 +252,7 @@ class StreamProcessor
         return $result;
     }
 
-    public function rmdir($path, $options)
+    public function rmdir($path)
     {
         $this->restore();
         if (isset($this->context)) {
