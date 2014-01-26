@@ -1,6 +1,8 @@
 <?php
 namespace VCR;
 
+use Guzzle\Http\Exception\BadResponseException;
+
 class Client
 {
     protected $client;
