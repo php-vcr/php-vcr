@@ -76,7 +76,7 @@ class CurlRunkit implements LibraryHookInterface
     }
 
     /**
-     * @inherit
+     * @inheritdoc
      */
     public function enable(\Closure $handleRequestCallback)
     {
@@ -101,7 +101,7 @@ class CurlRunkit implements LibraryHookInterface
     }
 
     /**
-     * @inherit
+     * @inheritdoc
      */
     public function disable()
     {
