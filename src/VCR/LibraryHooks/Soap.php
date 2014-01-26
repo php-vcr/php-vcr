@@ -3,10 +3,8 @@
 namespace VCR\LibraryHooks;
 
 use VCR\Assertion;
-use VCR\Configuration;
 use VCR\LibraryHooks\LibraryHooksException;
 use VCR\Request;
-use VCR\Response;
 use VCR\Util\StreamProcessor;
 
 /**

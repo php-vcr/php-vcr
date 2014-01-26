@@ -2,10 +2,8 @@
 
 namespace VCR\Util\Soap;
 
-
 use VCR\LibraryHooks\LibraryHookInterface;
 use VCR\LibraryHooks\LibraryHooksException;
-use VCR\Request;
 use VCR\VCRFactory;
 
 class SoapClient extends \SoapClient
