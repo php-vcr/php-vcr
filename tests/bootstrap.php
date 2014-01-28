@@ -18,7 +18,7 @@ $loader->addClassMap(
 );
 
 \VCR\VCR::configure()
-    ->enableLibraryHooks(array('curl_rewrite', 'soap'))
+    ->enableLibraryHooks(array('curl', 'soap'))
     ->setBlackList(array('Soap/FilterTest'));
 \VCR\VCR::turnOn();
 \VCR\VCR::turnOff();

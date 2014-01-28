@@ -16,7 +16,7 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 * Supports common http functions and extensions
   * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification
   * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) by adding `\VCR\VCR\turnOn();` in your `tests/boostrap.php`
-  * curl(), either using [runkit extension](http://www.php.net/manual/en/book.runkit.php) and `runkit.internal_override=1` in your php.ini or by adding `\VCR\VCR\turnOn();` in your `tests/boostrap.php`
+  * curl(), by adding `\VCR\VCR::turnOn();` in your `tests/boostrap.php`
 * The same request can receive different responses in different tests--just use different cassettes.
 * Disables all HTTP requests that you don't explicitly allow (except SoapClient if not configured).
 * Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
@@ -108,9 +108,8 @@ PHP-VCR depends on:
   * HTTP library [Guzzle](http://guzzlephp.org)
   * [symfony/yaml](https://github.com/symfony/yaml)
   * [beberlei/assert](https://github.com/beberlei/assert)
-  * (optional) runkit extension with `runkit.internal_override=1` in php.ini if you want to intercept curl
 
-Composer installs all dependencies except extensions like curl or runkit.
+Composer installs all dependencies except extensions like curl.
 
 ## Run tests
 
@@ -123,6 +122,7 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2014-01-28 Release 1.1.0: Removes curl runkit library hook.
  * 2014-02-19 Release 1.0.7: Adds query request matcher.
  * 2014-01-12 Release 1.0.6: Updates dependencies.
  * 2013-10-13 Release 1.0.5: Fixed SOAP support, refactorings.

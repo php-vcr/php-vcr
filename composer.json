@@ -25,10 +25,6 @@
         "lapistano/proxy-object": "dev-master"
     },
 
-    "suggest": {
-        "ext-runkit": "*"
-    },
-
     "autoload": {
         "classmap": ["src/"]
     }

@@ -30,24 +30,6 @@ class VCRTest extends VCR_TestCase
         VCR::turnOff();
     }
 
-    /**
-     * @group runkit
-     */
-    public function testShouldInterceptCurl()
-    {
-        $this->skipTestIfRunkitUnavailable();
-        VCR::configure()->enableLibraryHooks(array('curl_runkit'));
-        VCR::turnOn();
-        VCR::insertCassette('unittest_curl_test');
-        $ch = curl_init('http://example.com/');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        $this->assertEquals('This is a curl test dummy.', $result, 'Curl call was not intercepted.');
-        VCR::eject();
-        VCR::turnOff();
-    }
-
     public function testShouldInterceptGuzzleLibrary()
     {
         VCR::configure()->enableLibraryHooks(array('curl_rewrite'));
