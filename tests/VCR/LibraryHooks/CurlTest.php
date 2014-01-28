@@ -3,47 +3,42 @@
 namespace VCR\LibraryHooks;
 
 use VCR\Response;
-use VCR\VCR_TestCase;
+use VCR\Configuration;
+use VCR\LibraryHooks\Curl\Filter;
+use VCR\Util\StreamProcessor;
+
 
 /**
- * Test if intercepting http/https using stream wrapper works.
+ * Test if intercepting http/https using curl works.
  */
-class CurlRunkitTest extends VCR_TestCase
+class CurlTest extends \PHPUnit_Framework_TestCase
 {
     public $expected = 'example response body';
 
-
     public function setup()
     {
-        $this->skipTestIfRunkitUnavailable();
+        $this->config = new Configuration();
+        $this->curlHook = new Curl(new Filter(), new StreamProcessor($this->config));
     }
 
-
-    /**
-     * @group runkit
-     */
     public function testShouldInterceptCallWhenEnabled()
     {
-        $curlHook = new CurlRunkit();
-        $curlHook->enable($this->getTestCallback());
+        $this->curlHook->enable($this->getTestCallback());
 
         $ch = curl_init('http://127.0.0.1/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $actual = curl_exec($ch);
         curl_close($ch);
 
-        $curlHook->disable();
+        $this->curlHook->disable();
         $this->assertEquals($this->expected, $actual, 'Response was not returned.');
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldNotInterceptCallWhenNotEnabled()
     {
         $this->markTestSkipped('Uses internet connection, find another way to test this.');
         $testClass = $this;
-        $curlHook = new CurlRunkit();
+        $this->curlHook = new Curl();
 
         $ch = curl_init('http://127.0.0.1/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -51,17 +46,13 @@ class CurlRunkitTest extends VCR_TestCase
         curl_close($ch);
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldNotInterceptCallWhenDisabled()
     {
         $testClass = $this;
-        $curlHook = new CurlRunkit();
-        $curlHook->enable(function($request) use($testClass) {
+        $this->curlHook->enable(function($request) use($testClass) {
             $testClass->fail('This request should not have been intercepted.');
         });
-        $curlHook->disable();
+        $this->curlHook->disable();
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1/');
@@ -70,13 +61,9 @@ class CurlRunkitTest extends VCR_TestCase
         curl_close($ch);
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldWriteFileOnFileDownload()
     {
-        $curlHook = new CurlRunkit();
-        $curlHook->enable($this->getTestCallback());
+        $this->curlHook->enable($this->getTestCallback());
 
         $ch = curl_init('https://127.0.0.1/');
         $fp = fopen('php://temp/test_file', 'w');
@@ -87,17 +74,13 @@ class CurlRunkitTest extends VCR_TestCase
         $actual = fread($fp, 1024);
         fclose($fp);
 
-        $curlHook->disable();
+        $this->curlHook->disable();
         $this->assertEquals($this->expected, $actual, 'Response was not written in file.');
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldEchoResponseIfReturnTransferFalse()
     {
-        $curlHook = new CurlRunkit();
-        $curlHook->enable($this->getTestCallback());
+        $this->curlHook->enable($this->getTestCallback());
 
         $ch = curl_init('http://127.0.0.1/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
@@ -107,18 +90,14 @@ class CurlRunkitTest extends VCR_TestCase
         ob_end_clean();
         curl_close($ch);
 
-        $curlHook->disable();
+        $this->curlHook->disable();
         $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldPostFieldsAsString()
     {
         $testClass = $this;
-        $curlHook = new CurlRunkit();
-        $curlHook->enable(function($request) use($testClass) {
+        $this->curlHook->enable(function($request) use($testClass) {
             $testClass->assertEquals(
                 array('para1' => 'val1', 'para2' => 'val2'),
                 $request->getPostFields()->getAll(),
@@ -131,17 +110,13 @@ class CurlRunkitTest extends VCR_TestCase
         curl_setopt($ch, CURLOPT_POSTFIELDS, 'para1=val1&para2=val2');
         curl_exec($ch);
         curl_close($ch);
-        $curlHook->disable();
+        $this->curlHook->disable();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldPostFieldsAsArray()
     {
         $testClass = $this;
-        $curlHook = new CurlRunkit;
-        $curlHook->enable(function($request) use($testClass) {
+        $this->curlHook->enable(function($request) use($testClass) {
             $testClass->assertEquals(
                 array('para1' => 'val1', 'para2' => 'val2'),
                 $request->getPostFields()->getAll(),
@@ -154,63 +129,67 @@ class CurlRunkitTest extends VCR_TestCase
         curl_setopt($ch, CURLOPT_POSTFIELDS, array('para1' => 'val1', 'para2' => 'val2'));
         curl_exec($ch);
         curl_close($ch);
-        $curlHook->disable();
+        $this->curlHook->disable();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldReturnCurlInfoStatusCode()
     {
-        $curlHook = new CurlRunkit();
-        $curlHook->enable($this->getTestCallback());
+        $this->curlHook->enable($this->getTestCallback());
 
         $ch = curl_init('http://127.0.0.1');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
+        $infoHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        $this->assertEquals(200, curl_getinfo($ch, CURLINFO_HTTP_CODE), 'HTTP status not set.');
-        $curlHook->disable();
+        $this->assertEquals(200, $infoHttpCode, 'HTTP status not set.');
+        $this->curlHook->disable();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldReturnCurlInfoAll()
     {
-        $curlHook = new CurlRunkit();
-        $curlHook->enable($this->getTestCallback());
+        $this->curlHook->enable($this->getTestCallback());
 
         $ch = curl_init('http://127.0.0.1');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
+        $info = curl_getinfo($ch);
         curl_close($ch);
 
-        $this->assertTrue(is_array(curl_getinfo($ch)), 'curl_getinfo() should return an array.');
-        $this->assertEquals(19, count(curl_getinfo($ch)), 'curl_getinfo() should return 19 values.');
-        $curlHook->disable();
+        $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
+        $this->assertEquals(19, count($info), 'curl_getinfo() should return 19 values.');
+        $this->curlHook->disable();
     }
 
-    /**
-     * @group runkit
-     */
     public function testShouldNotThrowErrorWhenDisabledTwice()
     {
-        $curlHook = new CurlRunkit();
-        $curlHook->disable();
-        $curlHook->disable();
+        $this->curlHook->disable();
+        $this->curlHook->disable();
+    }
+
+    public function testShouldNotThrowErrorWhenEnabledTwice()
+    {
+        $this->curlHook->enable($this->getTestCallback());
+        $this->curlHook->enable($this->getTestCallback());
+        $this->curlHook->disable();
     }
 
     /**
-     * @group runkit
+     * @dataProvider curlMethodsProvider
      */
-    public function testShouldNotThrowErrorWhenEnabledTwice()
+    public function testBuildLocalMethodName($expected, $method)
     {
-        $curlHook = new CurlRunkit();
-        $curlHook->enable($this->getTestCallback());
-        $curlHook->enable($this->getTestCallback());
+        $this->assertEquals($expected, CurlProxy::buildLocalMethodName($method));
     }
+    public function curlMethodsProvider()
+    {
+        return array(
+            'curl_multi_add_handler' => array('multiAddHandler', 'curl_multi_add_handler'),
+            'curl_add_handler' => array('addHandler', 'curl_add_handler'),
+            'not a curl function' => array('exec', 'curl_exec'),
+        );
+    }
+
 
     /**
      * @return \callable
@@ -223,3 +202,12 @@ class CurlRunkitTest extends VCR_TestCase
         };
     }
 }
+
+
+ class CurlProxy extends Curl
+ {
+     public static function buildLocalMethodName($method)
+    {
+        return parent::buildLocalMethodName($method);
+    }
+ }
