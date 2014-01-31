@@ -36,7 +36,7 @@ class Configuration
         'query_string' => array('VCR\RequestMatcher', 'matchQueryString'),
     );
     private $whiteList = array();
-    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/Soap/SoapClient');
+    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient');
 
     /**
      *

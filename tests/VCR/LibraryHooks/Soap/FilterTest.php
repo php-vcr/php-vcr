@@ -23,19 +23,19 @@ class FilterTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'new \SoapClient' => array(
-                'new \VCR\Util\Soap\SoapClient(',
+                'new \VCR\Util\SoapClient(',
                 'new \SoapClient('
             ),
             'new SoapClient' => array(
-                'new \VCR\Util\Soap\SoapClient(',
+                'new \VCR\Util\SoapClient(',
                 'new SoapClient('
             ),
             'extends \SoapClient' => array(
-                'extends \VCR\Util\Soap\SoapClient',
+                'extends \VCR\Util\SoapClient',
                 'extends \SoapClient'
             ),
             'extends \SoapClient with linebreak' => array(
-                "extends \VCR\Util\Soap\SoapClient\n",
+                "extends \VCR\Util\SoapClient\n",
                 "extends \SoapClient\n"
             ),
             'new SoapClientExtended' => array(

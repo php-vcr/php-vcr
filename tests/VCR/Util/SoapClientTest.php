@@ -3,7 +3,7 @@
 namespace VCR\Util;
 
 use VCR\VCRException;
-use VCR\Util\Soap\SoapClient;
+use VCR\Util\SoapClient;
 
 class SoapClientTest extends \PHPUnit_Framework_TestCase
 {
