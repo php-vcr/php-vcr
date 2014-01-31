@@ -3,7 +3,7 @@
 namespace VCR\Util\Soap;
 
 use VCR\LibraryHooks\LibraryHookInterface;
-use VCR\LibraryHooks\LibraryHooksException;
+use VCR\VCRException;
 use VCR\VCRFactory;
 
 class SoapClient extends \SoapClient
@@ -19,14 +19,10 @@ class SoapClient extends \SoapClient
 
         try {
             $response = $soap->doRequest($request, $location, $action, $version, $one_way);
-
-        } catch (LibraryHooksException $e) {
-
-            if (LibraryHooksException::HookDisabled === $e->getCode()) {
-
+        } catch (VCRException $e) {
+            if (VCRException::LIBRARY_HOOK_DISABLED === $e->getCode()) {
                 $response = parent::__doRequest($request, $location, $action, $version, $one_way);
             } else {
-
                 throw $e;
             }
         }

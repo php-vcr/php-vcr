@@ -2,7 +2,7 @@
 
 namespace VCR\Util;
 
-use VCR\LibraryHooks\LibraryHooksException;
+use VCR\VCRException;
 use VCR\Util\Soap\SoapClient;
 
 class SoapClientTest extends \PHPUnit_Framework_TestCase
@@ -51,10 +51,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
             ->method('doRequest')
             ->will(
                 $this->throwException(
-                    new LibraryHooksException(
-                        'hook not enabled.',
-                        LibraryHooksException::HookDisabled
-                    )
+                    new VCRException('Hook not enabled.', VCRException::LIBRARY_HOOK_DISABLED)
                 )
             );
 

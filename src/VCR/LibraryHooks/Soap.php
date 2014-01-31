@@ -3,7 +3,7 @@
 namespace VCR\LibraryHooks;
 
 use VCR\Assertion;
-use VCR\LibraryHooks\LibraryHooksException;
+use VCR\VCRException;
 use VCR\Request;
 use VCR\Util\StreamProcessor;
 
@@ -48,10 +48,7 @@ class Soap implements LibraryHookInterface
     public function doRequest($request, $location, $action, $version, $one_way = 0)
     {
         if ($this->status === self::DISABLED) {
-            throw new LibraryHooksException(
-                'Hook must be enabled.',
-                LibraryHooksException::HookDisabled
-            );
+            throw new VCRException('Hook must be enabled.', VCRException::LIBRARY_HOOK_DISABLED);
         }
 
         $vcrRequest = new Request('POST', $location);
