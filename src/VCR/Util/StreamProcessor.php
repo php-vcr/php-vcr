@@ -3,7 +3,7 @@
 namespace VCR\Util;
 
 use VCR\Configuration;
-use VCR\LibraryHooks\FilterInterface;
+use VCR\Filter\AbstractFilter;
 
 
 /**
@@ -24,7 +24,7 @@ class StreamProcessor
      */
     protected static $configuration;
 
-    /** @var FilterInterface[] $filters */
+    /** @var AbstractFilter[] $filters */
     protected static $filters = array();
 
     /**
@@ -340,17 +340,17 @@ class StreamProcessor
     }
 
     /**
-     * @param FilterInterface $filter
+     * @param AbstractFilter $filter
      */
-    public function appendFilter(FilterInterface $filter)
+    public function appendFilter(AbstractFilter $filter)
     {
         static::$filters[$filter::NAME] = $filter;
     }
 
     /**
-     * @param FilterInterface $filter
+     * @param AbstractFilter $filter
      */
-    public function detachFilter(FilterInterface $filter)
+    public function detachFilter(AbstractFilter $filter)
     {
         if (!empty(static::$filters[$filter::NAME])) {
             unset(static::$filters[$filter::NAME]);

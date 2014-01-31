@@ -1,7 +1,6 @@
 <?php
 
-namespace VCR\LibraryHooks;
-
+namespace VCR\Filter;
 
 class AbstractFilterTest extends \PHPUnit_framework_TestCase
 {
@@ -13,7 +12,7 @@ class AbstractFilterTest extends \PHPUnit_framework_TestCase
             $methods
         );
 
-        $filter = $this->getMockBuilder('\VCR\LibraryHooks\AbstractFilter')
+        $filter = $this->getMockBuilder('\VCR\Filter\AbstractFilter')
             ->setMethods(array($defaults))
             ->getMockForAbstractClass();
 

@@ -2,9 +2,10 @@
 
 namespace VCR\LibraryHooks;
 
+use VCR\Assertion;
 use VCR\Request;
 use VCR\Response;
-use VCR\Assertion;
+use VCR\Filter\AbstractFilter;
 use VCR\Util\CurlHelper;
 use VCR\Util\StreamProcessor;
 
@@ -47,7 +48,7 @@ class Curl implements LibraryHookInterface
     protected static $multiExecLastCh;
 
     /**
-     * @var FilterInterface
+     * @var AbstractFilter
      */
     private $filter;
 
@@ -60,7 +61,7 @@ class Curl implements LibraryHookInterface
      *
      * @throws \BadMethodCallException in case the Soap extension is not installed.
      */
-    public function __construct(FilterInterface $filter, StreamProcessor $processor)
+    public function __construct(AbstractFilter $filter, StreamProcessor $processor)
     {
         $this->processor = $processor;
         $this->filter = $filter;

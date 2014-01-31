@@ -4,7 +4,7 @@ namespace VCR\LibraryHooks;
 
 use VCR\Response;
 use VCR\Configuration;
-use VCR\LibraryHooks\Curl\Filter;
+use VCR\Filter\CurlFilter;
 use VCR\Util\StreamProcessor;
 
 
@@ -18,7 +18,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     public function setup()
     {
         $this->config = new Configuration();
-        $this->curlHook = new Curl(new Filter(), new StreamProcessor($this->config));
+        $this->curlHook = new Curl(new CurlFilter(), new StreamProcessor($this->config));
     }
 
     public function testShouldInterceptCallWhenEnabled()

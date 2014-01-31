@@ -4,7 +4,7 @@ namespace VCR\LibraryHooks;
 
 use VCR\Response;
 use VCR\Configuration;
-use VCR\LibraryHooks\Soap\Filter;
+use VCR\Filter\SoapFilter;
 use VCR\Util\StreamProcessor;
 
 
@@ -23,7 +23,7 @@ class SoapTest extends \PHPUnit_Framework_TestCase
     public function setup()
     {
         $this->config = new Configuration();
-        $this->soapHook = new Soap(new Filter(), new StreamProcessor($this->config));
+        $this->soapHook = new Soap(new SoapFilter(), new StreamProcessor($this->config));
     }
 
 

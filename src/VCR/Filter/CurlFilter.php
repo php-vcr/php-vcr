@@ -1,10 +1,8 @@
 <?php
 
-namespace VCR\LibraryHooks\Curl;
+namespace VCR\Filter;
 
-use VCR\LibraryHooks\AbstractFilter;
-
-class Filter extends AbstractFilter
+class CurlFilter extends AbstractFilter
 {
     const NAME = 'vcr_curl';
 

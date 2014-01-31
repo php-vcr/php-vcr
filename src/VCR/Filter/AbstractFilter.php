@@ -1,9 +1,8 @@
 <?php
 
-namespace VCR\LibraryHooks;
+namespace VCR\Filter;
 
-
-abstract class AbstractFilter extends \PHP_User_Filter implements FilterInterface
+abstract class AbstractFilter extends \PHP_User_Filter
 {
     const NAME = 'vcr_abstract_filter';
 

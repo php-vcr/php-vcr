@@ -63,7 +63,7 @@ class VCRFactory
     protected function createVCRLibraryHooksSoap()
     {
         return new Soap(
-            $this->getOrCreate('VCR\LibraryHooks\Soap\Filter'),
+            $this->getOrCreate('VCR\Filter\SoapFilter'),
             $this->getOrCreate('Util\StreamProcessor')
         );
     }
@@ -71,7 +71,7 @@ class VCRFactory
     protected function createVCRLibraryHooksCurl()
     {
         return new Curl(
-            $this->getOrCreate('VCR\LibraryHooks\Curl\Filter'),
+            $this->getOrCreate('VCR\Filter\CurlFilter'),
             $this->getOrCreate('Util\StreamProcessor')
         );
     }

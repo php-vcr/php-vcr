@@ -1,10 +1,8 @@
 <?php
 
-namespace VCR\LibraryHooks\Soap;
+namespace VCR\Filter;
 
-use VCR\LibraryHooks\AbstractFilter;
-
-class Filter extends AbstractFilter
+class SoapFilter extends AbstractFilter
 {
     const NAME = 'vcr_soap';
 

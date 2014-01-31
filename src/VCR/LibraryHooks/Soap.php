@@ -5,6 +5,7 @@ namespace VCR\LibraryHooks;
 use VCR\Assertion;
 use VCR\VCRException;
 use VCR\Request;
+use VCR\Filter\AbstractFilter;
 use VCR\Util\StreamProcessor;
 
 /**
@@ -21,7 +22,7 @@ class Soap implements LibraryHookInterface
      */
     private $status = self::DISABLED;
     /**
-     * @var FilterInterface
+     * @var AbstractFilter
      */
     private $filter;
     /**
@@ -30,12 +31,12 @@ class Soap implements LibraryHookInterface
     private $processor;
 
     /**
-     * @param FilterInterface $filter
+     * @param AbstractFilter $filter
      * @param StreamProcessor $processor
      *
      * @throws \BadMethodCallException in case the Soap extension is not installed.
      */
-    public function __construct(FilterInterface $filter, StreamProcessor $processor)
+    public function __construct(AbstractFilter $filter, StreamProcessor $processor)
     {
         if (!class_exists('\SoapClient')) {
             throw new \BadMethodCallException('For soap support you need to install the soap extension.');
