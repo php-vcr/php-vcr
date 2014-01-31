@@ -233,7 +233,7 @@ class Curl implements LibraryHook
         // CamalCase. Example: multi_exec -> multiExec
         $localMethod = preg_replace_callback(
             '/_(.?)/',
-            function($matches) {
+            function ($matches) {
                 return strtoupper($matches[1]);
             },
             $localMethod

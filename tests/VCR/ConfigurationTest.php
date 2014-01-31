@@ -67,7 +67,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testAddRequestMatcherFailsWithNoName()
     {
         $this->setExpectedException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
-        $expected = function($first, $second) {
+        $expected = function ($first, $second) {
             return true;
         };
         $actual = $this->config->addRequestMatcher('', $expected);
@@ -81,7 +81,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testAddRequestMatchers()
     {
-        $expected = function($first, $second) {
+        $expected = function ($first, $second) {
             return true;
         };
         $actual = $this->config->addRequestMatcher('new_matcher', $expected);

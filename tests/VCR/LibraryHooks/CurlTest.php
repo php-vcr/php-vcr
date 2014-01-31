@@ -49,7 +49,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     public function testShouldNotInterceptCallWhenDisabled()
     {
         $testClass = $this;
-        $this->curlHook->enable(function($request) use($testClass) {
+        $this->curlHook->enable(function ($request) use ($testClass) {
             $testClass->fail('This request should not have been intercepted.');
         });
         $this->curlHook->disable();
@@ -97,7 +97,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     public function testShouldPostFieldsAsString()
     {
         $testClass = $this;
-        $this->curlHook->enable(function($request) use($testClass) {
+        $this->curlHook->enable(function ($request) use ($testClass) {
             $testClass->assertEquals(
                 array('para1' => 'val1', 'para2' => 'val2'),
                 $request->getPostFields()->getAll(),
@@ -116,7 +116,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     public function testShouldPostFieldsAsArray()
     {
         $testClass = $this;
-        $this->curlHook->enable(function($request) use($testClass) {
+        $this->curlHook->enable(function ($request) use ($testClass) {
             $testClass->assertEquals(
                 array('para1' => 'val1', 'para2' => 'val2'),
                 $request->getPostFields()->getAll(),
@@ -197,7 +197,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     protected function getTestCallback($handleRequestCallback = null)
     {
         $testClass = $this;
-        return function($request) use($testClass) {
+        return function ($request) use ($testClass) {
             return new Response(200, null, $testClass->expected);
         };
     }
