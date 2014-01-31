@@ -19,8 +19,10 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
 
     public function testInsertCassetteEjectExisting()
     {
+        $configuration = new Configuration();
+        $configuration->enableLibraryHooks(array());
         $videorecorder = $this->getMockBuilder('\VCR\Videorecorder')
-            ->setConstructorArgs(array(new Configuration(), new Util\HttpClient(), VCRFactory::getInstance()))
+            ->setConstructorArgs(array($configuration, new Util\HttpClient(), VCRFactory::getInstance()))
             ->setMethods(array('eject'))
             ->getMock();
 
