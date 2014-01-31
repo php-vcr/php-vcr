@@ -101,6 +101,14 @@ class Curl implements LibraryHookInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function isEnabled()
+    {
+        return $this->status == self::ENABLED;
+    }
+
+    /**
      * Calls default curl functions if library hook is disabled.
      *
      * @param  string $method [description]

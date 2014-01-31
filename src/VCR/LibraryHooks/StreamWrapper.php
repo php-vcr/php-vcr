@@ -40,7 +40,14 @@ class StreamWrapper implements LibraryHookInterface
         self::$handleRequestCallback = null;
         stream_wrapper_restore('http');
         stream_wrapper_restore('https');
+    }
 
+    /**
+     * @inheritDoc
+     */
+    public function isEnabled()
+    {
+        return $this->status == self::ENABLED;
     }
 
     public function stream_open($path, $mode, $options, &$opened_path)

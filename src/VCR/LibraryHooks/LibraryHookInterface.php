@@ -35,4 +35,10 @@ interface LibraryHookInterface
      */
     public function disable();
 
+    /**
+     * Returns true if library hook is enabled, false otherwise.
+     *
+     * @return boolean True if library hook is enabled, false otherwise.
+     */
+    public function isEnabled();
 }

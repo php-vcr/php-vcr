@@ -63,16 +63,16 @@ class VCRFactory
     protected function createVCRLibraryHooksSoap()
     {
         return new Soap(
-            $this->getOrCreate('VCR\\LibraryHooks\\Soap\\Filter'),
-            $this->getOrCreate('Util\\StreamProcessor')
+            $this->getOrCreate('VCR\LibraryHooks\Soap\Filter'),
+            $this->getOrCreate('Util\StreamProcessor')
         );
     }
 
     protected function createVCRLibraryHooksCurl()
     {
         return new Curl(
-            $this->getOrCreate('VCR\\LibraryHooks\\Curl\\Filter'),
-            $this->getOrCreate('Util\\StreamProcessor')
+            $this->getOrCreate('VCR\LibraryHooks\Curl\Filter'),
+            $this->getOrCreate('Util\StreamProcessor')
         );
     }
 
@@ -118,7 +118,7 @@ class VCRFactory
      *
      * Example:
      *
-     *   ClassName: \\Tux\\Foo\\Linus
+     *   ClassName: \Tux\Foo\Linus
      *   Returns: createTuxFooLinus
      *
      * @param string $className

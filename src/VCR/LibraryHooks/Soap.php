@@ -87,13 +87,21 @@ class Soap implements LibraryHookInterface
      */
     public function disable()
     {
-        if ($this->status == self::DISABLED) {
+        if (!$this->isEnabled()) {
             return;
         }
 
         self::$handleRequestCallback = null;
 
         $this->status = self::DISABLED;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEnabled()
+    {
+        return $this->status == self::ENABLED;
     }
 
     public function __destruct()
