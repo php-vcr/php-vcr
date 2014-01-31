@@ -5,7 +5,10 @@ namespace VCR;
 use VCR\Util\Assertion;
 
 /**
- * Configuration.
+ * Configuration stores a Videorecorders configuration options.
+ *
+ * Those configuration options might be which library hooks to use,
+ * where to store cassettes or which files to scan when filtering source code.
  */
 class Configuration
 {
