@@ -60,6 +60,8 @@ class Videorecorder
      *
      * This enables configured library hooks.
      *
+     * @api
+     *
      * @return void
      */
     public function turnOn()
@@ -77,6 +79,8 @@ class Videorecorder
      *
      * Library hooks will be disabled and cassettes ejected.
      *
+     * @api
+     *
      * @return void
      */
     public function turnOff()
@@ -93,6 +97,8 @@ class Videorecorder
      *
      * Recording and playing back requets won't be possible after ejecting.
      *
+     * @api
+     *
      * @return void
      */
     public function eject()
@@ -103,6 +109,8 @@ class Videorecorder
 
     /**
      * Inserts a cassette to record responses and requets on.
+     *
+     * @api
      *
      * @param  string $cassetteName Name of the cassette (used for the cassette filename).
      *
@@ -127,6 +135,8 @@ class Videorecorder
     /**
      * Returns the current Configuration for this videorecorder.
      *
+     * @api
+     *
      * @return Configuration Configuration for this videorecorder.
      */
     public function configure()
@@ -140,12 +150,14 @@ class Videorecorder
      * If a request was already recorded on a cassette it's response is returned,
      * otherwise the request is issued and it's response recorded (and returned).
      *
+     * @api
+     *
      * @param  Request $request Intercepted request.
      *
      * @return Response Response for the intercepted request.
      * @throws \BadMethodCallException If there was no cassette inserted.
      */
-    public function handleRequest($request)
+    public function handleRequest(Request $request)
     {
         if ($this->cassette === null) {
             throw new \BadMethodCallException(
@@ -168,6 +180,8 @@ class Videorecorder
     /**
      * Disables all library hooks.
      *
+     * @api
+     *
      * @return void
      */
     protected function disableLibraryHooks()
@@ -180,6 +194,8 @@ class Videorecorder
 
     /**
      * Enables configured library hooks.
+     *
+     * @api
      *
      * @return void
      */
