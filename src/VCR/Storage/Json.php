@@ -4,7 +4,7 @@ namespace VCR\Storage;
 
 use VCR\Assertion;
 
-class Json implements StorageInterface
+class Json implements Storage
 {
     const STATUS_IN_OBJECT = true;
     const STATUS_NOT_IN_OBJECT = false;

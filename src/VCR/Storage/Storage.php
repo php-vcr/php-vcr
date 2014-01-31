@@ -2,7 +2,7 @@
 
 namespace VCR\Storage;
 
-interface StorageInterface extends \Iterator
+interface Storage extends \Iterator
 {
     public function storeRecording(array $recording);
 }

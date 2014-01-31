@@ -7,7 +7,7 @@ use Symfony\Component\Yaml\Dumper;
 
 use VCR\Assertion;
 
-class Yaml implements StorageInterface
+class Yaml implements Storage
 {
     const STATUS_IN_OBJECT = true;
     const STATUS_NOT_IN_OBJECT = false;
