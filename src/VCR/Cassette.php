@@ -3,7 +3,7 @@
 namespace VCR;
 
 use VCR\Storage\Storage;
-use VCR\Assertion;
+use VCR\Util\Assertion;
 
 /**
  * A Cassette records and plays back pairs of Requests and Responses in a Storage.

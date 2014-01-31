@@ -4,7 +4,7 @@ namespace VCR\LibraryHooks;
 
 use VCR\Request;
 use VCR\Response;
-use VCR\Assertion;
+use VCR\Util\Assertion;
 
 /**
  * StreamWrapper.

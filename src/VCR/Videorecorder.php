@@ -2,6 +2,7 @@
 
 namespace VCR;
 
+use VCR\Util\Assertion;
 use VCR\Util\HttpClient;
 
 class Videorecorder

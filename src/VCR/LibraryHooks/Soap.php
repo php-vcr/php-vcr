@@ -2,7 +2,7 @@
 
 namespace VCR\LibraryHooks;
 
-use VCR\Assertion;
+use VCR\Util\Assertion;
 use VCR\VCRException;
 use VCR\Request;
 use VCR\Filter\AbstractFilter;

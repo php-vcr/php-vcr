@@ -1,7 +1,8 @@
 <?php
-namespace VCR;
+namespace VCR\Util;
 
 use Assert\Assertion as BaseAssertion;
+use VCR\VCRException;
 
 class Assertion extends BaseAssertion
 {

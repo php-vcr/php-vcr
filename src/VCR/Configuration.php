@@ -2,6 +2,8 @@
 
 namespace VCR;
 
+use VCR\Util\Assertion;
+
 /**
  * Configuration.
  */
