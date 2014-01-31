@@ -25,10 +25,10 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     {
         $this->curlHook->enable($this->getTestCallback());
 
-        $ch = curl_init('http://127.0.0.1/');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $actual = curl_exec($ch);
-        curl_close($ch);
+        $curlHandle = curl_init('http://example.com/');
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        $actual = curl_exec($curlHandle);
+        curl_close($curlHandle);
 
         $this->curlHook->disable();
         $this->assertEquals($this->expected, $actual, 'Response was not returned.');
@@ -37,42 +37,43 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     public function testShouldNotInterceptCallWhenNotEnabled()
     {
         $this->markTestSkipped('Uses internet connection, find another way to test this.');
-        $testClass = $this;
         $this->curlHook = new Curl();
 
-        $ch = curl_init('http://127.0.0.1/');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_exec($ch);
-        curl_close($ch);
+        $curlHandle = curl_init('http://example.com/');
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+        curl_close($curlHandle);
     }
 
     public function testShouldNotInterceptCallWhenDisabled()
     {
         $testClass = $this;
-        $this->curlHook->enable(function ($request) use ($testClass) {
-            $testClass->fail('This request should not have been intercepted.');
-        });
+        $this->curlHook->enable(
+            function () use ($testClass) {
+                $testClass->fail('This request should not have been intercepted.');
+            }
+        );
         $this->curlHook->disable();
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1/');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_exec($ch);
-        curl_close($ch);
+        $curlHandle = curl_init();
+        curl_setopt($curlHandle, CURLOPT_URL, 'http://example.com/');
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+        curl_close($curlHandle);
     }
 
     public function testShouldWriteFileOnFileDownload()
     {
         $this->curlHook->enable($this->getTestCallback());
 
-        $ch = curl_init('https://127.0.0.1/');
-        $fp = fopen('php://temp/test_file', 'w');
-        curl_setopt($ch, CURLOPT_FILE, $fp);
-        curl_exec($ch);
-        curl_close($ch);
-        rewind($fp);
-        $actual = fread($fp, 1024);
-        fclose($fp);
+        $curlHandle = curl_init('https://example.com/');
+        $filePointer = fopen('php://temp/test_file', 'w');
+        curl_setopt($curlHandle, CURLOPT_FILE, $filePointer);
+        curl_exec($curlHandle);
+        curl_close($curlHandle);
+        rewind($filePointer);
+        $actual = fread($filePointer, 1024);
+        fclose($filePointer);
 
         $this->curlHook->disable();
         $this->assertEquals($this->expected, $actual, 'Response was not written in file.');
@@ -82,13 +83,13 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     {
         $this->curlHook->enable($this->getTestCallback());
 
-        $ch = curl_init('http://127.0.0.1/');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+        $curlHandle = curl_init('http://example.com/');
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
         ob_start();
-        curl_exec($ch);
+        curl_exec($curlHandle);
         $actual = ob_get_contents();
         ob_end_clean();
-        curl_close($ch);
+        curl_close($curlHandle);
 
         $this->curlHook->disable();
         $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
@@ -97,38 +98,42 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     public function testShouldPostFieldsAsString()
     {
         $testClass = $this;
-        $this->curlHook->enable(function ($request) use ($testClass) {
-            $testClass->assertEquals(
-                array('para1' => 'val1', 'para2' => 'val2'),
-                $request->getPostFields()->getAll(),
-                'Post query string was not parsed and set correctly.'
-            );
-            return new Response(200);
-        });
+        $this->curlHook->enable(
+            function ($request) use ($testClass) {
+                $testClass->assertEquals(
+                    array('para1' => 'val1', 'para2' => 'val2'),
+                    $request->getPostFields()->getAll(),
+                    'Post query string was not parsed and set correctly.'
+                );
+                return new Response(200);
+            }
+        );
 
-        $ch = curl_init('http://127.0.0.1');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, 'para1=val1&para2=val2');
-        curl_exec($ch);
-        curl_close($ch);
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'para1=val1&para2=val2');
+        curl_exec($curlHandle);
+        curl_close($curlHandle);
         $this->curlHook->disable();
     }
 
     public function testShouldPostFieldsAsArray()
     {
         $testClass = $this;
-        $this->curlHook->enable(function ($request) use ($testClass) {
-            $testClass->assertEquals(
-                array('para1' => 'val1', 'para2' => 'val2'),
-                $request->getPostFields()->getAll(),
-                'Post query string was not parsed and set correctly.'
-            );
-            return new Response(200);
-        });
+        $this->curlHook->enable(
+            function ($request) use ($testClass) {
+                $testClass->assertEquals(
+                    array('para1' => 'val1', 'para2' => 'val2'),
+                    $request->getPostFields()->getAll(),
+                    'Post query string was not parsed and set correctly.'
+                );
+                return new Response(200);
+            }
+        );
 
-        $ch = curl_init('http://127.0.0.1');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array('para1' => 'val1', 'para2' => 'val2'));
-        curl_exec($ch);
-        curl_close($ch);
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_POSTFIELDS, array('para1' => 'val1', 'para2' => 'val2'));
+        curl_exec($curlHandle);
+        curl_close($curlHandle);
         $this->curlHook->disable();
     }
 
@@ -136,11 +141,11 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     {
         $this->curlHook->enable($this->getTestCallback());
 
-        $ch = curl_init('http://127.0.0.1');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_exec($ch);
-        $infoHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+        $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        curl_close($curlHandle);
 
         $this->assertEquals(200, $infoHttpCode, 'HTTP status not set.');
         $this->curlHook->disable();
@@ -150,11 +155,11 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     {
         $this->curlHook->enable($this->getTestCallback());
 
-        $ch = curl_init('http://127.0.0.1');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_exec($ch);
-        $info = curl_getinfo($ch);
-        curl_close($ch);
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+        $info = curl_getinfo($curlHandle);
+        curl_close($curlHandle);
 
         $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
         $this->assertEquals(19, count($info), 'curl_getinfo() should return 19 values.');
@@ -190,24 +195,22 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-
     /**
      * @return \callable
      */
-    protected function getTestCallback($requestCallback = null)
+    protected function getTestCallback()
     {
         $testClass = $this;
-        return function ($request) use ($testClass) {
+        return function () use ($testClass) {
             return new Response(200, null, $testClass->expected);
         };
     }
 }
 
-
- class CurlProxy extends Curl
- {
-     public static function buildLocalMethodName($method)
+class CurlProxy extends Curl
+{
+    public static function buildLocalMethodName($method)
     {
         return parent::buildLocalMethodName($method);
     }
- }
+}
