@@ -2,18 +2,17 @@
 
 namespace VCR\LibraryHooks\Curl;
 
+use lapistano\ProxyObject\ProxyBuilder;
 
-use VCR\VCR_TestCase;
-
-
-class FilterTest extends VCR_TestCase
+class FilterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider codeSnippetProvider
      */
     public function testTransformCode($expected, $code)
     {
-        $filter = $this->getProxyBuilder('\VCR\LibraryHooks\Curl\Filter')
+        $proxy = new ProxyBuilder('\VCR\LibraryHooks\Curl\Filter');
+        $filter = $proxy
             ->setMethods(array('transformCode'))
             ->getProxy();
 

@@ -2,11 +2,10 @@
 
 namespace VCR;
 
-
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class VCRTest extends VCR_TestCase
+class VCRTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testUseStaticCallsNotInitialized()

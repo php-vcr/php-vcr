@@ -2,25 +2,21 @@
 
 namespace VCR\Util;
 
-
 use VCR\LibraryHooks\LibraryHooksException;
 use VCR\Util\Soap\SoapClient;
-use VCR\VCR_TestCase;
 
-class SoapClientTest extends VCR_TestCase
+class SoapClientTest extends \PHPUnit_Framework_TestCase
 {
     const WSDL = 'http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL';
     const ACTION = 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP';
 
-
-    protected function getLibraryHookMock(array $methods =array())
+    protected function getLibraryHookMock(array $methods = array())
     {
         return $this->getMockBuilder('\\VCR\\LibraryHooks\\Soap')
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();
     }
-
 
     public function testDoRequest()
     {
