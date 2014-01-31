@@ -11,26 +11,31 @@ use VCR\Assertion;
 class Cassette
 {
     /**
-     * @var string Cassette name.
+     * Casette name
+     * @var string
      */
     protected $name;
 
     /**
-     * @var \VCR\Configuration
+     * VCR configuration.
+     *
+     * @var Configuration
      */
     protected $config;
 
     /**
-     * @var \VCR\Storage\StorageInterface
+     * Storage used to store records and request pairs.
+     *
+     * @var StorageInterface
      */
     protected $storage;
 
     /**
      * Creates a new cassette.
      *
-     * @param string                        $name    Name of the cassette.
-     * @param \VCR\Configuration            $config  Configuration to use for this cassette.
-     * @param \VCR\Storage\StorageInterface $storage Storage to use for requests and responses.
+     * @param string           $name    Name of the cassette.
+     * @param Configuration    $config  Configuration to use for this cassette.
+     * @param StorageInterface $storage Storage to use for requests and responses.
      * @throws \VCR\VCRException If cassette name is in an invalid format.
      */
     public function __construct($name, Configuration $config, StorageInterface $storage)
@@ -47,7 +52,7 @@ class Cassette
      *
      * @param  Request $request Request to check if it was recorded.
      *
-     * @return boolean          True if a resposne was recorded for specified request.
+     * @return boolean True if a response was recorded for specified request.
      */
     public function hasResponse(Request $request)
     {
