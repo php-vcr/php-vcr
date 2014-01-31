@@ -8,6 +8,7 @@ use VCR\Response;
 use VCR\Filter\AbstractFilter;
 use VCR\Util\CurlHelper;
 use VCR\Util\StreamProcessor;
+use VCR\Util\TextUtil;
 
 /**
  * Library hook for curl functions using include-overwrite.
@@ -121,22 +122,25 @@ class Curl implements LibraryHook
         // Call original when disabled
         if (static::$status == self::DISABLED) {
             if ($method === 'curl_multi_exec') {
-                return curl_multi_exec($args[0], $args[1]);
+                // curl_multi_exec expects to be called with args by reference
+                // which call_user_func_array doesn't do.
+                return \curl_multi_exec($args[0], $args[1]);
             }
 
-            return call_user_func_array($method, $args);
+            return \call_user_func_array($method, $args);
         }
 
         if ($method === 'curl_multi_exec') {
-            return self::multiExec($args[0], $args[1]);
+            // curl_multi_exec expects to be called with args by reference
+            // which call_user_func_array doesn't do.
+            return self::curlMultiExec($args[0], $args[1]);
         }
 
-        $localMethod = static::buildLocalMethodName($method);
-
-        return call_user_func_array(array(__CLASS__, $localMethod), $args);
+        $localMethod = TextUtil::underscoreToLowerCamelcase($method);
+        return \call_user_func_array(array(__CLASS__, $localMethod), $args);
     }
 
-    public static function init($url = null)
+    public static function curlInit($url = null)
     {
         $ch = \curl_init($url);
         self::$requests[(int) $ch] = new Request('GET', $url);
@@ -144,7 +148,7 @@ class Curl implements LibraryHook
         return $ch;
     }
 
-    public static function exec($ch)
+    public static function curlExec($ch)
     {
         $requestCallback = self::$requestCallback;
         self::$responses[(int) $ch] = $requestCallback(self::$requests[(int) $ch]);
@@ -156,7 +160,7 @@ class Curl implements LibraryHook
         );
     }
 
-    public static function multiAddHandle($mh, $ch)
+    public static function curlMultiAddHandle($mh, $ch)
     {
         if (isset(self::$multiHandles[(int) $mh])) {
             self::$multiHandles[(int) $mh][] = (int) $ch;
@@ -165,20 +169,20 @@ class Curl implements LibraryHook
         }
     }
 
-    public static function multiRemoveHandle($mh, $ch)
+    public static function curlMultiRemoveHandle($mh, $ch)
     {
         if (isset(self::$multiHandles[(int) $mh][(int) $ch])) {
             unset(self::$multiHandles[(int) $mh][(int) $ch]);
         }
     }
 
-    public static function multiExec($mh, &$still_running)
+    public static function curlMultiExec($mh, &$still_running)
     {
         if (isset(self::$multiHandles[(int) $mh])) {
             foreach (self::$multiHandles[(int) $mh] as $ch) {
                 if (!isset(self::$responses[(int) $ch])) {
                     self::$multiExecLastCh = $ch;
-                    self::exec($ch);
+                    self::curlExec($ch);
                 }
             }
         }
@@ -186,7 +190,7 @@ class Curl implements LibraryHook
         return CURLM_OK;
     }
 
-    public static function multiInfoRead($mh)
+    public static function curlMultiInfoRead($mh)
     {
         if (self::$multiExecLastCh) {
             $info = array(
@@ -202,7 +206,7 @@ class Curl implements LibraryHook
         return false;
     }
 
-    public static function getinfo($ch, $option = 0)
+    public static function curlGetinfo($ch, $option = 0)
     {
         return CurlHelper::getCurlOptionFromResponse(
             self::$responses[(int) $ch],
@@ -210,7 +214,7 @@ class Curl implements LibraryHook
         );
     }
 
-    public static function setopt($ch, $option, $value)
+    public static function curlSetopt($ch, $option, $value)
     {
         CurlHelper::setCurlOptionOnRequest(self::$requests[(int) $ch], $option, $value);
 
@@ -222,28 +226,12 @@ class Curl implements LibraryHook
         \curl_setopt($ch, $option, $value);
     }
 
-    public static function setoptArray($ch, $options)
+    public static function curlSetoptArray($ch, $options)
     {
         if (is_array($options)) {
             foreach ($options as $option => $value) {
-                static::setopt($ch, $option, $value);
+                static::curlSetopt($ch, $option, $value);
             }
         }
-    }
-
-    protected static function buildLocalMethodName($method)
-    {
-        $localMethod = str_replace('curl_', '', $method);
-
-        // CamalCase. Example: multi_exec -> multiExec
-        $localMethod = preg_replace_callback(
-            '/_(.?)/',
-            function ($matches) {
-                return strtoupper($matches[1]);
-            },
-            $localMethod
-        );
-
-        return $localMethod;
     }
 }

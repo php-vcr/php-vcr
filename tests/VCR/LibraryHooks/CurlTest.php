@@ -7,7 +7,6 @@ use VCR\Configuration;
 use VCR\Filter\CurlFilter;
 use VCR\Util\StreamProcessor;
 
-
 /**
  * Test if intercepting http/https using curl works.
  */
@@ -180,22 +179,6 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider curlMethodsProvider
-     */
-    public function testBuildLocalMethodName($expected, $method)
-    {
-        $this->assertEquals($expected, CurlProxy::buildLocalMethodName($method));
-    }
-    public function curlMethodsProvider()
-    {
-        return array(
-            'curl_multi_add_handler' => array('multiAddHandler', 'curl_multi_add_handler'),
-            'curl_add_handler' => array('addHandler', 'curl_add_handler'),
-            'not a curl function' => array('exec', 'curl_exec'),
-        );
-    }
-
-    /**
      * @return \callable
      */
     protected function getTestCallback()
@@ -204,13 +187,5 @@ class CurlTest extends \PHPUnit_Framework_TestCase
         return function () use ($testClass) {
             return new Response(200, null, $testClass->expected);
         };
-    }
-}
-
-class CurlProxy extends Curl
-{
-    public static function buildLocalMethodName($method)
-    {
-        return parent::buildLocalMethodName($method);
     }
 }
