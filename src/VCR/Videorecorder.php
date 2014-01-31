@@ -39,7 +39,7 @@ class Videorecorder
     /**
      * @var boolean Flag if this videorecorder is turned on or not.
      */
-    public $isOn = false;
+    protected $isOn = false;
 
     /**
      * Creates a videorecorder instance.
@@ -214,6 +214,8 @@ class Videorecorder
 
     /**
      * Turns off this videorecorder when instance is destroyed.
+     *
+     * @codeCoverageIgnore
      */
     public function __destruct()
     {
