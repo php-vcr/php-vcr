@@ -12,7 +12,7 @@ use VCR\Util\StreamProcessor;
 /**
  * Library hook for curl functions using include-overwrite.
  */
-class Curl implements LibraryHookInterface
+class Curl implements LibraryHook
 {
 
     /**

@@ -5,7 +5,7 @@ namespace VCR\LibraryHooks;
 /**
  * Library hook interface.
  */
-interface LibraryHookInterface
+interface LibraryHook
 {
     /**
      * @var string Enabled status for a hook.
