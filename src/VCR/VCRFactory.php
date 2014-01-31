@@ -44,14 +44,14 @@ class VCRFactory
     {
         return new Videorecorder(
             $this->getOrCreate('Configuration'),
-            $this->getOrCreate('Client'),
+            $this->getOrCreate('HttpClient'),
             $this
         );
     }
 
-    protected function createClient()
+    protected function createHttpClient()
     {
-        return new Client();
+        return new Util\HttpClient();
     }
 
     protected function createStorage($filePath)

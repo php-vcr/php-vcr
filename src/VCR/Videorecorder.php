@@ -2,6 +2,8 @@
 
 namespace VCR;
 
+use VCR\Util\HttpClient;
+
 class Videorecorder
 {
     /**
@@ -10,7 +12,7 @@ class Videorecorder
     protected $config;
 
     /**
-     * @var Client
+     * @var HttpClient
      */
     protected $client;
 
@@ -24,7 +26,7 @@ class Videorecorder
      */
     public $isOn = false;
 
-    public function __construct(Configuration $config, Client $client, VCRFactory $factory)
+    public function __construct(Configuration $config, HttpClient $client, VCRFactory $factory)
     {
         $this->config = $config;
         $this->client = $client;
