@@ -18,7 +18,7 @@ class Curl implements LibraryHook
     /**
      * @var \Closure Callback which will be executed when a request is intercepted.
      */
-    protected static $handleRequestCallback;
+    protected static $requestCallback;
 
     /**
      * @var string Current status of this hook, either enabled or disabled.
@@ -70,9 +70,9 @@ class Curl implements LibraryHook
     /**
      * @inheritDoc
      */
-    public function enable(\Closure $handleRequestCallback)
+    public function enable(\Closure $requestCallback)
     {
-        Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
+        Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
 
         if (static::$status == self::ENABLED) {
             return;
@@ -82,7 +82,7 @@ class Curl implements LibraryHook
         $this->processor->appendFilter($this->filter);
         $this->processor->intercept();
 
-        self::$handleRequestCallback = $handleRequestCallback;
+        self::$requestCallback = $requestCallback;
 
         static::$status = self::ENABLED;
     }
@@ -96,7 +96,7 @@ class Curl implements LibraryHook
             return;
         }
 
-        self::$handleRequestCallback = null;
+        self::$requestCallback = null;
 
         static::$status = self::DISABLED;
     }
@@ -143,8 +143,8 @@ class Curl implements LibraryHook
 
     public static function exec($ch)
     {
-        $handleRequestCallback = self::$handleRequestCallback;
-        self::$responses[(int) $ch] = $handleRequestCallback(self::$requests[(int) $ch]);
+        $requestCallback = self::$requestCallback;
+        self::$responses[(int) $ch] = $requestCallback(self::$requests[(int) $ch]);
 
         return CurlHelper::handleOutput(
             self::$responses[(int) $ch],

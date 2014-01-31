@@ -16,7 +16,7 @@ class Soap implements LibraryHook
     /**
      * @var string
      */
-    private static $handleRequestCallback;
+    private static $requestCallback;
     /**
      * @var string
      */
@@ -57,8 +57,8 @@ class Soap implements LibraryHook
         $vcrRequest->addHeader('Content-Type', $contentType . '; charset=utf-8; action="' . $action . '"');
         $vcrRequest->setBody($request);
 
-        $handleRequestCallback = self::$handleRequestCallback;
-        $response = $handleRequestCallback($vcrRequest);
+        $requestCallback = self::$requestCallback;
+        $response = $requestCallback($vcrRequest);
 
         return (string) $response->getBody(true);
     }
@@ -66,10 +66,10 @@ class Soap implements LibraryHook
     /**
      * @inheritDoc
      */
-    public function enable(\Closure $handleRequestCallback)
+    public function enable(\Closure $requestCallback)
     {
-        Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
-        self::$handleRequestCallback = $handleRequestCallback;
+        Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
+        self::$requestCallback = $requestCallback;
 
         if ($this->status == self::ENABLED) {
             return;
@@ -92,7 +92,7 @@ class Soap implements LibraryHook
             return;
         }
 
-        self::$handleRequestCallback = null;
+        self::$requestCallback = null;
 
         $this->status = self::DISABLED;
     }
@@ -107,7 +107,7 @@ class Soap implements LibraryHook
 
     public function __destruct()
     {
-        self::$handleRequestCallback = null;
+        self::$requestCallback = null;
     }
 
 }

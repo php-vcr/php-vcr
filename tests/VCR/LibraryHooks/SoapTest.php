@@ -79,7 +79,7 @@ class SoapTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param null $handleRequestCallback
+     * @param null $requestCallback
      *
      * @return \callable
      */
@@ -92,7 +92,7 @@ class SoapTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param null $handleRequestCallback
+     * @param null $requestCallback
      *
      * @return \callable
      */

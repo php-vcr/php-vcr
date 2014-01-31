@@ -11,7 +11,7 @@ use VCR\Util\Assertion;
  */
 class StreamWrapper implements LibraryHook
 {
-    private static $handleRequestCallback;
+    private static $requestCallback;
 
     private $position;
 
@@ -24,10 +24,10 @@ class StreamWrapper implements LibraryHook
     {
     }
 
-    public function enable(\Closure $handleRequestCallback)
+    public function enable(\Closure $requestCallback)
     {
-        Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
-        self::$handleRequestCallback = $handleRequestCallback;
+        Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
+        self::$requestCallback = $requestCallback;
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', __CLASS__, STREAM_IS_URL);
 
@@ -37,7 +37,7 @@ class StreamWrapper implements LibraryHook
 
     public function disable()
     {
-        self::$handleRequestCallback = null;
+        self::$requestCallback = null;
         stream_wrapper_restore('http');
         stream_wrapper_restore('https');
     }
@@ -52,8 +52,8 @@ class StreamWrapper implements LibraryHook
 
     public function stream_open($path, $mode, $options, &$opened_path)
     {
-        $handleRequestCallback = self::$handleRequestCallback;
-        $this->response = $handleRequestCallback(new Request('GET', $path));
+        $requestCallback = self::$requestCallback;
+        $this->response = $requestCallback(new Request('GET', $path));
 
         return (string) $this->response->getBody();
     }
@@ -127,6 +127,6 @@ class StreamWrapper implements LibraryHook
 
     public function __destruct()
     {
-        self::$handleRequestCallback = null;
+        self::$requestCallback = null;
     }
 }

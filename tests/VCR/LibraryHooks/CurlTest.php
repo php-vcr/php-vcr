@@ -194,7 +194,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
     /**
      * @return \callable
      */
-    protected function getTestCallback($handleRequestCallback = null)
+    protected function getTestCallback($requestCallback = null)
     {
         $testClass = $this;
         return function ($request) use ($testClass) {
