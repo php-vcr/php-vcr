@@ -3,7 +3,6 @@
 namespace VCR\Util;
 
 use VCR\LibraryHooks\Soap;
-use VCR\VCRException;
 use VCR\VCRFactory;
 
 /**
@@ -27,7 +26,7 @@ class SoapClient extends \SoapClient
      * @param  integer $version  The SOAP version.
      * @param  integer $one_way  If one_way is set to 1, this method returns nothing.
      *                           Use this where a response is not expected.
-     * @return string The XML SOAP response.
+     * @return string  The XML SOAP response.
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
@@ -62,7 +61,7 @@ class SoapClient extends \SoapClient
      * @param  integer $version  The SOAP version.
      * @param  integer $one_way  If one_way is set to 1, this method returns nothing.
      *                           Use this where a response is not expected.
-     * @return string The XML SOAP response.
+     * @return string  The XML SOAP response.
      */
     protected function realDoRequest($request, $location, $action, $version, $one_way = 0)
     {

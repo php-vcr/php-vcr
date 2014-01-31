@@ -113,8 +113,8 @@ class Curl implements LibraryHook
      * Calls default curl functions if library hook is disabled.
      *
      * @param  string $method [description]
-     * @param  array $args   [description]
-     * @return mixed Curl function return type.
+     * @param  array  $args   [description]
+     * @return mixed  Curl function return type.
      */
     public static function __callStatic($method, $args)
     {
@@ -123,6 +123,7 @@ class Curl implements LibraryHook
             if ($method === 'curl_multi_exec') {
                 return curl_multi_exec($args[0], $args[1]);
             }
+
             return call_user_func_array($method, $args);
         }
 
@@ -131,6 +132,7 @@ class Curl implements LibraryHook
         }
 
         $localMethod = static::buildLocalMethodName($method);
+
         return call_user_func_array(array(__CLASS__, $localMethod), $args);
     }
 
@@ -138,6 +140,7 @@ class Curl implements LibraryHook
     {
         $ch = \curl_init($url);
         self::$requests[(int) $ch] = new Request('GET', $url);
+
         return $ch;
     }
 
@@ -179,6 +182,7 @@ class Curl implements LibraryHook
                 }
             }
         }
+
         return CURLM_OK;
     }
 
@@ -191,6 +195,7 @@ class Curl implements LibraryHook
                 'result' => CURLE_OK
             );
             self::$multiExecLastCh = null;
+
             return $info;
         }
 

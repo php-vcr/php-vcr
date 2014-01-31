@@ -106,6 +106,7 @@ class Yaml implements Storage
         if (is_null($this->recording)) {
             $this->next();
         }
+
         return ! is_null($this->recording) && $this->valid;
     }
 

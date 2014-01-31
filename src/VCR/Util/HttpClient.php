@@ -29,7 +29,7 @@ class HttpClient
     /**
      * Returns a response for specified HTTP request.
      *
-     * @param  Request $request HTTP Request to send.
+     * @param Request $request HTTP Request to send.
      *
      * @return Response Response for specified request.
      */

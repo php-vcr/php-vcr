@@ -94,6 +94,7 @@ class Json implements Storage
         if (is_null($this->currentJson)) {
             $this->next();
         }
+
         return !$this->isEOF;
     }
 

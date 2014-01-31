@@ -112,7 +112,7 @@ class Videorecorder
      *
      * @api
      *
-     * @param  string $cassetteName Name of the cassette (used for the cassette filename).
+     * @param string $cassetteName Name of the cassette (used for the cassette filename).
      *
      * @return void
      * @throws VCRExceptoin If videorecorder is turned off when inserting a cassette.
@@ -152,9 +152,9 @@ class Videorecorder
      *
      * @api
      *
-     * @param  Request $request Intercepted request.
+     * @param Request $request Intercepted request.
      *
-     * @return Response Response for the intercepted request.
+     * @return Response                Response for the intercepted request.
      * @throws \BadMethodCallException If there was no cassette inserted.
      */
     public function handleRequest(Request $request)

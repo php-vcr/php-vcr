@@ -13,8 +13,8 @@ class Assertion extends BaseAssertion
     /**
      * Assert that the value is callable.
      *
-     * @param mixed $value
-     * @param string $message
+     * @param  mixed                           $value
+     * @param  string                          $message
      * @return void
      * @throws Assert\AssertionFailedException
      */

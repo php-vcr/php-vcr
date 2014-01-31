@@ -62,6 +62,7 @@ class StreamWrapper implements LibraryHook
     {
         $ret = substr($this->response->getBody(), $this->position, $count);
         $this->position += strlen($ret);
+
         return $ret;
     }
 
@@ -91,6 +92,7 @@ class StreamWrapper implements LibraryHook
             case SEEK_SET:
                 if ($offset < strlen($this->response->getBody()) && $offset >= 0) {
                      $this->position = $offset;
+
                      return true;
                 } else {
                      return false;
@@ -100,6 +102,7 @@ class StreamWrapper implements LibraryHook
             case SEEK_CUR:
                 if ($offset >= 0) {
                      $this->position += $offset;
+
                      return true;
                 } else {
                      return false;
@@ -109,6 +112,7 @@ class StreamWrapper implements LibraryHook
             case SEEK_END:
                 if (strlen($this->response->getBody()) + $offset >= 0) {
                      $this->position = strlen($this->response->getBody()) + $offset;
+
                      return true;
                 } else {
                      return false;

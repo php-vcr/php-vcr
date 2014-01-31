@@ -33,8 +33,8 @@ abstract class AbstractFilter extends \PHP_User_Filter
      *
      * @param resource $in
      * @param resource $out
-     * @param int $consumed
-     * @param bool $closing
+     * @param int      $consumed
+     * @param bool     $closing
      *
      * @return int PSFS_PASS_ON
      *

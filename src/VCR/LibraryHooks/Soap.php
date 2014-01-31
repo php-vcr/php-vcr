@@ -31,7 +31,7 @@ class Soap implements LibraryHook
     private $processor;
 
     /**
-     * @param AbstractFilter $filter
+     * @param AbstractFilter  $filter
      * @param StreamProcessor $processor
      *
      * @throws \BadMethodCallException in case the Soap extension is not installed.
@@ -78,7 +78,6 @@ class Soap implements LibraryHook
         $this->filter->register();
         $this->processor->appendFilter($this->filter);
         $this->processor->intercept();
-
 
         $this->status = self::ENABLED;
     }

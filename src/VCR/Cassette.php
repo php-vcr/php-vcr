@@ -33,9 +33,9 @@ class Cassette
     /**
      * Creates a new cassette.
      *
-     * @param string           $name    Name of the cassette.
-     * @param Configuration    $config  Configuration to use for this cassette.
-     * @param Storage          $storage Storage to use for requests and responses.
+     * @param  string            $name    Name of the cassette.
+     * @param  Configuration     $config  Configuration to use for this cassette.
+     * @param  Storage           $storage Storage to use for requests and responses.
      * @throws \VCR\VCRException If cassette name is in an invalid format.
      */
     public function __construct($name, Configuration $config, Storage $storage)
@@ -50,7 +50,7 @@ class Cassette
     /**
      * Returns true if a response was recorded for specified request.
      *
-     * @param  Request $request Request to check if it was recorded.
+     * @param Request $request Request to check if it was recorded.
      *
      * @return boolean True if a response was recorded for specified request.
      */
@@ -62,7 +62,7 @@ class Cassette
     /**
      * Returns a response for given request or null if not found.
      *
-     * @param  Request $request Request.
+     * @param Request $request Request.
      *
      * @return string Response for specified request.
      */
@@ -81,8 +81,8 @@ class Cassette
     /**
      * Records a request and response pair.
      *
-     * @param  Request $request   Request to record.
-     * @param  Response $response Response to record.
+     * @param Request  $request  Request to record.
+     * @param Response $response Response to record.
      *
      * @return void
      */

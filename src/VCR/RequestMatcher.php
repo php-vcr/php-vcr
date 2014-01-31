@@ -29,6 +29,7 @@ class RequestMatcher
            && !preg_match('#'.str_replace('#', '\\#', $first->getHost()).'#i', $second->getHost())) {
             return false;
         }
+
         return true;
     }
 
@@ -41,6 +42,7 @@ class RequestMatcher
                 return false;
             }
         }
+
         return true;
     }
 
@@ -49,6 +51,7 @@ class RequestMatcher
         if (null !== $first->getBody() && $first->getBody() != $second->getBody() ) {
             return false;
         }
+
         return true;
     }
 
@@ -58,6 +61,7 @@ class RequestMatcher
           && $first->getPostFields()->toArray() != $second->getPostFields()->toArray() ) {
             return false;
         }
+
         return true;
     }
 

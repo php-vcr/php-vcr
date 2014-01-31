@@ -17,12 +17,14 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
                 return false;
             }
         }
+
         return true;
     }
 
     public function send()
     {
         $response = parent::send();
+
         return new Response($response->getStatusCode(), $response->getHeaders(), $response->getBody());
     }
 
@@ -50,10 +52,11 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
         }
 
         $headers = array();
-        foreach (parent::getHeaders()->getAll() as $key => $header){
+        foreach (parent::getHeaders()->getAll() as $key => $header) {
             $value = $header->toArray();
             $headers[$key] = $value[0];
         }
+
         return $headers;
     }
 

@@ -57,6 +57,7 @@ class VCRFactory
     protected function createStorage($filePath)
     {
         $class = $this->config->getStorage();
+
         return new $class($filePath);
     }
 
@@ -92,7 +93,7 @@ class VCRFactory
 
     /**
      * @param string $className
-     * @param array $params
+     * @param array  $params
      *
      * @return mixed
      */

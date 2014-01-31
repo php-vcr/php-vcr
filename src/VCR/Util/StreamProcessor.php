@@ -5,7 +5,6 @@ namespace VCR\Util;
 use VCR\Configuration;
 use VCR\Filter\AbstractFilter;
 
-
 /**
  * Implementation from:
  * https://github.com/antecedent/patchwork/blob/418a9aae80ca3228d6763a2dc6d9a30ade7a4e7e/lib/Preprocessor/Stream.php
@@ -144,6 +143,7 @@ class StreamProcessor
         }
 
         $this->intercept();
+
         return $this->resource !== false;
     }
 
@@ -196,12 +196,14 @@ class StreamProcessor
             return;
         }
         $this->intercept();
+
         return $result;
     }
 
     public function dir_closedir()
     {
         closedir($this->resource);
+
         return true;
     }
 
@@ -214,6 +216,7 @@ class StreamProcessor
             $this->resource = opendir($path);
         }
         $this->intercept();
+
         return $this->resource !== false;
     }
 
@@ -225,6 +228,7 @@ class StreamProcessor
     public function dir_rewinddir()
     {
         rewinddir($this->resource);
+
         return true;
     }
 
@@ -237,6 +241,7 @@ class StreamProcessor
             $result = mkdir($path, $mode, $options);
         }
         $this->intercept();
+
         return $result;
     }
 
@@ -249,6 +254,7 @@ class StreamProcessor
             $result = rename($path_from, $path_to);
         }
         $this->intercept();
+
         return $result;
     }
 
@@ -261,6 +267,7 @@ class StreamProcessor
             $result = rmdir($path);
         }
         $this->intercept();
+
         return $result;
     }
 
@@ -304,6 +311,7 @@ class StreamProcessor
             $result = unlink($path);
         }
         $this->intercept();
+
         return $result;
     }
 
@@ -331,6 +339,7 @@ class StreamProcessor
                 break;
         }
         $this->intercept();
+
         return $result;
     }
 
