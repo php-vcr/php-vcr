@@ -37,15 +37,18 @@ class Curl implements LibraryHook
     protected static $responses = array();
 
     /**
-     * @var array[] Additinal curl options, which are not stored within a request.
+     * @var array Additinal curl options, which are not stored within a request.
      */
     protected static $curlOptions = array();
 
     /**
-     * All curl handles which belong to curl_multi handles.
+     * @var array All curl handles which belong to curl_multi handles.
      */
     protected static $multiHandles = array();
 
+    /**
+     * @var resource Last active curl_multi_exec() handle.
+     */
     protected static $multiExecLastCh;
 
     /**
@@ -54,16 +57,25 @@ class Curl implements LibraryHook
     private $filter;
 
     /**
-     * @var VCR\Util\StreamProcessor
+     * @var StreamProcessor
      */
     private $processor;
 
     /**
+     * Creates a new cURL hook instance.
      *
-     * @throws \BadMethodCallException in case the Soap extension is not installed.
+     * @param AbstractFilter  $filter
+     * @param StreamProcessor $processor
+     *
+     * @throws \BadMethodCallException in case the cURL extension is not installed.
      */
     public function __construct(AbstractFilter $filter, StreamProcessor $processor)
     {
+        if (!function_exists('curl_version')) {
+            throw new \BadMethodCallException(
+                'cURL extension not installed, please disable the cURL library hook'
+            );
+        }
         $this->processor = $processor;
         $this->filter = $filter;
     }
@@ -111,11 +123,12 @@ class Curl implements LibraryHook
     }
 
     /**
-     * Calls default curl functions if library hook is disabled.
+     * Calls the intercepted curl method if library hook is disabled, otherwise the real one.
      *
-     * @param  string $method [description]
-     * @param  array  $args   [description]
-     * @return mixed  Curl function return type.
+     * @param string $method cURL method to call, example: curl_info()
+     * @param array  $args   cURL arguments for this function.
+     *
+     * @return mixed  cURL function return type.
      */
     public static function __callStatic($method, $args)
     {
@@ -140,49 +153,93 @@ class Curl implements LibraryHook
         return \call_user_func_array(array(__CLASS__, $localMethod), $args);
     }
 
+    /**
+     * Initialize a cURL session.
+     *
+     * @link http://www.php.net/manual/en/function.curl-init.php
+     * @param string $url (Optional) url.
+     *
+     * @return resource cURL handle.
+     */
     public static function curlInit($url = null)
     {
-        $ch = \curl_init($url);
-        self::$requests[(int) $ch] = new Request('GET', $url);
+        $curlHandle = \curl_init($url);
+        self::$requests[(int) $curlHandle] = new Request('GET', $url);
 
-        return $ch;
+        return $curlHandle;
     }
 
-    public static function curlExec($ch)
+    /**
+     * Perform a cURL session.
+     *
+     * @link http://www.php.net/manual/en/function.curl-exec.php
+     * @param string $curlHandle A cURL handle returned by curl_init().
+     *
+     * @return mixed Returns TRUE on success or FALSE on failure.
+     * However, if the CURLOPT_RETURNTRANSFER option is set, it will return the
+     * result on success, FALSE on failure.
+     */
+    public static function curlExec($curlHandle)
     {
         $requestCallback = self::$requestCallback;
-        self::$responses[(int) $ch] = $requestCallback(self::$requests[(int) $ch]);
+        self::$responses[(int) $curlHandle] = $requestCallback(self::$requests[(int) $curlHandle]);
 
         return CurlHelper::handleOutput(
-            self::$responses[(int) $ch],
-            self::$curlOptions[(int) $ch],
-            $ch
+            self::$responses[(int) $curlHandle],
+            self::$curlOptions[(int) $curlHandle],
+            $curlHandle
         );
     }
 
-    public static function curlMultiAddHandle($mh, $ch)
+    /**
+     * Add a normal cURL handle to a cURL multi handle.
+     *
+     * @link http://www.php.net/manual/en/function.curl-multi-add-handle.php
+     * @param resource $multiHandle A cURL multi handle returned by curl_multi_init().
+     * @param resource $curlHandle  A cURL handle returned by curl_init().
+     *
+     * @return integer Returns 0 on success, or one of the CURLM_XXX errors code.
+     */
+    public static function curlMultiAddHandle($multiHandle, $curlHandle)
     {
-        if (isset(self::$multiHandles[(int) $mh])) {
-            self::$multiHandles[(int) $mh][] = (int) $ch;
+        if (isset(self::$multiHandles[(int) $multiHandle])) {
+            self::$multiHandles[(int) $multiHandle][] = (int) $curlHandle;
         } else {
-            self::$multiHandles[(int) $mh] = array((int) $ch);
+            self::$multiHandles[(int) $multiHandle] = array((int) $curlHandle);
         }
     }
 
-    public static function curlMultiRemoveHandle($mh, $ch)
+    /**
+     * Remove a multi handle from a set of cURL handles.
+     *
+     * @link http://www.php.net/manual/en/function.curl-multi-remove-handle.php
+     * @param resource $multiHandle A cURL multi handle returned by curl_multi_init().
+     * @param resource $curlHandle A cURL handle returned by curl_init().
+     *
+     * @return integer  Returns 0 on success, or one of the CURLM_XXX error codes.
+     */
+    public static function curlMultiRemoveHandle($multiHandle, $curlHandle)
     {
-        if (isset(self::$multiHandles[(int) $mh][(int) $ch])) {
-            unset(self::$multiHandles[(int) $mh][(int) $ch]);
+        if (isset(self::$multiHandles[(int) $multiHandle][(int) $curlHandle])) {
+            unset(self::$multiHandles[(int) $multiHandle][(int) $curlHandle]);
         }
     }
 
-    public static function curlMultiExec($mh, &$still_running)
+    /**
+     * Run the sub-connections of the current cURL handle.
+     *
+     * @link http://www.php.net/manual/en/function.curl-multi-exec.php
+     * @param resource $multiHandle A cURL multi handle returned by curl_multi_init().
+     *
+     * @return integer  A cURL code defined in the cURL Predefined Constants.
+     */
+    public static function curlMultiExec($multiHandle)
     {
-        if (isset(self::$multiHandles[(int) $mh])) {
-            foreach (self::$multiHandles[(int) $mh] as $ch) {
-                if (!isset(self::$responses[(int) $ch])) {
-                    self::$multiExecLastCh = $ch;
-                    self::curlExec($ch);
+        if (isset(self::$multiHandles[(int) $multiHandle])) {
+            foreach (self::$multiHandles[(int) $multiHandle] as $curlHandle) {
+                if (!isset(self::$responses[(int) $curlHandle])) {
+                    self::$multiExecLastCh = $curlHandle;
+                    self::curlExec($curlHandle);
                 }
             }
         }
@@ -190,7 +247,14 @@ class Curl implements LibraryHook
         return CURLM_OK;
     }
 
-    public static function curlMultiInfoRead($mh)
+    /**
+     * Get information about the current transfers.
+     *
+     * @link http://www.php.net/manual/en/function.curl-multi-info-read.php
+     *
+     * @return array|bool On success, returns an associative array for the message, FALSE on failure.
+     */
+    public static function curlMultiInfoRead()
     {
         if (self::$multiExecLastCh) {
             $info = array(
@@ -206,31 +270,59 @@ class Curl implements LibraryHook
         return false;
     }
 
-    public static function curlGetinfo($ch, $option = 0)
+    /**
+     * Get information regarding a specific transfer.
+     *
+     * @link http://www.php.net/manual/en/function.curl-getinfo.php
+     * @param resource $curlHandle A cURL handle returned by curl_init().
+     * @param integer  $option     A cURL option defined in the cURL Predefined Constants.
+     *
+     * @return mixed
+     */
+    public static function curlGetinfo($curlHandle, $option = 0)
     {
         return CurlHelper::getCurlOptionFromResponse(
-            self::$responses[(int) $ch],
+            self::$responses[(int) $curlHandle],
             $option
         );
     }
 
-    public static function curlSetopt($ch, $option, $value)
+    /**
+     * Set an option for a cURL transfer.
+     *
+     * @link http://www.php.net/manual/en/function.curl-setopt.php
+     * @param resource $curlHandle A cURL handle returned by curl_init().
+     * @param integer  $option     The CURLOPT_XXX option to set.
+     * @param mixed    $value      The value to be set on option.
+     *
+     * @return boolean  Returns TRUE on success or FALSE on failure.
+     */
+    public static function curlSetopt($curlHandle, $option, $value)
     {
-        CurlHelper::setCurlOptionOnRequest(self::$requests[(int) $ch], $option, $value);
+        CurlHelper::setCurlOptionOnRequest(self::$requests[(int) $curlHandle], $option, $value);
 
-        if (!isset(static::$curlOptions[(int) $ch])) {
-            static::$curlOptions[(int) $ch] = array();
+        if (!isset(static::$curlOptions[(int) $curlHandle])) {
+            static::$curlOptions[(int) $curlHandle] = array();
         }
-        static::$curlOptions[(int) $ch][$option] = $value;
+        static::$curlOptions[(int) $curlHandle][$option] = $value;
 
-        \curl_setopt($ch, $option, $value);
+        \curl_setopt($curlHandle, $option, $value);
     }
 
-    public static function curlSetoptArray($ch, $options)
+    /**
+     * Set multiple options for a cURL transfer.
+     *
+     * @link http://www.php.net/manual/en/function.curl-setopt-array.php
+     * @param resource $curlHandle A cURL handle returned by curl_init().
+     * @param array    $options    An array specifying which options to set and their values.
+     *
+     * @return boolean              Returns TRUE if all options were successfully set.
+     */
+    public static function curlSetoptArray($curlHandle, $options)
     {
         if (is_array($options)) {
             foreach ($options as $option => $value) {
-                static::curlSetopt($ch, $option, $value);
+                static::curlSetopt($curlHandle, $option, $value);
             }
         }
     }
