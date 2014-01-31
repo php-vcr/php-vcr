@@ -31,6 +31,8 @@ class Soap implements LibraryHook
     private $processor;
 
     /**
+     * Creates a SOAP hook instance.
+     *
      * @param AbstractFilter  $filter
      * @param StreamProcessor $processor
      *
