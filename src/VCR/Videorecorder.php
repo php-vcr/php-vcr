@@ -32,6 +32,11 @@ class Videorecorder
     protected $client;
 
     /**
+     * @var VCRFactory Factory which can create instances and resolve dependencies.
+     */
+    protected $factory;
+
+    /**
      * @var Cassette Cassette on which to store requests and responses.
      */
     protected $cassette;

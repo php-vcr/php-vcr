@@ -11,18 +11,19 @@ use VCR\Util\Assertion;
  */
 class StreamWrapper implements LibraryHook
 {
-    private static $requestCallback;
+    protected static $requestCallback;
 
-    private $position;
+    protected $position;
+
+    /**
+     * @var string Current status of this hook, either enabled or disabled.
+     */
+    protected $status = self::DISABLED;
 
     /**
      * @var Response
      */
-    private $response;
-
-    public function __construct()
-    {
-    }
+    protected $response;
 
     public function enable(\Closure $requestCallback)
     {
@@ -33,6 +34,8 @@ class StreamWrapper implements LibraryHook
 
         stream_wrapper_unregister('https');
         stream_wrapper_register('https', __CLASS__, STREAM_IS_URL);
+
+        $this->status = self::ENABLED;
     }
 
     public function disable()
@@ -40,6 +43,8 @@ class StreamWrapper implements LibraryHook
         self::$requestCallback = null;
         stream_wrapper_restore('http');
         stream_wrapper_restore('https');
+
+        $this->status = self::DISABLED;
     }
 
     /**
