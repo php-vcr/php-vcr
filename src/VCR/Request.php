@@ -48,7 +48,7 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
     /**
      * Sets the request method.
      *
-     * @param string HTTP request method like GET, POST, PUT, ...
+     * @param string $method HTTP request method like GET, POST, PUT, ...
      */
     public function setMethod($method)
     {
@@ -106,7 +106,7 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
     public function getHeaders($asObjects = false)
     {
         if ($asObjects === true) {
-            return parent::getHeaders($asObjects);
+            return parent::getHeaders();
         }
 
         $headers = array();

@@ -64,7 +64,7 @@ class Cassette
      *
      * @param Request $request Request.
      *
-     * @return string Response for specified request.
+     * @return Response|null Response for specified request.
      */
     public function playback(Request $request)
     {

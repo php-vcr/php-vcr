@@ -33,7 +33,7 @@ class CurlFilter extends AbstractFilter
     /**
      * @param string $code
      *
-     * @return mixed
+     * @return string
      */
     protected function transformCode($code)
     {

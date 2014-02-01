@@ -4,7 +4,6 @@ namespace VCR\Storage;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
-
 use VCR\Util\Assertion;
 
 class Yaml implements Storage

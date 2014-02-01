@@ -48,6 +48,12 @@ class Soap implements LibraryHook
         $this->filter = $filter;
     }
 
+    /**
+     * @param string $request
+     * @param string $location
+     * @param string $action
+     * @param integer $version
+     */
     public function doRequest($request, $location, $action, $version, $one_way = 0)
     {
         if ($this->status === self::DISABLED) {

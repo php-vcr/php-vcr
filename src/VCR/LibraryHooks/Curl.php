@@ -316,7 +316,7 @@ class Curl implements LibraryHook
      * @param resource $curlHandle A cURL handle returned by curl_init().
      * @param array    $options    An array specifying which options to set and their values.
      *
-     * @return boolean              Returns TRUE if all options were successfully set.
+     * @return boolean|null              Returns TRUE if all options were successfully set.
      */
     public static function curlSetoptArray($curlHandle, $options)
     {

@@ -86,6 +86,9 @@ class VCRFactory
         return self::$instance;
     }
 
+    /**
+     * @param string $className
+     */
     public static function get($className, $params = array())
     {
         return self::getInstance()->getOrCreate($className, $params);

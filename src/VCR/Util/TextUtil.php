@@ -12,7 +12,7 @@ class TextUtil
      *
      * Example: curl_multi_exec -> curlMultiExec
      *
-     * @param  string $method Lowercased text.
+     * @param  string $underscore Lowercased text.
      *
      * @return string Lowercase camelcased version of specified text.
      */
