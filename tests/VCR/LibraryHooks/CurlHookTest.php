@@ -10,14 +10,14 @@ use VCR\Util\StreamProcessor;
 /**
  * Test if intercepting http/https using curl works.
  */
-class CurlTest extends \PHPUnit_Framework_TestCase
+class CurlHookTest extends \PHPUnit_Framework_TestCase
 {
     public $expected = 'example response body';
 
     public function setup()
     {
         $this->config = new Configuration();
-        $this->curlHook = new Curl(new CurlFilter(), new StreamProcessor($this->config));
+        $this->curlHook = new CurlHook(new CurlFilter(), new StreamProcessor($this->config));
     }
 
     public function testShouldInterceptCallWhenEnabled()

@@ -7,15 +7,15 @@ class CurlFilter extends AbstractFilter
     const NAME = 'vcr_curl';
 
     private static $replacements = array(
-        '\VCR\LibraryHooks\Curl::curl_init(',
-        '\VCR\LibraryHooks\Curl::curl_exec(',
-        '\VCR\LibraryHooks\Curl::curl_getinfo(',
-        '\VCR\LibraryHooks\Curl::curl_setopt(',
-        '\VCR\LibraryHooks\Curl::curl_setopt_array(',
-        '\VCR\LibraryHooks\Curl::curl_multi_add_handle(',
-        '\VCR\LibraryHooks\Curl::curl_multi_remove_handle(',
-        '\VCR\LibraryHooks\Curl::curl_multi_exec(',
-        '\VCR\LibraryHooks\Curl::curl_multi_info_read('
+        '\VCR\LibraryHooks\CurlHook::curl_init(',
+        '\VCR\LibraryHooks\CurlHook::curl_exec(',
+        '\VCR\LibraryHooks\CurlHook::curl_getinfo(',
+        '\VCR\LibraryHooks\CurlHook::curl_setopt(',
+        '\VCR\LibraryHooks\CurlHook::curl_setopt_array(',
+        '\VCR\LibraryHooks\CurlHook::curl_multi_add_handle(',
+        '\VCR\LibraryHooks\CurlHook::curl_multi_remove_handle(',
+        '\VCR\LibraryHooks\CurlHook::curl_multi_exec(',
+        '\VCR\LibraryHooks\CurlHook::curl_multi_info_read('
     );
 
     private static $patterns = array(

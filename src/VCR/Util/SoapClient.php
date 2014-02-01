@@ -2,7 +2,7 @@
 
 namespace VCR\Util;
 
-use VCR\LibraryHooks\Soap;
+use VCR\LibraryHooks\SoapHook;
 use VCR\VCRFactory;
 
 /**
@@ -11,7 +11,7 @@ use VCR\VCRFactory;
 class SoapClient extends \SoapClient
 {
     /**
-     * @var \VCR\LibraryHooks\Soap; SOAP library hook used to intercept SOAP requests.
+     * @var \VCR\LibraryHooks\SoapHook SOAP library hook used to intercept SOAP requests.
      */
     protected $soapHook;
 
@@ -44,9 +44,9 @@ class SoapClient extends \SoapClient
     /**
      * Sets the SOAP library hook which is used to intercept SOAP requests.
      *
-     * @param Soap $hook SOAP library hook to use when intercepting SOAP requests.
+     * @param SoapHook $hook SOAP library hook to use when intercepting SOAP requests.
      */
-    public function setLibraryHook(Soap $hook)
+    public function setLibraryHook(SoapHook $hook)
     {
         $this->soapHook = $hook;
     }
@@ -78,7 +78,7 @@ class SoapClient extends \SoapClient
     protected function getLibraryHook()
     {
         if (empty($this->soapHook)) {
-            $this->soapHook = VCRFactory::get('VCR\LibraryHooks\Soap');
+            $this->soapHook = VCRFactory::get('VCR\LibraryHooks\SoapHook');
         }
 
         return $this->soapHook;

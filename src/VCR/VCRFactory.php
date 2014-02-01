@@ -2,8 +2,8 @@
 
 namespace VCR;
 
-use VCR\LibraryHooks\Curl;
-use VCR\LibraryHooks\Soap;
+use VCR\LibraryHooks\CurlHook;
+use VCR\LibraryHooks\SoapHook;
 use VCR\Util\StreamProcessor;
 
 class VCRFactory
@@ -61,17 +61,17 @@ class VCRFactory
         return new $class($filePath);
     }
 
-    protected function createVCRLibraryHooksSoap()
+    protected function createVCRLibraryHooksSoapHook()
     {
-        return new Soap(
+        return new SoapHook(
             $this->getOrCreate('VCR\Filter\SoapFilter'),
             $this->getOrCreate('Util\StreamProcessor')
         );
     }
 
-    protected function createVCRLibraryHooksCurl()
+    protected function createVCRLibraryHooksCurlHook()
     {
-        return new Curl(
+        return new CurlHook(
             $this->getOrCreate('VCR\Filter\CurlFilter'),
             $this->getOrCreate('Util\StreamProcessor')
         );

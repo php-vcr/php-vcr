@@ -13,7 +13,7 @@ use VCR\Util\TextUtil;
 /**
  * Library hook for curl functions using include-overwrite.
  */
-class Curl implements LibraryHook
+class CurlHook implements LibraryHook
 {
 
     /**

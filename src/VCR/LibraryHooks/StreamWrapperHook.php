@@ -9,7 +9,7 @@ use VCR\Util\Assertion;
 /**
  * StreamWrapper.
  */
-class StreamWrapper implements LibraryHook
+class StreamWrapperHook implements LibraryHook
 {
     protected static $requestCallback;
 

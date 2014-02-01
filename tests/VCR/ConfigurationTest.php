@@ -16,9 +16,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'VCR\LibraryHooks\StreamWrapper',
-                'VCR\LibraryHooks\Curl',
-                'VCR\LibraryHooks\Soap',
+                'VCR\LibraryHooks\StreamWrapperHook',
+                'VCR\LibraryHooks\CurlHook',
+                'VCR\LibraryHooks\SoapHook',
             ),
             $this->config->getLibraryHooks()
         );
@@ -29,7 +29,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config->enableLibraryHooks(array('stream_wrapper'));
         $this->assertEquals(
             array(
-                'VCR\LibraryHooks\StreamWrapper',
+                'VCR\LibraryHooks\StreamWrapperHook',
             ),
             $this->config->getLibraryHooks()
         );
@@ -40,7 +40,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config->enableLibraryHooks('stream_wrapper');
         $this->assertEquals(
             array(
-                'VCR\LibraryHooks\StreamWrapper',
+                'VCR\LibraryHooks\StreamWrapperHook',
             ),
             $this->config->getLibraryHooks()
         );

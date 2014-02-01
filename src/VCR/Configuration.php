@@ -17,9 +17,9 @@ class Configuration
     // All are enabled by default
     private $enabledLibraryHooks;
     private $availableLibraryHooks = array(
-        'stream_wrapper' => 'VCR\LibraryHooks\StreamWrapper',
-        'curl'           => 'VCR\LibraryHooks\Curl',
-        'soap'           => 'VCR\LibraryHooks\Soap',
+        'stream_wrapper' => 'VCR\LibraryHooks\StreamWrapperHook',
+        'curl'           => 'VCR\LibraryHooks\CurlHook',
+        'soap'           => 'VCR\LibraryHooks\SoapHook',
     );
 
     // Yaml by default

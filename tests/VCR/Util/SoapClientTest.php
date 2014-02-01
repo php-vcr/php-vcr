@@ -13,7 +13,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     protected function getLibraryHookMock($enabled)
     {
-        $hookMock = $this->getMockBuilder('\VCR\LibraryHooks\Soap')
+        $hookMock = $this->getMockBuilder('\VCR\LibraryHooks\SoapHook')
             ->disableOriginalConstructor()
             ->setMethods(array('isEnabled', 'doRequest'))
             ->getMock();
@@ -134,10 +134,10 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array('getLibraryHook'))
             ->getProxy();
 
-        $this->assertInstanceOf('\VCR\LibraryHooks\Soap', $client->getLibraryHook());
+        $this->assertInstanceOf('\VCR\LibraryHooks\SoapHook', $client->getLibraryHook());
 
         $client->setLibraryHook($this->getLibraryHookMock(true));
 
-        $this->assertInstanceOf('\VCR\LibraryHooks\Soap', $client->getLibraryHook());
+        $this->assertInstanceOf('\VCR\LibraryHooks\SoapHook', $client->getLibraryHook());
     }
 }

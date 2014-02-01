@@ -11,7 +11,7 @@ use VCR\Util\StreamProcessor;
 /**
  * Library hook for curl functions.
  */
-class Soap implements LibraryHook
+class SoapHook implements LibraryHook
 {
     /**
      * @var string

@@ -5,21 +5,17 @@ namespace VCR\LibraryHooks;
 /**
  * Test if intercepting http/https using stream wrapper works.
  */
-class StreamWrapperTest extends \PHPUnit_Framework_TestCase
+class StreamWrapperHookTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \VCR\LibraryHooks\StreamWrapper
+     * @var \VCR\LibraryHooks\StreamWrapperHook
      */
     private $streamWrapper;
-
-    public function setUp()
-    {
-    }
 
     public function testEnable()
     {
         $testClass = $this;
-        $this->streamWrapper = new StreamWrapper();
+        $this->streamWrapper = new StreamWrapperHook();
         $this->streamWrapper->enable(function ($request) use ($testClass) {
         });
     }
@@ -27,7 +23,7 @@ class StreamWrapperTest extends \PHPUnit_Framework_TestCase
     public function testDisable()
     {
         $testClass = $this;
-        $this->streamWrapper = new StreamWrapper();
+        $this->streamWrapper = new StreamWrapperHook();
         $this->streamWrapper->disable();
     }
 
