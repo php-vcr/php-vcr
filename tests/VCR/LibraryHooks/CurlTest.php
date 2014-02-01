@@ -46,6 +46,8 @@ class CurlTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldNotInterceptCallWhenDisabled()
     {
+        $this->markTestSkipped('Uses internet connection, find another way to test this.');
+
         $testClass = $this;
         $this->curlHook->enable(
             function () use ($testClass) {
