@@ -72,9 +72,11 @@ class CurlHook implements LibraryHook
     public function __construct(AbstractFilter $filter, StreamProcessor $processor)
     {
         if (!function_exists('curl_version')) {
+            // @codeCoverageIgnoreStart
             throw new \BadMethodCallException(
                 'cURL extension not installed, please disable the cURL library hook'
             );
+            // @codeCoverageIgnoreEnd
         }
         $this->processor = $processor;
         $this->filter = $filter;
@@ -119,7 +121,7 @@ class CurlHook implements LibraryHook
      */
     public function isEnabled()
     {
-        return $this->status == self::ENABLED;
+        return self::$status == self::ENABLED;
     }
 
     /**
@@ -165,6 +167,7 @@ class CurlHook implements LibraryHook
     {
         $curlHandle = \curl_init($url);
         self::$requests[(int) $curlHandle] = new Request('GET', $url);
+        self::$curlOptions[(int) $curlHandle] = array();
 
         return $curlHandle;
     }
@@ -202,11 +205,11 @@ class CurlHook implements LibraryHook
      */
     public static function curlMultiAddHandle($multiHandle, $curlHandle)
     {
-        if (isset(self::$multiHandles[(int) $multiHandle])) {
-            self::$multiHandles[(int) $multiHandle][] = (int) $curlHandle;
-        } else {
-            self::$multiHandles[(int) $multiHandle] = array((int) $curlHandle);
+        if (!isset(self::$multiHandles[(int) $multiHandle])) {
+            self::$multiHandles[(int) $multiHandle] = array();
         }
+
+        self::$multiHandles[(int) $multiHandle][(int) $curlHandle] = $curlHandle;
     }
 
     /**
@@ -230,10 +233,11 @@ class CurlHook implements LibraryHook
      *
      * @link http://www.php.net/manual/en/function.curl-multi-exec.php
      * @param resource $multiHandle A cURL multi handle returned by curl_multi_init().
+     * @param integer $stillRunning A reference to a flag to tell whether the operations are still running.
      *
      * @return integer  A cURL code defined in the cURL Predefined Constants.
      */
-    public static function curlMultiExec($multiHandle)
+    public static function curlMultiExec($multiHandle, &$stillRunning)
     {
         if (isset(self::$multiHandles[(int) $multiHandle])) {
             foreach (self::$multiHandles[(int) $multiHandle] as $curlHandle) {
@@ -301,9 +305,6 @@ class CurlHook implements LibraryHook
     {
         CurlHelper::setCurlOptionOnRequest(self::$requests[(int) $curlHandle], $option, $value);
 
-        if (!isset(static::$curlOptions[(int) $curlHandle])) {
-            static::$curlOptions[(int) $curlHandle] = array();
-        }
         static::$curlOptions[(int) $curlHandle][$option] = $value;
 
         \curl_setopt($curlHandle, $option, $value);
