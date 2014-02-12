@@ -40,9 +40,11 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $actual->GetCityWeatherByZIPResult->Success, 'Response was not returned.');
     }
 
+    /**
+     * @group uses_internet
+     */
     public function testShouldNotInterceptCallWhenDisabled()
     {
-        $this->markTestSkipped('Uses internet connection, find another way to test this.');
         $this->soapHook->disable();
 
         $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
