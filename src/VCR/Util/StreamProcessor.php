@@ -19,12 +19,30 @@ class StreamProcessor
     const STREAM_OPEN_FOR_INCLUDE = 128;
 
     /**
+     * Stream protocol which is used when registering this wrapper.
+     */
+    const PROTOCOL = 'file';
+
+    /**
      * @var Configuration
      */
     protected static $configuration;
 
-    /** @var AbstractFilter[] $filters */
+    /**
+     * @var AbstractFilter[] $filters Filers which have been appended to this stream processor.
+     */
     protected static $filters = array();
+
+    /**
+     * @var resource Resource for the currently opened file.
+     */
+    protected $resource;
+
+    /**
+     * @var resource The current context, or NULL if no context was passed to the caller function.
+     * @link http://www.php.net/manual/en/class.streamwrapper.php#streamwrapper.props.context
+     */
+    public $context;
 
     /**
      * @var bool
@@ -44,23 +62,25 @@ class StreamProcessor
 
     /**
      * Registers current class as the PHP file stream wrapper.
+     *
+     * @return void
      */
     public function intercept()
     {
         if (!$this->isIntercepting) {
-
-            stream_wrapper_unregister('file');
-
-            $this->isIntercepting = stream_wrapper_register('file', __CLASS__);
+            stream_wrapper_unregister(self::PROTOCOL);
+            $this->isIntercepting = stream_wrapper_register(self::PROTOCOL, __CLASS__);
         }
     }
 
     /**
      * Restores the original file stream wrapper status.
+     *
+     * @return void
      */
     public function restore()
     {
-        stream_wrapper_restore('file');
+        stream_wrapper_restore(self::PROTOCOL);
     }
 
     /**
@@ -68,7 +88,7 @@ class StreamProcessor
      *
      * @param string $uri
      *
-     * @return bool
+     * @return bool True if the specified url is whitelisted, false otherwise.
      */
     protected function isWhitelisted($uri)
     {
@@ -92,7 +112,7 @@ class StreamProcessor
      *
      * @param string $uri
      *
-     * @return bool
+     * @return bool True if the provided url is blacklisted, flase otherwise.
      */
     protected function isBlacklisted($uri)
     {
