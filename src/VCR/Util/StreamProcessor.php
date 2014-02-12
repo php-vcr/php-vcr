@@ -39,8 +39,8 @@ class StreamProcessor
     protected $resource;
 
     /**
-     * @var resource The current context, or NULL if no context was passed to the caller function.
      * @link http://www.php.net/manual/en/class.streamwrapper.php#streamwrapper.props.context
+     * @var resource The current context, or NULL if no context was passed to the caller function.
      */
     public $context;
 

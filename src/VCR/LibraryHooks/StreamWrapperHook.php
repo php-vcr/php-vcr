@@ -91,6 +91,16 @@ class StreamWrapperHook implements LibraryHook
         return array();
     }
 
+    /**
+     * Seeks to specific location in a stream.
+     *
+     * @param  integer $offset The stream offset to seek to.
+     * @param  integer $whence Possible values:
+     *                         SEEK_SET - Set position equal to offset bytes.
+     *                         SEEK_CUR - Set position to current location plus offset.
+     *                         SEEK_END - Set position to end-of-file plus offset.
+     * @return boolean Return TRUE if the position was updated, FALSE otherwise.
+     */
     public function stream_seek($offset, $whence)
     {
         switch ($whence) {
@@ -99,34 +109,24 @@ class StreamWrapperHook implements LibraryHook
                      $this->position = $offset;
 
                      return true;
-                } else {
-                     return false;
                 }
                 break;
-
             case SEEK_CUR:
                 if ($offset >= 0) {
                      $this->position += $offset;
 
                      return true;
-                } else {
-                     return false;
                 }
                 break;
-
             case SEEK_END:
                 if (strlen($this->response->getBody()) + $offset >= 0) {
                      $this->position = strlen($this->response->getBody()) + $offset;
 
                      return true;
-                } else {
-                     return false;
                 }
-                break;
-
-            default:
-                return false;
         }
+
+        return false;
     }
 
     public function stream_metadata($path, $option, $var)
