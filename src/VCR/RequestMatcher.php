@@ -61,4 +61,11 @@ class RequestMatcher
         return true;
     }
 
+    public static function matchQueryString(Request $first, Request $second)
+    {
+        if (null !== $first->getQuery(true) && $first->getQuery(true) != $second->getQuery(true)) {
+            return false;
+        }
+        return true;
+    }
 }
