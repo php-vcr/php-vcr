@@ -28,12 +28,13 @@ class Configuration
     // All are enabled by default
     private $enabledRequestMatchers;
     private $availableRequestMatchers = array(
-        'method'      => array('VCR\RequestMatcher', 'matchMethod'),
-        'url'         => array('VCR\RequestMatcher', 'matchUrl'),
-        'host'        => array('VCR\RequestMatcher', 'matchHost'),
-        'headers'     => array('VCR\RequestMatcher', 'matchHeaders'),
-        'body'        => array('VCR\RequestMatcher', 'matchBody'),
-        'post_fields' => array('VCR\RequestMatcher', 'matchPostFields'),
+        'method'       => array('VCR\RequestMatcher', 'matchMethod'),
+        'url'          => array('VCR\RequestMatcher', 'matchUrl'),
+        'host'         => array('VCR\RequestMatcher', 'matchHost'),
+        'headers'      => array('VCR\RequestMatcher', 'matchHeaders'),
+        'body'         => array('VCR\RequestMatcher', 'matchBody'),
+        'post_fields'  => array('VCR\RequestMatcher', 'matchPostFields'),
+        'query_string' => array('VCR\RequestMatcher', 'matchQueryString'),
     );
     private $whiteList = array();
     private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/Soap/SoapClient');
