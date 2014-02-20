@@ -2,10 +2,6 @@
 
 namespace VCR;
 
-use VCR\LibraryHooks\CurlHook;
-use VCR\LibraryHooks\SoapHook;
-use VCR\Util\StreamProcessor;
-
 class VCRFactory
 {
     /**
@@ -19,12 +15,19 @@ class VCRFactory
 
     protected function __construct($config = null)
     {
-        $this->config = $config ?: $this->getOrCreate('Configuration');
+        $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
     }
 
-    protected function createConfiguration()
+    /**
+     * @return Videorecorder
+     */
+    protected function createVCRVideorecorder()
     {
-        return new Configuration();
+        return new Videorecorder(
+            $this->config,
+            $this->getOrCreate('VCR\Util\HttpClient'),
+            $this
+        );
     }
 
     /**
@@ -32,26 +35,9 @@ class VCRFactory
      *
      * @return StreamProcessor
      */
-    protected function createUtilStreamProcessor()
+    protected function createVCRUtilStreamProcessor()
     {
-        return new StreamProcessor($this->config);
-    }
-
-    /**
-     * @return Videorecorder
-     */
-    protected function createVideorecorder()
-    {
-        return new Videorecorder(
-            $this->getOrCreate('Configuration'),
-            $this->getOrCreate('HttpClient'),
-            $this
-        );
-    }
-
-    protected function createHttpClient()
-    {
-        return new Util\HttpClient();
+        return new Util\StreamProcessor($this->config);
     }
 
     protected function createStorage($filePath)
@@ -63,21 +49,28 @@ class VCRFactory
 
     protected function createVCRLibraryHooksSoapHook()
     {
-        return new SoapHook(
+        return new LibraryHooks\SoapHook(
             $this->getOrCreate('VCR\Filter\SoapFilter'),
-            $this->getOrCreate('Util\StreamProcessor')
+            $this->getOrCreate('VCR\Util\StreamProcessor')
         );
     }
 
     protected function createVCRLibraryHooksCurlHook()
     {
-        return new CurlHook(
+        return new LibraryHooks\CurlHook(
             $this->getOrCreate('VCR\Filter\CurlFilter'),
-            $this->getOrCreate('Util\StreamProcessor')
+            $this->getOrCreate('VCR\Util\StreamProcessor')
         );
     }
 
-    public static function getInstance($config = null)
+    /**
+     * Returns the same VCRFactory instance on ever call (singleton).
+     *
+     * @param  Configuration $config (Optional) configuration.
+     *
+     * @return VCRFactory
+     */
+    public static function getInstance(Configuration $config = null)
     {
         if (!self::$instance) {
             self::$instance = new self($config);
@@ -87,7 +80,12 @@ class VCRFactory
     }
 
     /**
-     * @param string $className
+     * Returns an instance for specified class name and parameters.
+     *
+     * @param string $className Class name to get a instance for.
+     * @param array $params Constructor arguments for this class.
+     *
+     * @return mixed An instance for specified class name and parameters.
      */
     public static function get($className, $params = array())
     {
@@ -95,8 +93,10 @@ class VCRFactory
     }
 
     /**
-     * @param string $className
-     * @param array  $params
+     * Returns an instance for specified classname and parameters.
+     *
+     * @param string $className Class name to get a instance for.
+     * @param array $params Constructor arguments for this class.
      *
      * @return mixed
      */

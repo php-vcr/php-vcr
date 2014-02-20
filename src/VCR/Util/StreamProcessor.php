@@ -53,7 +53,7 @@ class StreamProcessor
      *
      * @param Configuration $configuration
      */
-    public function __construct($configuration = null)
+    public function __construct(Configuration $configuration = null)
     {
         if ($configuration) {
             static::$configuration = $configuration;
