@@ -4,12 +4,21 @@
         method: GET
         url: 'http://example.com'
         headers:
-            Host: example.com
-            Content-Length: 0
+            host: example.com
+            user-agent: 'Guzzle/3.8.1 curl/7.30.0 PHP/5.4.16'
+            content-length: 0
     response:
-        status: 302
+        status: 200
         headers:
-            Location: 'http://example.iana.org'
-            Server: BigIP
-            Connection: Keep-Alive
-            Content-Length: 'This is a guzzle test dummy.'
+            Accept-Ranges: bytes
+            Cache-Control: max-age=604800
+            Content-Type: text/html
+            Date: 'Thu, 20 Feb 2014 16:41:24 GMT'
+            Etag: '"359670651"'
+            Expires: 'Thu, 27 Feb 2014 16:41:24 GMT'
+            Last-Modified: 'Fri, 09 Aug 2013 23:54:35 GMT'
+            Server: 'ECS (iad/19AB)'
+            X-Cache: HIT
+            x-ec-custom-error: '1'
+            Content-Length: '1270'
+        body: "This is a guzzle test dummy."

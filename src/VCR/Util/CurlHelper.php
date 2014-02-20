@@ -113,14 +113,12 @@ class CurlHelper
                 }
                 break;
             case CURLOPT_HTTPHEADER:
-                $headers = array();
                 foreach ($value as $header) {
                     $headerParts = explode(': ', $header, 2);
                     if (isset($headerParts[1])) {
-                        $headers[$headerParts[0]] = $headerParts[1];
+                        $request->setHeader($headerParts[0], $headerParts[1]);
                     }
                 }
-                $request->addHeaders($headers);
                 break;
             case CURLOPT_WRITEFUNCTION:
             case CURLOPT_HEADERFUNCTION:

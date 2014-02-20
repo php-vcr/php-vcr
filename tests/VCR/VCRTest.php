@@ -50,7 +50,6 @@ class VCRTest extends VCR_TestCase
 
     public function testShouldInterceptGuzzleLibrary()
     {
-        $this->markTestSkipped('Not yet implemented.');
         VCR::configure()->enableLibraryHooks(array('curl_rewrite'));
         VCR::turnOn();
         VCR::insertCassette('unittest_guzzle_test');
