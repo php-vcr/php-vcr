@@ -31,7 +31,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldInterceptGuzzleLibrary()
     {
-        VCR::configure()->enableLibraryHooks(array('curl_rewrite'));
+        VCR::configure()->enableLibraryHooks(array('curl'));
         VCR::turnOn();
         VCR::insertCassette('unittest_guzzle_test');
         $client = new \Guzzle\Http\Client();
