@@ -64,6 +64,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testEnableRequestMatchersFailsWithNoExistingName()
+    {
+        $this->setExpectedException('InvalidArgumentException', "Request matchers don't exist: wrong, name");
+        $this->config->enableRequestMatchers(array('wrong', 'name'));
+    }
+
     public function testAddRequestMatcherFailsWithNoName()
     {
         $this->setExpectedException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
@@ -86,6 +92,23 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         };
         $actual = $this->config->addRequestMatcher('new_matcher', $expected);
         $this->assertContains($expected, $this->config->getRequestMatchers());
+    }
+
+    /**
+     * @dataProvider availableStorageProvider
+     */
+    public function testSetStorage($name, $className)
+    {
+        $this->config->setStorage($name);
+        $this->assertEquals($className, $this->config->getStorage(), "$name should be class $className.");
+    }
+
+    public function availableStorageProvider()
+    {
+        return array(
+            array('json', 'VCR\Storage\Json'),
+            array('yaml', 'VCR\Storage\Yaml'),
+        );
     }
 
     public function testSetStorageInvalidName()

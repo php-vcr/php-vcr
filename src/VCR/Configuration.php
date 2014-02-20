@@ -148,7 +148,7 @@ class Configuration
 
     public function setStorage($storageName)
     {
-        Assertion::inArray($storageName, $this->availableStorages, "Storage '{$storageName}' not available.");
+        Assertion::keyExists($this->availableStorages, $storageName, "Storage '{$storageName}' not available.");
         $this->enabledStorage = $storageName;
 
         return $this;
