@@ -83,7 +83,7 @@ class Json implements Storage
     /**
      * Returns the current key.
      *
-     * @return void
+     * @return integer
      */
     public function key()
     {
@@ -125,7 +125,6 @@ class Json implements Storage
             }
 
             if ($isInRecord && $char === '}' && $depth == 0) {
-                $isInRecord = false;
                 break;
             }
         }

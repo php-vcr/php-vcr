@@ -92,7 +92,7 @@ class Yaml implements Storage
     /**
      * Returns the current key.
      *
-     * @return void
+     * @return integer
      */
     public function key()
     {
@@ -131,7 +131,6 @@ class Yaml implements Storage
             $lastChar = $char;
 
             if ($isInRecord && $isNewArrayStart) {
-                $isInRecord = false;
                 fseek($this->handle, -1, SEEK_CUR);
                 break;
             }

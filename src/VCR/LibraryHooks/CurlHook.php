@@ -176,7 +176,7 @@ class CurlHook implements LibraryHook
      * Perform a cURL session.
      *
      * @link http://www.php.net/manual/en/function.curl-exec.php
-     * @param string $curlHandle A cURL handle returned by curl_init().
+     * @param resource $curlHandle A cURL handle returned by curl_init().
      *
      * @return mixed Returns TRUE on success or FALSE on failure.
      * However, if the CURLOPT_RETURNTRANSFER option is set, it will return the
@@ -307,7 +307,7 @@ class CurlHook implements LibraryHook
 
         static::$curlOptions[(int) $curlHandle][$option] = $value;
 
-        \curl_setopt($curlHandle, $option, $value);
+        return \curl_setopt($curlHandle, $option, $value);
     }
 
     /**
