@@ -25,6 +25,9 @@ class StreamWrapperHook implements LibraryHook
      */
     protected $response;
 
+    /**
+     * @inheritDoc
+     */
     public function enable(\Closure $requestCallback)
     {
         Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
@@ -38,6 +41,9 @@ class StreamWrapperHook implements LibraryHook
         $this->status = self::ENABLED;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function disable()
     {
         self::$requestCallback = null;
