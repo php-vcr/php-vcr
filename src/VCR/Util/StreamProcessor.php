@@ -165,9 +165,9 @@ class StreamProcessor
         $this->restore();
 
         if (isset($this->context)) {
-            $this->resource = fopen($path, $mode, $options, $this->context);
+            $this->resource = fopen($path, $mode, $options & STREAM_USE_PATH, $this->context);
         } else {
-            $this->resource = fopen($path, $mode, $options);
+            $this->resource = fopen($path, $mode, $options & STREAM_USE_PATH);
         }
 
         if ($options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
