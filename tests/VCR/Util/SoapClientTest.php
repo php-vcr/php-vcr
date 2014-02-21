@@ -79,7 +79,6 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testDoRequestHandlesHookDisabled()
     {
-        // $proxy = new ProxyBuilder('\VCR\Util\SoapClient');
         $client = $this->getMockBuilder('\VCR\Util\SoapClient')
             ->disableOriginalConstructor()
             ->setMethods(array('realDoRequest'))
