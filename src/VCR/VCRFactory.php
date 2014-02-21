@@ -13,6 +13,11 @@ class VCRFactory
 
     protected static $instance;
 
+   /**
+    * Creates a new VCRFactory instance.
+    *
+    * @param Configuration $config
+    */
     protected function __construct($config = null)
     {
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
@@ -33,7 +38,7 @@ class VCRFactory
     /**
      * Provides an instance of the StreamProcessor.
      *
-     * @return StreamProcessor
+     * @return \VCR\Util\StreamProcessor
      */
     protected function createVCRUtilStreamProcessor()
     {
