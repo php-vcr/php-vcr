@@ -116,6 +116,10 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testStreamMetadata()
     {
+        if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+            $this->markTestSkipped('Behavior is only applicable and testable for PHP 5.4+');
+        }
+
         $mock = $this->getStreamProcessorMock();
         $mock->expects($this->exactly(8))->method('restore');
         $mock->expects($this->exactly(8))->method('intercept');
