@@ -73,7 +73,6 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 
     public function testInsertMultipleCassettes()
     {
-        $this->markTestSkipped();
         VCR::turnOn();
         VCR::insertCassette('unittest_cassette1');
         VCR::insertCassette('unittest_cassette2');
