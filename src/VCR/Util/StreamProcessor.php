@@ -6,7 +6,7 @@ use VCR\Configuration;
 use VCR\Filter\AbstractFilter;
 
 /**
- * Implementation from:
+ * Implementation adapted from:
  * https://github.com/antecedent/patchwork/blob/418a9aae80ca3228d6763a2dc6d9a30ade7a4e7e/lib/Preprocessor/Stream.php
  *
  * @author     Ignas Rudaitis <ignas.rudaitis@gmail.com>
@@ -148,6 +148,18 @@ class StreamProcessor
         return $this->isWhitelisted($uri) && !$this->isBlacklisted($uri) && $this->isPhpFile($uri);
     }
 
+    /**
+     * Opens a stream and attaches registered filters.
+     *
+     * @param  string  $path       Specifies the URL that was passed to the original function.
+     * @param  string  $mode       The mode used to open the file, as detailed for fopen().
+     * @param  integer $options    Holds additional flags set by the streams API. It can hold one or more of the following values OR'd together.
+     * @param  string  $openedPath If the path is opened successfully, and STREAM_USE_PATH is set in options,
+     *                             opened_path should be set to the full path of the file/resource that was
+     *                             actually opened.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function stream_open($path, $mode, $options, &$openedPath)
     {
         $this->restore();
@@ -301,6 +313,18 @@ class StreamProcessor
         return flock($this->resource, $operation);
     }
 
+    /**
+     * Change stream options.
+     *
+     * @codeCoverageIgnore
+     *
+     * @param  int $option One of STREAM_OPTION_BLOCKING, STREAM_OPTION_READ_TIMEOUT, STREAM_OPTION_WRITE_BUFFER.
+     * @param  int $arg1   Depending on option.
+     * @param  int $arg2   Depending on option.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure. If option is not implemented,
+     *                 FALSE should be returned.
+     */
     public function stream_set_option($option, $arg1, $arg2)
     {
         switch ($option) {
