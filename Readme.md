@@ -122,7 +122,7 @@ phpunit ./tests
 
 ## Changelog
 
- * 2014-01-28 Release 1.1.0: Removes curl runkit library hook.
+ * 2014-01-28 Release 1.1.0: Removes curl runkit library hook and additional cleanup.
  * 2014-02-19 Release 1.0.7: Adds query request matcher.
  * 2014-01-12 Release 1.0.6: Updates dependencies.
  * 2013-10-13 Release 1.0.5: Fixed SOAP support, refactorings.
