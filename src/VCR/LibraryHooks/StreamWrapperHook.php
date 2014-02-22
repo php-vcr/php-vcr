@@ -7,7 +7,7 @@ use VCR\Response;
 use VCR\Util\Assertion;
 
 /**
- * StreamWrapper.
+ * Library hook for streamWrapper functions using stream_wrapper_register().
  */
 class StreamWrapperHook implements LibraryHook
 {
@@ -67,14 +67,35 @@ class StreamWrapperHook implements LibraryHook
         return $this->status == self::ENABLED;
     }
 
+    /**
+     * This method is called immediately after the wrapper is initialized (f.e. by fopen() and file_get_contents()).
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-open.php
+     * @param  string $path        Specifies the URL that was passed to the original function.
+     * @param  string $mode        The mode used to open the file, as detailed for fopen().
+     * @param  int $options        Holds additional flags set by the streams API.
+     * @param  string $opened_path If the path is opened successfully, and STREAM_USE_PATH is set.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function stream_open($path, $mode, $options, &$opened_path)
     {
         $requestCallback = self::$requestCallback;
         $this->response = $requestCallback(new Request('GET', $path));
 
-        return (string) $this->response->getBody();
+        return true;
     }
 
+
+    /**
+     * Read from stream.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-read.php
+     * @param  int $count How many bytes of data from the current position should be returned.
+     *
+     * @return string If there are less than count bytes available, return as many as are available.
+     *                If no more data is available, return either FALSE or an empty string.
+     */
     public function stream_read($count)
     {
         $ret = substr($this->response->getBody(), $this->position, $count);
@@ -83,21 +104,56 @@ class StreamWrapperHook implements LibraryHook
         return $ret;
     }
 
+    /**
+     * Write to stream.
+     *
+     * @throws BadMethodCall If called, because this method is not applicable for this stream.
+     * @link http://www.php.net/manual/en/streamwrapper.stream-write.php
+     *
+     * @param  string $data Should be stored into the underlying stream.
+     *
+     * @return int
+     */
     public function stream_write($data)
     {
         throw new \BadMethodCall('No writing possible');
     }
 
+    /**
+     * Retrieve the current position of a stream.
+     *
+     * This method is called in response to fseek() to determine the current position.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-tell.php
+     *
+     * @return integer Should return the current position of the stream.
+     */
     public function stream_tell()
     {
         return $this->position;
     }
 
+    /**
+     * Tests for end-of-file on a file pointer.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-eof.php
+     *
+     * @return boolean Should return TRUE if the read/write position is at the end of the stream
+     *                 and if no more data is available to be read, or FALSE otherwise.
+     */
     public function stream_eof()
     {
         return $this->position >= strlen($this->response->getBody());
     }
 
+
+    /**
+     * Retrieve information about a file resource.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-stat.php
+     *
+     * @return array See stat().
+     */
     public function stream_stat()
     {
         return array();
@@ -141,11 +197,26 @@ class StreamWrapperHook implements LibraryHook
         return false;
     }
 
+    /**
+     * Change stream options.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-metadata.php
+     * @param  string  $path   The file path or URL to set metadata.
+     * @param  integer $option One of the stream options.
+     * @param  mixed   $var    Value depending on the option.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function stream_metadata($path, $option, $var)
     {
         return false;
     }
 
+    /**
+     * Cleanup.
+     *
+     * @return  void
+     */
     public function __destruct()
     {
         self::$requestCallback = null;
