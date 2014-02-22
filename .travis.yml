@@ -5,11 +5,7 @@ php:
   - 5.3
 
 before_script:
-  - composer install --dev
+  - composer install
 
 script:
-  - mkdir -p build/logs
-  - phpunit --exclude-group runkit --coverage-clover build/logs/clover.xml tests
-
-after_script:
-  - php vendor/bin/coveralls
+  - phpunit

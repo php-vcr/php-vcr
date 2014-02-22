@@ -2,20 +2,24 @@
 
 namespace VCR;
 
+use VCR\Util\Assertion;
+
 /**
- * Configuration.
+ * Configuration stores a Videorecorders configuration options.
+ *
+ * Those configuration options might be which library hooks to use,
+ * where to store cassettes or which files to scan when filtering source code.
  */
 class Configuration
 {
     private $cassettePath = 'tests/fixtures';
 
     // All are enabled by default
-    private $enabledLibraryHooks = array('stream_wrapper', 'curl_rewrite', 'soap');
+    private $enabledLibraryHooks;
     private $availableLibraryHooks = array(
-        'stream_wrapper' => 'VCR\LibraryHooks\StreamWrapper',
-        'curl_runkit'    => 'VCR\LibraryHooks\CurlRunkit',
-        'curl_rewrite'   => 'VCR\LibraryHooks\CurlRewrite',
-        'soap'           => 'VCR\LibraryHooks\Soap',
+        'stream_wrapper' => 'VCR\LibraryHooks\StreamWrapperHook',
+        'curl'           => 'VCR\LibraryHooks\CurlHook',
+        'soap'           => 'VCR\LibraryHooks\SoapHook',
     );
 
     // Yaml by default
@@ -37,7 +41,7 @@ class Configuration
         'query_string' => array('VCR\RequestMatcher', 'matchQueryString'),
     );
     private $whiteList = array();
-    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/Soap/SoapClient');
+    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter');
 
     /**
      *
@@ -50,7 +54,8 @@ class Configuration
 
     /**
      * @param string|array $paths
-     * @return $this
+     *
+     * @return Configuration
      */
     public function setBlackList($paths)
     {
@@ -59,7 +64,6 @@ class Configuration
         $this->blackList = $paths;
 
         return $this;
-
     }
 
     /**
@@ -144,7 +148,7 @@ class Configuration
 
     public function setStorage($storageName)
     {
-        Assertion::inArray($storageName, $this->availableStorages, "Storage '{$storageName}' not available.");
+        Assertion::keyExists($this->availableStorages, $storageName, "Storage '{$storageName}' not available.");
         $this->enabledStorage = $storageName;
 
         return $this;

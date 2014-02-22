@@ -2,56 +2,65 @@
 
 namespace VCR\LibraryHooks;
 
-use VCR\Assertion;
-use VCR\LibraryHooks\LibraryHooksException;
+use VCR\Util\Assertion;
+use VCR\VCRException;
 use VCR\Request;
+use VCR\CodeTransform\AbstractCodeTransform;
 use VCR\Util\StreamProcessor;
 
 /**
  * Library hook for curl functions.
  */
-class Soap implements LibraryHookInterface
+class SoapHook implements LibraryHook
 {
     /**
      * @var string
      */
-    private static $handleRequestCallback;
+    private static $requestCallback;
+
     /**
      * @var string
      */
     private $status = self::DISABLED;
+
     /**
-     * @var FilterInterface
+     * @var AbstractCodeTransform
      */
-    private $filter;
+    private $codeTransformer;
+
     /**
      * @var \VCR\Util\StreamProcessor
      */
     private $processor;
 
     /**
-     * @param FilterInterface $filter
+     * Creates a SOAP hook instance.
+     *
+     * @param AbstractCodeTransform  $codeTransformer
      * @param StreamProcessor $processor
      *
      * @throws \BadMethodCallException in case the Soap extension is not installed.
      */
-    public function __construct(FilterInterface $filter, StreamProcessor $processor)
+    public function __construct(AbstractCodeTransform $codeTransformer, StreamProcessor $processor)
     {
         if (!class_exists('\SoapClient')) {
             throw new \BadMethodCallException('For soap support you need to install the soap extension.');
         }
 
         $this->processor = $processor;
-        $this->filter = $filter;
+        $this->codeTransformer = $codeTransformer;
     }
 
+    /**
+     * @param string $request
+     * @param string $location
+     * @param string $action
+     * @param integer $version
+     */
     public function doRequest($request, $location, $action, $version, $one_way = 0)
     {
         if ($this->status === self::DISABLED) {
-            throw new LibraryHooksException(
-                'Hook must be enabled.',
-                LibraryHooksException::HookDisabled
-            );
+            throw new VCRException('Hook must be enabled.', VCRException::LIBRARY_HOOK_DISABLED);
         }
 
         $vcrRequest = new Request('POST', $location);
@@ -59,8 +68,8 @@ class Soap implements LibraryHookInterface
         $vcrRequest->addHeader('Content-Type', $contentType . '; charset=utf-8; action="' . $action . '"');
         $vcrRequest->setBody($request);
 
-        $handleRequestCallback = self::$handleRequestCallback;
-        $response = $handleRequestCallback($vcrRequest);
+        $requestCallback = self::$requestCallback;
+        $response = $requestCallback($vcrRequest);
 
         return (string) $response->getBody(true);
     }
@@ -68,19 +77,18 @@ class Soap implements LibraryHookInterface
     /**
      * @inheritDoc
      */
-    public function enable(\Closure $handleRequestCallback)
+    public function enable(\Closure $requestCallback)
     {
-        Assertion::isCallable($handleRequestCallback, 'No valid callback for handling requests defined.');
-        self::$handleRequestCallback = $handleRequestCallback;
+        Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
+        self::$requestCallback = $requestCallback;
 
         if ($this->status == self::ENABLED) {
             return;
         }
 
-        $this->filter->register();
-        $this->processor->appendFilter($this->filter);
+        $this->codeTransformer->register();
+        $this->processor->appendCodeTransformer($this->codeTransformer);
         $this->processor->intercept();
-
 
         $this->status = self::ENABLED;
     }
@@ -90,18 +98,30 @@ class Soap implements LibraryHookInterface
      */
     public function disable()
     {
-        if ($this->status == self::DISABLED) {
+        if (!$this->isEnabled()) {
             return;
         }
 
-        self::$handleRequestCallback = null;
+        self::$requestCallback = null;
 
         $this->status = self::DISABLED;
     }
 
-    public function __destruct()
+    /**
+     * @inheritDoc
+     */
+    public function isEnabled()
     {
-        self::$handleRequestCallback = null;
+        return $this->status == self::ENABLED;
     }
 
+    /**
+     * Cleanup.
+     *
+     * @return  void
+     */
+    public function __destruct()
+    {
+        self::$requestCallback = null;
+    }
 }

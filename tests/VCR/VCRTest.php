@@ -2,11 +2,10 @@
 
 namespace VCR;
 
-
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class VCRTest extends VCR_TestCase
+class VCRTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testUseStaticCallsNotInitialized()
@@ -30,27 +29,9 @@ class VCRTest extends VCR_TestCase
         VCR::turnOff();
     }
 
-    /**
-     * @group runkit
-     */
-    public function testShouldInterceptCurl()
-    {
-        $this->skipTestIfRunkitUnavailable();
-        VCR::configure()->enableLibraryHooks(array('curl_runkit'));
-        VCR::turnOn();
-        VCR::insertCassette('unittest_curl_test');
-        $ch = curl_init('http://example.com/');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        $this->assertEquals('This is a curl test dummy.', $result, 'Curl call was not intercepted.');
-        VCR::eject();
-        VCR::turnOff();
-    }
-
     public function testShouldInterceptGuzzleLibrary()
     {
-        VCR::configure()->enableLibraryHooks(array('curl_rewrite'));
+        VCR::configure()->enableLibraryHooks(array('curl'));
         VCR::turnOn();
         VCR::insertCassette('unittest_guzzle_test');
         $client = new \Guzzle\Http\Client();
@@ -92,7 +73,6 @@ class VCRTest extends VCR_TestCase
 
     public function testInsertMultipleCassettes()
     {
-        $this->markTestSkipped();
         VCR::turnOn();
         VCR::insertCassette('unittest_cassette1');
         VCR::insertCassette('unittest_cassette2');

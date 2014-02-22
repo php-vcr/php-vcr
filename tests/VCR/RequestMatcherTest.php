@@ -45,21 +45,13 @@ class RequestMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchingHeaders()
     {
-        $first = new Request('GET', 'http://example.com', array(
-            'Accept' => 'Everything',
-        ));
-        $second = new Request('GET', 'http://example.com', array(
-            'Accept' => 'Everything',
-        ));
+        $first = new Request('GET', 'http://example.com', array('Accept' => 'Everything'));
+        $second = new Request('GET', 'http://example.com', array('Accept' => 'Everything'));
 
         $this->assertTrue(RequestMatcher::matchHeaders($first, $second));
 
-        $first = new Request('GET', 'http://example.com', array(
-            'Accept' => 'Everything',
-        ));
-        $second = new Request('GET', 'http://example.com', array(
-            'Accept' => 'Nothing',
-        ));
+        $first = new Request('GET', 'http://example.com', array('Accept' => 'Everything'));
+        $second = new Request('GET', 'http://example.com', array('Accept' => 'Nothing'));
 
         $this->assertFalse(RequestMatcher::matchHeaders($first, $second));
     }
@@ -98,5 +90,22 @@ class RequestMatcherTest extends \PHPUnit_Framework_TestCase
         $second = new Request('GET', 'http://example.com/search?query=second', array());
 
         $this->assertFalse(RequestMatcher::matchQueryString($first, $second));
+    }
+
+    public function testMatchingBody()
+    {
+        $first = new Request('GET', 'http://example.com', array());
+        $first->setBody('test');
+        $second = new Request('GET', 'http://example.com', array());
+        $second->setBody('test');
+
+        $this->assertTrue(RequestMatcher::matchBody($first, $second), 'Bodies should be equal');
+
+        $first = new Request('GET', 'http://example.com', array());
+        $first->setBody('test');
+        $second = new Request('POST', 'http://example.com', array());
+        $second->setBody('different');
+
+        $this->assertFalse(RequestMatcher::matchBody($first, $second), 'Bodies are different.');
     }
 }

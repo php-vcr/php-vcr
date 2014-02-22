@@ -2,10 +2,6 @@
 
 namespace VCR;
 
-use VCR\LibraryHooks\CurlRewrite;
-use VCR\LibraryHooks\Soap;
-use VCR\Util\StreamProcessor;
-
 class VCRFactory
 {
     /**
@@ -17,66 +13,69 @@ class VCRFactory
 
     protected static $instance;
 
+   /**
+    * Creates a new VCRFactory instance.
+    *
+    * @param Configuration $config
+    */
     protected function __construct($config = null)
     {
-        $this->config = $config ?: $this->getOrCreate('Configuration');
-    }
-
-    protected function createConfiguration()
-    {
-        return new Configuration();
-    }
-
-    /**
-     * Provides an instance of the StreamProcessor.
-     *
-     * @return StreamProcessor
-     */
-    protected function createUtilStreamProcessor()
-    {
-        return new StreamProcessor($this->config);
+        $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
     }
 
     /**
      * @return Videorecorder
      */
-    protected function createVideorecorder()
+    protected function createVCRVideorecorder()
     {
         return new Videorecorder(
-            $this->getOrCreate('Configuration'),
-            $this->getOrCreate('Client'),
+            $this->config,
+            $this->getOrCreate('VCR\Util\HttpClient'),
             $this
         );
     }
 
-    protected function createClient()
+    /**
+     * Provides an instance of the StreamProcessor.
+     *
+     * @return \VCR\Util\StreamProcessor
+     */
+    protected function createVCRUtilStreamProcessor()
     {
-        return new Client();
+        return new Util\StreamProcessor($this->config);
     }
 
     protected function createStorage($filePath)
     {
         $class = $this->config->getStorage();
+
         return new $class($filePath);
     }
 
-    protected function createVCRLibraryHooksSoap()
+    protected function createVCRLibraryHooksSoapHook()
     {
-        return new Soap(
-            $this->getOrCreate('VCR\\LibraryHooks\\Soap\\Filter'),
-            $this->getOrCreate('Util\\StreamProcessor')
+        return new LibraryHooks\SoapHook(
+            $this->getOrCreate('VCR\CodeTransform\SoapCodeTransform'),
+            $this->getOrCreate('VCR\Util\StreamProcessor')
         );
     }
 
-    protected function createVCRLibraryHooksCurlRewrite()
+    protected function createVCRLibraryHooksCurlHook()
     {
-        return new CurlRewrite(
-            $this->getOrCreate('VCR\\LibraryHooks\\CurlRewrite\\Filter'),
-            $this->getOrCreate('Util\\StreamProcessor')
+        return new LibraryHooks\CurlHook(
+            $this->getOrCreate('VCR\CodeTransform\CurlCodeTransform'),
+            $this->getOrCreate('VCR\Util\StreamProcessor')
         );
     }
 
-    public static function getInstance($config = null)
+    /**
+     * Returns the same VCRFactory instance on ever call (singleton).
+     *
+     * @param  Configuration $config (Optional) configuration.
+     *
+     * @return VCRFactory
+     */
+    public static function getInstance(Configuration $config = null)
     {
         if (!self::$instance) {
             self::$instance = new self($config);
@@ -85,14 +84,24 @@ class VCRFactory
         return self::$instance;
     }
 
+    /**
+     * Returns an instance for specified class name and parameters.
+     *
+     * @param string $className Class name to get a instance for.
+     * @param array $params Constructor arguments for this class.
+     *
+     * @return mixed An instance for specified class name and parameters.
+     */
     public static function get($className, $params = array())
     {
         return self::getInstance()->getOrCreate($className, $params);
     }
 
     /**
-     * @param string $className
-     * @param array $params
+     * Returns an instance for specified classname and parameters.
+     *
+     * @param string $className Class name to get a instance for.
+     * @param array $params Constructor arguments for this class.
      *
      * @return mixed
      */
@@ -118,7 +127,7 @@ class VCRFactory
      *
      * Example:
      *
-     *   ClassName: \\Tux\\Foo\\Linus
+     *   ClassName: \Tux\Foo\Linus
      *   Returns: createTuxFooLinus
      *
      * @param string $className

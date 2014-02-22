@@ -2,18 +2,47 @@
 
 namespace VCR\Storage;
 
-use VCR\Assertion;
+use VCR\Util\Assertion;
 
-class Json implements StorageInterface
+/**
+ * Json based storage for records.
+ *
+ * This storage can be iterated while keeping the memory consumption to the
+ * amount of memory used by the largest record.
+ *
+ */
+class Json implements Storage
 {
-    const STATUS_IN_OBJECT = true;
-    const STATUS_NOT_IN_OBJECT = false;
+    /**
+     * @var resource File handle.
+     */
+    protected $handle;
 
-    private $handle;
-    private $filePath;
-    private $currentJson;
-    private $isEOF = false;
+    /**
+     * @var string Path to storage file.
+     */
+    protected $filePath;
 
+    /**
+     * @var array Current parsed record.
+     */
+    protected $current;
+
+    /**
+     * @var integer Number of the current recording.
+     */
+    protected $position = 0;
+
+    /**
+     * @var boolean True when parser is at the end of the file.
+     */
+    protected $isEOF = false;
+
+    /**
+     * Creates a new JSON based file store.
+     *
+     * @param string $filePath Path to a file, will be created if not existing.
+     */
     public function __construct($filePath)
     {
         if (!file_exists($filePath)) {
@@ -28,6 +57,9 @@ class Json implements StorageInterface
         $this->filePath = $filePath;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function storeRecording(array $recording)
     {
         fseek($this->handle, -1, SEEK_END);
@@ -38,40 +70,61 @@ class Json implements StorageInterface
         fflush($this->handle);
     }
 
+    /**
+     * Returns the current record.
+     *
+     * @return array Parsed current record.
+     */
     public function current()
     {
-        return $this->currentJson;
+        return $this->current;
     }
 
+    /**
+     * Returns the current key.
+     *
+     * @return integer
+     */
     public function key()
     {
+        return $this->position;
     }
 
+    /**
+     * Parses the next record.
+     *
+     * @return void
+     */
     public function next()
     {
-        $this->currentJson = json_decode($this->readNextJsonString(), true);
+        $this->current = json_decode($this->readNextRecord(), true);
+        ++$this->position;
     }
 
-    private function readNextJsonString()
+    /**
+     * Returns the next record in raw format.
+     *
+     * @return string Next record in raw format.
+     */
+    protected function readNextRecord()
     {
         $depth = 0;
-        $status = self::STATUS_NOT_IN_OBJECT;
-        $currentJson = '';
+        $isInRecord = false;
+        $record = '';
 
         while (false !== ($char = fgetc($this->handle))) {
             if ($char === '{') {++$depth;}
             if ($char === '}') {--$depth;}
 
-            if ($status === self::STATUS_NOT_IN_OBJECT && $char === '{') {
-                $status = self::STATUS_IN_OBJECT;
+            if (!$isInRecord && $char === '{') {
+                $isInRecord = true;
             }
 
-            if ($status === self::STATUS_IN_OBJECT) {
-                $currentJson .= $char;
+            if ($isInRecord) {
+                $record .= $char;
             }
 
-            if ($status === self::STATUS_IN_OBJECT && $char === '}' && $depth == 0) {
-                $status = self::STATUS_NOT_IN_OBJECT;
+            if ($isInRecord && $char === '}' && $depth == 0) {
                 break;
             }
         }
@@ -80,23 +133,38 @@ class Json implements StorageInterface
             $this->isEOF = true;
         }
 
-        return $currentJson;
+        return $record;
     }
 
+    /**
+     * Resets the storage to the beginning.
+     *
+     * @return void
+     */
     public function rewind()
     {
         rewind($this->handle);
         $this->isEOF = false;
+        $this->position = 0;
     }
 
+    /**
+     * Returns true if the current record is valid.
+     *
+     * @return boolean True if the current record is valid.
+     */
     public function valid()
     {
-        if (is_null($this->currentJson)) {
+        if (is_null($this->current)) {
             $this->next();
         }
+
         return !$this->isEOF;
     }
 
+    /**
+     * Closes file handle.
+     */
     public function __destruct()
     {
         fclose($this->handle);

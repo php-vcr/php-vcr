@@ -3,7 +3,7 @@
 namespace VCR;
 
 /**
- * Test integration of PHPVCR with PHPUnit.
+ * Test VCRs response object.
  */
 class ResponseTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,6 +25,20 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(), $response->getHeaders());
     }
 
+    public function testRestoreHeadersFromArray()
+    {
+        $headers = array(
+            'Content-Type'   => 'application/json',
+            'Content-Length' => '349',
+            'Connection'     => 'close',
+            'Date'           => 'Fri, 31 Jan 2014 15:37:13 GMT',
+        );
+        $response = new Response(200, $headers);
+        $restoredResponse = Response::fromArray($response->toArray());
+
+        $this->assertEquals($headers, $restoredResponse->getHeaders());
+    }
+
     public function testGetBody()
     {
         $expectedBody = 'This is test content';
@@ -40,13 +54,82 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(null, $response->getBody(true));
     }
 
+    public function testRestoreBodyFromArray()
+    {
+        $body = 'this is an example body';
+        $response = new Response(200, array(), $body);
+        $restoredResponse = Response::fromArray($response->toArray());
+
+        $this->assertEquals($body, $restoredResponse->getBody(true));
+    }
+
+    public function testBase64EncodeCompressedBody()
+    {
+        $body = 'this is an example body';
+        $response = new Response(200, array('Content-Type' => 'application/x-gzip'), $body);
+        $responseArray = $response->toArray();
+
+        $this->assertEquals(base64_encode($body), $responseArray['body']);
+    }
+
+    public function testBase64DecodeCompressedBody()
+    {
+        $body = 'this is an example body';
+        $responseArray = array(
+            'headers' => array('Content-Type' => 'application/x-gzip'),
+            'body'    => base64_encode($body)
+        );
+        $response = Response::fromArray($responseArray);
+
+        $this->assertEquals($body, $response->getBody(true));
+    }
+
+    public function testRestoreCompressedBody()
+    {
+        $body = 'this is an example body';
+        $response = new Response(200, array('Content-Type' => 'application/x-gzip'), $body);
+        $restoredResponse = Response::fromArray($response->toArray());
+
+        $this->assertEquals($body, $restoredResponse->getBody(true));
+    }
+
     public function testGetStatus()
     {
         $expectedStatus = 200;
 
-        $response = Response::fromArray(array('status' => $expectedStatus));
+        $response = new Response($expectedStatus);
 
         $this->assertEquals($expectedStatus, $response->getStatusCode());
+    }
+
+    public function testRestoreStatusFromArray()
+    {
+        $expectedStatus = 200;
+
+        $response = new Response($expectedStatus);
+        $restoredResponse = Response::fromArray($response->toArray());
+
+        $this->assertEquals($expectedStatus, $restoredResponse->getStatusCode());
+    }
+
+    public function testGetCurlInfo()
+    {
+        $curlOptions = array('option' => 'value');
+        $response = new Response(200);
+        $response->setInfo($curlOptions);
+
+        $this->assertEquals($curlOptions, $response->getInfo());
+    }
+
+    public function testGetCurlInfoFromArray()
+    {
+        $curlOptions = array('option' => 'value');
+
+        $response = new Response(200);
+        $response->setInfo($curlOptions);
+        $restoredResponse = Response::fromArray($response->toArray());
+
+        $this->assertEquals($curlOptions, $restoredResponse->getInfo());
     }
 
     public function testToArray()
@@ -63,5 +146,4 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedArray, $response->toArray());
     }
-
 }

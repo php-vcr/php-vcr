@@ -1,16 +1,14 @@
 <?php
 
-namespace VCR\LibraryHooks\Soap;
+namespace VCR\CodeTransform;
 
-use VCR\LibraryHooks\AbstractFilter;
-
-class Filter extends AbstractFilter
+class SoapCodeTransform extends AbstractCodeTransform
 {
     const NAME = 'vcr_soap';
 
     private static $replacements = array(
-        'new \VCR\Util\Soap\SoapClient(',
-        'extends \VCR\Util\Soap\SoapClient',
+        'new \VCR\Util\SoapClient(',
+        'extends \VCR\Util\SoapClient',
     );
 
     private static $patterns = array(
@@ -21,7 +19,7 @@ class Filter extends AbstractFilter
     /**
      * @param string $code
      *
-     * @return mixed
+     * @return string
      */
     protected function transformCode($code)
     {

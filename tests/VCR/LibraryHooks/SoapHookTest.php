@@ -4,14 +4,14 @@ namespace VCR\LibraryHooks;
 
 use VCR\Response;
 use VCR\Configuration;
-use VCR\LibraryHooks\Soap\Filter;
+use VCR\CodeTransform\SoapCodeTransform;
 use VCR\Util\StreamProcessor;
 
 
 /**
  * Test if intercepting http/https using soap works.
  */
-class SoapTest extends \PHPUnit_Framework_TestCase
+class SoapHookTest extends \PHPUnit_Framework_TestCase
 {
     public $expected = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetCityWeatherByZIPResponse xmlns="http://ws.cdyne.com/WeatherWS/"><GetCityWeatherByZIPResult><Success>true</Success></GetCityWeatherByZIPResult></GetCityWeatherByZIPResponse></soap:Body></soap:Envelope>';
 
@@ -23,7 +23,7 @@ class SoapTest extends \PHPUnit_Framework_TestCase
     public function setup()
     {
         $this->config = new Configuration();
-        $this->soapHook = new Soap(new Filter(), new StreamProcessor($this->config));
+        $this->soapHook = new SoapHook(new SoapCodeTransform(), new StreamProcessor($this->config));
     }
 
 
@@ -40,9 +40,11 @@ class SoapTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $actual->GetCityWeatherByZIPResult->Success, 'Response was not returned.');
     }
 
+    /**
+     * @group uses_internet
+     */
     public function testShouldNotInterceptCallWhenDisabled()
     {
-        $this->markTestSkipped('Uses internet connection, find another way to test this.');
         $this->soapHook->disable();
 
         $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
@@ -79,7 +81,7 @@ class SoapTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param null $handleRequestCallback
+     * @param null $requestCallback
      *
      * @return \callable
      */
@@ -92,7 +94,7 @@ class SoapTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param null $handleRequestCallback
+     * @param null $requestCallback
      *
      * @return \callable
      */

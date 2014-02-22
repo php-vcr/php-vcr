@@ -16,9 +16,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'VCR\LibraryHooks\StreamWrapper',
-                'VCR\LibraryHooks\CurlRewrite',
-                'VCR\LibraryHooks\Soap',
+                'VCR\LibraryHooks\StreamWrapperHook',
+                'VCR\LibraryHooks\CurlHook',
+                'VCR\LibraryHooks\SoapHook',
             ),
             $this->config->getLibraryHooks()
         );
@@ -29,7 +29,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config->enableLibraryHooks(array('stream_wrapper'));
         $this->assertEquals(
             array(
-                'VCR\LibraryHooks\StreamWrapper',
+                'VCR\LibraryHooks\StreamWrapperHook',
             ),
             $this->config->getLibraryHooks()
         );
@@ -40,7 +40,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config->enableLibraryHooks('stream_wrapper');
         $this->assertEquals(
             array(
-                'VCR\LibraryHooks\StreamWrapper',
+                'VCR\LibraryHooks\StreamWrapperHook',
             ),
             $this->config->getLibraryHooks()
         );
@@ -64,10 +64,16 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testEnableRequestMatchersFailsWithNoExistingName()
+    {
+        $this->setExpectedException('InvalidArgumentException', "Request matchers don't exist: wrong, name");
+        $this->config->enableRequestMatchers(array('wrong', 'name'));
+    }
+
     public function testAddRequestMatcherFailsWithNoName()
     {
         $this->setExpectedException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
-        $expected = function($first, $second) {
+        $expected = function ($first, $second) {
             return true;
         };
         $actual = $this->config->addRequestMatcher('', $expected);
@@ -81,11 +87,28 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testAddRequestMatchers()
     {
-        $expected = function($first, $second) {
+        $expected = function ($first, $second) {
             return true;
         };
         $actual = $this->config->addRequestMatcher('new_matcher', $expected);
         $this->assertContains($expected, $this->config->getRequestMatchers());
+    }
+
+    /**
+     * @dataProvider availableStorageProvider
+     */
+    public function testSetStorage($name, $className)
+    {
+        $this->config->setStorage($name);
+        $this->assertEquals($className, $this->config->getStorage(), "$name should be class $className.");
+    }
+
+    public function availableStorageProvider()
+    {
+        return array(
+            array('json', 'VCR\Storage\Json'),
+            array('yaml', 'VCR\Storage\Yaml'),
+        );
     }
 
     public function testSetStorageInvalidName()
@@ -97,7 +120,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testGetStorage()
     {
         $class = $this->config->getStorage();
-        $this->assertTrue(in_array("VCR\Storage\StorageInterface", class_implements($class)));
+        $this->assertTrue(in_array("VCR\Storage\Storage", class_implements($class)));
     }
 
     public function testWhitelist()

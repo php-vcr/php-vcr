@@ -1,3 +1,4 @@
 *.sublime-*
 vendor/*
 notes.md
+tests/fixtures/cassette*

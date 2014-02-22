@@ -5,7 +5,7 @@ namespace VCR\LibraryHooks;
 /**
  * Library hook interface.
  */
-interface LibraryHookInterface
+interface LibraryHook
 {
     /**
      * @var string Enabled status for a hook.
@@ -25,7 +25,7 @@ interface LibraryHookInterface
      * @throws VCR\VCRException When specified callback is not callable.
      * @return void
      */
-    public function enable(\Closure $handleRequestCallback);
+    public function enable(\Closure $requestCallback);
 
     /**
      * Disables library hook, so no http interactions of
@@ -35,4 +35,10 @@ interface LibraryHookInterface
      */
     public function disable();
 
+    /**
+     * Returns true if library hook is enabled, false otherwise.
+     *
+     * @return boolean True if library hook is enabled, false otherwise.
+     */
+    public function isEnabled();
 }

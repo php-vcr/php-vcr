@@ -10,6 +10,9 @@ use VCR\Response;
 */
 class CurlHelper
 {
+    /**
+     * @var array List of cURL info constants.
+     */
     private static $curlInfoList = array(
         CURLINFO_HTTP_CODE,
         CURLINFO_EFFECTIVE_URL,
@@ -32,6 +35,20 @@ class CurlHelper
         CURLINFO_CONTENT_LENGTH_UPLOAD
     );
 
+    /**
+     * Outputs a response depending on the set cURL option.
+     *
+     * The response body can be written to a file, returned, echoed or
+     * passed to a custom function.
+     *
+     * The response header might be passed to a custom function.
+     *
+     * @param  Response $response    Response which contains the response body.
+     * @param  array    $curlOptions cURL options which are not stored within the Response.
+     * @param  resource $ch          cURL handle to add headers if needed.
+     *
+     * @return null|string
+     */
     public static function handleOutput(Response $response, array $curlOptions, $ch)
     {
         if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
@@ -54,6 +71,14 @@ class CurlHelper
         }
     }
 
+    /**
+     * Returns a cURL option from a Response.
+     *
+     * @param  Response $response Response to get cURL option from.
+     * @param  integer  $option   cURL option to get.
+     *
+     * @return mixed Value of the cURL option.
+     */
     public static function getCurlOptionFromResponse(Response $response, $option = 0)
     {
         switch ($option) {
@@ -86,6 +111,13 @@ class CurlHelper
         throw new \BadMethodCallException("Not implemented: {$constantNames[$option]} ({$option}) ");
     }
 
+    /**
+     * Sets a cURL option on a Request.
+     *
+     * @param Request $request Request to set cURL option to.
+     * @param integer $option  cURL option to set.
+     * @param mixed   $value   Value of the cURL option.
+     */
     public static function setCurlOptionOnRequest(Request $request, $option, $value)
     {
         switch ($option) {

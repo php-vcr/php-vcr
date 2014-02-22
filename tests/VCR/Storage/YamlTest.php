@@ -9,8 +9,6 @@ use org\bovigo\vfs\vfsStream;
  */
 class YamlTest extends \PHPUnit_Framework_TestCase
 {
-    private $handle;
-
     public function setUp()
     {
         vfsStream::setup('test');

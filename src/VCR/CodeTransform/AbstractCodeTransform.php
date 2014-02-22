@@ -1,9 +1,8 @@
 <?php
 
-namespace VCR\LibraryHooks;
+namespace VCR\CodeTransform;
 
-
-abstract class AbstractFilter extends \PHP_User_Filter implements FilterInterface
+abstract class AbstractCodeTransform extends \PHP_User_Filter
 {
     const NAME = 'vcr_abstract_filter';
 
@@ -22,7 +21,6 @@ abstract class AbstractFilter extends \PHP_User_Filter implements FilterInterfac
     public function register()
     {
         if (!$this->isRegistered) {
-
             $this->isRegistered = stream_filter_register(static::NAME, get_called_class());
         }
 
@@ -34,8 +32,8 @@ abstract class AbstractFilter extends \PHP_User_Filter implements FilterInterfac
      *
      * @param resource $in
      * @param resource $out
-     * @param int $consumed
-     * @param bool $closing
+     * @param int      $consumed
+     * @param bool     $closing
      *
      * @return int PSFS_PASS_ON
      *

@@ -4,22 +4,56 @@ namespace VCR\Storage;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
+use VCR\Util\Assertion;
 
-use VCR\Assertion;
-
-class Yaml implements StorageInterface
+/**
+ * Yaml based storage for records.
+ *
+ * This storage can be iterated while keeping the memory consumption to the
+ * amount of memory used by the largest record.
+ */
+class Yaml implements Storage
 {
-    const STATUS_IN_OBJECT = true;
-    const STATUS_NOT_IN_OBJECT = false;
+    /**
+     * @var resource File handle.
+     */
+    protected $handle;
 
-    private $handle;
-    private $filePath;
-    private $recording;
-    private $yamlDumper;
-    private $yamlParser;
-    private $isEOF = false;
-    private $valid = true;
+    /**
+     * @var array Current parsed record.
+     */
+    protected $current;
 
+    /**
+     * @var integer Number of the current recording.
+     */
+    protected $position = 0;
+
+    /**
+     * @var boolean True when parser is at the end of the file.
+     */
+    protected $isEOF = false;
+
+    /**
+     * @var boolean If the current position is valid.
+     */
+    protected $valid = true;
+
+    /**
+     * @var Symfony\Component\Yaml\Parser Yaml parser.
+     */
+    protected $yamlParser;
+
+    /**
+     * @var  Symfony\Component\Yaml\Dumper Yaml writer.
+     */
+    protected $yamlDumper;
+
+    /**
+     * Creates a new YAML based file store.
+     *
+     * @param string $filePath Path to a file, will be created if not existing.
+     */
     public function __construct($filePath, Parser $parser = null, Dumper $dumper = null)
     {
         if (!file_exists($filePath)) {
@@ -31,11 +65,13 @@ class Yaml implements StorageInterface
         Assertion::writeable($filePath, "Specified path '{$filePath}' must be writeable.");
 
         $this->handle = fopen($filePath, 'r+');
-        $this->filePath = $filePath;
         $this->yamlParser = $parser ?: new Parser();
         $this->yamlDumper = $dumper ?: new Dumper();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function storeRecording(array $recording)
     {
         fseek($this->handle, -1, SEEK_END);
@@ -43,28 +79,50 @@ class Yaml implements StorageInterface
         fflush($this->handle);
     }
 
+    /**
+     * Returns the current record.
+     *
+     * @return array Parsed current record.
+     */
     public function current()
     {
-        return $this->recording;
+        return $this->current;
     }
 
+    /**
+     * Returns the current key.
+     *
+     * @return integer
+     */
     public function key()
     {
+        return $this->position;
     }
 
+    /**
+     * Parses the next record.
+     *
+     * @return void
+     */
     public function next()
     {
-        $recording = $this->yamlParser->parse($this->readNextRecording());
-        $this->recording = $recording[0];
+        $recording = $this->yamlParser->parse($this->readNextRecord());
+        $this->current = $recording[0];
+        ++$this->position;
     }
 
-    private function readNextRecording()
+    /**
+     * Returns the next record in raw format.
+     *
+     * @return string Next record in raw format.
+     */
+    private function readNextRecord()
     {
         if ($this->isEOF) {
             $this->valid = false;
         }
 
-        $status = self::STATUS_NOT_IN_OBJECT;
+        $isInRecord = false;
         $recording = '';
         $lastChar = null;
 
@@ -72,17 +130,16 @@ class Yaml implements StorageInterface
             $isNewArrayStart = ($char === '-') && ($lastChar === PHP_EOL || $lastChar === null);
             $lastChar = $char;
 
-            if ($status === self::STATUS_IN_OBJECT && $isNewArrayStart) {
-                $status = self::STATUS_NOT_IN_OBJECT;
+            if ($isInRecord && $isNewArrayStart) {
                 fseek($this->handle, -1, SEEK_CUR);
                 break;
             }
 
-            if ($status === self::STATUS_NOT_IN_OBJECT && $isNewArrayStart) {
-                $status = self::STATUS_IN_OBJECT;
+            if (!$isInRecord && $isNewArrayStart) {
+                $isInRecord = true;
             }
 
-            if ($status === self::STATUS_IN_OBJECT) {
+            if ($isInRecord) {
                 $recording .= $char;
             }
         }
@@ -94,24 +151,38 @@ class Yaml implements StorageInterface
         return $recording;
     }
 
+    /**
+     * Resets the storage to the beginning.
+     *
+     * @return void
+     */
     public function rewind()
     {
         rewind($this->handle);
         $this->isEOF = false;
         $this->valid = true;
+        $this->position = 0;
     }
 
+    /**
+     * Returns true if the current record is valid.
+     *
+     * @return boolean True if the current record is valid.
+     */
     public function valid()
     {
-        if (is_null($this->recording)) {
+        if (is_null($this->current)) {
             $this->next();
         }
-        return ! is_null($this->recording) && $this->valid;
+
+        return ! is_null($this->current) && $this->valid;
     }
 
+    /**
+     * Closes file handle.
+     */
     public function __destruct()
     {
         fclose($this->handle);
     }
-
 }

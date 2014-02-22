@@ -9,16 +9,7 @@ if (!file_exists(__DIR__ . "/../vendor/autoload.php")) {
     );
 }
 
-$loader = require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-$loader->addClassMap(
-    array(
-        'VCR\\VCR_TestCase' => __DIR__ . '/VCR/VCR_TestCase.php',
-    )
-);
-
-\VCR\VCR::configure()
-    ->enableLibraryHooks(array('curl_rewrite', 'soap'))
-    ->setBlackList(array('Soap/FilterTest'));
 \VCR\VCR::turnOn();
 \VCR\VCR::turnOff();

@@ -1,7 +1,8 @@
 <?php
-namespace VCR;
+namespace VCR\Util;
 
 use Assert\Assertion as BaseAssertion;
+use VCR\VCRException;
 
 class Assertion extends BaseAssertion
 {
@@ -12,8 +13,8 @@ class Assertion extends BaseAssertion
     /**
      * Assert that the value is callable.
      *
-     * @param mixed $value
-     * @param string $message
+     * @param  mixed                           $value
+     * @param  string                          $message
      * @return void
      * @throws Assert\AssertionFailedException
      */
