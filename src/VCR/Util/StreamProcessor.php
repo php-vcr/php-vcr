@@ -188,7 +188,7 @@ class StreamProcessor
      *
      * @link http://www.php.net/manual/en/streamwrapper.stream-close.php
      *
-     * @return void
+     * @return boolean
      */
     public function stream_close()
     {
@@ -213,7 +213,7 @@ class StreamProcessor
      *
      * @link http://www.php.net/manual/en/streamwrapper.stream-flush.php
      *
-     * @return void
+     * @return boolean
      */
     public function stream_flush()
     {

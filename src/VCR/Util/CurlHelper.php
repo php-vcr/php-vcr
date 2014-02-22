@@ -47,7 +47,7 @@ class CurlHelper
      * @param  array    $curlOptions cURL options which are not stored within the Response.
      * @param  resource $ch          cURL handle to add headers if needed.
      *
-     * @return mixed
+     * @return null|string
      */
     public static function handleOutput(Response $response, array $curlOptions, $ch)
     {
