@@ -17,6 +17,9 @@ use VCR\CodeTransform\AbstractCodeTransform;
  */
 class StreamProcessor
 {
+    /**
+     * Constant for a stream which was opened while including a file.
+     */
     const STREAM_OPEN_FOR_INCLUDE = 128;
 
     /**
@@ -30,7 +33,7 @@ class StreamProcessor
     protected static $configuration;
 
     /**
-     * @var AbstractCodeTransform[] $codeTransformers Tranformers which have been appended to this stream processor.
+     * @var AbstractCodeTransform[] $codeTransformers Transformers which have been appended to this stream processor.
      */
     protected static $codeTransformers = array();
 
@@ -501,6 +504,15 @@ class StreamProcessor
         return fwrite($this->resource, $data);
     }
 
+    /**
+     * Delete a file.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.unlink.php
+     *
+     * @param  string $path The file URL which should be deleted.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function unlink($path)
     {
         $this->restore();
