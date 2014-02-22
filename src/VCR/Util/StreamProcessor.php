@@ -10,6 +10,7 @@ use VCR\CodeTransform\AbstractCodeTransform;
  * https://github.com/antecedent/patchwork/blob/418a9aae80ca3228d6763a2dc6d9a30ade7a4e7e/lib/Preprocessor/Stream.php
  *
  * @author     Ignas Rudaitis <ignas.rudaitis@gmail.com>
+ * @author     Adrian Philipp <mail@adrian-philipp.com>
  * @copyright  2010-2013 Ignas Rudaitis
  * @license    http://www.opensource.org/licenses/mit-license.html
  * @link       http://antecedent.github.com/patchwork
@@ -179,41 +180,107 @@ class StreamProcessor
         return $this->resource !== false;
     }
 
+    /**
+     * Close an resource.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-close.php
+     *
+     * @return void
+     */
     public function stream_close()
     {
         return fclose($this->resource);
     }
 
+    /**
+     * Tests for end-of-file on a file pointer.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-eof.php
+     *
+     * @return boolean Should return TRUE if the read/write position is at the end of the stream
+     *                 and if no more data is available to be read, or FALSE otherwise.
+     */
     public function stream_eof()
     {
         return feof($this->resource);
     }
 
+    /**
+     * Flushes the output.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-flush.php
+     *
+     * @return void
+     */
     public function stream_flush()
     {
         return fflush($this->resource);
     }
 
+    /**
+     * Read from stream.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-read.php
+     * @param  int $count How many bytes of data from the current position should be returned.
+     *
+     * @return string If there are less than count bytes available, return as many as are available.
+     *                If no more data is available, return either FALSE or an empty string.
+     */
     public function stream_read($count)
     {
         return fread($this->resource, $count);
     }
 
+    /**
+     * Seeks to specific location in a stream.
+     *
+     * @param  integer $offset The stream offset to seek to.
+     * @param  integer $whence Possible values:
+     *                         SEEK_SET - Set position equal to offset bytes.
+     *                         SEEK_CUR - Set position to current location plus offset.
+     *                         SEEK_END - Set position to end-of-file plus offset.
+     * @return boolean Return TRUE if the position was updated, FALSE otherwise.
+     */
     public function stream_seek($offset, $whence = SEEK_SET)
     {
         return fseek($this->resource, $offset, $whence) === 0;
     }
 
+    /**
+     * Retrieve information about a file resource.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-stat.php
+     *
+     * @return array See stat().
+     */
     public function stream_stat()
     {
         return fstat($this->resource);
     }
 
+    /**
+     * Retrieve the current position of a stream.
+     *
+     * This method is called in response to fseek() to determine the current position.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-tell.php
+     *
+     * @return integer Should return the current position of the stream.
+     */
     public function stream_tell()
     {
         return ftell($this->resource);
     }
 
+    /**
+     * Retrieve information about a file.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.url-stat.php
+     *
+     * @param  string $path The file path or URL to stat.
+     *
+     * @return integer      Should return as many elements as stat() does.
+     */
     public function url_stat($path)
     {
         $this->restore();
@@ -232,6 +299,13 @@ class StreamProcessor
         return $result;
     }
 
+    /**
+     * Close directory handle.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.dir-closedir.php
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function dir_closedir()
     {
         closedir($this->resource);
@@ -239,6 +313,15 @@ class StreamProcessor
         return true;
     }
 
+    /**
+     * Open directory handle.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.dir-opendir.php
+     *
+     * @param  string $path The file path or URL to stat.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function dir_opendir($path)
     {
         $this->restore();
@@ -252,11 +335,25 @@ class StreamProcessor
         return $this->resource !== false;
     }
 
+    /**
+     * Read entry from directory handle.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.dir-readdir.php
+     *
+     * @return mixed Should return string representing the next filename, or FALSE if there is no next file.
+     */
     public function dir_readdir()
     {
         return readdir($this->resource);
     }
 
+    /**
+     * Rewind directory handle.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.dir-rewinddir.php
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function dir_rewinddir()
     {
         rewinddir($this->resource);
@@ -264,6 +361,17 @@ class StreamProcessor
         return true;
     }
 
+    /**
+     * Create a directory.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.mkdir.php
+     *
+     * @param  string  $path       Directory which should be created.
+     * @param  int     $mode       The value passed to mkdir().
+     * @param  integer $options    A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
+     *
+     * @return boolean  Returns TRUE on success or FALSE on failure.
+     */
     public function mkdir($path, $mode, $options)
     {
         $this->restore();
@@ -277,6 +385,16 @@ class StreamProcessor
         return $result;
     }
 
+    /**
+     * Renames a file or directory.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.rename.php
+     *
+     * @param  string $path_from The URL to the current file.
+     * @param  string $path_to   The URL which the path_from should be renamed to.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function rename($path_from, $path_to)
     {
         $this->restore();
@@ -290,6 +408,15 @@ class StreamProcessor
         return $result;
     }
 
+    /**
+     * Removes a directory
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.rmdir.php
+     *
+     * @param  string $path The directory URL which should be removed.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function rmdir($path)
     {
         $this->restore();
@@ -303,11 +430,29 @@ class StreamProcessor
         return $result;
     }
 
+    /**
+     * Retrieve the underlaying resource.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-cast.php
+     *
+     * @param  integer $cast_as Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or
+     *                          STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
+     * @return resource         Should return the underlying stream resource used by the wrapper, or FALSE.
+     */
     public function stream_cast($cast_as)
     {
         return $this->resource;
     }
 
+    /**
+     * Advisory file locking.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-lock.php
+     *
+     * @param  integer $operation One of the operation constantes.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function stream_lock($operation)
     {
         return flock($this->resource, $operation);
@@ -341,6 +486,16 @@ class StreamProcessor
         }
     }
 
+    /**
+     * Write to stream.
+     *
+     * @throws BadMethodCall If called, because this method is not applicable for this stream.
+     * @link http://www.php.net/manual/en/streamwrapper.stream-write.php
+     *
+     * @param  string $data Should be stored into the underlying stream.
+     *
+     * @return int
+     */
     public function stream_write($data)
     {
         return fwrite($this->resource, $data);
@@ -359,6 +514,16 @@ class StreamProcessor
         return $result;
     }
 
+    /**
+     * Change stream options.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-metadata.php
+     * @param  string  $path   The file path or URL to set metadata.
+     * @param  integer $option One of the stream options.
+     * @param  mixed   $var    Value depending on the option.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function stream_metadata($path, $option, $value)
     {
         $this->restore();
@@ -389,13 +554,26 @@ class StreamProcessor
         return $result;
     }
 
+    /**
+     * Truncate stream.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.stream-truncate.php
+     *
+     * @param  integer $new_size The new size.
+     *
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     */
     public function stream_truncate($new_size)
     {
         return ftruncate($this->resource, $new_size);
     }
 
     /**
+     * Adds code transformer to the stream processor.
+     *
      * @param AbstractCodeTransform $codeTransformer
+     *
+     * @return void
      */
     public function appendCodeTransformer(AbstractCodeTransform $codeTransformer)
     {
@@ -403,9 +581,13 @@ class StreamProcessor
     }
 
     /**
+     * Removes a code transformer from the stream processor.
+     *
      * @param AbstractCodeTransform $codeTransformer
+     *
+     * @return void
      */
-    public function detachCodeTranformer(AbstractCodeTransform $codeTransformer)
+    public function detachCodeTransformer(AbstractCodeTransform $codeTransformer)
     {
         if (!empty(static::$codeTransformers[$codeTransformer::NAME])) {
             unset(static::$codeTransformers[$codeTransformer::NAME]);

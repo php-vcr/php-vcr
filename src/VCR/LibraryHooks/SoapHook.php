@@ -17,14 +17,17 @@ class SoapHook implements LibraryHook
      * @var string
      */
     private static $requestCallback;
+
     /**
      * @var string
      */
     private $status = self::DISABLED;
+
     /**
      * @var AbstractCodeTransform
      */
     private $codeTransformer;
+
     /**
      * @var \VCR\Util\StreamProcessor
      */
@@ -112,9 +115,13 @@ class SoapHook implements LibraryHook
         return $this->status == self::ENABLED;
     }
 
+    /**
+     * Cleanup.
+     *
+     * @return  void
+     */
     public function __destruct()
     {
         self::$requestCallback = null;
     }
-
 }

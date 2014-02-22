@@ -86,7 +86,6 @@ class StreamWrapperHook implements LibraryHook
         return true;
     }
 
-
     /**
      * Read from stream.
      *
@@ -145,7 +144,6 @@ class StreamWrapperHook implements LibraryHook
     {
         return $this->position >= strlen($this->response->getBody());
     }
-
 
     /**
      * Retrieve information about a file resource.
