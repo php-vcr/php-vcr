@@ -1,8 +1,8 @@
 <?php
 
-namespace VCR\Filter;
+namespace VCR\CodeTransform;
 
-class CurlFilter extends AbstractFilter
+class CurlCodeTransform extends AbstractCodeTransform
 {
     const NAME = 'vcr_curl';
 

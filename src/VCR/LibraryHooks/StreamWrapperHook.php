@@ -11,8 +11,14 @@ use VCR\Util\Assertion;
  */
 class StreamWrapperHook implements LibraryHook
 {
+    /**
+     * @var \Closure Callback which will be executed when a request is intercepted.
+     */
     protected static $requestCallback;
 
+    /**
+     * @var integer Position in the current response body.
+     */
     protected $position;
 
     /**

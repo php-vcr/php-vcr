@@ -1,17 +1,17 @@
 <?php
 
-namespace VCR\Filter;
+namespace VCR\CodeTransform;
 
 use lapistano\ProxyObject\ProxyBuilder;
 
-class CurlFilterTest extends \PHPUnit_Framework_TestCase
+class CurlCodeTransformTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider codeSnippetProvider
      */
     public function testTransformCode($expected, $code)
     {
-        $proxy = new ProxyBuilder('\VCR\Filter\CurlFilter');
+        $proxy = new ProxyBuilder('\VCR\CodeTransform\CurlCodeTransform');
         $filter = $proxy
             ->setMethods(array('transformCode'))
             ->getProxy();

@@ -1,8 +1,8 @@
 <?php
 
-namespace VCR\Filter;
+namespace VCR\CodeTransform;
 
-class SoapFilter extends AbstractFilter
+class SoapCodeTransform extends AbstractCodeTransform
 {
     const NAME = 'vcr_soap';
 

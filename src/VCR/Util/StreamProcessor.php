@@ -3,7 +3,7 @@
 namespace VCR\Util;
 
 use VCR\Configuration;
-use VCR\Filter\AbstractFilter;
+use VCR\CodeTransform\AbstractCodeTransform;
 
 /**
  * Implementation adapted from:
@@ -29,9 +29,9 @@ class StreamProcessor
     protected static $configuration;
 
     /**
-     * @var AbstractFilter[] $filters Filers which have been appended to this stream processor.
+     * @var AbstractCodeTransform[] $codeTransformers Tranformers which have been appended to this stream processor.
      */
-    protected static $filters = array();
+    protected static $codeTransformers = array();
 
     /**
      * @var resource Resource for the currently opened file.
@@ -395,20 +395,20 @@ class StreamProcessor
     }
 
     /**
-     * @param AbstractFilter $filter
+     * @param AbstractCodeTransform $codeTransformer
      */
-    public function appendFilter(AbstractFilter $filter)
+    public function appendCodeTransformer(AbstractCodeTransform $codeTransformer)
     {
-        static::$filters[$filter::NAME] = $filter;
+        static::$codeTransformers[$codeTransformer::NAME] = $codeTransformer;
     }
 
     /**
-     * @param AbstractFilter $filter
+     * @param AbstractCodeTransform $codeTransformer
      */
-    public function detachFilter(AbstractFilter $filter)
+    public function detachCodeTranformer(AbstractCodeTransform $codeTransformer)
     {
-        if (!empty(static::$filters[$filter::NAME])) {
-            unset(static::$filters[$filter::NAME]);
+        if (!empty(static::$codeTransformers[$codeTransformer::NAME])) {
+            unset(static::$codeTransformers[$codeTransformer::NAME]);
         }
     }
 
@@ -419,8 +419,8 @@ class StreamProcessor
      */
     protected function appendFiltersToStream($stream)
     {
-        foreach (static::$filters as $filter) {
-            stream_filter_append($stream, $filter::NAME, STREAM_FILTER_READ);
+        foreach (static::$codeTransformers as $codeTransformer) {
+            stream_filter_append($stream, $codeTransformer::NAME, STREAM_FILTER_READ);
         }
     }
 }

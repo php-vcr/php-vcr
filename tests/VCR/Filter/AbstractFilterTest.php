@@ -1,8 +1,8 @@
 <?php
 
-namespace VCR\Filter;
+namespace VCR\CodeTransform;
 
-class AbstractFilterTest extends \PHPUnit_framework_TestCase
+class AbstractCodeTransformTest extends \PHPUnit_framework_TestCase
 {
 
     protected function getFilter(array $methods = array())
@@ -12,7 +12,7 @@ class AbstractFilterTest extends \PHPUnit_framework_TestCase
             $methods
         );
 
-        $filter = $this->getMockBuilder('\VCR\Filter\AbstractFilter')
+        $filter = $this->getMockBuilder('\VCR\CodeTransform\AbstractCodeTransform')
             ->setMethods(array($defaults))
             ->getMockForAbstractClass();
 

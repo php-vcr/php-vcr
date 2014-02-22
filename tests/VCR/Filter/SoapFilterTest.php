@@ -1,17 +1,17 @@
 <?php
 
-namespace VCR\Filter;
+namespace VCR\CodeTransform;
 
 use lapistano\ProxyObject\ProxyBuilder;
 
-class SoapFilterTest extends \PHPUnit_Framework_TestCase
+class SoapCodeTransformTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider codeSnippetProvider
      */
     public function testTransformCode($expected, $code)
     {
-        $proxy = new ProxyBuilder('\VCR\Filter\SoapFilter');
+        $proxy = new ProxyBuilder('\VCR\CodeTransform\SoapCodeTransform');
         $filter = $proxy
             ->setMethods(array('transformCode'))
             ->getProxy();

@@ -5,7 +5,7 @@ namespace VCR\LibraryHooks;
 use VCR\Util\Assertion;
 use VCR\Request;
 use VCR\Response;
-use VCR\Filter\AbstractFilter;
+use VCR\CodeTransform\AbstractCodeTransform;
 use VCR\Util\CurlHelper;
 use VCR\Util\StreamProcessor;
 use VCR\Util\TextUtil;
@@ -15,7 +15,6 @@ use VCR\Util\TextUtil;
  */
 class CurlHook implements LibraryHook
 {
-
     /**
      * @var \Closure Callback which will be executed when a request is intercepted.
      */
@@ -52,9 +51,9 @@ class CurlHook implements LibraryHook
     protected static $multiExecLastCh;
 
     /**
-     * @var AbstractFilter
+     * @var AbstractCodeTransform
      */
-    private $filter;
+    private $codeTransformer;
 
     /**
      * @var StreamProcessor
@@ -64,12 +63,12 @@ class CurlHook implements LibraryHook
     /**
      * Creates a new cURL hook instance.
      *
-     * @param AbstractFilter  $filter
+     * @param AbstractCodeTransform  $codeTransformer
      * @param StreamProcessor $processor
      *
      * @throws \BadMethodCallException in case the cURL extension is not installed.
      */
-    public function __construct(AbstractFilter $filter, StreamProcessor $processor)
+    public function __construct(AbstractCodeTransform $codeTransformer, StreamProcessor $processor)
     {
         if (!function_exists('curl_version')) {
             // @codeCoverageIgnoreStart
@@ -79,7 +78,7 @@ class CurlHook implements LibraryHook
             // @codeCoverageIgnoreEnd
         }
         $this->processor = $processor;
-        $this->filter = $filter;
+        $this->codeTransformer = $codeTransformer;
     }
 
     /**
@@ -93,8 +92,8 @@ class CurlHook implements LibraryHook
             return;
         }
 
-        $this->filter->register();
-        $this->processor->appendFilter($this->filter);
+        $this->codeTransformer->register();
+        $this->processor->appendCodeTransformer($this->codeTransformer);
         $this->processor->intercept();
 
         self::$requestCallback = $requestCallback;
