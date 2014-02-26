@@ -73,4 +73,34 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertEquals($expected, $request->getHeaders());
     }
+
+    public function testSetCurlOptionReadFunctionMissingSize()
+    {
+        $this->setExpectedException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
+        $request = new Request('POST', 'example.com');
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, null, curl_init());
+
+        $this->assertEquals($expected, $request->getBody());
+    }
+
+    public function testSetCurlOptionReadFunction()
+    {
+        $expected = 'test body';
+        $request = new Request('POST', 'example.com');
+
+        $test = $this;
+        $callback = function ($curlHandle, $fileHandle, $size) use ($test, $expected) {
+            $test->assertInternalType('resource', $curlHandle);
+            $test->assertInternalType('resource', $fileHandle);
+            $test->assertEquals(strlen($expected), $size);
+
+            return $expected;
+        };
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_INFILESIZE, strlen($expected));
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, $callback, curl_init());
+
+        $this->assertEquals($expected, $request->getBody());
+    }
 }
