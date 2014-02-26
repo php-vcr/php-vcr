@@ -276,10 +276,10 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $testClass = $this;
         $this->curlHook->enable(
             function ($request) use ($testClass, $url, $body, $headers) {
-                $this->assertEquals('POST', $request->getMethod());
-                $this->assertEquals($url, $request->getUrl());
-                $this->assertEquals($body, $request->getBody());
-                $this->assertEquals($headers, $request->getHeaders());
+                $testClass->assertEquals('POST', $request->getMethod());
+                $testClass->assertEquals($url, $request->getUrl());
+                $testClass->assertEquals($body, $request->getBody());
+                $testClass->assertEquals($headers, $request->getHeaders());
 
                 return new Response(200);
             }
@@ -306,10 +306,10 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $testClass = $this;
         $this->curlHook->enable(
             function ($request) use ($testClass, $url, $body, $headers) {
-                $this->assertEquals("PUT", $request->getMethod());
-                $this->assertEquals($url, $request->getUrl());
-                $this->assertEquals($body, $request->getBody());
-                $this->assertEquals($headers, $request->getHeaders());
+                $testClass->assertEquals("PUT", $request->getMethod());
+                $testClass->assertEquals($url, $request->getUrl());
+                $testClass->assertEquals($body, $request->getBody());
+                $testClass->assertEquals($headers, $request->getHeaders());
 
                 return new Response(200);
             }
