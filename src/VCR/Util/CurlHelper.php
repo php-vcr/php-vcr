@@ -114,11 +114,12 @@ class CurlHelper
     /**
      * Sets a cURL option on a Request.
      *
-     * @param Request $request Request to set cURL option to.
-     * @param integer $option  cURL option to set.
-     * @param mixed   $value   Value of the cURL option.
+     * @param Request  $request Request to set cURL option to.
+     * @param integer  $option  cURL option to set.
+     * @param mixed    $value   Value of the cURL option.
+     * @param resource $curlHandle cURL handle where this option is set on (optional).
      */
-    public static function setCurlOptionOnRequest(Request $request, $option, $value)
+    public static function setCurlOptionOnRequest(Request $request, $option, $value, $curlHandle = null)
     {
         switch ($option) {
             case CURLOPT_URL:
@@ -156,11 +157,16 @@ class CurlHelper
             case CURLOPT_HEADERFUNCTION:
                 // Ignore writer and header functions
                 break;
+            case CURLOPT_READFUNCTION:
+                // Guzzle provides a callback to let curl read the body string.
+                // To get the body, this callback is called manually.
+                $bodySize = $request->getCurlOptions()->get(CURLOPT_INFILESIZE);
+                $body = $value($curlHandle, fopen('php://memory', 'r'), $bodySize);
+                $request->setBody($body);
+                break;
             default:
                 $request->getCurlOptions()->set($option, $value);
                 break;
         }
-
     }
-
 }
