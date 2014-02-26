@@ -165,7 +165,7 @@ class CurlHelper
                 // To get the body, this callback is called manually.
                 $bodySize = $request->getCurlOptions()->get(CURLOPT_INFILESIZE);
                 Assertion::notEmpty($bodySize, "To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.");
-                $body = $value($curlHandle, fopen('php://memory', 'r'), $bodySize);
+                $body = call_user_func_array($value, array($curlHandle, fopen('php://memory', 'r'), $bodySize));
                 $request->setBody($body);
                 break;
             default:
