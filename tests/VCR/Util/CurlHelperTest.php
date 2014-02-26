@@ -27,11 +27,14 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
     public function getHttpMethodsProvider()
     {
         return array(
+            array('CONNECT'),
             array('DELETE'),
             array('GET'),
             array('HEAD'),
+            array('OPTIONS'),
             array('POST'),
             array('PUT'),
+            array('TRACE'),
         );
     }
 
