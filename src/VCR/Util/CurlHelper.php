@@ -131,6 +131,9 @@ class CurlHelper
             case CURLOPT_MAXREDIRS:
                 $request->getParams()->set('redirect.max', $value);
                 break;
+            case CURLOPT_CUSTOMREQUEST:
+                $request->setMethod($value);
+                break;
             case CURLOPT_POST:
                 if ($value == true) {
                     $request->setMethod('POST');

@@ -6,6 +6,35 @@ use VCR\Request;
 
 class CurlHelperTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @dataProvider getHttpMethodsProvider()
+     */
+    public function testSetCurlOptionMethods($method)
+    {
+        $request = new Request($method, 'example.com');
+        $headers = array('Host: example.com');
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
+
+        $this->assertEquals($method, $request->getMethod());
+    }
+
+    /**
+     * Returns a list of HTTP methods for testing testSetCurlOptionMethods.
+     *
+     * @return array HTTP methods.
+     */
+    public function getHttpMethodsProvider()
+    {
+        return array(
+            array('DELETE'),
+            array('GET'),
+            array('HEAD'),
+            array('POST'),
+            array('PUT'),
+        );
+    }
+
     public function testSetCurlOptionOnRequestSetSingleHeader()
     {
         $request = new Request('GET', 'example.com');
