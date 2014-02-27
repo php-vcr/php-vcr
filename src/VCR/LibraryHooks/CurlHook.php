@@ -302,7 +302,7 @@ class CurlHook implements LibraryHook
      */
     public static function curlSetopt($curlHandle, $option, $value)
     {
-        CurlHelper::setCurlOptionOnRequest(self::$requests[(int) $curlHandle], $option, $value);
+        CurlHelper::setCurlOptionOnRequest(self::$requests[(int) $curlHandle], $option, $value, $curlHandle);
 
         static::$curlOptions[(int) $curlHandle][$option] = $value;
 
