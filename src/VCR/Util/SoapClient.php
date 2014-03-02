@@ -73,7 +73,7 @@ class SoapClient extends \SoapClient
      *
      * If no library hook is set, a new one is created.
      *
-     * @return Soap SOAP library hook.
+     * @return SoapHook SOAP library hook.
      */
     protected function getLibraryHook()
     {

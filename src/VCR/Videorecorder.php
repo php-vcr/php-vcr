@@ -15,7 +15,7 @@ use VCR\Util\HttpClient;
  * will play back its response and not issue a HTTP request.
  *
  * If turned off, HTTP requests won't be intercepted and will
- * hit their origininal servers.
+ * hit their original servers.
  *
  * @author Adrian Philipp <mail@adrian-philipp.com>
  */
@@ -100,7 +100,7 @@ class Videorecorder
     /**
      * Eject the currently inserted cassette.
      *
-     * Recording and playing back requets won't be possible after ejecting.
+     * Recording and playing back requests won't be possible after ejecting.
      *
      * @api
      *
@@ -113,14 +113,14 @@ class Videorecorder
     }
 
     /**
-     * Inserts a cassette to record responses and requets on.
+     * Inserts a cassette to record responses and requests on.
      *
      * @api
      *
      * @param string $cassetteName Name of the cassette (used for the cassette filename).
      *
      * @return void
-     * @throws VCRExceptoin If videorecorder is turned off when inserting a cassette.
+     * @throws VCRException If videorecorder is turned off when inserting a cassette.
      */
     public function insertCassette($cassetteName)
     {

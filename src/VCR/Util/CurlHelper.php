@@ -6,7 +6,7 @@ use VCR\Request;
 use VCR\Response;
 
 /**
-* CUrlhelper
+* cURL helper class.
 */
 class CurlHelper
 {

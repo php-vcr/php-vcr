@@ -5,7 +5,7 @@ namespace VCR;
 /**
  * Singleton interface to a Videorecorder.
  *
- * @method VCR\Configuration configure()
+ * @method Configuration configure()
  * @method void insertCassette(string cassetteName)
  * @method void turnOn()
  * @method void turnOff()
