@@ -2,6 +2,8 @@
 
 namespace VCR;
 
+use Guzzle\Http\Client;
+
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
@@ -34,7 +36,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::configure()->enableLibraryHooks(array('curl'));
         VCR::turnOn();
         VCR::insertCassette('unittest_guzzle_test');
-        $client = new \Guzzle\Http\Client();
+        $client = new Client();
         $response = $client->post('http://example.com')->send();
         $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
         VCR::eject();

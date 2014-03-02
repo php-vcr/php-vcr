@@ -56,6 +56,11 @@ class SoapHook implements LibraryHook
      * @param string $location
      * @param string $action
      * @param integer $version
+     * @param int $one_way
+     *
+     * @throws \VCR\VCRException It this method is called although VCR is disabled.
+     *
+     * @return string SOAP response.
      */
     public function doRequest($request, $location, $action, $version, $one_way = 0)
     {

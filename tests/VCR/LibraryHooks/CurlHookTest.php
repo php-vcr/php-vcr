@@ -2,6 +2,7 @@
 
 namespace VCR\LibraryHooks;
 
+use Guzzle\Http\Client;
 use VCR\Response;
 use VCR\Configuration;
 use VCR\CodeTransform\CurlCodeTransform;
@@ -285,7 +286,7 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $client = new \Guzzle\Http\Client();
+        $client = new Client();
         $client->post($url, $headers, $body)->send();
 
         $this->curlHook->disable();
@@ -315,7 +316,7 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $client = new \Guzzle\Http\Client();
+        $client = new Client();
         $client->put($url, $headers, $body)->send();
 
         $this->curlHook->disable();

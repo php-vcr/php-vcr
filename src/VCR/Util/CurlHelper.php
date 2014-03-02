@@ -75,8 +75,9 @@ class CurlHelper
      * Returns a cURL option from a Response.
      *
      * @param  Response $response Response to get cURL option from.
-     * @param  integer  $option   cURL option to get.
+     * @param  integer $option cURL option to get.
      *
+     * @throws \BadMethodCallException
      * @return mixed Value of the cURL option.
      */
     public static function getCurlOptionFromResponse(Response $response, $option = 0)
@@ -144,8 +145,8 @@ class CurlHelper
                 if (is_string($value)) {
                     parse_str($value, $value);
                 }
-                foreach ($value as $key => $value) {
-                    $request->setPostField($key, $value);
+                foreach ($value as $name => $fieldValue) {
+                    $request->setPostField($name, $fieldValue);
                 }
                 break;
             case CURLOPT_HTTPHEADER:

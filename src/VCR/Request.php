@@ -2,18 +2,22 @@
 
 namespace VCR;
 
+use Guzzle\Http\Message\EntityEnclosingRequest;
+use Guzzle\Http\Message\PostFile;
+
 /**
  * Encapsulates a HTTP request.
  */
-class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
+class Request extends EntityEnclosingRequest
 {
     /**
      * Returns true if specified request maches the current one
      * with specified request matcher callbacks.
      *
-     * @param  Request $request         Request to check if it matches the current one.
-     * @param  array   $requestMatchers Request matcher callbacks.
+     * @param  Request      $request         Request to check if it matches the current one.
+     * @param  \callable[]  $requestMatchers Request matcher callbacks.
      *
+     * @throws \BadFunctionCallException If one of the specified request matchers is not callable.
      * @return boolean True if specified request matches the current one.
      */
     public function matches(Request $request, array $requestMatchers)
@@ -140,7 +144,7 @@ class Request extends \Guzzle\Http\Message\EntityEnclosingRequest
         if (!empty($request['post_files']) && is_array($request['post_files'])) {
             foreach ($request['post_files'] as $file) {
                 $requestObject->addPostFile(
-                    new \Guzzle\Http\Message\PostFile(
+                    new PostFile(
                         $file['fieldName'],
                         $file['filename'],
                         $file['contentType'],

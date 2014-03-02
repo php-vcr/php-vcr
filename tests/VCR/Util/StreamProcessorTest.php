@@ -2,9 +2,6 @@
 
 namespace VCR\Util;
 
-use VCR\Configuration;
-use lapistano\ProxyObject\ProxyBuilder;
-
 class StreamProcessorTest extends \PHPUnit_Framework_TestCase
 {
 

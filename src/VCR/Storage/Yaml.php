@@ -40,12 +40,12 @@ class Yaml implements Storage
     protected $valid = true;
 
     /**
-     * @var Symfony\Component\Yaml\Parser Yaml parser.
+     * @var Parser Yaml parser.
      */
     protected $yamlParser;
 
     /**
-     * @var  Symfony\Component\Yaml\Dumper Yaml writer.
+     * @var  Dumper Yaml writer.
      */
     protected $yamlDumper;
 
@@ -53,6 +53,8 @@ class Yaml implements Storage
      * Creates a new YAML based file store.
      *
      * @param string $filePath Path to a file, will be created if not existing.
+     * @param Parser $parser Parser used to decode yaml.
+     * @param Dumper $dumper Dumper used to encode yaml.
      */
     public function __construct($filePath, Parser $parser = null, Dumper $dumper = null)
     {

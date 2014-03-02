@@ -5,11 +5,11 @@ namespace VCR;
 /**
  * Singleton interface to a Videorecorder.
  *
- * @method Configuration configure()
- * @method void insertCassette(string cassetteName)
- * @method void turnOn()
- * @method void turnOff()
- * @method void eject()
+ * @method static Configuration configure()
+ * @method static void insertCassette(string $cassetteName)
+ * @method static void turnOn()
+ * @method static void turnOff()
+ * @method static void eject()
  */
 class VCR
 {

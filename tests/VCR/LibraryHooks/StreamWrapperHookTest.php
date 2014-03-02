@@ -9,11 +9,6 @@ use VCR\Response;
  */
 class StreamWrapperHookTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \VCR\LibraryHooks\StreamWrapperHook
-     */
-    private $streamWrapper;
-
     public function testEnable()
     {
         $streamWrapper = new StreamWrapperHook();

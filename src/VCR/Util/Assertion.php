@@ -13,10 +13,12 @@ class Assertion extends BaseAssertion
     /**
      * Assert that the value is callable.
      *
-     * @param  mixed                           $value
-     * @param  string                          $message
+     * @param  mixed  $value Variable to check for a callable.
+     * @param  string $message Exception message to show if value is not a callable.
+     * @param  null   $propertyPath
+     * @throws \VCR\VCRException If specified value is not a callable.
+     *
      * @return void
-     * @throws Assert\AssertionFailedException
      */
     public static function isCallable($value, $message = null, $propertyPath = null)
     {

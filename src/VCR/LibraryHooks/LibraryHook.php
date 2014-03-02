@@ -22,7 +22,7 @@ interface LibraryHook
      * http interactions are intercepted.
      *
      * @param \Closure Callback which will be called when a request is intercepted.
-     * @throws VCR\VCRException When specified callback is not callable.
+     * @throws \VCR\VCRException When specified callback is not callable.
      * @return void
      */
     public function enable(\Closure $requestCallback);

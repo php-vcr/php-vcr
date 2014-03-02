@@ -532,7 +532,7 @@ class StreamProcessor
      * @link http://www.php.net/manual/en/streamwrapper.stream-metadata.php
      * @param  string  $path   The file path or URL to set metadata.
      * @param  integer $option One of the stream options.
-     * @param  mixed   $var    Value depending on the option.
+     * @param  mixed   $value  Value depending on the option.
      *
      * @return boolean Returns TRUE on success or FALSE on failure.
      */

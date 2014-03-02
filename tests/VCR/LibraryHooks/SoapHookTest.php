@@ -81,8 +81,6 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param null $requestCallback
-     *
      * @return \callable
      */
     protected function getContentCheckCallback()
@@ -94,8 +92,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param null $requestCallback
-     *
+     * @param string $expectedHeader
      * @return \callable
      */
     protected function getHeaderCheckCallback($expectedHeader)
