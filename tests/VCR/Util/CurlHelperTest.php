@@ -38,6 +38,37 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSetCurlOptionOnRequestPostFieldsQueryString()
+    {
+        $request = new Request('POST', 'example.com');
+        $payload = 'para1=val1&para2=val2';
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+
+        $this->assertEquals($payload, (string) $request->getBody());
+    }
+
+    public function testSetCurlOptionOnRequestPostFieldsArray()
+    {
+        $request = new Request('POST', 'example.com');
+        $payload = array('some' => 'test');
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+
+        $this->assertNull($request->getBody());
+        $this->assertEquals($payload, $request->getPostFields()->toArray());
+    }
+
+    public function testSetCurlOptionOnRequestPostFieldsString()
+    {
+        $request = new Request('POST', 'example.com');
+        $payload = json_encode(array('some' => 'test'));
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+
+        $this->assertEquals($payload, (string) $request->getBody());
+    }
+
     public function testSetCurlOptionOnRequestSetSingleHeader()
     {
         $request = new Request('GET', 'example.com');

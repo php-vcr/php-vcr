@@ -141,12 +141,13 @@ class CurlHelper
                 }
                 break;
             case CURLOPT_POSTFIELDS:
-                // check for file @
-                if (is_string($value)) {
-                    parse_str($value, $value);
-                }
-                foreach ($value as $name => $fieldValue) {
-                    $request->setPostField($name, $fieldValue);
+                // todo: check for file @
+                if (is_array($value)) {
+                    foreach ($value as $name => $fieldValue) {
+                        $request->setPostField($name, $fieldValue);
+                    }
+                } else {
+                    $request->setBody($value);
                 }
                 break;
             case CURLOPT_HTTPHEADER:
