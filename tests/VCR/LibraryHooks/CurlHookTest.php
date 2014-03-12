@@ -111,27 +111,6 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
     }
 
-    public function testShouldPostFieldsAsString()
-    {
-        $testClass = $this;
-        $this->curlHook->enable(
-            function ($request) use ($testClass) {
-                $testClass->assertEquals(
-                    array('para1' => 'val1', 'para2' => 'val2'),
-                    $request->getPostFields()->getAll(),
-                    'Post query string was not parsed and set correctly.'
-                );
-                return new Response(200);
-            }
-        );
-
-        $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'para1=val1&para2=val2');
-        curl_exec($curlHandle);
-        curl_close($curlHandle);
-        $this->curlHook->disable();
-    }
-
     public function testShouldPostFieldsAsArray()
     {
         $testClass = $this;
