@@ -71,7 +71,7 @@ class Request extends EntityEnclosingRequest
                 'method'      => $this->getMethod(),
                 'url'         => $this->getUrl(),
                 'headers'     => $this->getHeaders(),
-                'body'        => $this->getBody(),
+                'body'        => (string) $this->getBody(),
                 'post_files'  => $this->getPostFilesArray(),
                 'post_fields' => (array) $this->getPostFields()->toArray(),
             )
