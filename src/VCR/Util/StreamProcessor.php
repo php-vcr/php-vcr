@@ -492,7 +492,7 @@ class StreamProcessor
     /**
      * Write to stream.
      *
-     * @throws BadMethodCall If called, because this method is not applicable for this stream.
+     * @throws \BadMethodCallException If called, because this method is not applicable for this stream.
      * @link http://www.php.net/manual/en/streamwrapper.stream-write.php
      *
      * @param  string $data Should be stored into the underlying stream.
