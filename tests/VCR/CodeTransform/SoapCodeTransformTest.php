@@ -22,12 +22,12 @@ class SoapCodeTransformTest extends \PHPUnit_Framework_TestCase
     public function codeSnippetProvider()
     {
         return array(
-            array('new \VCR\Util\SoapClient(',      'new \SoapClient('),
-            array('new \VCR\Util\SoapClient(',      'new SoapClient('),
-            array('extends \VCR\Util\SoapClient',   'extends \SoapClient'),
-            array("extends \VCR\Util\SoapClient\n", "extends \SoapClient\n"),
-            array('new SoapClientExtended(',        'new SoapClientExtended('),
-            array('new \SoapClientExtended(',       'new \SoapClientExtended('),
+          array('new \VCR\Util\SoapClient(', 'new \SoapClient('),
+          array('new \VCR\Util\SoapClient(', 'new SoapClient('),
+          array('extends \VCR\Util\SoapClient', 'extends \SoapClient'),
+          array("extends \\VCR\\Util\\SoapClient\n", "extends \\SoapClient\n"),
+          array('new SoapClientExtended(', 'new SoapClientExtended('),
+          array('new \SoapClientExtended(', 'new \SoapClientExtended('),
         );
     }
 }

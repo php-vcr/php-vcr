@@ -19,9 +19,7 @@ class CurlCodeTransform extends AbstractCodeTransform
     );
 
     /**
-     * @param string $code
-     *
-     * @return string
+     * @inheritdoc
      */
     protected function transformCode($code)
     {
