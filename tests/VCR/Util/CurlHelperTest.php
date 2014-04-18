@@ -2,7 +2,9 @@
 
 namespace VCR\Util;
 
+use org\bovigo\vfs\vfsStream;
 use VCR\Request;
+use VCR\Response;
 
 class CurlHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -114,8 +116,6 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $request = new Request('POST', 'example.com');
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, null, curl_init());
-
-        $this->assertEquals($expected, $request->getBody());
     }
 
     public function testSetCurlOptionReadFunction()
@@ -136,5 +136,63 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, $callback, curl_init());
 
         $this->assertEquals($expected, $request->getBody());
+    }
+
+    public function testHandleResponseReturnsBody()
+    {
+        $curlOptions = array(
+            CURLOPT_RETURNTRANSFER => true
+        );
+        $response = new Response(200, null, 'example response');
+
+        $output = CurlHelper::handleOutput($response, $curlOptions, curl_init());
+
+        $this->assertEquals($response->getBody(true), $output);
+    }
+
+    public function testHandleResponseEchosBody()
+    {
+        $response = new Response(200, null, 'example response');
+
+        ob_start();
+        CurlHelper::handleOutput($response, array(), curl_init());
+        $output = ob_get_clean();
+
+        $this->assertEquals($response->getBody(true), $output);
+    }
+
+    public function testHandleResponseUsesWriteFunction()
+    {
+        $test = $this;
+        $expectedCh = curl_init();
+        $expectedBody = 'example response';
+        $curlOptions = array(
+            CURLOPT_WRITEFUNCTION => function($ch, $body) use ($test, $expectedCh, $expectedBody) {
+                $test->assertEquals($expectedCh, $ch);
+                $test->assertEquals($expectedBody, $body);
+
+                return strlen($body);
+            }
+        );
+        $response = new Response(200, null, $expectedBody);
+
+        CurlHelper::handleOutput($response, $curlOptions, $expectedCh);
+    }
+
+    public function testHandleResponseWritesFile()
+    {
+        vfsStream::setup('test');
+        $expectedBody = 'example response';
+        $testFile = vfsStream::url('test/write_file');
+
+        $curlOptions = array(
+            CURLOPT_FILE => fopen($testFile, 'w+')
+        );
+
+        $response = new Response(200, null, $expectedBody);
+
+        CurlHelper::handleOutput($response, $curlOptions, curl_init());
+
+        $this->assertEquals($expectedBody, file_get_contents($testFile));
     }
 }

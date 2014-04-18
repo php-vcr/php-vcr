@@ -58,14 +58,14 @@ class CurlHelper
 
         $body = (string) $response->getBody(true);
 
-        if (isset($curlOptions[CURLOPT_FILE])) {
+        if (isset($curlOptions[CURLOPT_WRITEFUNCTION])) {
+            call_user_func($curlOptions[CURLOPT_WRITEFUNCTION], $ch, $body);
+        } elseif (isset($curlOptions[CURLOPT_RETURNTRANSFER]) && $curlOptions[CURLOPT_RETURNTRANSFER] == true) {
+            return $body;
+        } elseif (isset($curlOptions[CURLOPT_FILE])) {
             $fp = $curlOptions[CURLOPT_FILE];
             fwrite($fp, $body);
             fflush($fp);
-        } elseif (isset($curlOptions[CURLOPT_RETURNTRANSFER]) && $curlOptions[CURLOPT_RETURNTRANSFER] == true) {
-            return $body;
-        } elseif (isset($curlOptions[CURLOPT_WRITEFUNCTION])) {
-            call_user_func($curlOptions[CURLOPT_WRITEFUNCTION], $ch, $body);
         } else {
             echo $body;
         }
