@@ -19,7 +19,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     public function testIterateOneObject()
     {
         $this->iterateAndTest(
-            "-". PHP_EOL
+            "-". "\n"
             . "    para1: val1",
             array(
                 array('para1' => 'val1'),
@@ -31,9 +31,9 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     public function testIterateTwoObjects()
     {
         $this->iterateAndTest(
-            "-". PHP_EOL
-            . "    para1: val1" . PHP_EOL
-            . "-". PHP_EOL
+            "-". "\n"
+            . "    para1: val1" . "\n"
+            . "-". "\n"
             . "   para2: val2",
             array(
                 array('para1' => 'val1'),
@@ -46,10 +46,10 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     public function testIterateFirstNestedObject()
     {
         $this->iterateAndTest(
-            "-". PHP_EOL
-            . "    para1:" . PHP_EOL
-            . "        para2: val2" . PHP_EOL
-            . "-". PHP_EOL
+            "-". "\n"
+            . "    para1:" . "\n"
+            . "        para2: val2" . "\n"
+            . "-". "\n"
             . "    para3: val3",
             array(
                 array('para1' => array('para2' => 'val2')),
@@ -62,11 +62,11 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     public function testIterateSecondNestedObject()
     {
         $this->iterateAndTest(
-            "-". PHP_EOL
-            . "    para1: val1" . PHP_EOL
-            . "-" . PHP_EOL
-            . "    para2:" . PHP_EOL
-            . "        para3: val3" . PHP_EOL,
+            "-". "\n"
+            . "    para1: val1" . "\n"
+            . "-" . "\n"
+            . "    para2:" . "\n"
+            . "        para3: val3" . "\n",
             array(
                 array('para1' => 'val1'),
                 array('para2' => array('para3' => 'val3')),
