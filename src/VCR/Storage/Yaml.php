@@ -48,13 +48,6 @@ class Yaml implements Storage
      * @var  Dumper Yaml writer.
      */
     protected $yamlDumper;
-	
-	/**
-	 * Keep the tracking of the character before last character
-	 *
-	 * @var type 
-	 */
-	private $_charBuffer;
 
     /**
      * Creates a new YAML based file store.
@@ -136,7 +129,7 @@ class Yaml implements Storage
         $lastChar = null;
 
         while (false !== ($char = fgetc($this->handle))) {
-            $isNewArrayStart = ($this->_isEOL($lastChar) || $lastChar === null) && ($char === '-');
+            $isNewArrayStart = ($char === '-') && ($lastChar === PHP_EOL || $lastChar === null);
             $lastChar = $char;
 
             if ($isInRecord && $isNewArrayStart) {
@@ -186,26 +179,6 @@ class Yaml implements Storage
 
         return ! is_null($this->current) && $this->valid;
     }
-	
-	/**
-	 * A proper function to detect the end of line
-	 * 
-	 */
-	private function _isEOL($char)
-	{
-		if ($char == PHP_EOL)
-		{
-			return true;
-		}
-		elseif ($char == chr(10))
-		{
-			// check if this char is '\r' and the previous character is '\n'
-			return ($this->_charBuffer == chr(13));
-		}
-		// replace this char into buffer
-		$this->_charBuffer = $char;
-		return false;
-	}
 
     /**
      * Closes file handle.
