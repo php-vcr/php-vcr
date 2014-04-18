@@ -77,7 +77,7 @@ class Yaml implements Storage
     public function storeRecording(array $recording)
     {
         fseek($this->handle, -1, SEEK_END);
-        fwrite($this->handle, PHP_EOL . $this->yamlDumper->dump(array($recording), 4));
+        fwrite($this->handle, "\n" . $this->yamlDumper->dump(array($recording), 4));
         fflush($this->handle);
     }
 
@@ -129,7 +129,7 @@ class Yaml implements Storage
         $lastChar = null;
 
         while (false !== ($char = fgetc($this->handle))) {
-            $isNewArrayStart = ($char === '-') && ($lastChar === PHP_EOL || $lastChar === null);
+            $isNewArrayStart = ($char === '-') && ($lastChar === "\n" || $lastChar === null);
             $lastChar = $char;
 
             if ($isInRecord && $isNewArrayStart) {
