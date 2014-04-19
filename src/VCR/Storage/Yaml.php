@@ -52,21 +52,24 @@ class Yaml implements Storage
     /**
      * Creates a new YAML based file store.
      *
-     * @param string $filePath Path to a file, will be created if not existing.
+     * @param string $cassettePath Path to the cassette directory.
+     * @param string $cassetteName Path to a file, will be created if not existing.
      * @param Parser $parser Parser used to decode yaml.
      * @param Dumper $dumper Dumper used to encode yaml.
      */
-    public function __construct($filePath, Parser $parser = null, Dumper $dumper = null)
+    public function __construct($cassettePath, $cassetteName, Parser $parser = null, Dumper $dumper = null)
     {
-        if (!file_exists($filePath)) {
-            file_put_contents($filePath, '');
+        $file = $cassettePath . DIRECTORY_SEPARATOR . $cassetteName;
+
+        if (!file_exists($file)) {
+            file_put_contents($file, '');
         }
 
-        Assertion::file($filePath, "Specified path '{$filePath}' is not a file.");
-        Assertion::readable($filePath, "Specified file '{$filePath}' must be readable.");
-        Assertion::writeable($filePath, "Specified path '{$filePath}' must be writeable.");
+        Assertion::file($file, "Specified path '{$file}' is not a file.");
+        Assertion::readable($file, "Specified file '{$file}' must be readable.");
+        Assertion::writeable($file, "Specified path '{$file}' must be writable.");
 
-        $this->handle = fopen($filePath, 'r+');
+        $this->handle = fopen($file, 'r+');
         $this->yamlParser = $parser ?: new Parser();
         $this->yamlDumper = $dumper ?: new Dumper();
     }

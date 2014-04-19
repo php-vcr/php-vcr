@@ -16,8 +16,8 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         vfsStream::setup('test');
-        $this->filePath = vfsStream::url('test/json_test');
-        $this->jsonObject = new Json($this->filePath);
+        $this->filePath = vfsStream::url('test/') .  'json_test';
+        $this->jsonObject = new Json(vfsStream::url('test/') , 'json_test');
     }
 
     public function testIterateOneObject()

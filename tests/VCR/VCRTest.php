@@ -10,6 +10,11 @@ use Guzzle\Http\Client;
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
 
+    public static function setupBeforeClass()
+    {
+       VCR::configure()->setCassettePath('tests/fixtures') ;
+    }
+
     public function testUseStaticCallsNotInitialized()
     {
         VCR::configure()->enableLibraryHooks(array('stream_wrapper'));

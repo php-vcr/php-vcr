@@ -45,11 +45,12 @@ class VCRFactory
         return new Util\StreamProcessor($this->config);
     }
 
-    protected function createStorage($filePath)
+    protected function createStorage($cassetteName)
     {
+        $dsn = $this->config->getCassettePath();
         $class = $this->config->getStorage();
 
-        return new $class($filePath);
+        return new $class($dsn, $cassetteName);
     }
 
     protected function createVCRLibraryHooksSoapHook()

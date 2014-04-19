@@ -9,16 +9,22 @@ use org\bovigo\vfs\vfsStream;
  */
 class CassetteTest extends \PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @var Cassette
+     */
+    private $cassette;
+
     public function setUp()
     {
         vfsStream::setup('test');
-        $this->cassette = new Cassette('test', new Configuration(), new Storage\Yaml(vfsStream::url('test/json_test')));
+        $this->cassette = new Cassette('test', new Configuration(), new Storage\Yaml(vfsStream::url('test/'), 'json_test'));
     }
 
     public function testInvalidCassetteName()
     {
         $this->setExpectedException('\VCR\VCRException', 'Cassette name must be a string, array given.');
-        new Cassette(array(), new Configuration(), new Storage\Yaml(vfsStream::url('test/json_test')));
+        new Cassette(array(), new Configuration(), new Storage\Yaml(vfsStream::url('test/'), 'json_test'));
     }
 
     public function testGetName()
