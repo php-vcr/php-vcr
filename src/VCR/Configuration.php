@@ -7,8 +7,10 @@ use VCR\Util\Assertion;
 /**
  * Configuration stores a Videorecorders configuration options.
  *
- * Those configuration options might be which library hooks to use,
- * where to store cassettes or which files to scan when filtering source code.
+ * Those configuration options might be:
+ *  - which library hooks to use,
+ *  - where to store cassettes or
+ *  - which files to scan when filtering source code.
  */
 class Configuration
 {
@@ -67,24 +69,44 @@ class Configuration
     }
 
     /**
-     * @return string
+     * Returns the path to where cassettes are stored.
+     *
+     * @return string Path to where cassettes are stored.
      */
     public function getCassettePath()
     {
+        $this->assertValidCassettePath($this->cassettePath);
+
         return $this->cassettePath;
     }
 
     /**
-     * @param string $cassettePath
+     * @param string $cassettePath Path where to store cassettes.
      *
      * @return $this
      */
     public function setCassettePath($cassettePath)
     {
-        Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' doesn't exist.");
+        $this->assertValidCassettePath($cassettePath);
         $this->cassettePath = $cassettePath;
 
         return $this;
+    }
+
+    /**
+     * Validates a specified cassette path.
+     *
+     * @param string $cassettePath Path to a cassette.
+     * @throws VCRException If cassette path is invalid.
+     */
+    private function assertValidCassettePath($cassettePath)
+    {
+        Assertion::directory(
+            $cassettePath,
+            "Cassette path '{$cassettePath}' is not a directory. Please either "
+            . "create it or set a different cassette path using "
+            . "VCR::configure()->setCassettePath('directory')."
+        );
     }
 
     public function getLibraryHooks()
