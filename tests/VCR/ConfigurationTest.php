@@ -7,9 +7,25 @@ namespace VCR;
  */
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Configuration
+     */
+    private $config;
+
     public function setUp()
     {
         $this->config = new Configuration;
+    }
+
+    public function testSetCassettePathThrowsErrorOnInvalidPath()
+    {
+        $this->setExpectedException(
+            'VCR\VCRException',
+            "Cassette path 'invalid_path' is not a directory. Please either "
+            . "create it or set a different cassette path using "
+            . "VCR::configure()->setCassettePath('directory')."
+        );
+        $this->config->setCassettePath('invalid_path');
     }
 
     public function testGetLibraryHooks()
@@ -54,7 +70,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testEnableRequestMatchers()
     {
-        $actual = $this->config->enableRequestMatchers(array('body', 'headers'));
+        $this->config->enableRequestMatchers(array('body', 'headers'));
         $this->assertEquals(
             array(
                 array('VCR\RequestMatcher', 'matchHeaders'),
@@ -76,21 +92,21 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expected = function ($first, $second) {
             return true;
         };
-        $actual = $this->config->addRequestMatcher('', $expected);
+        $this->config->addRequestMatcher('', $expected);
     }
 
     public function testAddRequestMatcherFailsWithWrongCallback()
     {
         $this->setExpectedException('VCR\VCRException', "Request matcher 'example' is not callable.");
-        $actual = $this->config->addRequestMatcher('example', array());
+        $this->config->addRequestMatcher('example', array());
     }
 
     public function testAddRequestMatchers()
     {
-        $expected = function ($first, $second) {
+        $expected = function () {
             return true;
         };
-        $actual = $this->config->addRequestMatcher('new_matcher', $expected);
+        $this->config->addRequestMatcher('new_matcher', $expected);
         $this->assertContains($expected, $this->config->getRequestMatchers());
     }
 

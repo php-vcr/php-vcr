@@ -41,20 +41,23 @@ class Json implements Storage
     /**
      * Creates a new JSON based file store.
      *
-     * @param string $filePath Path to a file, will be created if not existing.
+     * @param string $cassettePath Path to the cassette directory.
+     * @param string $cassetteName Path to a file, will be created if not existing.
      */
-    public function __construct($filePath)
+    public function __construct($cassettePath, $cassetteName)
     {
-        if (!file_exists($filePath)) {
-            file_put_contents($filePath, '[]');
+        $file = $cassettePath . DIRECTORY_SEPARATOR . $cassetteName;
+
+        if (!file_exists($file)) {
+            file_put_contents($file, '[]');
         }
 
-        Assertion::file($filePath, "Specified path '{$filePath}' is not a file.");
-        Assertion::readable($filePath, "Specified file '{$filePath}' must be readable.");
-        Assertion::writeable($filePath, "Specified path '{$filePath}' must be writeable.");
+        Assertion::file($file, "Specified path '{$file}' is not a file.");
+        Assertion::readable($file, "Specified file '{$file}' must be readable.");
+        Assertion::writeable($file, "Specified path '{$file}' must be writeable.");
 
-        $this->handle = fopen($filePath, 'r+');
-        $this->filePath = $filePath;
+        $this->handle = fopen($file, 'r+');
+        $this->filePath = $file;
     }
 
     /**

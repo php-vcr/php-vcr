@@ -130,8 +130,7 @@ class Videorecorder
             $this->eject();
         }
 
-        $filePath = $this->config->getCassettePath() . DIRECTORY_SEPARATOR . $cassetteName;
-        $storage = $this->factory->get('Storage', array($filePath));
+        $storage = $this->factory->get('Storage', array($cassetteName));
 
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
         $this->enableLibraryHooks();

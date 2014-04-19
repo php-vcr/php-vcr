@@ -41,7 +41,9 @@ class VCRFactoryTest extends \PHPUnit_Framework_TestCase
         vfsStream::setup('test');
 
         VCRFactory::get('VCR\Configuration')->setStorage($storage);
-        $instance = VCRFactory::get('Storage', array(vfsStream::url('test/' . rand())));
+        VCRFactory::get('VCR\Configuration')->setCassettePath(vfsStream::url('test/'));
+
+        $instance = VCRFactory::get('Storage', array(rand()));
 
         $this->assertInstanceOf($className, $instance);
     }

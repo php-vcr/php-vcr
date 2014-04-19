@@ -12,8 +12,8 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         vfsStream::setup('test');
-        $this->filePath = vfsStream::url('test/yaml_test');
-        $this->yamlObject = new Yaml($this->filePath);
+        $this->filePath = vfsStream::url('test/') . DIRECTORY_SEPARATOR . 'yaml_test';
+        $this->yamlObject = new Yaml(vfsStream::url('test/'), 'yaml_test');
     }
 
     public function testIterateOneObject()
