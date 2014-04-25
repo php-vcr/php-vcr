@@ -24,6 +24,7 @@ class HttpClient
     public function __construct(Client $client = null)
     {
         $this->client = $client ?: new Client;
+        $this->client->setUserAgent(false);
     }
 
     /**

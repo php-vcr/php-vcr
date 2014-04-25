@@ -42,6 +42,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::turnOn();
         VCR::insertCassette('unittest_guzzle_test');
         $client = new Client();
+        $client->setUserAgent(false);
         $response = $client->post('http://example.com')->send();
         $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
         VCR::eject();

@@ -78,7 +78,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
 
-        $this->assertEquals(array('host' => 'example.com'), $request->getHeaders());
+        $this->assertEquals(array('Host' => 'example.com'), $request->getHeaders());
     }
 
     public function testSetCurlOptionOnRequestSetSingleHeaderTwice()
@@ -89,7 +89,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
 
-        $this->assertEquals(array('host' => 'example.com'), $request->getHeaders());
+        $this->assertEquals(array('Host' => 'example.com'), $request->getHeaders());
     }
 
     public function testSetCurlOptionOnRequestSetMultipleHeadersTwice()
@@ -104,12 +104,28 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
 
         $expected = array(
-            'host' => 'example.com',
-            'content-type' => 'application/json'
+            'Host' => 'example.com',
+            'Content-Type' => 'application/json'
         );
         $this->assertEquals($expected, $request->getHeaders());
     }
 
+    public function testSetCurlOptionOnRequestEmptyPostFieldsRemovesContentType()
+    {
+        $request = new Request('GET', 'example.com');
+        $headers = array(
+            'Host: example.com',
+            'Content-Type: application/json',
+        );
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, array());
+
+        $expected = array(
+            'Host' => 'example.com',
+        );
+        $this->assertEquals($expected, $request->getHeaders());
+    }
     public function testSetCurlOptionReadFunctionMissingSize()
     {
         $this->setExpectedException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
@@ -159,6 +175,19 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $output = ob_get_clean();
 
         $this->assertEquals($response->getBody(true), $output);
+    }
+
+    public function testHandleResponseIncludesHeader()
+    {
+        $curlOptions = array(
+            CURLOPT_HEADER => true,
+            CURLOPT_RETURNTRANSFER => true,
+        );
+        $response = new Response(200, null, 'example response');
+
+        $output = CurlHelper::handleOutput($response, $curlOptions, curl_init());
+
+        $this->assertEquals("HTTP/1.1 200 OK\r\n\r\n" . $response->getBody(true), $output);
     }
 
     public function testHandleResponseUsesWriteFunction()

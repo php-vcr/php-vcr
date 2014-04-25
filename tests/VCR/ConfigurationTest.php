@@ -23,7 +23,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'VCR\VCRException',
             "Cassette path 'invalid_path' is not a directory. Please either "
             . "create it or set a different cassette path using "
-            . "VCR::configure()->setCassettePath('directory')."
+            . "\\VCR\\VCR::configure()->setCassettePath('directory')."
         );
         $this->config->setCassettePath('invalid_path');
     }
