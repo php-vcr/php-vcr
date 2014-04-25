@@ -14,25 +14,29 @@ class CurlHelper
      * @var array List of cURL info constants.
      */
     private static $curlInfoList = array(
-        CURLINFO_HTTP_CODE,
-        CURLINFO_EFFECTIVE_URL,
+        //"certinfo"?
+        CURLINFO_HTTP_CODE => 'http_code',
+        CURLINFO_EFFECTIVE_URL => 'url',
         CURLINFO_FILETIME,
-        CURLINFO_TOTAL_TIME,
-        CURLINFO_NAMELOOKUP_TIME,
-        CURLINFO_CONNECT_TIME,
-        CURLINFO_PRETRANSFER_TIME,
-        CURLINFO_STARTTRANSFER_TIME,
-        CURLINFO_REDIRECT_TIME,
-        CURLINFO_SIZE_UPLOAD,
-        CURLINFO_SIZE_DOWNLOAD,
-        CURLINFO_SPEED_DOWNLOAD,
-        CURLINFO_SPEED_UPLOAD,
-        CURLINFO_HEADER_SIZE,
-        CURLINFO_HEADER_OUT,
-        CURLINFO_REQUEST_SIZE,
-        CURLINFO_SSL_VERIFYRESULT,
-        CURLINFO_CONTENT_LENGTH_DOWNLOAD,
-        CURLINFO_CONTENT_LENGTH_UPLOAD
+        CURLINFO_TOTAL_TIME => 'total_time',
+        CURLINFO_NAMELOOKUP_TIME => 'namelookup_time',
+        CURLINFO_CONNECT_TIME => 'connect_time',
+        CURLINFO_PRETRANSFER_TIME => 'pretransfer_time',
+        CURLINFO_STARTTRANSFER_TIME => 'starttransfer_time',
+        CURLINFO_REDIRECT_COUNT => 'redirect_count',
+        CURLINFO_REDIRECT_TIME => 'redirect_time',
+        CURLINFO_SIZE_UPLOAD => 'size_upload',
+        CURLINFO_SIZE_DOWNLOAD => 'size_download',
+        CURLINFO_SPEED_DOWNLOAD => 'speed_download',
+        CURLINFO_SPEED_UPLOAD => 'speed_upload',
+        CURLINFO_HEADER_SIZE => 'header_size',
+        CURLINFO_HEADER_OUT => 'request_header',
+        CURLINFO_FILETIME => 'filetime',
+        CURLINFO_REQUEST_SIZE => 'request_size',
+        CURLINFO_SSL_VERIFYRESULT => 'ssl_verify_result',
+        CURLINFO_CONTENT_LENGTH_DOWNLOAD => 'download_content_length',
+        CURLINFO_CONTENT_LENGTH_UPLOAD => 'upload_content_length',
+        CURLINFO_CONTENT_TYPE => 'content_type'
     );
 
     /**
@@ -89,12 +93,9 @@ class CurlHelper
         switch ($option) {
             case 0: // 0 == array of all curl options
                 $info = array();
-                array_map(
-                    function ($curlInfo) use (&$info, $response) {
-                        return $info[$curlInfo] = $response->getInfo($curlInfo);
-                    },
-                    self::$curlInfoList
-                );
+                foreach (self::$curlInfoList as $option => $key) {
+                   $info[$key] = $response->getInfo($option);
+                }
                 break;
             case CURLINFO_HTTP_CODE:
                 $info = $response->getStatusCode();

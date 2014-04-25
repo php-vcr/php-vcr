@@ -183,7 +183,41 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         curl_close($curlHandle);
 
         $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
-        $this->assertEquals(19, count($info), 'curl_getinfo() should return 19 values.');
+        $this->assertEquals(22, count($info), 'curl_getinfo() should return 19 values.');
+        $this->curlHook->disable();
+    }
+
+    public function testShouldReturnCurlInfoAllKeys()
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+        $info = curl_getinfo($curlHandle);
+        curl_close($curlHandle);
+
+        $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
+        $this->assertArrayHasKey('url', $info);
+        $this->assertArrayHasKey('content_type', $info);
+        $this->assertArrayHasKey('http_code', $info);
+        $this->assertArrayHasKey('header_size', $info);
+        $this->assertArrayHasKey('request_size', $info);
+        $this->assertArrayHasKey('filetime', $info);
+        $this->assertArrayHasKey('ssl_verify_result', $info);
+        $this->assertArrayHasKey('redirect_count', $info);
+        $this->assertArrayHasKey('total_time', $info);
+        $this->assertArrayHasKey('namelookup_time', $info);
+        $this->assertArrayHasKey('connect_time', $info);
+        $this->assertArrayHasKey('pretransfer_time', $info);
+        $this->assertArrayHasKey('size_upload', $info);
+        $this->assertArrayHasKey('size_download', $info);
+        $this->assertArrayHasKey('speed_download', $info);
+        $this->assertArrayHasKey('speed_upload', $info);
+        $this->assertArrayHasKey('download_content_length', $info);
+        $this->assertArrayHasKey('upload_content_length', $info);
+        $this->assertArrayHasKey('starttransfer_time', $info);
+        $this->assertArrayHasKey('redirect_time', $info);
         $this->curlHook->disable();
     }
 
