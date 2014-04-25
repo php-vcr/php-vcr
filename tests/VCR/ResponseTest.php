@@ -10,8 +10,8 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     public function testGetHeaders()
     {
         $expectedHeaders = array(
-            'user-agent' => 'Unit-Test',
-            'host'       => 'example.com'
+            'User-Agent' => 'Unit-Test',
+            'Host'       => 'example.com'
         );
 
         $response = Response::fromArray(array('headers' => $expectedHeaders));

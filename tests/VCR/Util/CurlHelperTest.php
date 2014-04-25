@@ -78,7 +78,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
 
-        $this->assertEquals(array('host' => 'example.com'), $request->getHeaders());
+        $this->assertEquals(array('Host' => 'example.com'), $request->getHeaders());
     }
 
     public function testSetCurlOptionOnRequestSetSingleHeaderTwice()
@@ -89,7 +89,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
 
-        $this->assertEquals(array('host' => 'example.com'), $request->getHeaders());
+        $this->assertEquals(array('Host' => 'example.com'), $request->getHeaders());
     }
 
     public function testSetCurlOptionOnRequestSetMultipleHeadersTwice()
@@ -104,8 +104,8 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
 
         $expected = array(
-            'host' => 'example.com',
-            'content-type' => 'application/json'
+            'Host' => 'example.com',
+            'Content-Type' => 'application/json'
         );
         $this->assertEquals($expected, $request->getHeaders());
     }

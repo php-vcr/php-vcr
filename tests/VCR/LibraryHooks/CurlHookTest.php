@@ -247,10 +247,10 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $url     = 'http://example.com';
         $body    = json_encode(array('key' => 'value'));
         $headers = array(
-            'content-type' => 'application/json',
-            'host' => 'example.com',
-            'user-agent' => 'Guzzle/3.8.1 curl/7.30.0 PHP/5.4.16',
-            'content-length' => strlen($body),
+            'Content-Type' => 'application/json',
+            'Host' => 'example.com',
+            'User-Agent' => 'Guzzle/3.8.1 curl/7.30.0 PHP/5.4.16',
+            'Content-Length' => strlen($body),
         );
 
         $testClass = $this;
@@ -277,10 +277,10 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $url     = 'http://example.com';
         $body    = json_encode(array('key' => 'value'));
         $headers = array(
-            'content-type' => 'application/json',
-            'host' => 'example.com',
-            'user-agent' => 'Guzzle/3.8.1 curl/7.30.0 PHP/5.4.16',
-            'content-length' => strlen($body),
+            'Content-Type' => 'application/json',
+            'Host' => 'example.com',
+            'User-Agent' => 'Guzzle/3.8.1 curl/7.30.0 PHP/5.4.16',
+            'Content-Length' => strlen($body),
         );
 
         $testClass = $this;

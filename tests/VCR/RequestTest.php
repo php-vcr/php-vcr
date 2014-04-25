@@ -18,8 +18,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'user-agent' => 'Unit-Test',
-                'host'       => 'example.com'
+                'User-Agent' => 'Unit-Test',
+                'Host'       => 'example.com'
             ),
             $this->request->getHeaders()
         );
@@ -81,8 +81,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'method'      => 'GET',
                 'url'         => 'http://example.com',
                 'headers'     => array(
-                    'user-agent' => 'Unit-Test',
-                    'host' => 'example.com',
+                    'User-Agent' => 'Unit-Test',
+                    'Host' => 'example.com',
                  )
             ),
             $restoredRequest->toArray()
@@ -97,9 +97,9 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'method'      => 'GET',
                 'url'         => 'http://example.com',
                 'headers'     => array(
-                    'user-agent' => 'Unit-Test',
-                    'host' => 'example.com',
-                    'content-type' => 'application/x-www-form-urlencoded; charset=utf-8'
+                    'User-Agent' => 'Unit-Test',
+                    'Host' => 'example.com',
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8'
                     ),
                 'post_fields' => array('para1' => 'val1'),
             ),
@@ -116,9 +116,9 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'method'      => 'GET',
                 'url'         => 'http://example.com',
                 'headers'     => array(
-                    'user-agent' => 'Unit-Test',
-                    'host' => 'example.com',
-                    'content-type' => 'application/x-www-form-urlencoded; charset=utf-8'
+                    'User-Agent' => 'Unit-Test',
+                    'Host' => 'example.com',
+                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8'
                     ),
                 'post_fields' => array('para1' => 'val1'),
             ),
@@ -134,10 +134,10 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'method'      => 'GET',
                 'url'         => 'http://example.com',
                 'headers'     => array(
-                    'user-agent'   => 'Unit-Test',
-                    'host'         => 'example.com',
-                    'content-type' => 'multipart/form-data',
-                    'expect'       => '100-Continue'
+                    'User-Agent'   => 'Unit-Test',
+                    'Host'         => 'example.com',
+                    'Content-Type' => 'multipart/form-data',
+                    'Expect'       => '100-Continue'
                 ),
                 'post_files' => array(
                     array(
@@ -161,10 +161,10 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'method'      => 'GET',
                 'url'         => 'http://example.com',
                 'headers'     => array(
-                    'user-agent'   => 'Unit-Test',
-                    'host'         => 'example.com',
-                    'content-type' => 'multipart/form-data',
-                    'expect'       => '100-Continue'
+                    'User-Agent'   => 'Unit-Test',
+                    'Host'         => 'example.com',
+                    'Content-Type' => 'multipart/form-data',
+                    'Expect'       => '100-Continue'
                     ),
                 'post_files' => array(
                     array(

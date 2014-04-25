@@ -114,9 +114,10 @@ class Request extends EntityEnclosingRequest
         }
 
         $headers = array();
-        foreach (parent::getHeaders()->getAll() as $key => $header) {
-            $value = $header->toArray();
-            $headers[$key] = $value[0];
+
+        /* @var \Guzzle\Http\Message\Header $header */
+        foreach (parent::getHeaders()->getAll() as $header) {
+            $headers[$header->getName()] = (string) $header;
         }
 
         return $headers;

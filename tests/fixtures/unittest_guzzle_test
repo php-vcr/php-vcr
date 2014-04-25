@@ -20,3 +20,25 @@
             x-ec-custom-error: '1'
             Content-Length: '1270'
         body: "This is a guzzle test dummy."
+-
+    request:
+        method: POST
+        url: 'http://example.com'
+        headers:
+            Host: example.com
+            User-Agent: 'Guzzle/3.8.1 curl/7.30.0 PHP/5.4.27'
+            Content-Length: '0'
+    response:
+        status: 200
+        headers:
+            Accept-Ranges: bytes
+            Cache-Control: max-age=604800
+            Content-Type: text/html
+            Date: 'Fri, 25 Apr 2014 09:14:54 GMT'
+            Etag: '"359670651"'
+            Expires: 'Fri, 02 May 2014 09:14:54 GMT'
+            Last-Modified: 'Fri, 09 Aug 2013 23:54:35 GMT'
+            Server: 'EOS (lax004/2813)'
+            x-ec-custom-error: '1'
+            Content-Length: '1270'
+        body: "This is a guzzle test dummy."

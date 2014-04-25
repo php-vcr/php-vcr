@@ -1,13 +1,12 @@
-
 -
     request:
         method: POST
         url: 'http://wsf.cdyne.com/WeatherWS/Weather.asmx'
         headers:
-            host: wsf.cdyne.com
-            content-type: 'application/soap+xml; charset=utf-8; action="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP"'
-            content-length: 260
-        body: null
+            Host: wsf.cdyne.com
+            Content-Type: 'application/soap+xml; charset=utf-8; action="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP"'
+            Content-Length: '260'
+        body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns1=\"http://ws.cdyne.com/WeatherWS/\"><env:Body><ns1:GetCityWeatherByZIP><ns1:ZIP>10013</ns1:ZIP></ns1:GetCityWeatherByZIP></env:Body></env:Envelope>\n"
     response:
         status: 200
         headers:
@@ -18,6 +17,6 @@
             Server: Microsoft-IIS/7.5
             X-AspNet-Version: 2.0.50727
             X-Powered-By: ASP.NET
-            Date: 'Sat, 12 Oct 2013 19:40:38 GMT'
-            Content-Length: '763'
+            Date: 'Fri, 25 Apr 2014 09:22:59 GMT'
+            Content-Length: '756'
         body: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetCityWeatherByZIPResponse xmlns="http://ws.cdyne.com/WeatherWS/"><GetCityWeatherByZIPResult><Success>true</Success><ResponseText>City Found</ResponseText><State>NY</State><City>New York</City><WeatherStationCity>White Plains</WeatherStationCity><WeatherID>3</WeatherID><Description>Mostly Cloudy</Description><Temperature>1337</Temperature><RelativeHumidity>75</RelativeHumidity><Wind>NE7</Wind><Pressure>30.12F</Pressure><Visibility /><WindChill /><Remarks /></GetCityWeatherByZIPResult></GetCityWeatherByZIPResponse></soap:Body></soap:Envelope>'
