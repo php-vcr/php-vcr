@@ -110,6 +110,22 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $request->getHeaders());
     }
 
+    public function testSetCurlOptionOnRequestEmptyPostFieldsRemovesContentType()
+    {
+        $request = new Request('GET', 'example.com');
+        $headers = array(
+            'Host: example.com',
+            'Content-Type: application/json',
+        );
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, array());
+
+        $expected = array(
+            'Host' => 'example.com',
+        );
+        $this->assertEquals($expected, $request->getHeaders());
+    }
     public function testSetCurlOptionReadFunctionMissingSize()
     {
         $this->setExpectedException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');

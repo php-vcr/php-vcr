@@ -151,6 +151,10 @@ class CurlHelper
                     foreach ($value as $name => $fieldValue) {
                         $request->setPostField($name, $fieldValue);
                     }
+
+                    if (count($value) == 0) {
+                        $request->removeHeader('Content-Type');
+                    }
                 } else {
                     $request->setBody($value);
                 }
