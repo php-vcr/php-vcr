@@ -58,6 +58,10 @@ class CurlHelper
 
         $body = (string) $response->getBody(true);
 
+        if (!empty($curlOptions[CURLOPT_HEADER])) {
+            $body = $response->getRawHeaders() . $body;
+        }
+
         if (isset($curlOptions[CURLOPT_WRITEFUNCTION])) {
             call_user_func($curlOptions[CURLOPT_WRITEFUNCTION], $ch, $body);
         } elseif (isset($curlOptions[CURLOPT_RETURNTRANSFER]) && $curlOptions[CURLOPT_RETURNTRANSFER] == true) {
@@ -158,9 +162,11 @@ class CurlHelper
                     }
                 }
                 break;
+            case CURLOPT_HEADER:
             case CURLOPT_WRITEFUNCTION:
             case CURLOPT_HEADERFUNCTION:
-                // Ignore writer and header functions
+                // Ignore writer and header functions.
+                // These options are stored and will be handled later in handleOutput().
                 break;
             case CURLOPT_READFUNCTION:
                 // Guzzle provides a callback to let curl read the body string.
