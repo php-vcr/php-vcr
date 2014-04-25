@@ -72,7 +72,7 @@ class RequestMatcher
         $firstHeaders = $first->getHeaders();
         foreach ($second->getHeaders() as $key => $pattern) {
             if (!isset($firstHeaders[$key])
-                || !preg_match('#'.str_replace('#', '\\#', $pattern[0]).'#', $firstHeaders[$key][0])) {
+                || $pattern !== $firstHeaders[$key]) {
                 return false;
             }
         }
