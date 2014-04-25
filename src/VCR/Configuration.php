@@ -290,7 +290,7 @@ class Configuration
         return $this;
     }
 
-    /**
+   /**
      * Returns a list of whitelisted paths.
      *
      * @return array
@@ -328,7 +328,7 @@ class Configuration
             $cassettePath,
             "Cassette path '{$cassettePath}' is not a directory. Please either "
             . "create it or set a different cassette path using "
-            . "VCR::configure()->setCassettePath('directory')."
+            . "\\VCR\\VCR::configure()->setCassettePath('directory')."
         );
     }
 }
