@@ -5,7 +5,6 @@
         url: 'http://example.com'
         headers:
             Host: example.com
-            User-Agent: 'Guzzle/3.8.1 curl/7.30.0 PHP/5.4.27'
             Content-Length: '0'
     response:
         status: 200
