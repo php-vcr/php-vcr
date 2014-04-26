@@ -123,7 +123,8 @@ phpunit ./tests
 
 ## Changelog
 
- * 2014-04-12 Release 1.1.3: Fixed #48: Allows data to be passed to CURLOPT_POSTFIELDS.
+ * 2014-04-26 Release 1.1.4: Fixes #50, #52, #53, #54, #56 and better error messages.
+ * 2014-04-12 Release 1.1.3: Fixes #48: Allows data to be passed to CURLOPT_POSTFIELDS.
  * 2014-02-27 Release 1.1.2: Fix for storing the request body.
  * 2014-02-27 Release 1.1.1: Fix for non-GET requests with Guzzle.
  * 2014-02-22 Release 1.1.0: Removes curl runkit library hook and additional cleanup.
