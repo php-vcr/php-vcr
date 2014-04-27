@@ -12,7 +12,7 @@
 
     "require": {
         "ext-curl": "*",
-        "guzzle/http": "3.8.*",
+        "guzzle/http": "3.*",
         "beberlei/assert": "1.*",
         "symfony/yaml": "2.*"
     },
@@ -20,7 +20,6 @@
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
         "mikey179/vfsStream": "1.2.*",
-        "guzzle/plugin-mock": "3.8.*",
         "lapistano/proxy-object": "dev-master"
     },
 
