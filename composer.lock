@@ -3,30 +3,38 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "fa7934a4f57d00ecedf16424e877e353",
+    "hash": "22797b413ec8f5befd1c69ba20479d6a",
     "packages": [
         {
             "name": "beberlei/assert",
-            "version": "v1.7",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beberlei/assert.git",
-                "reference": "97515db6b6c8fb254f5c3ce5730cdfa5a1e3fbf4"
+                "reference": "85ba3497e59e33f3d4a1754aafb33c82512f7647"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beberlei/assert/zipball/97515db6b6c8fb254f5c3ce5730cdfa5a1e3fbf4",
-                "reference": "97515db6b6c8fb254f5c3ce5730cdfa5a1e3fbf4",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/85ba3497e59e33f3d4a1754aafb33c82512f7647",
+                "reference": "85ba3497e59e33f3d4a1754aafb33c82512f7647",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Assert": "lib/"
-                }
+                },
+                "files": [
+                    "lib/Assert/functions.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -44,7 +52,7 @@
                 "assertion",
                 "validation"
             ],
-            "time": "2014-01-25 08:48:48"
+            "time": "2014-01-26 15:26:52"
         },
         {
             "name": "guzzle/common",

@@ -13,7 +13,7 @@
     "require": {
         "ext-curl": "*",
         "guzzle/http": "3.*",
-        "beberlei/assert": "1.*",
+        "beberlei/assert": "2.*",
         "symfony/yaml": "2.*"
     },
 
