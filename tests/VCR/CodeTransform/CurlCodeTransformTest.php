@@ -31,6 +31,15 @@ class CurlCodeTransformTest extends \PHPUnit_Framework_TestCase
             array('\VCR\LibraryHooks\CurlHook::curl_multi_exec(', 'curl_multi_exec('),
             array('\VCR\LibraryHooks\CurlHook::curl_multi_info_read(', 'curl_multi_info_read('),
 
+            array('\VCR\LibraryHooks\CurlHook::curl_init(', '\\CURL_INIT ('),
+            array('\VCR\LibraryHooks\CurlHook::curl_exec(', '\\curl_exec('),
+            array('\VCR\LibraryHooks\CurlHook::curl_getinfo(', '\\curl_getinfo('),
+            array('\VCR\LibraryHooks\CurlHook::curl_setopt(', '\\curl_setopt('),
+            array('\VCR\LibraryHooks\CurlHook::curl_multi_add_handle(', '\\curl_multi_add_handle('),
+            array('\VCR\LibraryHooks\CurlHook::curl_multi_remove_handle(', '\\curl_multi_remove_handle('),
+            array('\VCR\LibraryHooks\CurlHook::curl_multi_exec(', '\\curl_multi_exec('),
+            array('\VCR\LibraryHooks\CurlHook::curl_multi_info_read(', '\\curl_multi_info_read('),
+
             array('SomeClass::CURL_INIT (', 'SomeClass::CURL_INIT ('),
             array('SomeClass::curl_exec(', 'SomeClass::curl_exec('),
             array('SomeClass::curl_getinfo(', 'SomeClass::curl_getinfo('),
