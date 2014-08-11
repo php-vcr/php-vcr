@@ -111,6 +111,16 @@ class Cassette
     }
 
     /**
+     * Returns true if the cassette was created recently.
+     *
+     * @return boolean
+     */
+    public function isNew()
+    {
+        return $this->storage->isNew();
+    }
+
+    /**
      * Returns a list of callbacks to configured request matchers.
      *
      * @return array List of callbacks to configured request matchers.

@@ -50,6 +50,11 @@ class Yaml implements Storage
     protected $yamlDumper;
 
     /**
+     * @var  Is the cassette new.
+     */
+    protected $new = false;
+
+    /**
      * Creates a new YAML based file store.
      *
      * @param string $cassettePath Path to the cassette directory.
@@ -63,6 +68,8 @@ class Yaml implements Storage
 
         if (!file_exists($file)) {
             file_put_contents($file, '');
+
+            $this->new = true;
         }
 
         Assertion::file($file, "Specified path '{$file}' is not a file.");
@@ -181,6 +188,16 @@ class Yaml implements Storage
         }
 
         return ! is_null($this->current) && $this->valid;
+    }
+
+    /**
+     * Returns true if the file was created recently.
+     *
+     * @return boolean
+     */
+    public function isNew()
+    {
+        return $this->new;
     }
 
     /**

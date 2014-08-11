@@ -39,6 +39,11 @@ class Json implements Storage
     protected $isEOF = false;
 
     /**
+     * @var  Is the cassette new.
+     */
+    protected $new = false;
+
+    /**
      * Creates a new JSON based file store.
      *
      * @param string $cassettePath Path to the cassette directory.
@@ -163,6 +168,16 @@ class Json implements Storage
         }
 
         return !$this->isEOF;
+    }
+
+    /**
+     * Returns true if the file was created recently.
+     *
+     * @return boolean
+     */
+    public function isNew()
+    {
+        return $this->new;
     }
 
     /**
