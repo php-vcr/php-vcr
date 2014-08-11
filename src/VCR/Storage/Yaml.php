@@ -50,7 +50,7 @@ class Yaml implements Storage
     protected $yamlDumper;
 
     /**
-     * @var  Is the cassette new.
+     * @var boolean If the cassette file is new.
      */
     protected $new = false;
 

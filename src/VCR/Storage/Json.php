@@ -39,7 +39,7 @@ class Json implements Storage
     protected $isEOF = false;
 
     /**
-     * @var  Is the cassette new.
+     * @var boolean If the cassette file is new.
      */
     protected $new = false;
 

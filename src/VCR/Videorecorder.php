@@ -160,7 +160,7 @@ class Videorecorder
      *
      * @return Response                Response for the intercepted request.
      * @throws \BadMethodCallException If there was no cassette inserted.
-     * @throws \LogicException         If the mode is set to protected and the cassette did not have a matching response.
+     * @throws \LogicException         If the mode is set to none or once and the cassette did not have a matching response.
      */
     public function handleRequest(Request $request)
     {
@@ -175,7 +175,7 @@ class Videorecorder
         if (!$this->cassette->hasResponse($request)) {
             if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
                 throw new \LogicException(
-                    "Invalid http request. The cassette inserted did not have the appropriate response. "
+                    "Invalid http request. The cassette inserted did not have the necessary response. "
                     . "If you want to send a request anyway, make sure your mode is set to basic.");
             }
 
