@@ -122,9 +122,9 @@ class Configuration
     /**
      * The mode which determines how requests are handled
      *
-     * Currently support modes:
+     * Currently supported modes:
      *      - new_episodes (Always allows new HTTP requests)
-     *      - once (Will allow new HTTP requests the first time the cassette is created than throw an exception after that)
+     *      - once (Will allow new HTTP requests the first time the cassette is created then throw an exception after that)
      *      - none (Will never allow new HTTP requests)
      *
      * @var string Current mode
