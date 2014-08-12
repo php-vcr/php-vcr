@@ -176,7 +176,7 @@ class Videorecorder
             if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
                 throw new \LogicException(
                     "Invalid http request. The cassette inserted did not have the necessary response. "
-                    . "If you want to send a request anyway, make sure your mode is set to basic.");
+                    . "If you want to send a request anyway, make sure your mode is set to new_episodes.");
             }
 
             $this->disableLibraryHooks();

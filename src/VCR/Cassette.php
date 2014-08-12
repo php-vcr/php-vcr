@@ -31,6 +31,14 @@ class Cassette
     protected $storage;
 
     /**
+     * Whether this Cassette is new or not.
+     *
+     * @var boolean
+     */
+    protected $new = null;
+
+
+    /**
      * Creates a new cassette.
      *
      * @param  string            $name    Name of the cassette.
@@ -117,7 +125,11 @@ class Cassette
      */
     public function isNew()
     {
-        return $this->storage->isNew();
+        if ($this->new === null) {
+            $this->new = $this->storage->isNew();
+        }
+
+        return $this->new;
     }
 
     /**

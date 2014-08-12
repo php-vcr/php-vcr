@@ -55,6 +55,8 @@ class Json implements Storage
 
         if (!file_exists($file)) {
             file_put_contents($file, '[]');
+
+            $this->new = true;
         }
 
         Assertion::file($file, "Specified path '{$file}' is not a file.");
@@ -171,9 +173,7 @@ class Json implements Storage
     }
 
     /**
-     * Returns true if the file was created recently.
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function isNew()
     {

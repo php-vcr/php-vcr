@@ -191,9 +191,7 @@ class Yaml implements Storage
     }
 
     /**
-     * Returns true if the file was created recently.
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function isNew()
     {
