@@ -132,6 +132,22 @@ class Configuration
     private $mode = 'new_episodes';
 
     /**
+     * List of available modes.
+     *
+     * Format:
+     * array(
+     *  'name'
+     * )
+     *
+     * @var array List of available modes.
+     */
+    private $availableModes = array(
+        'new_episodes',
+        'once',
+        'none'
+    );
+
+    /**
      * Returns the current blacklist.
      *
      * @return array
@@ -347,6 +363,7 @@ class Configuration
      */
     public function setMode($mode)
     {
+        Assertion::choice($mode, $this->availableModes, "Mode '{$mode}' does not exist.");
         $this->mode = $mode;
 
         return $this;
