@@ -136,7 +136,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testGetStorage()
     {
         $class = $this->config->getStorage();
-        $this->assertTrue(in_array("VCR\Storage\Storage", class_implements($class)));
+        $this->assertTrue(in_array("VCR\Storage\StorageInterface", class_implements($class)));
     }
 
     public function testWhitelist()
@@ -155,5 +155,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config->setBlackList($expected);
 
         $this->assertEquals($expected, $this->config->getBlackList());
+    }
+
+    public function testSetModeInvalidName()
+    {
+        $this->setExpectedException('VCR\VCRException', "Mode 'invalid' does not exist.");
+        $this->config->setMode('invalid');
     }
 }
