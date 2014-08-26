@@ -2,6 +2,8 @@
 
 namespace VCR\Storage;
 
+use VCR\Storage\Storage;
+use VCR\Storage\StorageInterface;
 use VCR\Util\Assertion;
 
 /**
@@ -11,12 +13,8 @@ use VCR\Util\Assertion;
  * amount of memory used by the largest record.
  *
  */
-class Json implements Storage
+class Json extends Storage implements StorageInterface
 {
-    /**
-     * @var resource File handle.
-     */
-    protected $handle;
 
     /**
      * @var string Path to storage file.
@@ -24,24 +22,9 @@ class Json implements Storage
     protected $filePath;
 
     /**
-     * @var array Current parsed record.
-     */
-    protected $current;
-
-    /**
      * @var integer Number of the current recording.
      */
     protected $position = 0;
-
-    /**
-     * @var boolean True when parser is at the end of the file.
-     */
-    protected $isEOF = false;
-
-    /**
-     * @var boolean If the cassette file is new.
-     */
-    protected $new = false;
 
     /**
      * Creates a new JSON based file store.
@@ -78,16 +61,6 @@ class Json implements Storage
         }
         fwrite($this->handle, json_encode($recording) . ']');
         fflush($this->handle);
-    }
-
-    /**
-     * Returns the current record.
-     *
-     * @return array Parsed current record.
-     */
-    public function current()
-    {
-        return $this->current;
     }
 
     /**
@@ -171,21 +144,4 @@ class Json implements Storage
 
         return !$this->isEOF;
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function isNew()
-    {
-        return $this->new;
-    }
-
-    /**
-     * Closes file handle.
-     */
-    public function __destruct()
-    {
-        fclose($this->handle);
-    }
-
 }

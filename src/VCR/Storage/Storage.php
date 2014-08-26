@@ -2,26 +2,56 @@
 
 namespace VCR\Storage;
 
+use VCR\Util\Assertion;
+
 /**
- * Interface for storing records.
- *
- * Storages can be iterated using standard loops.
- * New recordings can be stored.
+ * Abstract base for storing records.
  */
-interface Storage extends \Iterator
+class Storage
 {
     /**
-     * Stores an array of data.
-     *
-     * @param array $recording Array to store in storage.
-     * @return void
+     * @var resource File handle.
      */
-    public function storeRecording(array $recording);
+    protected $handle;
 
     /**
-     * Returns true if the file did not exist and had to be created.
-     *
-     * @return boolean TRUE if created, FALSE if not
+     * @var array Current parsed record.
      */
-    public function isNew();
+    protected $current;
+
+    /**
+     * @var boolean True when parser is at the end of the file.
+     */
+    protected $isEOF = false;
+
+    /**
+     * @var boolean If the cassette file is new.
+     */
+    protected $new = false;
+
+    /**
+     * Returns the current record.
+     *
+     * @return array Parsed current record.
+     */
+    public function current()
+    {
+        return $this->current;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isNew()
+    {
+        return $this->new;
+    }
+
+    /**
+     * Closes file handle.
+     */
+    public function __destruct()
+    {
+        fclose($this->handle);
+    }
 }

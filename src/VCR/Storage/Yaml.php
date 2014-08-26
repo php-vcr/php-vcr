@@ -4,6 +4,8 @@ namespace VCR\Storage;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
+use VCR\Storage\Storage;
+use VCR\Storage\StorageInterface;
 use VCR\Util\Assertion;
 
 /**
@@ -12,27 +14,12 @@ use VCR\Util\Assertion;
  * This storage can be iterated while keeping the memory consumption to the
  * amount of memory used by the largest record.
  */
-class Yaml implements Storage
+class Yaml extends Storage implements StorageInterface
 {
-    /**
-     * @var resource File handle.
-     */
-    protected $handle;
-
-    /**
-     * @var array Current parsed record.
-     */
-    protected $current;
-
     /**
      * @var integer Number of the current recording.
      */
     protected $position = 0;
-
-    /**
-     * @var boolean True when parser is at the end of the file.
-     */
-    protected $isEOF = false;
 
     /**
      * @var boolean If the current position is valid.
@@ -48,11 +35,6 @@ class Yaml implements Storage
      * @var  Dumper Yaml writer.
      */
     protected $yamlDumper;
-
-    /**
-     * @var boolean If the cassette file is new.
-     */
-    protected $new = false;
 
     /**
      * Creates a new YAML based file store.
@@ -188,21 +170,5 @@ class Yaml implements Storage
         }
 
         return ! is_null($this->current) && $this->valid;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isNew()
-    {
-        return $this->new;
-    }
-
-    /**
-     * Closes file handle.
-     */
-    public function __destruct()
-    {
-        fclose($this->handle);
     }
 }
