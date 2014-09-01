@@ -175,7 +175,7 @@ class Configuration
         $paths = (is_array($paths)) ? $paths : array($paths);
 
         // Convert slashes in the path to that of the OS.
-        $convertPaths = [];
+        $convertPaths = array();
         foreach ($paths as $path) {
             $convertPaths[] = $this->convertToOsSlash($path);
         }
