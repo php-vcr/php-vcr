@@ -117,7 +117,7 @@ class Configuration
      *
      * @var array A blacklist is a list of paths.
      */
-    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter', 'phpunit/', 'phpunit-mock-objects/');
+    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter', 'phpunit/', 'phpunit-mock-objects/', 'Guzzle/Http/Message/Header/');
 
 
     public function __construct()
