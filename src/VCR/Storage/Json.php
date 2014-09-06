@@ -2,54 +2,14 @@
 
 namespace VCR\Storage;
 
-use VCR\Storage\Storage;
-use VCR\Storage\StorageInterface;
-use VCR\Util\Assertion;
-
 /**
  * Json based storage for records.
  *
  * This storage can be iterated while keeping the memory consumption to the
  * amount of memory used by the largest record.
- *
  */
-class Json extends Storage implements StorageInterface
+class Json extends AbstractStorage
 {
-
-    /**
-     * @var string Path to storage file.
-     */
-    protected $filePath;
-
-    /**
-     * @var integer Number of the current recording.
-     */
-    protected $position = 0;
-
-    /**
-     * Creates a new JSON based file store.
-     *
-     * @param string $cassettePath Path to the cassette directory.
-     * @param string $cassetteName Path to a file, will be created if not existing.
-     */
-    public function __construct($cassettePath, $cassetteName)
-    {
-        $file = $cassettePath . DIRECTORY_SEPARATOR . $cassetteName;
-
-        if (!file_exists($file)) {
-            file_put_contents($file, '[]');
-
-            $this->new = true;
-        }
-
-        Assertion::file($file, "Specified path '{$file}' is not a file.");
-        Assertion::readable($file, "Specified file '{$file}' must be readable.");
-        Assertion::writeable($file, "Specified path '{$file}' must be writeable.");
-
-        $this->handle = fopen($file, 'r+');
-        $this->filePath = $file;
-    }
-
     /**
      * @inheritDoc
      */
@@ -61,16 +21,6 @@ class Json extends Storage implements StorageInterface
         }
         fwrite($this->handle, json_encode($recording) . ']');
         fflush($this->handle);
-    }
-
-    /**
-     * Returns the current key.
-     *
-     * @return integer
-     */
-    public function key()
-    {
-        return $this->position;
     }
 
     /**
