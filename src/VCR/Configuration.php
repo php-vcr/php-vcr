@@ -117,13 +117,7 @@ class Configuration
      *
      * @var array A blacklist is a list of paths.
      */
-    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter', 'phpunit/', 'phpunit-mock-objects/', 'Guzzle/Http/Message/Header/');
-
-
-    public function __construct()
-    {
-        $this->setBlackList($this->blackList);
-    }
+    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter');
 
     /**
      * The mode which determines how requests are handled
@@ -174,13 +168,7 @@ class Configuration
     {
         $paths = (is_array($paths)) ? $paths : array($paths);
 
-        // Convert slashes in the path to that of the OS.
-        $convertPaths = array();
-        foreach ($paths as $path) {
-            $convertPaths[] = $this->convertToOsSlash($path);
-        }
-
-        $this->blackList = $convertPaths;
+        $this->blackList = $paths;
 
         return $this;
     }
@@ -395,21 +383,5 @@ class Configuration
             . "create it or set a different cassette path using "
             . "\\VCR\\VCR::configure()->setCassettePath('directory')."
         );
-    }
-
-    /**
-     * Convert directory separator in a path to that of the current OS.
-     *
-     * @param string $subject Path.
-     * @return string
-     */
-    private function convertToOsSlash($subject)
-    {
-        // BEGIN Credit: http://stackoverflow.com/a/5642838/419097
-        $path = (DIRECTORY_SEPARATOR === '\\')
-            ? str_replace('/', '\\', $subject)
-            : str_replace('\\', '/', $subject);
-        // END Credit: http://stackoverflow.com/a/5642838/419097
-        return $path;
     }
 }
