@@ -113,27 +113,28 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testStreamMetadata()
     {
-        $posixGetuidExists = function_exists('posix_getuid');
-        $expectedCount = $posixGetuidExists ? 8 : 4;
+        if (!function_exists('posix_getuid'))
+        {
+            $this->markTestSkipped('posix_getuid function');
+        }
+
         if (version_compare(PHP_VERSION, '5.4.0', '<')) {
             $this->markTestSkipped('Behavior is only applicable and testable for PHP 5.4+');
         }
 
         $mock = $this->getStreamProcessorMock();
-        $mock->expects($this->exactly($expectedCount))->method('restore');
-        $mock->expects($this->exactly($expectedCount))->method('intercept');
+        $mock->expects($this->exactly(8))->method('restore');
+        $mock->expects($this->exactly(8))->method('intercept');
 
         $path = 'tests/fixtures/unnitest_streamprocessor_metadata';
         $this->assertTrue($mock->stream_metadata($path, STREAM_META_TOUCH, null));
         $this->assertTrue($mock->stream_metadata($path, STREAM_META_TOUCH, array(time(), time())));
 
-        if ($posixGetuidExists) {
-            $this->assertTrue($mock->stream_metadata($path, STREAM_META_OWNER_NAME, posix_getuid()));
-            $this->assertTrue($mock->stream_metadata($path, STREAM_META_OWNER, posix_getuid()));
+        $this->assertTrue($mock->stream_metadata($path, STREAM_META_OWNER_NAME, posix_getuid()));
+        $this->assertTrue($mock->stream_metadata($path, STREAM_META_OWNER, posix_getuid()));
 
-            $this->assertTrue($mock->stream_metadata($path, STREAM_META_GROUP_NAME, posix_getgid()));
-            $this->assertTrue($mock->stream_metadata($path, STREAM_META_GROUP, posix_getgid()));
-        }
+        $this->assertTrue($mock->stream_metadata($path, STREAM_META_GROUP_NAME, posix_getgid()));
+        $this->assertTrue($mock->stream_metadata($path, STREAM_META_GROUP, posix_getgid()));
 
         $this->assertTrue($mock->stream_metadata($path, STREAM_META_ACCESS, 0777));
 
