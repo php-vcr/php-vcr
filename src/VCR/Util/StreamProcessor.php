@@ -103,7 +103,8 @@ class StreamProcessor
         }
 
         foreach ($whiteList as $path) {
-            if (strpos($uri, $path) !== false) {
+            $convertedPath = $this->convertToOsSlash($path);
+            if (strpos($uri, $convertedPath) !== false) {
                 return true;
             }
         }
