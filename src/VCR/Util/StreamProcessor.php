@@ -116,7 +116,7 @@ class StreamProcessor
      *
      * @param string $uri
      *
-     * @return bool True if the provided url is blacklisted, flase otherwise.
+     * @return bool True if the provided url is blacklisted, false otherwise.
      */
     protected function isBlacklisted($uri)
     {
