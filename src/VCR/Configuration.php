@@ -120,6 +120,34 @@ class Configuration
     private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter');
 
     /**
+     * The mode which determines how requests are handled
+     *
+     * Currently supported modes:
+     *      - new_episodes (Always allows new HTTP requests)
+     *      - once (Will allow new HTTP requests the first time the cassette is created then throw an exception after that)
+     *      - none (Will never allow new HTTP requests)
+     *
+     * @var string Current mode
+     */
+    private $mode = 'new_episodes';
+
+    /**
+     * List of available modes.
+     *
+     * Format:
+     * array(
+     *  'name'
+     * )
+     *
+     * @var array List of available modes.
+     */
+    private $availableModes = array(
+        'new_episodes',
+        'once',
+        'none'
+    );
+
+    /**
      * Returns the current blacklist.
      *
      * @return array
@@ -312,6 +340,31 @@ class Configuration
         $paths = (is_array($paths)) ? $paths : array($paths);
 
         $this->whiteList = $paths;
+
+        return $this;
+    }
+
+   /**
+     * Returns the current mode.
+     *
+     * @return string
+     */
+    public function getMode()
+    {
+        return $this->mode;
+    }
+
+    /**
+     * Sets the current mode.
+     *
+     * @param string The mode to set VCR to
+     *
+     * @return Configuration
+     */
+    public function setMode($mode)
+    {
+        Assertion::choice($mode, $this->availableModes, "Mode '{$mode}' does not exist.");
+        $this->mode = $mode;
 
         return $this;
     }

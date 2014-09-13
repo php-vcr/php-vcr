@@ -2,7 +2,7 @@
 
 namespace VCR;
 
-use VCR\Storage\Storage;
+use VCR\Storage\AbstractStorage;
 use VCR\Util\Assertion;
 
 /**
@@ -26,7 +26,7 @@ class Cassette
     /**
      * Storage used to store records and request pairs.
      *
-     * @var Storage
+     * @var AbstractStorage
      */
     protected $storage;
 
@@ -35,10 +35,10 @@ class Cassette
      *
      * @param  string            $name    Name of the cassette.
      * @param  Configuration     $config  Configuration to use for this cassette.
-     * @param  Storage           $storage Storage to use for requests and responses.
+     * @param  AbstractStorage   $storage Storage to use for requests and responses.
      * @throws \VCR\VCRException If cassette name is in an invalid format.
      */
-    public function __construct($name, Configuration $config, Storage $storage)
+    public function __construct($name, Configuration $config, AbstractStorage $storage)
     {
         Assertion::string($name, "Cassette name must be a string, " . \gettype($name) . " given.");
 
@@ -108,6 +108,16 @@ class Cassette
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Returns true if the cassette was created recently.
+     *
+     * @return boolean
+     */
+    public function isNew()
+    {
+        return $this->storage->isNew();
     }
 
     /**
