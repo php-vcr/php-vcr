@@ -15,9 +15,11 @@ class Response extends \Guzzle\Http\Message\Response
     public function toArray()
     {
         $body = (string) $this->getBody(true);
-
         // Base64 encode when binary
-        if (strpos($this->getContentType(), 'application/x-gzip') !== false) {
+        if (
+            strpos($this->getContentType(), 'application/x-gzip') !== false
+            || $this->getHeader('Content-Transfer-Encoding') == 'binary'
+        ) {
             $body = base64_encode($body);
         }
 
@@ -57,9 +59,14 @@ class Response extends \Guzzle\Http\Message\Response
     {
         $body = isset($response['body']) ? $response['body'] : null;
 
+        $gzip = isset($response['headers']['Content-Type'])
+            && strpos($response['headers']['Content-Type'], 'application/x-gzip') !== false;
+
+        $binary = isset($response['headers']['Content-Transfer-Encoding'])
+            && $response['headers']['Content-Transfer-Encoding'] == 'binary';
+
         // Base64 decode when binary
-        if (isset($response['headers']['Content-Type'])
-           && strpos($response['headers']['Content-Type'], 'application/x-gzip') !== false) {
+        if ($gzip || $binary) {
             $body = base64_decode($response['body']);
         }
 
