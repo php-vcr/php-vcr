@@ -16,7 +16,7 @@ class Json extends AbstractStorage
     public function storeRecording(array $recording)
     {
         fseek($this->handle, -1, SEEK_END);
-        if (filesize($this->filePath) > 2) {
+        if (ftell($this->handle) > 2) {
             fwrite($this->handle, ',');
         }
         fwrite($this->handle, json_encode($recording) . ']');

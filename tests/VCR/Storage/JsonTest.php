@@ -16,8 +16,8 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         vfsStream::setup('test');
-        $this->filePath = vfsStream::url('test/') .  'json_test';
-        $this->jsonObject = new Json(vfsStream::url('test/') , 'json_test');
+        $this->filePath = vfsStream::url('test/') . 'json_test';
+        $this->jsonObject = new Json(vfsStream::url('test/'), 'json_test');
     }
 
     public function testIterateOneObject()
@@ -91,6 +91,19 @@ class JsonTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals($expected, $actual[0], 'Storing and reading a recording failed.');
+    }
+
+    public function testValidJson()
+    {
+        $stored = array(
+            'request' => 'some request',
+            'response' => 'some response'
+        );
+        $this->jsonObject->storeRecording($stored);
+        $this->jsonObject->storeRecording($stored);
+
+        $this->assertJson(file_get_contents($this->filePath));
+
     }
 
     private function iterateAndTest($json, $expected, $message)
