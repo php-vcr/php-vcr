@@ -19,7 +19,12 @@ class Json extends AbstractStorage
         if (ftell($this->handle) > 2) {
             fwrite($this->handle, ',');
         }
-        fwrite($this->handle, json_encode($recording) . ']');
+        if (defined('JSON_PRETTY_PRINT')) {
+            $json = json_encode($recording, JSON_PRETTY_PRINT);
+        } else {
+            $json = json_encode($recording);
+        }
+        fwrite($this->handle, $json . ']');
         fflush($this->handle);
     }
 
