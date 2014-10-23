@@ -123,6 +123,7 @@ phpunit ./tests
 
 ## Changelog
 
+ * 2014-10-23 Release 1.1.6: #73, #74, #75, improvements for JSON storage and binary requests.
  * 2014-09-11 Release 1.1.5: Fixes #58 #60, #61, #69 updated vendors and new record mode.
  * 2014-04-26 Release 1.1.4: Fixes #50, #52, #53, #54, #56 and better error messages.
  * 2014-04-12 Release 1.1.3: Fixes #48: Allows data to be passed to CURLOPT_POSTFIELDS.
