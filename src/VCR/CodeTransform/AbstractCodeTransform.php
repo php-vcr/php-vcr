@@ -57,6 +57,7 @@ abstract class AbstractCodeTransform extends \PHP_User_Filter
      *
      * @return int PSFS_PASS_ON | PSFS_FEED_ME
      *
+     * @link Implementation adapted from http://www.codediesel.com/php/creating-custom-stream-filters/
      * @link http://www.php.net/manual/en/php-user-filter.filter.php
      */
     public function filter($in, $out, &$consumed, $closing)
