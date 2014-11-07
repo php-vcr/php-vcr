@@ -19,6 +19,21 @@ abstract class AbstractCodeTransform extends \PHP_User_Filter
     protected $isRegistered = false;
 
     /**
+     * A bucket object returned by stream_bucket_make_writeable.
+     *
+     * @link http://php.net/manual/en/function.stream-bucket-make-writeable.php
+     * @var object
+     */
+    protected $bucket;
+
+    /**
+     * Buffer which stores the content of a file for transforming.
+     *
+     * @var string
+     */
+    protected $buffer;
+
+    /**
      * Attaches the current filter to a stream.
      *
      * @return bool true on success or false on failure.
@@ -40,19 +55,34 @@ abstract class AbstractCodeTransform extends \PHP_User_Filter
      * @param int      $consumed
      * @param bool     $closing
      *
-     * @return int PSFS_PASS_ON
+     * @return int PSFS_PASS_ON | PSFS_FEED_ME
      *
      * @link http://www.php.net/manual/en/php-user-filter.filter.php
      */
     public function filter($in, $out, &$consumed, $closing)
     {
-        while ($bucket = stream_bucket_make_writeable($in)) {
-            $bucket->data = $this->transformCode($bucket->data);
-            $consumed += $bucket->datalen;
-            stream_bucket_append($out, $bucket);
+        // Read all the stream data and store it.
+        while($bucket = stream_bucket_make_writeable($in)) {
+            $this->buffer .= $bucket->data;
+            $this->bucket = $bucket;
+            $consumed = 0;
         }
 
-        return PSFS_PASS_ON;
+        // After reading all data, run the transformation.
+        if ($closing) {
+            $consumed += strlen($this->buffer);
+
+            $this->bucket->data = $this->transformCode($this->buffer);
+            $this->bucket->datalen = strlen($this->bucket->data);
+
+            if(!empty($this->bucket->data)) {
+                stream_bucket_append($out, $this->bucket);
+            }
+
+            return PSFS_PASS_ON;
+        }
+
+        return PSFS_FEED_ME;
     }
 
     /**
