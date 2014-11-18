@@ -56,8 +56,10 @@ class CurlHelper
     public static function handleOutput(Response $response, array $curlOptions, $ch)
     {
         if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
-            $headers = $response->getRawHeaders();
-            call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $headers);
+            $headers = explode("\n", $response->getRawHeaders());
+            foreach($headers as $header) {
+                call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $header);
+            }
         }
 
         $body = (string) $response->getBody(true);
