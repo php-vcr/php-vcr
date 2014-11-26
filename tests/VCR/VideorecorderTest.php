@@ -156,11 +156,6 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
                 ->expects($this->once())
                 ->method('record')
                 ->with($request, $response);
-            $cassette
-                ->expects($this->once())
-                ->method('playback')
-                ->with($request)
-                ->will($this->returnValue($response));
         }
 
         if ($mode == 'once') {

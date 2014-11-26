@@ -65,8 +65,9 @@ class Configuration
      * @var array List of available storages.
      */
     private $availableStorages = array(
-        'json' => 'VCR\Storage\Json',
-        'yaml' => 'VCR\Storage\Yaml',
+        'blackhole' => 'VCR\Storage\Blackhole',
+        'json'      => 'VCR\Storage\Json',
+        'yaml'      => 'VCR\Storage\Yaml',
     );
 
     /**
