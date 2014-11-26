@@ -172,20 +172,22 @@ class Videorecorder
             );
         }
 
-        if (!$this->cassette->hasResponse($request)) {
-            if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
-                throw new \LogicException(
-                    "Invalid http request. The cassette inserted did not have the necessary response. "
-                    . "If you want to send a request anyway, make sure your mode is set to new_episodes.");
-            }
-
-            $this->disableLibraryHooks();
-            $response = $this->client->send($request);
-            $this->cassette->record($request, $response);
-            $this->enableLibraryHooks();
+        if ($this->cassette->hasResponse($request)) {
+            return $this->cassette->playback($request);
         }
 
-        return $this->cassette->playback($request);
+        if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
+            throw new \LogicException(
+                "Invalid http request. The cassette inserted did not have the necessary response. "
+                . "If you want to send a request anyway, make sure your mode is set to new_episodes.");
+        }
+
+        $this->disableLibraryHooks();
+        $response = $this->client->send($request);
+        $this->cassette->record($request, $response);
+        $this->enableLibraryHooks();
+
+        return $response;
     }
 
     /**
