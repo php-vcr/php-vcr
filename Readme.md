@@ -94,7 +94,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 Simply run the following command:
 
 ``` bash
-$ composer require php-vcr/php-vcr
+$ composer require --dev php-vcr/php-vcr
 ```
 
 ## Dependencies
