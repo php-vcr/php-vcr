@@ -178,4 +178,51 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             $restoredRequest->toArray()
         );
     }
+
+    public function testRestoreBody()
+    {
+        $this->request->setBody('sometest');
+        $restoredRequest = Request::fromArray($this->request->toArray());
+        $this->assertEquals(
+            array(
+                'method'      => 'GET',
+                'url'         => 'http://example.com',
+                'headers'     => array(
+                    'User-Agent' => 'Unit-Test',
+                    'Host' => 'example.com',
+                    'Content-Length' => '8'
+                ),
+                'body' => 'sometest',
+            ),
+            $restoredRequest->toArray()
+        );
+    }
+
+    public function testMatchesBody()
+    {
+        $this->request->setBody('sometest');
+        $request = new Request('POST', 'http://example.com');
+        $request->setBody('sometest');
+
+        $this->assertTrue(
+            $this->request->matches(
+                Request::fromArray($request->toArray()),
+                array(array('VCR\RequestMatcher', 'matchBody'))
+            )
+        );
+    }
+
+    public function testDoesntMatchBody()
+    {
+        $this->request->setBody('sometest');
+        $request = new Request('POST', 'http://example.com');
+        $request->setBody('not match');
+
+        $this->assertFalse(
+            $this->request->matches(
+                Request::fromArray($request->toArray()),
+                array(array('VCR\RequestMatcher', 'matchBody'))
+            )
+        );
+    }
 }
