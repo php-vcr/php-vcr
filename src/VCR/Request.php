@@ -155,6 +155,10 @@ class Request extends EntityEnclosingRequest
             }
         }
 
+        if (!empty($request['body'])) {
+            $requestObject->setBody((string) $request['body']);
+        }
+
         return $requestObject;
     }
 }
