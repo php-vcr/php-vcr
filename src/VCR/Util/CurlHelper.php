@@ -178,6 +178,10 @@ class CurlHelper
             case CURLOPT_READFUNCTION:
                 // Guzzle provides a callback to let curl read the body string.
                 // To get the body, this callback is called manually.
+                if (is_null($value)) {
+                    $request->getCurlOptions()->set($option, $value);
+                    break;
+                }
                 $bodySize = $request->getCurlOptions()->get(CURLOPT_INFILESIZE);
                 Assertion::notEmpty($bodySize, "To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.");
                 $body = call_user_func_array($value, array($curlHandle, fopen('php://memory', 'r'), $bodySize));
