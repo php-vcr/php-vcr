@@ -103,7 +103,8 @@ class StreamProcessor
         }
 
         foreach ($whiteList as $path) {
-            if (strpos($uri, $path) !== false) {
+            $convertedPath = $this->convertToOsSlash($path);
+            if (strpos($uri, $convertedPath) !== false) {
                 return true;
             }
         }
@@ -121,7 +122,8 @@ class StreamProcessor
     protected function isBlacklisted($uri)
     {
         foreach (static::$configuration->getBlackList() as $path) {
-            if (strpos($uri, $path) !== false) {
+            $convertedPath = $this->convertToOsSlash($path);
+            if (strpos($uri, $convertedPath) !== false) {
                 return true;
             }
         }
@@ -616,5 +618,21 @@ class StreamProcessor
         foreach (static::$codeTransformers as $codeTransformer) {
             stream_filter_append($stream, $codeTransformer::NAME, STREAM_FILTER_READ);
         }
+    }
+
+    /**
+     * Convert directory separator in a path to that of the current OS.
+     *
+     * @param string $subject Path.
+     * @return string
+     */
+    private function convertToOsSlash($subject)
+    {
+        // BEGIN Credit: http://stackoverflow.com/a/5642838/419097
+        $path = (DIRECTORY_SEPARATOR === '\\')
+            ? str_replace('/', '\\', $subject)
+            : str_replace('\\', '/', $subject);
+        // END Credit: http://stackoverflow.com/a/5642838/419097
+        return $path;
     }
 }
