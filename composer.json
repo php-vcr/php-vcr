@@ -13,7 +13,8 @@
     "require": {
         "ext-curl": "*",
         "beberlei/assert": "2.*",
-        "symfony/yaml": "2.*"
+        "symfony/yaml": "2.*",
+        "symfony/event-dispatcher": "~2.1"
     },
 
     "require-dev": {

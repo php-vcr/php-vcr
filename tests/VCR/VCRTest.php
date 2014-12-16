@@ -2,6 +2,8 @@
 
 namespace VCR;
 
+use Guzzle\Http\Client;
+use Symfony\Component\EventDispatcher\Event;
 use org\bovigo\vfs\vfsStream;
 
 /**
@@ -32,6 +34,19 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::insertCassette('unittest_streamwrapper_test');
         $result = file_get_contents('http://example.com');
         $this->assertEquals('This is a stream wrapper test dummy.', $result, 'Stream wrapper call was not intercepted.');
+        VCR::eject();
+        VCR::turnOff();
+    }
+
+    public function testShouldInterceptGuzzleLibrary()
+    {
+        VCR::configure()->enableLibraryHooks(array('curl'));
+        VCR::turnOn();
+        VCR::insertCassette('unittest_guzzle_test');
+        $client = new Client();
+        $client->setUserAgent(false);
+        $response = $client->post('http://example.com')->send();
+        $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
         VCR::eject();
         VCR::turnOff();
     }
@@ -98,5 +113,77 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::turnOn();
         $this->assertEquals('tests', VCR::configure()->getCassettePath());
         VCR::turnOff();
+    }
+
+    public function testShouldDispatchBeforeAndAfterPlaybackWhenCassetteHasResponse()
+    {
+        VCR::configure()
+            ->enableLibraryHooks(array('curl'));
+
+        $this->recordAllEvents();
+
+        VCR::turnOn();
+        VCR::insertCassette('unittest_guzzle_test');
+        $client = new Client();
+        $client->setUserAgent(false);
+        $client->post('http://example.com')->send();
+
+        VCR::eject();
+        VCR::turnOff();
+
+        $this->assertEquals(
+            array(VCREvents::VCR_BEFORE_PLAYBACK, VCREvents::VCR_AFTER_PLAYBACK),
+            $this->getRecordedEventNames()
+        );
+
+    }
+
+    public function testShouldDispatchBeforeAfterHttpRequestAndBeforeRecordWhenCassetteHasNoResponse()
+    {
+        vfsStream::setup('testDir');
+        VCR::configure()
+            ->setCassettePath(vfsStream::url('testDir'))
+            ->enableLibraryHooks(array('curl'));
+
+        $this->recordAllEvents();
+
+        VCR::turnOn();
+        VCR::insertCassette('virtual_cassette');
+
+        $client = new Client();
+        $client->post('http://example.com')->send();
+
+        VCR::eject();
+        VCR::turnOff();
+
+        $this->assertEquals(
+            array(VCREvents::VCR_BEFORE_HTTP_REQUEST, VCREvents::VCR_AFTER_HTTP_REQUEST, VCREvents::VCR_BEFORE_RECORD),
+            $this->getRecordedEventNames()
+        );
+
+    }
+
+    private function recordAllEvents()
+    {
+        $allEventsToListen = array(
+            VCREvents::VCR_BEFORE_PLAYBACK,
+            VCREvents::VCR_AFTER_PLAYBACK,
+            VCREvents::VCR_BEFORE_HTTP_REQUEST,
+            VCREvents::VCR_AFTER_HTTP_REQUEST,
+            VCREvents::VCR_BEFORE_RECORD,
+        );
+        foreach ($allEventsToListen as $eventToListen) {
+            VCR::getEventDispatcher()->addListener($eventToListen, array($this, 'recordEvent'));
+        }
+    }
+
+    public function recordEvent(Event $event)
+    {
+        $this->events[$event->getName()] = $event;
+    }
+
+    private function getRecordedEventNames()
+    {
+        return array_keys($this->events);
     }
 }
