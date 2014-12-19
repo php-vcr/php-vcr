@@ -16,10 +16,8 @@ class CurlCodeTransformTest extends \PHPUnit_Framework_TestCase
         $content = '';
         while (!feof($stream)) {
             $content .= fread($stream, 2024);
-            var_dump('hier', $content);
         }
         fclose($stream);
-        var_dump($content);
     }
 
     /**
