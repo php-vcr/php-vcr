@@ -6,6 +6,22 @@ use lapistano\ProxyObject\ProxyBuilder;
 
 class CurlCodeTransformTest extends \PHPUnit_Framework_TestCase
 {
+    public function testTransformOverBucketSizeBorder() {
+        $transformer = new \VCR\CodeTransform\CurlCodeTransform();
+        $transformer->register();
+
+        $stream = fopen(__DIR__ .  '/../../fixtures/code_transform_large.php', 'r');
+        stream_filter_append($stream, $transformer::NAME);
+
+        $content = '';
+        while (!feof($stream)) {
+            $content .= fread($stream, 2024);
+            var_dump('hier', $content);
+        }
+        fclose($stream);
+        var_dump($content);
+    }
+
     /**
      * @dataProvider codeSnippetProvider
      */
