@@ -75,7 +75,7 @@ abstract class AbstractStorage implements Storage
 
         Assertion::file($file, "Specified path '{$file}' is not a file.");
         Assertion::readable($file, "Specified file '{$file}' must be readable.");
-        Assertion::writeable($file, "Specified path '{$file}' must be writeable.");
+        Assertion::writeable($file, "Specified path '{$file}' must be writable.");
 
         $this->handle = fopen($file, 'r+');
     }
