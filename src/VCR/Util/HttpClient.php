@@ -1,8 +1,6 @@
 <?php
 namespace VCR\Util;
 
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\BadResponseException;
 use VCR\Request;
 use VCR\Response;
 
@@ -12,22 +10,6 @@ use VCR\Response;
 class HttpClient
 {
     /**
-     * @var \Guzzle\Http\Client
-     */
-    protected $client;
-
-    /**
-     * Creates a new HttpClient instance
-     *
-     * @param Client $client
-     */
-    public function __construct(Client $client = null)
-    {
-        $this->client = $client ?: new Client;
-        $this->client->setUserAgent(false);
-    }
-
-    /**
      * Returns a response for specified HTTP request.
      *
      * @param Request $request HTTP Request to send.
@@ -36,16 +18,60 @@ class HttpClient
      */
     public function send(Request $request)
     {
-        try {
-            $response = $this->client->send($request);
-        } catch (BadResponseException $e) {
-            $response = $e->getResponse();
+        $ch = curl_init($request->getUrl());
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getBody());
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $request->getHeaders());
+
+        curl_setopt_array($ch, $request->getCurlOptions());
+
+        $response = curl_exec($ch);
+        if ($response === false) {
+            syslog(LOG_WARNING, "PHP-VCR cURL failed: " . curl_error($ch));
         }
 
+        return $this->responseFromCurlResponse($ch, $response);
+    }
+
+    /**
+     * @param resource $ch
+     * @param string $response Response including header and body.
+     * @return Response
+     */
+    protected function responseFromCurlResponse($ch, $response)
+    {
+        list($header, $body) = explode("\r\n\r\n", $response, 2);
+
         return new Response(
-            $response->getStatusCode(),
-            $response->getHeaders(),
-            $response->getBody()
+            curl_getinfo($ch, CURLINFO_HTTP_CODE),
+            $this->parseHeaders($header),
+            $body,
+            curl_getinfo($ch)
         );
+    }
+
+    /**
+     * Returns key value pairs of response headers.
+     *
+     * @param string $header
+     * @return array Key/value pairs of headers.
+     */
+    protected function parseHeaders($header)
+    {
+        $headers = array();
+
+        foreach (explode("\r\n", $header) as $i => $line) {
+            // skip status
+            if ($i === 0) {
+                continue;
+            }
+
+            list ($key, $value) = explode(': ', $line);
+            $headers[$key] = $value;
+        }
+
+        return $headers;
     }
 }
