@@ -2,20 +2,58 @@
 
 namespace VCR;
 
-use Guzzle\Http\Message\EntityEnclosingRequest;
-use Guzzle\Http\Message\PostFile;
-
 /**
  * Encapsulates a HTTP request.
  */
-class Request extends EntityEnclosingRequest
+class Request
 {
     /**
-     * Returns true if specified request maches the current one
+     * @var string
+     */
+    protected $method;
+    /**
+     * @var string
+     */
+    protected $url;
+    /**
+     * @var array
+     */
+    protected $headers = array();
+    /**
+     * @var string
+     */
+    protected $body;
+    /**
+     * @var array
+     */
+    protected $postFiles = array();
+    /**
+     * @var array
+     */
+    protected $postFields = array();
+    /**
+     * @var array
+     */
+    protected $curlOptions = array();
+
+    /**
+     * @param string $method
+     * @param string $url
+     * @param array $headers
+     */
+    function __construct($method, $url, array $headers = array())
+    {
+        $this->method = $method;
+        $this->headers = $headers;
+        $this->setUrl($url);
+    }
+
+    /**
+     * Returns true if specified request matches the current one
      * with specified request matcher callbacks.
      *
-     * @param  Request      $request         Request to check if it matches the current one.
-     * @param  \callable[]  $requestMatchers Request matcher callbacks.
+     * @param  Request $request Request to check if it matches the current one.
+     * @param  \callable[] $requestMatchers Request matcher callbacks.
      *
      * @throws \BadFunctionCallException If one of the specified request matchers is not callable.
      * @return boolean True if specified request matches the current one.
@@ -38,15 +76,161 @@ class Request extends EntityEnclosingRequest
     }
 
     /**
-     * Returns a response for current request.
+     * Returns an array representation of this request.
      *
-     * @return Response Response for current request.
+     * @return array Array representation of this request.
      */
-    public function send()
+    public function toArray()
     {
-        $response = parent::send();
+        return array_filter(
+            array(
+                'method' => $this->getMethod(),
+                'url' => $this->getUrl(),
+                'headers' => $this->getHeaders(),
+                'body' => $this->getBody(),
+                'post_files' => $this->getPostFiles(),
+                'post_fields' => $this->getPostFields(),
+            )
+        );
+    }
 
-        return new Response($response->getStatusCode(), $response->getHeaders(), $response->getBody());
+
+    /**
+     * Creates a new Request from a specified array.
+     *
+     * @param  array $request Request represented as an array.
+     *
+     * @return Request A new Request from specified array.
+     */
+    public static function fromArray(array $request)
+    {
+        $requestObject = new Request(
+            $request['method'],
+            $request['url'],
+            isset($request['headers']) ? $request['headers'] : array()
+        );
+
+        if (!empty($request['post_fields']) && is_array($request['post_fields'])) {
+            $requestObject->setPostFields($request['post_fields']);
+        }
+
+        if (!empty($request['post_files']) && is_array($request['post_files'])) {
+            foreach ($request['post_files'] as $file) {
+                $requestObject->addPostFile($file);
+            }
+        }
+
+        if (!empty($request['body'])) {
+            $requestObject->setBody((string)$request['body']);
+        }
+
+        return $requestObject;
+    }
+
+    /**
+     * @param string $url
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        $this->setHeader('Host', $this->getHost());
+    }
+
+    /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function getHeader($key)
+    {
+        return $this->headers[$key];
+    }
+
+    /**
+     * @return array
+     */
+    public function getPostFields()
+    {
+        return $this->postFields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPostFiles()
+    {
+        return $this->postFiles;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHost()
+    {
+        return parse_url($this->getUrl(), PHP_URL_HOST);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPath()
+    {
+        return parse_url($this->getUrl(), PHP_URL_PATH);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuery()
+    {
+        return parse_url($this->getUrl(), PHP_URL_QUERY);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurlOptions()
+    {
+        return $this->curlOptions;
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function getCurlOption($key) {
+        return $this->curlOptions[$key];
     }
 
     /**
@@ -60,105 +244,75 @@ class Request extends EntityEnclosingRequest
     }
 
     /**
-     * Returns an array representation of this request.
-     *
-     * @return array Array representation of this request.
+     * @param array $post_fields
      */
-    public function toArray()
+    public function setPostFields(array $post_fields)
     {
-        return array_filter(
-            array(
-                'method'      => $this->getMethod(),
-                'url'         => $this->getUrl(),
-                'headers'     => $this->getHeaders(),
-                'body'        => (string) $this->getBody(),
-                'post_files'  => $this->getPostFilesArray(),
-                'post_fields' => (array) $this->getPostFields()->toArray(),
-            )
-        );
+        $this->postFields = $post_fields;
     }
 
     /**
-     * Returns a list of post files.
-     *
-     * @return array List of post files.
+     * @param array $post_files
      */
-    public function getPostFilesArray()
+    public function setPostFiles(array $post_files)
     {
-        $postFileList = array();
-
-        foreach ($this->getPostFiles() as $files) {
-            foreach ($files as $file) {
-                $postFileList[] = array(
-                    'fieldName'   => $file->getFieldName(),
-                    'contentType' => $file->getContentType(),
-                    'filename'    => $file->getFilename(),
-                    'postname'    => $file->getPostname(),
-                );
-            }
-        }
-
-        return $postFileList;
+        $this->postFiles = $post_files;
     }
 
     /**
-     * Returns a list of headers as key/value pairs.
-     *
-     * @param  boolean $asObjects (Optional) returns the headers as object.
-     * @return array List of headers as key/value pairs.
+     * @param string $body
      */
-    public function getHeaders($asObjects = false)
+    public function setBody($body)
     {
-        if ($asObjects === true) {
-            return parent::getHeaders();
-        }
-
-        $headers = array();
-
-        /* @var \Guzzle\Http\Message\Header $header */
-        foreach (parent::getHeaders()->getAll() as $header) {
-            $headers[$header->getName()] = (string) $header;
-        }
-
-        return $headers;
+        $this->body = $body;
     }
 
     /**
-     * Creates a new Request from a specified array.
-     *
-     * @param  array  $request Request represented as an array.
-     *
-     * @return Request A new Request from specified array.
+     * @param array $curlOptions
      */
-    public static function fromArray(array $request)
+    public function setCurlOptions(array $curlOptions)
     {
-        $requestObject = new Request(
-            $request['method'],
-            $request['url'],
-            $request['headers']
-        );
-
-        if (!empty($request['post_fields']) && is_array($request['post_fields'])) {
-            $requestObject->addPostFields($request['post_fields']);
-        }
-
-        if (!empty($request['post_files']) && is_array($request['post_files'])) {
-            foreach ($request['post_files'] as $file) {
-                $requestObject->addPostFile(
-                    new PostFile(
-                        $file['fieldName'],
-                        $file['filename'],
-                        $file['contentType'],
-                        $file['postname']
-                    )
-                );
-            }
-        }
-
-        if (!empty($request['body'])) {
-            $requestObject->setBody((string) $request['body']);
-        }
-
-        return $requestObject;
+        $this->curlOptions = $curlOptions;
     }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function setHeader($key, $value)
+    {
+        $this->headers[$key] = $value;
+    }
+
+    /**
+     * @param $key
+     */
+    public function removeHeader($key)
+    {
+        unset($this->headers[$key]);
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function setPostField($key, $value)
+    {
+        $this->postFields[$key] = $value;
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function setCurlOption($key, $value)
+    {
+        $this->curlOptions[$key] = $value;
+    }
+
+    public function addPostFile(array $file)
+    {
+        $this->postFiles[] = $file;
+    }
+
 }

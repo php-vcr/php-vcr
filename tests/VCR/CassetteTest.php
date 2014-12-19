@@ -35,8 +35,8 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
     public function testDontOverwriteRecord()
     {
         $request = new Request('GET', 'https://example.com');
-        $response1 = new Response(200, null, 'sometest');
-        $response2 = new Response(200, null, 'sometest');
+        $response1 = new Response(200, array(), 'sometest');
+        $response2 = new Response(200, array(), 'sometest');
         $this->cassette->record($request, $response1);
         $this->cassette->record($request, $response2);
 
@@ -46,7 +46,7 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
     public function testPlaybackAlreadyRecordedRequest()
     {
         $request = new Request('GET', 'https://example.com');
-        $response = new Response(200, null, 'sometest');
+        $response = new Response(200, array(), 'sometest');
         $this->cassette->record($request, $response);
 
         $this->assertEquals($response->toArray(), $this->cassette->playback($request)->toArray());
@@ -62,7 +62,7 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
     public function testHasResponseFound()
     {
         $request = new Request('GET', 'https://example.com');
-        $response = new Response(200, null, 'sometest');
+        $response = new Response(200, array(), 'sometest');
         $this->cassette->record($request, $response);
 
         $this->assertTrue($this->cassette->hasResponse($request), 'Expected true if request was found.');

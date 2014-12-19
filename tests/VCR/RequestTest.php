@@ -7,6 +7,9 @@ namespace VCR;
  */
 class RequestTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \VCR\Request
+     */
     protected $request;
 
     public function setUp()
@@ -30,12 +33,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->request->setMethod('post');
 
         $this->assertEquals('POST', $this->request->getMethod());
-    }
-
-    public function testSendFailsMissingClient()
-    {
-        $this->setExpectedException('Guzzle\Common\Exception\RuntimeException', 'A client must be set on the request');
-        $this->request->send();
     }
 
     public function testMatches()
@@ -62,17 +59,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->request->matches($request, array(array('some', 'method')));
     }
 
-    public function testGetHeadersAsObject()
-    {
-        $this->assertEquals(
-            array(
-                'User-Agent' => array('Unit-Test'),
-                'Host'       => array('example.com')
-            ),
-            $this->request->getHeaders(true)->toArray()
-        );
-    }
-
     public function testRestoreRequest()
     {
         $restoredRequest = Request::fromArray($this->request->toArray());
@@ -91,7 +77,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testStorePostFields()
     {
-        $this->request->addPostFields(array('para1' => 'val1'));
+        $this->request->setPostFields(array('para1' => 'val1'));
         $this->assertEquals(
             array(
                 'method'      => 'GET',
@@ -109,7 +95,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testRestorePostFields()
     {
-        $this->request->addPostFields(array('para1' => 'val1'));
+        $this->request->setPostFields(array('para1' => 'val1'));
         $restoredRequest = Request::fromArray($this->request->toArray());
         $this->assertEquals(
             array(
@@ -128,7 +114,14 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testStorePostFile()
     {
-        $this->request->addPostFile('field_name', 'tests/fixtures/unittest_curl_test');
+
+        $file = array(
+            'fieldName'   => 'field_name',
+            'contentType' => 'application/octet-stream',
+            'filename'    => 'tests/fixtures/unittest_curl_test',
+            'postname'    => 'unittest_curl_test',
+        );
+        $this->request->addPostFile($file);
         $this->assertEquals(
             array(
                 'method'      => 'GET',
@@ -139,14 +132,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                     'Content-Type' => 'multipart/form-data',
                     'Expect'       => '100-Continue'
                 ),
-                'post_files' => array(
-                    array(
-                        'fieldName'   => 'field_name',
-                        'contentType' => 'application/octet-stream',
-                        'filename'    => 'tests/fixtures/unittest_curl_test',
-                        'postname'    => 'unittest_curl_test',
-                    )
-                ),
+                'post_files' => array($file),
             ),
             $this->request->toArray()
         );
@@ -154,7 +140,13 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testRestorePostFiles()
     {
-        $this->request->addPostFile('field_name', 'tests/fixtures/unittest_curl_test');
+        $file = array(
+            'fieldName'   => 'field_name',
+            'contentType' => 'application/octet-stream',
+            'filename'    => 'tests/fixtures/unittest_curl_test',
+            'postname'    => 'unittest_curl_test',
+        );
+        $this->request->addPostFile($file);
         $restoredRequest = Request::fromArray($this->request->toArray());
         $this->assertEquals(
             array(
@@ -166,14 +158,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                     'Content-Type' => 'multipart/form-data',
                     'Expect'       => '100-Continue'
                     ),
-                'post_files' => array(
-                    array(
-                        'fieldName'   => 'field_name',
-                        'contentType' => 'application/octet-stream',
-                        'filename'    => 'tests/fixtures/unittest_curl_test',
-                        'postname'    => 'unittest_curl_test',
-                    )
-                ),
+                'post_files' => array($file),
             ),
             $restoredRequest->toArray()
         );

@@ -87,7 +87,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
     {
         $testClass = $this;
         return function () use ($testClass) {
-            return new Response(200, null, $testClass->expected);
+            return new Response(200, array(), $testClass->expected);
         };
     }
 
@@ -100,7 +100,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $test = $this;
         return function ($request) use ($test, $expectedHeader) {
             $test->assertEquals($expectedHeader, $request->getHeader('Content-Type'));
-            return new Response(200, null, '');
+            return new Response(200, array(), '');
         };
     }
 }

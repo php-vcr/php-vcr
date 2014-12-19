@@ -56,16 +56,15 @@ class CurlHelper
     public static function handleOutput(Response $response, array $curlOptions, $ch)
     {
         if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
-            $headers = explode("\n", $response->getRawHeaders());
-            foreach($headers as $header) {
-                call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $header);
+            foreach($response->getHeaders() as $key => $value) {
+                call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $key . ': ' . $value);
             }
         }
 
         $body = (string) $response->getBody(true);
 
         if (!empty($curlOptions[CURLOPT_HEADER])) {
-            $body = $response->getRawHeaders() . $body;
+            $body = join("\n", $response->getHeaders()) . $body;
         }
 
         if (isset($curlOptions[CURLOPT_WRITEFUNCTION])) {
@@ -96,7 +95,7 @@ class CurlHelper
             case 0: // 0 == array of all curl options
                 $info = array();
                 foreach (self::$curlInfoList as $option => $key) {
-                   $info[$key] = $response->getInfo($option);
+                   $info[$key] = $response->getCurlInfo($option);
                 }
                 break;
             case CURLINFO_HTTP_CODE:
@@ -106,7 +105,7 @@ class CurlHelper
                 $info = $response->getHeader('Content-Length');
                 break;
             default:
-                $info = $response->getInfo($option);
+                $info = $response->getCurlInfo($option);
                 break;
         }
 
@@ -132,12 +131,6 @@ class CurlHelper
         switch ($option) {
             case CURLOPT_URL:
                 $request->setUrl($value);
-                break;
-            case CURLOPT_FOLLOWLOCATION:
-                $request->getParams()->set('redirect.disable', !$value);
-                break;
-            case CURLOPT_MAXREDIRS:
-                $request->getParams()->set('redirect.max', $value);
                 break;
             case CURLOPT_CUSTOMREQUEST:
                 $request->setMethod($value);
@@ -182,16 +175,16 @@ class CurlHelper
                 // Guzzle provides a callback to let curl read the body string.
                 // To get the body, this callback is called manually.
                 if (is_null($value)) {
-                    $request->getCurlOptions()->set($option, $value);
+                    $request->setCurlOption($option, $value);
                     break;
                 }
-                $bodySize = $request->getCurlOptions()->get(CURLOPT_INFILESIZE);
+                $bodySize = $request->getCurlOption(CURLOPT_INFILESIZE);
                 Assertion::notEmpty($bodySize, "To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.");
                 $body = call_user_func_array($value, array($curlHandle, fopen('php://memory', 'r'), $bodySize));
                 $request->setBody($body);
                 break;
             default:
-                $request->getCurlOptions()->set($option, $value);
+                $request->setCurlOption($option, $value);
                 break;
         }
     }

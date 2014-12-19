@@ -5,12 +5,43 @@ namespace VCR;
 /**
  * Encapsulates a HTTP response.
  */
-class Response extends \Guzzle\Http\Message\Response
+class Response
 {
+    /**
+     * @var string
+     */
+    protected $statusCode;
+    /**
+     * @var array
+     */
+    protected $headers = array();
+    /**
+     * @var string
+     */
+    protected $body;
+    /**
+     * @var array
+     */
+    protected $curlInfo = array();
+
+    /**
+     * @param string $statusCode
+     * @param array $headers
+     * @param string $body
+     * @param array $curlInfo
+     */
+    function __construct($statusCode, array $headers = array(), $body = null, array $curlInfo = array())
+    {
+        $this->statusCode = $statusCode;
+        $this->headers = $headers;
+        $this->body = $body;
+        $this->curlInfo = $curlInfo;
+    }
+
     /**
      * Returns an array representation of this Response.
      *
-     * @return array Arrey representation of this Request.
+     * @return array Array representation of this Request.
      */
     public function toArray()
     {
@@ -28,25 +59,9 @@ class Response extends \Guzzle\Http\Message\Response
                 'status'    => $this->getStatusCode(),
                 'headers'   => $this->getHeaders(),
                 'body'      => $body,
-                'curl_info' => $this->getInfo()
+                'curl_info' => $this->getCurlInfo()
             )
         );
-    }
-
-    /**
-     * Returns a list of headers as key/value pairs.
-     *
-     * @return array List of headers as key/value pairs.
-     */
-    public function getHeaders()
-    {
-        $headers = array();
-        foreach (parent::getHeaders() as $header) {
-            $values = $header->toArray();
-            $headers[$header->getName()] = $values[0];
-        }
-
-        return $headers;
     }
 
     /**
@@ -70,16 +85,57 @@ class Response extends \Guzzle\Http\Message\Response
             $body = base64_decode($response['body']);
         }
 
-        $responseObject = new static(
+        return new static(
             isset($response['status']) ? $response['status'] : 200,
             isset($response['headers']) ? $response['headers'] : array(),
-            $body
+            $body,
+            isset($response['curl_info']) ? $response['curl_info'] : array()
         );
+    }
 
-        if (isset($response['curl_info'])) {
-            $responseObject->setInfo($response['curl_info']);
+    /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurlInfo()
+    {
+        return $this->curlInfo;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    public function getContentType()
+    {
+        return $this->getHeader('Content-Type');
+    }
+
+    public function getHeader($key)
+    {
+        if (!isset($this->headers[$key])) {
+            return null;
         }
 
-        return $responseObject;
+        return $this->headers[$key];
     }
 }

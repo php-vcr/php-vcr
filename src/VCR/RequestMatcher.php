@@ -107,8 +107,7 @@ class RequestMatcher
      */
     public static function matchPostFields(Request $first, Request $second)
     {
-        if (null !== $first->getPostFields()->toArray()
-          && $first->getPostFields()->toArray() != $second->getPostFields()->toArray() ) {
+        if (null !== $first->getPostFields() && $first->getPostFields() != $second->getPostFields()) {
             return false;
         }
 
@@ -125,7 +124,7 @@ class RequestMatcher
      */
     public static function matchQueryString(Request $first, Request $second)
     {
-        if (null !== $first->getQuery(true) && $first->getQuery(true) != $second->getQuery(true)) {
+        if (null !== $first->getQuery() && $first->getQuery() != $second->getQuery()) {
             return false;
         }
         return true;
