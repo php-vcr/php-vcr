@@ -3,6 +3,7 @@
 namespace VCR;
 
 use lapistano\ProxyObject\ProxyBuilder;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Test Videorecorder.
@@ -19,7 +20,10 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
 
     public function testInsertCassetteEjectExisting()
     {
-        $configuration = new Configuration();
+        vfsStream::setup('testDir');
+        $factory = VCRFactory::getInstance();
+        $configuration = $factory->get('VCR\Configuration');
+        $configuration->setCassettePath(vfsStream::url('testDir'));
         $configuration->enableLibraryHooks(array());
         $videorecorder = $this->getMockBuilder('\VCR\Videorecorder')
             ->setConstructorArgs(array($configuration, new Util\HttpClient(), VCRFactory::getInstance()))
