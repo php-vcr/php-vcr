@@ -1,0 +1,21 @@
+
+-
+    request:
+        method: GET
+        url: 'https://api.github.com/repos/php-vcr/php-vcr'
+        headers:
+            Host: api.github.com
+            User-Agent: 'Guzzle/3.8.1 curl/7.37.1 PHP/5.5.18'
+    response:
+        status: '403'
+        body: "{\n  \"message\": \"API rate limit exceeded for 77.58.151.64. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)\",\n  \"documentation_url\": \"https://developer.github.com/v3/#rate-limiting\"\n}\n"
+-
+    request:
+        method: GET
+        url: 'https://api.github.com/repos/php-vcr/random_stuff'
+        headers:
+            Host: api.github.com
+            User-Agent: 'Guzzle/3.8.1 curl/7.37.1 PHP/5.5.18'
+    response:
+        status: '403'
+        body: "{\n  \"message\": \"API rate limit exceeded for 77.58.151.64. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)\",\n  \"documentation_url\": \"https://developer.github.com/v3/#rate-limiting\"\n}\n"
