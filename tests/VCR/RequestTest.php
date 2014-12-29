@@ -85,7 +85,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'headers'     => array(
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8'
                     ),
                 'post_fields' => array('para1' => 'val1'),
             ),
@@ -104,7 +103,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'headers'     => array(
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8'
                     ),
                 'post_fields' => array('para1' => 'val1'),
             ),
@@ -129,8 +127,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'headers'     => array(
                     'User-Agent'   => 'Unit-Test',
                     'Host'         => 'example.com',
-                    'Content-Type' => 'multipart/form-data',
-                    'Expect'       => '100-Continue'
                 ),
                 'post_files' => array($file),
             ),
@@ -155,8 +151,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'headers'     => array(
                     'User-Agent'   => 'Unit-Test',
                     'Host'         => 'example.com',
-                    'Content-Type' => 'multipart/form-data',
-                    'Expect'       => '100-Continue'
                     ),
                 'post_files' => array($file),
             ),
@@ -175,7 +169,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'headers'     => array(
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    'Content-Length' => '8'
                 ),
                 'body' => 'sometest',
             ),

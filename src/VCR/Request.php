@@ -230,6 +230,10 @@ class Request
      * @return mixed
      */
     public function getCurlOption($key) {
+        if (empty($this->curlOptions[$key])) {
+            return null;
+        }
+
         return $this->curlOptions[$key];
     }
 

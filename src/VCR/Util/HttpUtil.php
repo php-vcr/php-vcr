@@ -2,6 +2,8 @@
 
 namespace VCR\Util;
 
+use VCR\Response;
+
 class HttpUtil
 {
     /**
@@ -73,5 +75,13 @@ class HttpUtil
         }
 
         return $curlHeaders;
+    }
+
+
+    public static function formatAsStatusString(Response $response)
+    {
+        return 'HTTP/' . $response->getHttpVersion()
+             . ' ' . $response->getStatusCode()
+             . ' ' . $response->getStatusMessage();
     }
 }

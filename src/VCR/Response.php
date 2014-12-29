@@ -138,14 +138,6 @@ class Response
         return $this->status['code'];
     }
 
-    /**
-     * @return string
-     */
-    public function getStatusAsString()
-    {
-        return 'HTTP/' . $this->httpVersion . ' ' . $this->status['code'] . ' ' . $this->status['message'];
-    }
-
     public function getContentType()
     {
         return $this->getHeader('Content-Type');
@@ -158,6 +150,22 @@ class Response
         }
 
         return $this->headers[$key];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHttpVersion()
+    {
+        return $this->httpVersion;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusMessage()
+    {
+        return $this->status['message'];
     }
 
     /**

@@ -195,11 +195,16 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
             CURLOPT_HEADER => true,
             CURLOPT_RETURNTRANSFER => true,
         );
-        $response = new Response(200, array(), 'example response');
+        $status = array(
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1'
+        );
+        $response = new Response($status, array(), 'example response');
 
         $output = CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
-        $this->assertEquals("HTTP/1.1 200 OK\r\n\r\n" . $response->getBody(true), $output);
+        $this->assertEquals("HTTP/1.1 200 OK\r\n\r\n" . $response->getBody(), $output);
     }
 
     public function testHandleResponseUsesWriteFunction()

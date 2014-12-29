@@ -122,6 +122,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurlInfoFromArray()
     {
+        $this->markTestSkipped('Is there a reason to store the cURL info?');
         $curlOptions = array('option' => 'value');
 
         $response = new Response(200, array(), null, $curlOptions);

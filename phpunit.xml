@@ -7,7 +7,7 @@
 
     <testsuites>
         <testsuite>
-            <directory>./tests</directory>
+            <directory>./tests/VCR</directory>
         </testsuite>
     </testsuites>
 
