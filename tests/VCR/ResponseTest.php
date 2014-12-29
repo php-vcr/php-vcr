@@ -134,7 +134,11 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     public function testToArray()
     {
         $expectedArray = array(
-            'status'    => 200,
+            'status'    => array(
+                'http_version' => '1.1',
+                'code' => 200,
+                'message' => 'OK',
+            ),
             'headers'   => array(
                 'host' => 'example.com'
             ),
