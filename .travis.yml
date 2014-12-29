@@ -33,3 +33,14 @@ script:
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+
+# Faster builds on travis setup not using sudo.
+sudo: false
+
+cache:
+  directories:
+    - vendor
+    - tests/integration/guzzle/3/vendor
+    - tests/integration/guzzle/4/vendor
+    - $HOME/.composer/cache
+
