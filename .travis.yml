@@ -21,7 +21,7 @@ matrix:
     - php: hhvm-nightly
 
 before_install:
-  - cd ${TEST_DIR}
+  - composer install && cd ${TEST_DIR}
 
 install:
   - composer install
