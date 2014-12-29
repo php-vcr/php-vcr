@@ -1,6 +1,7 @@
 <?php
 
 namespace VCR;
+use VCR\Util\Assertion;
 
 /**
  * Encapsulates a HTTP response.
@@ -10,7 +11,11 @@ class Response
     /**
      * @var string
      */
-    protected $statusCode;
+    protected $status = array(
+        'code' => null,
+        'message' => ''
+    );
+
     /**
      * @var array
      */
@@ -24,15 +29,17 @@ class Response
      */
     protected $curlInfo = array();
 
+    protected $httpVersion;
+
     /**
-     * @param string $statusCode
+     * @param string|array $status
      * @param array $headers
      * @param string $body
      * @param array $curlInfo
      */
-    function __construct($statusCode, array $headers = array(), $body = null, array $curlInfo = array())
+    function __construct($status, array $headers = array(), $body = null, array $curlInfo = array())
     {
-        $this->statusCode = $statusCode;
+        $this->setStatus($status);
         $this->headers = $headers;
         $this->body = $body;
         $this->curlInfo = $curlInfo;
@@ -58,8 +65,7 @@ class Response
             array(
                 'status'    => $this->getStatusCode(),
                 'headers'   => $this->getHeaders(),
-                'body'      => $body,
-                'curl_info' => $this->getCurlInfo()
+                'body'      => $body
             )
         );
     }
@@ -88,8 +94,7 @@ class Response
         return new static(
             isset($response['status']) ? $response['status'] : 200,
             isset($response['headers']) ? $response['headers'] : array(),
-            $body,
-            isset($response['curl_info']) ? $response['curl_info'] : array()
+            $body
         );
     }
 
@@ -104,9 +109,17 @@ class Response
     /**
      * @return array
      */
-    public function getCurlInfo()
+    public function getCurlInfo($option = null)
     {
-        return $this->curlInfo;
+        if (empty($option)) {
+            return $this->curlInfo;
+        }
+
+        if (!isset($this->curlInfo[$option])) {
+            return null;
+        }
+
+        return $this->curlInfo[$option];
     }
 
     /**
@@ -122,7 +135,15 @@ class Response
      */
     public function getStatusCode()
     {
-        return $this->statusCode;
+        return $this->status['code'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusAsString()
+    {
+        return 'HTTP/' . $this->httpVersion . ' ' . $this->status['code'] . ' ' . $this->status['message'];
     }
 
     public function getContentType()
@@ -137,5 +158,21 @@ class Response
         }
 
         return $this->headers[$key];
+    }
+
+    /**
+     * @param string|array $status
+     */
+    protected function setStatus($status)
+    {
+        if (is_array($status)) {
+            $this->status = $status;
+            if (!empty($status['http_version'])) {
+                $this->httpVersion = $status['http_version'];
+            }
+        } else {
+            Assertion::numeric($status, 'Response status must be either an array or a number.');
+            $this->status['code'] = $status;
+        }
     }
 }
