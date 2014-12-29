@@ -1,6 +1,6 @@
 language: php
 
-# Test php-vcr with all PHP versions but only use PHP 5.6 for integration tests.
+# Test php-vcr with all relevant PHP versions but only use PHP 5.6 for integration tests.
 matrix:
   fast_finish: true
   include:
