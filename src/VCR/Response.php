@@ -63,7 +63,7 @@ class Response
 
         return array_filter(
             array(
-                'status'    => $this->getStatusCode(),
+                'status'    => $this->status,
                 'headers'   => $this->getHeaders(),
                 'body'      => $body
             )

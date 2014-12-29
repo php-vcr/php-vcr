@@ -12,16 +12,16 @@ class HttpUtil
      * @param array $header List of headers. Example: ['Content-Type: text/html', '...']
      * @return array Key/value pairs of headers, e.g. ['Content-Type' => 'text/html']
      */
-    public static function parseHeaders(array $header)
+    public static function parseHeaders(array $headers)
     {
-        $headers = array();
+        $headerList = array();
 
         foreach ($headers as $line) {
             list ($key, $value) = explode(': ', $line);
-            $headers[$key] = $value;
+            $headerList[$key] = $value;
         }
 
-        return $headers;
+        return $headerList;
     }
 
     /**
