@@ -3,6 +3,7 @@ namespace VCR\Util;
 
 use VCR\Request;
 use VCR\Response;
+use VCR\VCRException;
 
 /**
  * Sends requests over the HTTP protocol.
@@ -19,59 +20,29 @@ class HttpClient
     public function send(Request $request)
     {
         $ch = curl_init($request->getUrl());
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FAILONERROR, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
         curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getBody());
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $request->getHeaders());
-
+        curl_setopt($ch, CURLOPT_HTTPHEADER, HttpUtil::formatHeadersForCurl($request->getHeaders()));
         curl_setopt_array($ch, $request->getCurlOptions());
 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, false);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+
         $response = curl_exec($ch);
+
         if ($response === false) {
             syslog(LOG_WARNING, "PHP-VCR cURL failed: " . curl_error($ch));
+            throw new VCRException('PHP-VCR cURL failed: ' . curl_error($ch), VCRException::REQUEST_ERROR);
         }
 
-        return $this->responseFromCurlResponse($ch, $response);
-    }
-
-    /**
-     * @param resource $ch
-     * @param string $response Response including header and body.
-     * @return Response
-     */
-    protected function responseFromCurlResponse($ch, $response)
-    {
-        list($header, $body) = explode("\r\n\r\n", $response, 2);
+        list($status, $headers, $body) = HttpUtil::parseResponse($response);
 
         return new Response(
-            curl_getinfo($ch, CURLINFO_HTTP_CODE),
-            $this->parseHeaders($header),
+            HttpUtil::parseStatus($status),
+            HttpUtil::parseHeaders($headers),
             $body,
             curl_getinfo($ch)
         );
-    }
-
-    /**
-     * Returns key value pairs of response headers.
-     *
-     * @param string $header
-     * @return array Key/value pairs of headers.
-     */
-    protected function parseHeaders($header)
-    {
-        $headers = array();
-
-        foreach (explode("\r\n", $header) as $i => $line) {
-            // skip status
-            if ($i === 0) {
-                continue;
-            }
-
-            list ($key, $value) = explode(': ', $line);
-            $headers[$key] = $value;
-        }
-
-        return $headers;
     }
 }
