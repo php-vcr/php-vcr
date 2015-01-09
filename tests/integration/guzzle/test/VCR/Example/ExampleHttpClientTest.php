@@ -11,7 +11,7 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_URL = 'http://httpbin.org/get';
 
-    protected $ignoreHeaders = array('Accept', 'Connect-Time', 'X-Request-Id');
+    protected $ignoreHeaders = array('Accept', 'Connect-Time', 'Total-Route-Time', 'X-Request-Id');
 
     public function setUp()
     {
