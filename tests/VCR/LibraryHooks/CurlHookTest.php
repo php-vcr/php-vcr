@@ -6,7 +6,6 @@ use VCR\Request;
 use VCR\Response;
 use VCR\Configuration;
 use VCR\CodeTransform\CurlCodeTransform;
-use VCR\Util\HttpClient;
 use VCR\Util\StreamProcessor;
 
 /**
@@ -278,70 +277,12 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, $callCount, 'Hook should have been called twice.');
         $this->assertEquals(
-            array("msg"=> 1, "result" => 0, "handle" => $curlHandle2),
+            array("msg" => 1, "result" => 0, "handle" => $curlHandle2),
             $lastInfo,
             'When called the first time curl_multi_info_read should return last curl info.'
         );
         $this->assertFalse($afterLastInfo, 'Multi info called the last time should return false.');
     }
-
-//    public function testShouldSetGuzzleCurlOptionsPost()
-//    {
-//        $url     = 'http://example.com';
-//        $body    = json_encode(array('key' => 'value'));
-//        $headers = array(
-//            'Content-Type' => 'application/json',
-//            'Host' => 'example.com',
-//            'User-Agent' => 'Guzzle/3.8.1 curl/7.30.0 PHP/5.4.16',
-//            'Content-Length' => strlen($body),
-//        );
-//
-//        $testClass = $this;
-//        $this->curlHook->enable(
-//            function ($request) use ($testClass, $url, $body, $headers) {
-//                $testClass->assertEquals('POST', $request->getMethod());
-//                $testClass->assertEquals($url, $request->getUrl());
-//                $testClass->assertEquals($body, $request->getBody());
-//                $testClass->assertEquals($headers, $request->getHeaders());
-//
-//                return new Response(200);
-//            }
-//        );
-//
-//        $client = new HttpClient();
-//        $client->post($url, $headers, $body)->send();
-//
-//        $this->curlHook->disable();
-//    }
-
-//    public function testShouldSetGuzzleCurlOptionsPut()
-//    {
-//        $url     = 'http://example.com';
-//        $body    = json_encode(array('key' => 'value'));
-//        $headers = array(
-//            'Content-Type' => 'application/json',
-//            'Host' => 'example.com',
-//            'User-Agent' => 'Guzzle/3.8.1 curl/7.30.0 PHP/5.4.16',
-//            'Content-Length' => strlen($body),
-//        );
-//
-//        $testClass = $this;
-//        $this->curlHook->enable(
-//            function ($request) use ($testClass, $url, $body, $headers) {
-//                $testClass->assertEquals("PUT", $request->getMethod());
-//                $testClass->assertEquals($url, $request->getUrl());
-//                $testClass->assertEquals($body, $request->getBody());
-//                $testClass->assertEquals($headers, $request->getHeaders());
-//
-//                return new Response(200);
-//            }
-//        );
-//
-//        $client = new Client();
-//        $client->put($url, $headers, $body)->send();
-//
-//        $this->curlHook->disable();
-//    }
 
     public function testShouldNotInterceptMultiCallWhenDisabled()
     {
