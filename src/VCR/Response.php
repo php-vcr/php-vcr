@@ -9,7 +9,7 @@ use VCR\Util\Assertion;
 class Response
 {
     /**
-     * @var string
+     * @var array
      */
     protected $status = array(
         'code' => null,
