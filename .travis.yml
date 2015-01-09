@@ -44,5 +44,6 @@ cache:
     - vendor
     - tests/integration/guzzle/3/vendor
     - tests/integration/guzzle/4/vendor
+    - tests/integration/guzzle/5/vendor
     - $HOME/.composer/cache
 
