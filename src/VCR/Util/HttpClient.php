@@ -32,14 +32,7 @@ class HttpClient
         curl_setopt($ch, CURLOPT_FAILONERROR, false);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
-        $response = curl_exec($ch);
-
-        if ($response === false) {
-            syslog(LOG_WARNING, "PHP-VCR cURL failed: " . curl_error($ch));
-            throw new VCRException('PHP-VCR cURL failed: ' . curl_error($ch), VCRException::REQUEST_ERROR);
-        }
-
-        list($status, $headers, $body) = HttpUtil::parseResponse($response);
+        list($status, $headers, $body) = HttpUtil::parseResponse(curl_exec($ch));
 
         return new Response(
             HttpUtil::parseStatus($status),
