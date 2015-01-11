@@ -170,14 +170,12 @@ class CurlHelper
                     $request->setHeader($headerParts[0], $headerParts[1]);
                 }
                 break;
+            case CURLOPT_FILE:
             case CURLOPT_HEADER:
             case CURLOPT_WRITEFUNCTION:
             case CURLOPT_HEADERFUNCTION:
-                // Ignore writer and header functions.
+                // Ignore header, file and writer functions.
                 // These options are stored and will be handled later in handleOutput().
-                break;
-            case CURLOPT_FILE:
-                $request->setBody($value);
                 break;
             case CURLOPT_READFUNCTION:
                 // Guzzle provides a callback to let curl read the body string.
