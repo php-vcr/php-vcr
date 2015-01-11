@@ -20,6 +20,8 @@ matrix:
         php: 5.6
       - env: TEST_DIR=tests/integration/guzzle/5
         php: 5.6
+      - env: TEST_DIR=tests/integration/soap
+        php: 5.6
   allow_failures:
     - php: hhvm-nightly
 
