@@ -57,7 +57,7 @@ abstract class AbstractStorage implements Storage
     {
         $file = $cassettePath . DIRECTORY_SEPARATOR . $cassetteName;
 
-        if (!file_exists($file)) {
+        if (!file_exists($file) || 0 === filesize($file)) {
             file_put_contents($file, $defaultContent);
 
             $this->isNew = true;

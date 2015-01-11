@@ -106,6 +106,21 @@ class JsonTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testStoreRecordingWhenBlankFileAlreadyExists()
+    {
+        vfsStream::create(array('blank_file_test' => ''));
+        $filePath = vfsStream::url('test/') . 'blank_file_test';
+
+        $jsonObject = new Json(vfsStream::url('test/'), 'blank_file_test');
+        $stored = array(
+            'request' => 'some request',
+            'response' => 'some response'
+        );
+        $jsonObject->storeRecording($stored);
+
+        $this->assertJson(file_get_contents($filePath));
+    }
+
     private function iterateAndTest($json, $expected, $message)
     {
         file_put_contents($this->filePath, $json);
