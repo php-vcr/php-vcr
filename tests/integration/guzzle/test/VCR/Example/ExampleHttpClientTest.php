@@ -60,7 +60,7 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
     protected function requestGETIntercepted()
     {
         \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('github_adri_php-vcr.yml');
+        \VCR\VCR::insertCassette('test-cassette.yml');
         $info = $this->requestGET();
         \VCR\VCR::turnOff();
 

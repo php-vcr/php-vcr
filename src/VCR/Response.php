@@ -52,7 +52,7 @@ class Response
      */
     public function toArray()
     {
-        $body = (string) $this->getBody(true);
+        $body = $this->getBody();
         // Base64 encode when binary
         if (
             strpos($this->getContentType(), 'application/x-gzip') !== false

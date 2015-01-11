@@ -9,7 +9,7 @@ class HttpUtil
     /**
      * Returns key value pairs of response headers.
      *
-     * @param array $header List of headers. Example: ['Content-Type: text/html', '...']
+     * @param array $headers List of headers. Example: ['Content-Type: text/html', '...']
      * @return array Key/value pairs of headers, e.g. ['Content-Type' => 'text/html']
      */
     public static function parseHeaders(array $headers)
@@ -77,7 +77,12 @@ class HttpUtil
         return $curlHeaders;
     }
 
-
+    /**
+     * Returns a HTTP status line from specified response.
+     *
+     * @param Response $response
+     * @return string HTTP status line.
+     */
     public static function formatAsStatusString(Response $response)
     {
         return 'HTTP/' . $response->getHttpVersion()
