@@ -1,6 +1,6 @@
 *.idea*
 *.sublime-*
-vendor/*
+**/vendor/*
 coverage/*
 notes.md
 tests/fixtures/cassette*

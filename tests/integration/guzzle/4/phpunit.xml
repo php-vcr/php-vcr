@@ -1,4 +1,4 @@
-<phpunit bootstrap="tests/bootstrap.php"
+<phpunit bootstrap="../test/bootstrap.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -7,7 +7,7 @@
 
     <testsuites>
         <testsuite>
-            <directory>./tests/VCR</directory>
+            <directory>../test</directory>
         </testsuite>
     </testsuites>
 

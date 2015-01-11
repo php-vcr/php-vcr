@@ -2,7 +2,6 @@
 
 namespace VCR;
 
-use Guzzle\Http\Client;
 use org\bovigo\vfs\vfsStream;
 
 /**
@@ -33,19 +32,6 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::insertCassette('unittest_streamwrapper_test');
         $result = file_get_contents('http://example.com');
         $this->assertEquals('This is a stream wrapper test dummy.', $result, 'Stream wrapper call was not intercepted.');
-        VCR::eject();
-        VCR::turnOff();
-    }
-
-    public function testShouldInterceptGuzzleLibrary()
-    {
-        VCR::configure()->enableLibraryHooks(array('curl'));
-        VCR::turnOn();
-        VCR::insertCassette('unittest_guzzle_test');
-        $client = new Client();
-        $client->setUserAgent(false);
-        $response = $client->post('http://example.com')->send();
-        $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
         VCR::eject();
         VCR::turnOff();
     }
