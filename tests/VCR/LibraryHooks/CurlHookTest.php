@@ -191,7 +191,7 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         curl_close($curlHandle);
 
         $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
-        $this->assertEquals(22, count($info), 'curl_getinfo() should return 19 values.');
+        $this->assertEquals(21, count($info), 'curl_getinfo() should return 19 values.');
         $this->curlHook->disable();
     }
 
