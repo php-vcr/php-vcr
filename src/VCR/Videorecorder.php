@@ -171,9 +171,14 @@ class Videorecorder
                 . "VCR::insertCassette('name');"
             );
         }
+        $cassettename = $this->cassette->getName();
+        $cassettename = pathinfo($cassettename, PATHINFO_FILENAME);
+        $md5 = md5(md5($request->getBody()).md5($request->getUrl()).$request->getMethod());
+        $this->insertCassette($cassettename . "." . $md5);
 
-        if ($this->cassette->hasResponse($request)) {
-            return $this->cassette->playback($request);
+        $response = $this->cassette->playback($request);
+        if ($response !== null) {
+             return $response;
         }
 
         if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
