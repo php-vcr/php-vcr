@@ -272,6 +272,17 @@ class Request
     }
 
     /**
+     * Sets the auth credentials.
+     *
+     * @param string $username
+     * @param string $password
+     */
+    public function setAuth($username, $password)
+    {
+        $this->setHeader('Authorization', 'Basic ' . base64_encode($username . ':' . $password));
+    }
+
+    /**
      * @param array $curlOptions
      */
     public function setCurlOptions(array $curlOptions)
