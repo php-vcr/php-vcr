@@ -84,7 +84,12 @@ class StreamWrapperHook implements LibraryHook
     {
         $requestCallback = self::$requestCallback;
 
-        $context = stream_context_get_options($this->context);
+        if ($this->context) {
+            $context = stream_context_get_options($this->context);
+        } else {
+            $context = array();
+        }
+
         $headers = array();
 
         //parse headers added to the stream_context
