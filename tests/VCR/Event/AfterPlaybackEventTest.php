@@ -6,7 +6,7 @@ use VCR\Request;
 use VCR\Cassette;
 use VCR\Configuration;
 use VCR\Storage;
-use Guzzle\Http\Message\Response;
+use VCR\Response;
 
 class AfterPlaybackEventTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,7 +31,7 @@ class AfterPlaybackEventTest extends \PHPUnit_Framework_TestCase
 
     public function testGetResponse()
     {
-        $this->assertInstanceOf('Guzzle\Http\Message\Response', $this->event->getResponse());
+        $this->assertInstanceOf('VCR\Response', $this->event->getResponse());
     }
 
     public function testGetCassette()

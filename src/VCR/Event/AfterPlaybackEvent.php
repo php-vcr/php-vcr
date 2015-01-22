@@ -4,7 +4,7 @@ namespace VCR\Event;
 
 use VCR\Cassette;
 use VCR\Request;
-use Guzzle\Http\Message\Response;
+use VCR\Response;
 use Symfony\Component\EventDispatcher\Event;
 
 class AfterPlaybackEvent extends Event

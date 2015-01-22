@@ -3,7 +3,7 @@
 namespace VCR\Event;
 
 use VCR\Request;
-use Guzzle\Http\Message\Response;
+use VCR\Response;
 
 class AfterHttpRequestEventTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,6 +24,6 @@ class AfterHttpRequestEventTest extends \PHPUnit_Framework_TestCase
 
     public function testGetResponse()
     {
-        $this->assertInstanceOf('Guzzle\Http\Message\Response', $this->event->getResponse());
+        $this->assertInstanceOf('VCR\Response', $this->event->getResponse());
     }
 }

@@ -2,7 +2,6 @@
 
 namespace VCR;
 
-use Guzzle\Http\Client;
 use Symfony\Component\EventDispatcher\Event;
 use org\bovigo\vfs\vfsStream;
 
@@ -38,17 +37,29 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::turnOff();
     }
 
-    public function testShouldInterceptGuzzleLibrary()
+    public function testShouldInterceptCurlLibrary()
     {
         VCR::configure()->enableLibraryHooks(array('curl'));
         VCR::turnOn();
-        VCR::insertCassette('unittest_guzzle_test');
-        $client = new Client();
-        $client->setUserAgent(false);
-        $response = $client->post('http://example.com')->send();
-        $this->assertEquals('This is a guzzle test dummy.', (string) $response->getBody(), 'Guzzle call was not intercepted.');
+        VCR::insertCassette('unittest_curl_test');
+
+        $output = $this->doCurlGetRequest('http://google.com/');
+
+        $this->assertEquals('This is a curl test dummy.', $output, 'Curl call was not intercepted.');
         VCR::eject();
         VCR::turnOff();
+    }
+
+    private function doCurlGetRequest($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, false);
+        $output = curl_exec($ch);
+        curl_close($ch);
+
+        return $output;
     }
 
     public function testShouldInterceptSoapLibrary()
@@ -119,22 +130,18 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     {
         VCR::configure()
             ->enableLibraryHooks(array('curl'));
-
         $this->recordAllEvents();
-
         VCR::turnOn();
-        VCR::insertCassette('unittest_guzzle_test');
-        $client = new Client();
-        $client->setUserAgent(false);
-        $client->post('http://example.com')->send();
+        VCR::insertCassette('unittest_curl_test');
 
-        VCR::eject();
-        VCR::turnOff();
+        $this->doCurlGetRequest('http://google.com/');
 
         $this->assertEquals(
             array(VCREvents::VCR_BEFORE_PLAYBACK, VCREvents::VCR_AFTER_PLAYBACK),
             $this->getRecordedEventNames()
         );
+        VCR::eject();
+        VCR::turnOff();
 
     }
 
@@ -144,23 +151,18 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::configure()
             ->setCassettePath(vfsStream::url('testDir'))
             ->enableLibraryHooks(array('curl'));
-
         $this->recordAllEvents();
-
         VCR::turnOn();
         VCR::insertCassette('virtual_cassette');
 
-        $client = new Client();
-        $client->post('http://example.com')->send();
-
-        VCR::eject();
-        VCR::turnOff();
+        $this->doCurlGetRequest('http://google.com/');
 
         $this->assertEquals(
             array(VCREvents::VCR_BEFORE_HTTP_REQUEST, VCREvents::VCR_AFTER_HTTP_REQUEST, VCREvents::VCR_BEFORE_RECORD),
             $this->getRecordedEventNames()
         );
-
+        VCR::eject();
+        VCR::turnOff();
     }
 
     private function recordAllEvents()

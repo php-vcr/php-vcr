@@ -3,7 +3,7 @@
 namespace VCR\Event;
 
 use VCR\Request;
-use Guzzle\Http\Message\Response;
+use VCR\Response;
 use Symfony\Component\EventDispatcher\Event;
 
 class AfterHttpRequestEvent extends Event
