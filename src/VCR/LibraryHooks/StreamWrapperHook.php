@@ -5,6 +5,7 @@ namespace VCR\LibraryHooks;
 use VCR\Request;
 use VCR\Response;
 use VCR\Util\Assertion;
+use VCR\Util\HttpUtil;
 
 /**
  * Library hook for streamWrapper functions using stream_wrapper_register().
@@ -31,6 +32,9 @@ class StreamWrapperHook implements LibraryHook
      */
     protected $response;
 
+    /**
+     * @var resource Current stream context.
+     */
     public $context;
 
     /**
@@ -83,25 +87,59 @@ class StreamWrapperHook implements LibraryHook
     public function stream_open($path, $mode, $options, &$opened_path)
     {
         $requestCallback = self::$requestCallback;
-
-        if ($this->context) {
-            $context = stream_context_get_options($this->context);
-        } else {
-            $context = array();
-        }
-
+        $http = $this->getHttpOptionsFromContext();
         $headers = array();
 
-        //parse headers added to the stream_context
-        if (isset($context['http']) && isset($context['http']['header']) ) {
-            $cheaders = $context['http']['header'];
-            $parsedheaders = array_map(function($x) { return array_map("trim", explode(":", $x, 2)); }, array_filter(array_map("trim", explode("\n", $cheaders))));
-            foreach ($parsedheaders as $header) {
-                $headers[$header[0]] = $header[1];
-            }
+        if (!empty($http['header'])) {
+            $headers = HttpUtil::parseHeaders(HttpUtil::parseRawHeader($http['header']));
         }
-        $this->response = $requestCallback(new Request('GET', $path, $headers));
+
+        $request = new Request(
+            !empty($http['method']) ? $http['method'] : 'GET',
+            $path,
+            $headers
+        );
+
+        if (!empty($http['content'])) {
+            $request->setBody($http['content']);
+        }
+
+        if (!empty($http['user_agent'])) {
+            $request->setHeader('User-Agent', $http['user_agent']);
+        }
+
+        if (isset($http['follow_location'])) {
+            $request->setCurlOption(CURLOPT_FOLLOWLOCATION, (bool) $http['follow_location']);
+        }
+
+        if (isset($http['max_redirects'])) {
+            $request->setCurlOption(CURLOPT_MAXREDIRS, $http['max_redirects']);
+        }
+
+        if (isset($http['timeout'])) {
+            $request->setCurlOption(CURLOPT_TIMEOUT, $http['timeout']);
+        }
+
+        // TODO: protocol_version
+
+        $this->response = $requestCallback($request);
         return true;
+    }
+
+    /**
+     * Returns HTTP options from current stream context.
+     *
+     * @see http://php.net/manual/en/context.http.php
+     * @return array HTTP options.
+     */
+    protected function getHttpOptionsFromContext() {
+        if (!$this->context) {
+            return array();
+        }
+
+        $context = stream_context_get_options($this->context);
+
+        return !empty($context['http']) ? $context['http'] : array();
     }
 
     /**
@@ -239,14 +277,5 @@ class StreamWrapperHook implements LibraryHook
     public function stream_metadata($path, $option, $var)
     {
         return false;
-    }
-
-    /**
-     * Cleanup.
-     *
-     * @return  void
-     */
-    public function __destruct()
-    {
     }
 }

@@ -54,10 +54,20 @@ class HttpUtil
         list($rawHeader, $rawBody) = explode("\r\n\r\n", $response, 2);
 
         // Parse headers and status.
-        $headers = explode("\r\n", $rawHeader);
+        $headers = self::parseRawHeader($rawHeader);
         $status = array_shift($headers);
 
         return array($status, $headers, $rawBody);
+    }
+
+    /**
+     * Returns an array of arrays for specified raw header string.
+     *
+     * @param string $header
+     * @return array
+     */
+    public static function parseRawHeader($rawHeader) {
+        return explode("\r\n", trim($rawHeader));
     }
 
     /**
