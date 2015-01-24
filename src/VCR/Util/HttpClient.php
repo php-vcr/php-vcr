@@ -3,7 +3,6 @@ namespace VCR\Util;
 
 use VCR\Request;
 use VCR\Response;
-use VCR\VCRException;
 
 /**
  * Sends requests over the HTTP protocol.

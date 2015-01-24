@@ -2,6 +2,7 @@
 
 namespace VCR\LibraryHooks;
 
+use VCR\Request;
 use VCR\Response;
 use VCR\Configuration;
 use VCR\CodeTransform\SoapCodeTransform;
@@ -17,7 +18,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
 
     protected $config;
 
-    /** @var  Soap $soapHook */
+    /** @var  SoapHook $soapHook */
     protected $soapHook;
 
     public function setup()
@@ -25,7 +26,6 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $this->config = new Configuration();
         $this->soapHook = new SoapHook(new SoapCodeTransform(), new StreamProcessor($this->config));
     }
-
 
     public function testShouldInterceptCallWhenEnabled()
     {
@@ -84,7 +84,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
     protected function getHeaderCheckCallback($expectedHeader)
     {
         $test = $this;
-        return function ($request) use ($test, $expectedHeader) {
+        return function (Request $request) use ($test, $expectedHeader) {
             $test->assertEquals($expectedHeader, $request->getHeader('Content-Type'));
             return new Response(200, array(), '');
         };
