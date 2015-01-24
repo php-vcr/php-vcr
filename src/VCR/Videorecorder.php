@@ -225,8 +225,9 @@ class Videorecorder
 
         if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
             throw new \LogicException(
-                "Invalid http request. The cassette inserted did not have the necessary response. "
-                . "If you want to send a request anyway, make sure your mode is set to new_episodes.");
+                "The request does not match a previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
+                . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
+                . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes.");
         }
 
         $this->disableLibraryHooks();
