@@ -62,7 +62,7 @@ class SoapHook implements LibraryHook
      *
      * @return string SOAP response.
      */
-    public function doRequest($request, $location, $action, $version, $one_way = 0)
+    public function doRequest($request, $location, $action, $version, $one_way = 0, $options = array())
     {
         if ($this->status === self::DISABLED) {
             throw new VCRException('Hook must be enabled.', VCRException::LIBRARY_HOOK_DISABLED);
@@ -73,6 +73,9 @@ class SoapHook implements LibraryHook
         $vcrRequest->setHeader('Content-Type', $contentType . '; charset=utf-8; action="' . $action . '"');
         $vcrRequest->setBody($request);
 
+        if (isset($options['login'])) {
+            $vcrRequest->setAuth($options['login'], $options['password']);
+        }
         $requestCallback = self::$requestCallback;
         /**
          * @var \VCR\Response $response

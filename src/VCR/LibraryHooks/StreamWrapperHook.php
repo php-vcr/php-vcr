@@ -31,6 +31,8 @@ class StreamWrapperHook implements LibraryHook
      */
     protected $response;
 
+    public $context;
+
     /**
      * @inheritDoc
      */
@@ -81,8 +83,24 @@ class StreamWrapperHook implements LibraryHook
     public function stream_open($path, $mode, $options, &$opened_path)
     {
         $requestCallback = self::$requestCallback;
-        $this->response = $requestCallback(new Request('GET', $path));
 
+        if ($this->context) {
+            $context = stream_context_get_options($this->context);
+        } else {
+            $context = array();
+        }
+
+        $headers = array();
+
+        //parse headers added to the stream_context
+        if (isset($context['http']) && isset($context['http']['header']) ) {
+            $cheaders = $context['http']['header'];
+            $parsedheaders = array_map(function($x) { return array_map("trim", explode(":", $x, 2)); }, array_filter(array_map("trim", explode("\n", $cheaders))));
+            foreach ($parsedheaders as $header) {
+                $headers[$header[0]] = $header[1];
+            }
+        }
+        $this->response = $requestCallback(new Request('GET', $path, $headers));
         return true;
     }
 
@@ -157,6 +175,19 @@ class StreamWrapperHook implements LibraryHook
         return array();
     }
 
+     /**
+     * Retrieve information about a file resource.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.url-stat.php
+     *
+     * @return array See stat().
+     */
+
+    public function url_stat($path,$flags)
+    {
+        return array();
+    }
+
     /**
      * Seeks to specific location in a stream.
      *
@@ -217,6 +248,5 @@ class StreamWrapperHook implements LibraryHook
      */
     public function __destruct()
     {
-        self::$requestCallback = null;
     }
 }
