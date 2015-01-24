@@ -73,13 +73,12 @@ class SoapHook implements LibraryHook
         $vcrRequest->setHeader('Content-Type', $contentType . '; charset=utf-8; action="' . $action . '"');
         $vcrRequest->setBody($request);
 
-        if (isset($options['login'])) {
-            $vcrRequest->setAuth($options['login'], $options['password']);
+        if (!empty($options['login'])) {
+            $vcrRequest->setAuthorization($options['login'], $options['password']);
         }
+
+        /* @var \VCR\Response $response */
         $requestCallback = self::$requestCallback;
-        /**
-         * @var \VCR\Response $response
-         */
         $response = $requestCallback($vcrRequest);
 
         return $response->getBody();

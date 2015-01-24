@@ -35,6 +35,13 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('POST', $this->request->getMethod());
     }
 
+    public function testSetAuthorization()
+    {
+        $this->request->setAuthorization('login', 'password');
+
+        $this->assertEquals('Basic bG9naW46cGFzc3dvcmQ=', $this->request->getHeader('Authorization'));
+    }
+
     public function testMatches()
     {
         $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));

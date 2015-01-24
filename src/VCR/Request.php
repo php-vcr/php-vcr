@@ -94,7 +94,6 @@ class Request
         );
     }
 
-
     /**
      * Creates a new Request from a specified array.
      *
@@ -272,12 +271,12 @@ class Request
     }
 
     /**
-     * Sets the auth credentials.
+     * Sets the authorization credentials as header.
      *
-     * @param string $username
-     * @param string $password
+     * @param string $username Username.
+     * @param string $password Password.
      */
-    public function setAuth($username, $password)
+    public function setAuthorization($username, $password)
     {
         $this->setHeader('Authorization', 'Basic ' . base64_encode($username . ':' . $password));
     }
