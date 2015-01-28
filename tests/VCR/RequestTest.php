@@ -210,4 +210,10 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             )
         );
     }
+
+    public function testGetHostReturnsBothHostAndPort()
+    {
+        $request = new Request('GET', 'http://example.com:5000/foo?param=key');
+        $this->assertEquals('example.com:5000', $request->getHost());
+    }
 }
