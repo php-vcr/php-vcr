@@ -71,7 +71,7 @@ class RequestMatcher
     {
         $firstHeaders = $first->getHeaders();
         foreach ($second->getHeaders() as $key => $pattern) {
-            if (!isset($firstHeaders[$key])
+            if (!array_key_exists($key, $firstHeaders)
                 || $pattern !== $firstHeaders[$key]) {
                 return false;
             }
