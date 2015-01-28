@@ -197,7 +197,13 @@ class Request
      */
     public function getHost()
     {
-        return parse_url($this->getUrl(), PHP_URL_HOST);
+        $host = parse_url($this->getUrl(), PHP_URL_HOST);
+
+        if ($port = parse_url($this->getUrl(), PHP_URL_PORT)) {
+          $host .= ':' . $port;
+        }
+
+        return $host;
     }
 
     /**
