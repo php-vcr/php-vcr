@@ -30,15 +30,7 @@ class RequestMatcher
      */
     public static function matchUrl(Request $first, Request $second)
     {
-        if (null !== $first->getPath()) {
-            $path = str_replace('#', '\\#', $first->getPath());
-
-            if (!preg_match('#'.$path.'#', rawurldecode($second->getPath()))) {
-                return false;
-            }
-        }
-
-        return true;
+        return !((null !== $first->getPath()) and ((string) $first->getPath() != (string) $second->getPath()));
     }
 
     /**
