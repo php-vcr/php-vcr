@@ -1,18 +1,51 @@
 language: php
-php:
-  - 5.6
-  - 5.5
-  - 5.4
-  - 5.3
-  - hhvm-nightly
 
+# Test php-vcr with all relevant PHP versions but only use PHP 5.6 for integration tests.
 matrix:
   fast_finish: true
+  include:
+      - env: TEST_DIR=.
+        php: 5.3
+      - env: TEST_DIR=.
+        php: 5.4
+      - env: TEST_DIR=.
+        php: 5.5
+      - env: TEST_DIR=.
+        php: 5.6
+      - env: TEST_DIR=.
+        php: hhvm-nightly
+      - env: TEST_DIR=tests/integration/guzzle/3
+        php: 5.6
+      - env: TEST_DIR=tests/integration/guzzle/4
+        php: 5.6
+      - env: TEST_DIR=tests/integration/guzzle/5
+        php: 5.6
+      - env: TEST_DIR=tests/integration/soap
+        php: 5.6
   allow_failures:
     - php: hhvm-nightly
 
-before_script:
+before_install:
+  - composer install && cd ${TEST_DIR}
+
+install:
   - composer install
 
 script:
-  - phpunit
+  - phpunit --coverage-clover=coverage.clover
+
+after_success:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+
+# Faster builds on travis setup not using sudo.
+sudo: false
+
+cache:
+  directories:
+    - vendor
+    - tests/integration/guzzle/3/vendor
+    - tests/integration/guzzle/4/vendor
+    - tests/integration/guzzle/5/vendor
+    - $HOME/.composer/cache
+

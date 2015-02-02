@@ -10,7 +10,7 @@ use VCR\Util\Assertion;
  * A Storage can be iterated using standard loops.
  * New recordings can be stored.
  */
-abstract class AbstractStorage implements \Iterator
+abstract class AbstractStorage implements Storage
 {
     /**
      * @var resource File handle.
@@ -57,7 +57,7 @@ abstract class AbstractStorage implements \Iterator
     {
         $file = $cassettePath . DIRECTORY_SEPARATOR . $cassetteName;
 
-        if (!file_exists($file)) {
+        if (!file_exists($file) || 0 === filesize($file)) {
             file_put_contents($file, $defaultContent);
 
             $this->isNew = true;
@@ -69,14 +69,6 @@ abstract class AbstractStorage implements \Iterator
 
         $this->handle = fopen($file, 'r+');
     }
-
-    /**
-     * Stores an array of data.
-     *
-     * @param array $recording Array to store in storage.
-     * @return void
-     */
-    public abstract function storeRecording(array $recording);
 
     /**
      * Returns the current record.

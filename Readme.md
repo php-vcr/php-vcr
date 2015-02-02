@@ -1,6 +1,6 @@
 ![PHP-VCR](https://dl.dropbox.com/u/13186339/blog/php-vcr.png)
 
-[![Build Status](https://travis-ci.org/php-vcr/php-vcr.png?branch=master)](https://travis-ci.org/php-vcr/php-vcr)
+[![Build Status](https://travis-ci.org/php-vcr/php-vcr.svg?branch=master)](https://travis-ci.org/php-vcr/php-vcr)
 [![Dependency Status](http://www.versioneye.com/user/projects/525a6160632bac1e35000001/badge.png)](http://www.versioneye.com/user/projects/525a6160632bac1e35000001)
 [![Code Coverage](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/coverage.png?s=15cf1644c8cf37a868e03cfba809a5e24c78f285)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/quality-score.png?s=4f638dbca5eb51fb9c87a1dd45c5df94687d85bd)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
@@ -91,13 +91,10 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 
 ## Installation
 
-Add php-vcr to your `composer.json`.
+Simply run the following command:
 
-``` json
-  "php-vcr/php-vcr": "dev-master"
-```
 ``` bash
-composer install
+$ composer require --dev php-vcr/php-vcr
 ```
 
 ## Dependencies
@@ -123,6 +120,11 @@ phpunit ./tests
 
 ## Changelog
 
+**The changelog has moved to the [PHP-VCR releases page](https://github.com/php-vcr/php-vcr/releases).**
+
+Old changelog entries:
+
+ * 2014-10-23 Release 1.1.6: #73, #74, #75, improvements for JSON storage and binary requests.
  * 2014-09-11 Release 1.1.5: Fixes #58 #60, #61, #69 updated vendors and new record mode.
  * 2014-04-26 Release 1.1.4: Fixes #50, #52, #53, #54, #56 and better error messages.
  * 2014-04-12 Release 1.1.3: Fixes #48: Allows data to be passed to CURLOPT_POSTFIELDS.

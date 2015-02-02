@@ -2,6 +2,7 @@
 
 namespace VCR\LibraryHooks;
 
+use VCR\Request;
 use VCR\Response;
 use VCR\Configuration;
 use VCR\CodeTransform\SoapCodeTransform;
@@ -17,7 +18,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
 
     protected $config;
 
-    /** @var  Soap $soapHook */
+    /** @var  SoapHook $soapHook */
     protected $soapHook;
 
     public function setup()
@@ -25,7 +26,6 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $this->config = new Configuration();
         $this->soapHook = new SoapHook(new SoapCodeTransform(), new StreamProcessor($this->config));
     }
-
 
     public function testShouldInterceptCallWhenEnabled()
     {
@@ -38,20 +38,6 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $this->soapHook->disable();
         $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
         $this->assertEquals(true, $actual->GetCityWeatherByZIPResult->Success, 'Response was not returned.');
-    }
-
-    /**
-     * @group uses_internet
-     */
-    public function testShouldNotInterceptCallWhenDisabled()
-    {
-        $this->soapHook->disable();
-
-        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
-        $client->setLibraryHook($this->soapHook);
-
-        $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
-        $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
     }
 
     public function testShouldHandleSOAPVersion11()
@@ -87,7 +73,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
     {
         $testClass = $this;
         return function () use ($testClass) {
-            return new Response(200, null, $testClass->expected);
+            return new Response(200, array(), $testClass->expected);
         };
     }
 
@@ -98,9 +84,9 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
     protected function getHeaderCheckCallback($expectedHeader)
     {
         $test = $this;
-        return function ($request) use ($test, $expectedHeader) {
+        return function (Request $request) use ($test, $expectedHeader) {
             $test->assertEquals($expectedHeader, $request->getHeader('Content-Type'));
-            return new Response(200, null, '');
+            return new Response(200, array(), '');
         };
     }
 }

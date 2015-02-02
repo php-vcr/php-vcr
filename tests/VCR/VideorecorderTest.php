@@ -3,6 +3,7 @@
 namespace VCR;
 
 use lapistano\ProxyObject\ProxyBuilder;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Test Videorecorder.
@@ -19,7 +20,10 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
 
     public function testInsertCassetteEjectExisting()
     {
-        $configuration = new Configuration();
+        vfsStream::setup('testDir');
+        $factory = VCRFactory::getInstance();
+        $configuration = $factory->get('VCR\Configuration');
+        $configuration->setCassettePath(vfsStream::url('testDir'));
         $configuration->enableLibraryHooks(array());
         $videorecorder = $this->getMockBuilder('\VCR\Videorecorder')
             ->setConstructorArgs(array($configuration, new Util\HttpClient(), VCRFactory::getInstance()))
@@ -58,8 +62,8 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             'LogicException',
-            "Invalid http request. The cassette inserted did not have the necessary response. "
-            . "If you want to send a request anyway, make sure your mode is set to new_episodes.");
+            "The request does not match a previously recorded request and the 'mode' is set to 'none'. "
+            . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'.");
 
         $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
         $response = new Response(200, array(), 'example response');
@@ -105,8 +109,8 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             'LogicException',
-            "Invalid http request. The cassette inserted did not have the necessary response. "
-            . "If you want to send a request anyway, make sure your mode is set to new_episodes.");
+            "The request does not match a previously recorded request and the 'mode' is set to 'once'. "
+            . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'.");
 
         $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
         $response = new Response(200, array(), 'example response');
@@ -156,11 +160,6 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
                 ->expects($this->once())
                 ->method('record')
                 ->with($request, $response);
-            $cassette
-                ->expects($this->once())
-                ->method('playback')
-                ->with($request)
-                ->will($this->returnValue($response));
         }
 
         if ($mode == 'once') {

@@ -58,7 +58,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
 
         $this->assertNull($request->getBody());
-        $this->assertEquals($payload, $request->getPostFields()->toArray());
+        $this->assertEquals($payload, $request->getPostFields());
     }
 
     public function testSetCurlOptionOnRequestPostFieldsString()
@@ -126,12 +126,24 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertEquals($expected, $request->getHeaders());
     }
+
+    public function testSetCurlOptionReadFunctionToNull()
+    {
+	    $request = new Request('POST', 'example.com');
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, null, curl_init());
+
+        $this->assertNull($request->getCurlOption(CURLOPT_READFUNCTION));
+    }
+
     public function testSetCurlOptionReadFunctionMissingSize()
     {
         $this->setExpectedException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $request = new Request('POST', 'example.com');
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, null, curl_init());
+        $callback = function ($curlHandle, $fileHandle, $size) {};
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, $callback, curl_init());
     }
 
     public function testSetCurlOptionReadFunction()
@@ -159,7 +171,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $curlOptions = array(
             CURLOPT_RETURNTRANSFER => true
         );
-        $response = new Response(200, null, 'example response');
+        $response = new Response(200, array(), 'example response');
 
         $output = CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
@@ -168,7 +180,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleResponseEchosBody()
     {
-        $response = new Response(200, null, 'example response');
+        $response = new Response(200, array(), 'example response');
 
         ob_start();
         CurlHelper::handleOutput($response, array(), curl_init());
@@ -183,11 +195,16 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
             CURLOPT_HEADER => true,
             CURLOPT_RETURNTRANSFER => true,
         );
-        $response = new Response(200, null, 'example response');
+        $status = array(
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1'
+        );
+        $response = new Response($status, array(), 'example response');
 
         $output = CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
-        $this->assertEquals("HTTP/1.1 200 OK\r\n\r\n" . $response->getBody(true), $output);
+        $this->assertEquals("HTTP/1.1 200 OK\r\n\r\n" . $response->getBody(), $output);
     }
 
     public function testHandleResponseUsesWriteFunction()
@@ -203,7 +220,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
                 return strlen($body);
             }
         );
-        $response = new Response(200, null, $expectedBody);
+        $response = new Response(200, array(), $expectedBody);
 
         CurlHelper::handleOutput($response, $curlOptions, $expectedCh);
     }
@@ -218,7 +235,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
             CURLOPT_FILE => fopen($testFile, 'w+')
         );
 
-        $response = new Response(200, null, $expectedBody);
+        $response = new Response(200, array(), $expectedBody);
 
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 

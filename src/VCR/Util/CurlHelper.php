@@ -17,7 +17,7 @@ class CurlHelper
         //"certinfo"?
         CURLINFO_HTTP_CODE => 'http_code',
         CURLINFO_EFFECTIVE_URL => 'url',
-        CURLINFO_FILETIME,
+        CURLINFO_FILETIME => 'filetime',
         CURLINFO_TOTAL_TIME => 'total_time',
         CURLINFO_NAMELOOKUP_TIME => 'namelookup_time',
         CURLINFO_CONNECT_TIME => 'connect_time',
@@ -55,15 +55,22 @@ class CurlHelper
      */
     public static function handleOutput(Response $response, array $curlOptions, $ch)
     {
+        // If there is a header function set, feed the http status and headers to it.
         if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
-            $headers = $response->getRawHeaders();
-            call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $headers);
+            $headerList = array(HttpUtil::formatAsStatusString($response));
+            $headerList += HttpUtil::formatHeadersForCurl($response->getHeaders());
+            $headerList[] = '';
+            foreach ($headerList as $header) {
+                call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $header);
+            }
         }
 
-        $body = (string) $response->getBody(true);
+        $body = $response->getBody();
 
         if (!empty($curlOptions[CURLOPT_HEADER])) {
-            $body = $response->getRawHeaders() . $body;
+            $headers = HttpUtil::formatHeadersForCurl($response->getHeaders());
+            array_unshift($headers, HttpUtil::formatAsStatusString($response));
+            $body = join("\r\n", $headers) . "\r\n\r\n" . $body;
         }
 
         if (isset($curlOptions[CURLOPT_WRITEFUNCTION])) {
@@ -94,7 +101,7 @@ class CurlHelper
             case 0: // 0 == array of all curl options
                 $info = array();
                 foreach (self::$curlInfoList as $option => $key) {
-                   $info[$key] = $response->getInfo($option);
+                   $info[$key] = $response->getCurlInfo($key);
                 }
                 break;
             case CURLINFO_HTTP_CODE:
@@ -104,7 +111,7 @@ class CurlHelper
                 $info = $response->getHeader('Content-Length');
                 break;
             default:
-                $info = $response->getInfo($option);
+                $info = $response->getCurlInfo($option);
                 break;
         }
 
@@ -131,12 +138,6 @@ class CurlHelper
             case CURLOPT_URL:
                 $request->setUrl($value);
                 break;
-            case CURLOPT_FOLLOWLOCATION:
-                $request->getParams()->set('redirect.disable', !$value);
-                break;
-            case CURLOPT_MAXREDIRS:
-                $request->getParams()->set('redirect.max', $value);
-                break;
             case CURLOPT_CUSTOMREQUEST:
                 $request->setMethod($value);
                 break;
@@ -162,27 +163,34 @@ class CurlHelper
             case CURLOPT_HTTPHEADER:
                 foreach ($value as $header) {
                     $headerParts = explode(': ', $header, 2);
-                    if (isset($headerParts[1])) {
-                        $request->setHeader($headerParts[0], $headerParts[1]);
+                    if (!isset($headerParts[1])) {
+                       $headerParts[0] = rtrim($headerParts[0], ':');
+                       $headerParts[1] = null;
                     }
+                    $request->setHeader($headerParts[0], $headerParts[1]);
                 }
                 break;
+            case CURLOPT_FILE:
             case CURLOPT_HEADER:
             case CURLOPT_WRITEFUNCTION:
             case CURLOPT_HEADERFUNCTION:
-                // Ignore writer and header functions.
+                // Ignore header, file and writer functions.
                 // These options are stored and will be handled later in handleOutput().
                 break;
             case CURLOPT_READFUNCTION:
                 // Guzzle provides a callback to let curl read the body string.
                 // To get the body, this callback is called manually.
-                $bodySize = $request->getCurlOptions()->get(CURLOPT_INFILESIZE);
+                if (is_null($value)) {
+                    $request->setCurlOption($option, $value);
+                    break;
+                }
+                $bodySize = $request->getCurlOption(CURLOPT_INFILESIZE);
                 Assertion::notEmpty($bodySize, "To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.");
                 $body = call_user_func_array($value, array($curlHandle, fopen('php://memory', 'r'), $bodySize));
                 $request->setBody($body);
                 break;
             default:
-                $request->getCurlOptions()->set($option, $value);
+                $request->setCurlOption($option, $value);
                 break;
         }
     }

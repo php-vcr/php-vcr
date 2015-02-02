@@ -4,6 +4,14 @@ namespace VCR;
 
 use VCR\Util\Assertion;
 use VCR\Util\HttpClient;
+use VCR\Event\AfterHttpRequestEvent;
+use VCR\Event\AfterPlaybackEvent;
+use VCR\Event\BeforeHttpRequestEvent;
+use VCR\Event\BeforePlaybackEvent;
+use VCR\Event\BeforeRecordEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * A videorecorder records requests on a cassette.
@@ -47,6 +55,11 @@ class Videorecorder
     protected $isOn = false;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * Creates a videorecorder instance.
      *
      * @param Configuration $config  Config options like which library hooks to use.
@@ -58,6 +71,37 @@ class Videorecorder
         $this->config = $config;
         $this->client = $client;
         $this->factory = $factory;
+    }
+
+    /**
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher)
+    {
+        $this->eventDispatcher = $dispatcher;
+    }
+
+    /**
+     * @return EventDispatcherInterface
+     */
+    public function getEventDispatcher()
+    {
+        if (!$this->eventDispatcher) {
+            $this->eventDispatcher = new EventDispatcher();
+        }
+        return $this->eventDispatcher;
+    }
+
+    /**
+     * Dispatches an event to all registered listeners.
+     *
+     * @param string $eventName The name of the event to dispatch.
+     * @param Event $event The event to pass to the event handlers/listeners.
+     * @return Event
+     */
+    private function dispatch($eventName, Event $event = null)
+    {
+        return $this->getEventDispatcher()->dispatch($eventName, $event);
     }
 
     /**
@@ -172,20 +216,31 @@ class Videorecorder
             );
         }
 
-        if (!$this->cassette->hasResponse($request)) {
-            if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
-                throw new \LogicException(
-                    "Invalid http request. The cassette inserted did not have the necessary response. "
-                    . "If you want to send a request anyway, make sure your mode is set to new_episodes.");
-            }
-
-            $this->disableLibraryHooks();
-            $response = $this->client->send($request);
-            $this->cassette->record($request, $response);
-            $this->enableLibraryHooks();
+        if ($this->cassette->hasResponse($request)) {
+            $this->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, new BeforePlaybackEvent($request, $this->cassette));
+            $response = $this->cassette->playback($request);
+            $this->dispatch(VCREvents::VCR_AFTER_PLAYBACK, new AfterPlaybackEvent($request, $response, $this->cassette));
+            return $response;
         }
 
-        return $this->cassette->playback($request);
+        if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
+            throw new \LogicException(
+                "The request does not match a previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
+                . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
+                . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes.");
+        }
+
+        $this->disableLibraryHooks();
+
+        $this->dispatch(VCREvents::VCR_BEFORE_HTTP_REQUEST, new BeforeHttpRequestEvent($request));
+        $response = $this->client->send($request);
+        $this->dispatch(VCREvents::VCR_AFTER_HTTP_REQUEST, new AfterHttpRequestEvent($request, $response));
+
+        $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
+        $this->cassette->record($request, $response);
+        $this->enableLibraryHooks();
+
+        return $response;
     }
 
     /**

@@ -5,6 +5,8 @@ namespace VCR\LibraryHooks;
 use VCR\Request;
 use VCR\Response;
 use VCR\Util\Assertion;
+use VCR\Util\HttpUtil;
+use VCR\Util\StreamHelper;
 
 /**
  * Library hook for streamWrapper functions using stream_wrapper_register().
@@ -30,6 +32,11 @@ class StreamWrapperHook implements LibraryHook
      * @var Response
      */
     protected $response;
+
+    /**
+     * @var resource Current stream context.
+     */
+    public $context;
 
     /**
      * @inheritDoc
@@ -80,8 +87,10 @@ class StreamWrapperHook implements LibraryHook
      */
     public function stream_open($path, $mode, $options, &$opened_path)
     {
+        $request = StreamHelper::createRequestFromStreamContext($this->context, $path);
+
         $requestCallback = self::$requestCallback;
-        $this->response = $requestCallback(new Request('GET', $path));
+        $this->response = $requestCallback($request);
 
         return true;
     }
@@ -157,6 +166,19 @@ class StreamWrapperHook implements LibraryHook
         return array();
     }
 
+     /**
+     * Retrieve information about a file resource.
+     *
+     * @link http://www.php.net/manual/en/streamwrapper.url-stat.php
+     *
+     * @return array See stat().
+     */
+
+    public function url_stat($path,$flags)
+    {
+        return array();
+    }
+
     /**
      * Seeks to specific location in a stream.
      *
@@ -208,15 +230,5 @@ class StreamWrapperHook implements LibraryHook
     public function stream_metadata($path, $option, $var)
     {
         return false;
-    }
-
-    /**
-     * Cleanup.
-     *
-     * @return  void
-     */
-    public function __destruct()
-    {
-        self::$requestCallback = null;
     }
 }

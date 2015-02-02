@@ -1,50 +1,73 @@
 <?php
 
 namespace VCR;
+use VCR\Util\Assertion;
 
 /**
  * Encapsulates a HTTP response.
  */
-class Response extends \Guzzle\Http\Message\Response
+class Response
 {
+    /**
+     * @var array
+     */
+    protected $status = array(
+        'code' => null,
+        'message' => ''
+    );
+
+    /**
+     * @var array
+     */
+    protected $headers = array();
+    /**
+     * @var string
+     */
+    protected $body;
+    /**
+     * @var array
+     */
+    protected $curlInfo = array();
+
+    protected $httpVersion;
+
+    /**
+     * @param string|array $status
+     * @param array $headers
+     * @param string $body
+     * @param array $curlInfo
+     */
+    function __construct($status, array $headers = array(), $body = null, array $curlInfo = array())
+    {
+        $this->setStatus($status);
+        $this->headers = $headers;
+        $this->body = $body;
+        $this->curlInfo = $curlInfo;
+    }
+
     /**
      * Returns an array representation of this Response.
      *
-     * @return array Arrey representation of this Request.
+     * @return array Array representation of this Request.
      */
     public function toArray()
     {
-        $body = (string) $this->getBody(true);
-
+        $body = $this->getBody();
         // Base64 encode when binary
-        if (strpos($this->getContentType(), 'application/x-gzip') !== false) {
+        if (
+            strpos($this->getContentType(), 'application/x-gzip') !== false
+            || $this->getHeader('Content-Transfer-Encoding') == 'binary'
+        ) {
             $body = base64_encode($body);
         }
 
         return array_filter(
             array(
-                'status'    => $this->getStatusCode(),
+                'status'    => $this->status,
                 'headers'   => $this->getHeaders(),
-                'body'      => $body,
-                'curl_info' => $this->getInfo()
+                'body'      => $body
             )
         );
-    }
-
-    /**
-     * Returns a list of headers as key/value pairs.
-     *
-     * @return array List of headers as key/value pairs.
-     */
-    public function getHeaders()
-    {
-        $headers = array();
-        foreach (parent::getHeaders() as $header) {
-            $values = $header->toArray();
-            $headers[$header->getName()] = $values[0];
-        }
-
-        return $headers;
     }
 
     /**
@@ -57,22 +80,107 @@ class Response extends \Guzzle\Http\Message\Response
     {
         $body = isset($response['body']) ? $response['body'] : null;
 
+        $gzip = isset($response['headers']['Content-Type'])
+            && strpos($response['headers']['Content-Type'], 'application/x-gzip') !== false;
+
+        $binary = isset($response['headers']['Content-Transfer-Encoding'])
+            && $response['headers']['Content-Transfer-Encoding'] == 'binary';
+
         // Base64 decode when binary
-        if (isset($response['headers']['Content-Type'])
-           && strpos($response['headers']['Content-Type'], 'application/x-gzip') !== false) {
+        if ($gzip || $binary) {
             $body = base64_decode($response['body']);
         }
 
-        $responseObject = new static(
+        return new static(
             isset($response['status']) ? $response['status'] : 200,
             isset($response['headers']) ? $response['headers'] : array(),
             $body
         );
+    }
 
-        if (isset($response['curl_info'])) {
-            $responseObject->setInfo($response['curl_info']);
+    /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurlInfo($option = null)
+    {
+        if (empty($option)) {
+            return $this->curlInfo;
         }
 
-        return $responseObject;
+        if (!isset($this->curlInfo[$option])) {
+            return null;
+        }
+
+        return $this->curlInfo[$option];
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusCode()
+    {
+        return $this->status['code'];
+    }
+
+    public function getContentType()
+    {
+        return $this->getHeader('Content-Type');
+    }
+
+    public function getHeader($key)
+    {
+        if (!isset($this->headers[$key])) {
+            return null;
+        }
+
+        return $this->headers[$key];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHttpVersion()
+    {
+        return $this->httpVersion;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusMessage()
+    {
+        return $this->status['message'];
+    }
+
+    /**
+     * @param string|array $status
+     */
+    protected function setStatus($status)
+    {
+        if (is_array($status)) {
+            $this->status = $status;
+            if (!empty($status['http_version'])) {
+                $this->httpVersion = $status['http_version'];
+            }
+        } else {
+            Assertion::numeric($status, 'Response status must be either an array or a number.');
+            $this->status['code'] = $status;
+        }
     }
 }

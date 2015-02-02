@@ -15,6 +15,13 @@ class SoapClient extends \SoapClient
      */
     protected $soapHook;
 
+    protected $options = array();
+
+    public function __construct($wsdl, $options = array()) {
+       $this->options = $options;
+       parent::__construct($wsdl, $options);
+    }
+
     /**
      * Performs (and may intercepts) SOAP request over HTTP.
      *
@@ -33,7 +40,7 @@ class SoapClient extends \SoapClient
         $soapHook = $this->getLibraryHook();
 
         if ($soapHook->isEnabled()) {
-            $response = $soapHook->doRequest($request, $location, $action, $version, $one_way);
+            $response = $soapHook->doRequest($request, $location, $action, $version, $one_way, $this->options);
         } else {
             $response = $this->realDoRequest($request, $location, $action, $version, $one_way);
         }

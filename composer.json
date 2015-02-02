@@ -12,9 +12,9 @@
 
     "require": {
         "ext-curl": "*",
-        "guzzle/http": "3.*",
         "beberlei/assert": "2.*",
-        "symfony/yaml": "2.*"
+        "symfony/yaml": "2.*",
+        "symfony/event-dispatcher": "~2.1"
     },
 
     "require-dev": {

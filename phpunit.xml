@@ -7,8 +7,14 @@
 
     <testsuites>
         <testsuite>
-            <directory>./tests</directory>>
+            <directory>./tests/VCR</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <blacklist>
+            <directory>./vendor</directory>
+        </blacklist>
+    </filter>
 
 </phpunit>

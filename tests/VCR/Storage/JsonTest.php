@@ -16,8 +16,8 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         vfsStream::setup('test');
-        $this->filePath = vfsStream::url('test/') .  'json_test';
-        $this->jsonObject = new Json(vfsStream::url('test/') , 'json_test');
+        $this->filePath = vfsStream::url('test/') . 'json_test';
+        $this->jsonObject = new Json(vfsStream::url('test/'), 'json_test');
     }
 
     public function testIterateOneObject()
@@ -91,6 +91,34 @@ class JsonTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals($expected, $actual[0], 'Storing and reading a recording failed.');
+    }
+
+    public function testValidJson()
+    {
+        $stored = array(
+            'request' => 'some request',
+            'response' => 'some response'
+        );
+        $this->jsonObject->storeRecording($stored);
+        $this->jsonObject->storeRecording($stored);
+
+        $this->assertJson(file_get_contents($this->filePath));
+
+    }
+
+    public function testStoreRecordingWhenBlankFileAlreadyExists()
+    {
+        vfsStream::create(array('blank_file_test' => ''));
+        $filePath = vfsStream::url('test/') . 'blank_file_test';
+
+        $jsonObject = new Json(vfsStream::url('test/'), 'blank_file_test');
+        $stored = array(
+            'request' => 'some request',
+            'response' => 'some response'
+        );
+        $jsonObject->storeRecording($stored);
+
+        $this->assertJson(file_get_contents($filePath));
     }
 
     private function iterateAndTest($json, $expected, $message)

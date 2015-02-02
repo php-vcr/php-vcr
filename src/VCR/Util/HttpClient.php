@@ -1,8 +1,6 @@
 <?php
 namespace VCR\Util;
 
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\BadResponseException;
 use VCR\Request;
 use VCR\Response;
 
@@ -12,22 +10,6 @@ use VCR\Response;
 class HttpClient
 {
     /**
-     * @var \Guzzle\Http\Client
-     */
-    protected $client;
-
-    /**
-     * Creates a new HttpClient instance
-     *
-     * @param Client $client
-     */
-    public function __construct(Client $client = null)
-    {
-        $this->client = $client ?: new Client;
-        $this->client->setUserAgent(false);
-    }
-
-    /**
      * Returns a response for specified HTTP request.
      *
      * @param Request $request HTTP Request to send.
@@ -36,16 +18,26 @@ class HttpClient
      */
     public function send(Request $request)
     {
-        try {
-            $response = $this->client->send($request);
-        } catch (BadResponseException $e) {
-            $response = $e->getResponse();
+        $ch = curl_init($request->getUrl());
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
+        curl_setopt($ch, CURLOPT_HTTPHEADER, HttpUtil::formatHeadersForCurl($request->getHeaders()));
+        if (!is_null($request->getBody())) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getBody());
         }
 
+        curl_setopt_array($ch, $request->getCurlOptions());
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, false);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+
+        list($status, $headers, $body) = HttpUtil::parseResponse(curl_exec($ch));
+
         return new Response(
-            $response->getStatusCode(),
-            $response->getHeaders(),
-            $response->getBody()
+            HttpUtil::parseStatus($status),
+            HttpUtil::parseHeaders($headers),
+            $body,
+            curl_getinfo($ch)
         );
     }
 }

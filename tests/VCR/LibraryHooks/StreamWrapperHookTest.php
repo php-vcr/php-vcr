@@ -2,6 +2,7 @@
 
 namespace VCR\LibraryHooks;
 
+use VCR\Request;
 use VCR\Response;
 
 /**
@@ -15,13 +16,16 @@ class StreamWrapperHookTest extends \PHPUnit_Framework_TestCase
 
         $testClass = $this;
         $streamWrapper->enable(function ($request) use ($testClass) {
+            $testClass->assertInstanceOf('\VCR\Request', $request);
         });
+        $this->assertTrue($streamWrapper->isEnabled());
     }
 
     public function testDisable()
     {
         $streamWrapper = new StreamWrapperHook();
         $streamWrapper->disable();
+        $this->assertFalse($streamWrapper->isEnabled());
     }
 
     public function testSeek()

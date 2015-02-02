@@ -14,7 +14,7 @@ use VCR\Util\StreamProcessor;
 class SoapHook implements LibraryHook
 {
     /**
-     * @var string
+     * @var callable
      */
     private static $requestCallback;
 
@@ -62,7 +62,7 @@ class SoapHook implements LibraryHook
      *
      * @return string SOAP response.
      */
-    public function doRequest($request, $location, $action, $version, $one_way = 0)
+    public function doRequest($request, $location, $action, $version, $one_way = 0, $options = array())
     {
         if ($this->status === self::DISABLED) {
             throw new VCRException('Hook must be enabled.', VCRException::LIBRARY_HOOK_DISABLED);
@@ -70,13 +70,18 @@ class SoapHook implements LibraryHook
 
         $vcrRequest = new Request('POST', $location);
         $contentType = ($version == SOAP_1_2) ? 'application/soap+xml' : 'text/xml';
-        $vcrRequest->addHeader('Content-Type', $contentType . '; charset=utf-8; action="' . $action . '"');
+        $vcrRequest->setHeader('Content-Type', $contentType . '; charset=utf-8; action="' . $action . '"');
         $vcrRequest->setBody($request);
 
+        if (!empty($options['login'])) {
+            $vcrRequest->setAuthorization($options['login'], $options['password']);
+        }
+
+        /* @var \VCR\Response $response */
         $requestCallback = self::$requestCallback;
         $response = $requestCallback($vcrRequest);
 
-        return (string) $response->getBody(true);
+        return $response->getBody();
     }
 
     /**
