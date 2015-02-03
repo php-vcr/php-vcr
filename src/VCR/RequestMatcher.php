@@ -76,6 +76,13 @@ class RequestMatcher
                 return false;
             }
         }
+        $secondHeaders = $second->getHeaders();
+        foreach ($firstHeaders as $key => $pattern) {
+            if (!array_key_exists($key, $secondHeaders)
+                || $pattern !== $secondHeaders[$key]) {
+                return false;
+            }
+        }
 
         return true;
     }

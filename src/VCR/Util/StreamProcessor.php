@@ -289,13 +289,19 @@ class StreamProcessor
         $this->restore();
         try {
             $result = @stat($path);
-        } catch (\ErrorException $e) {
-            // PHPUnit running in process isolation (processIsolation="true")
-            // throws an \ErrorException for any PHP warning.
+        } catch (\Exception $e) {
+            if ($e instanceof \ErrorException) {
+                // PHPUnit running in process isolation (processIsolation="true")
+                // throws an \ErrorException for any PHP warning.
 
-            // In this case we surpress errors.
-            // See https://github.com/php-vcr/php-vcr/pull/35 for more information.
-            return;
+                // In this case we surpress errors.
+                // See https://github.com/php-vcr/php-vcr/pull/35 for more information.
+                return;
+            } else if ($e instanceof \RuntimeException) {
+                if (!file_exists($path)) {
+                    return;
+                }
+            }
         }
         $this->intercept();
 
