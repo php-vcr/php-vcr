@@ -58,6 +58,8 @@ class CurlCodeTransformTest extends \PHPUnit_Framework_TestCase
             array('$object->curl_multi_exec(', '$object->curl_multi_exec('),
             array('$object->curl_multi_info_read(', '$object->curl_multi_info_read('),
 
+            array('function send_http_asynchronous_curl_exec(', 'function send_http_asynchronous_curl_exec(')
+
         );
     }
 }
