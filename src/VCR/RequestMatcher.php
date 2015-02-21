@@ -30,7 +30,7 @@ class RequestMatcher
      */
     public static function matchUrl(Request $first, Request $second)
     {
-        return !((null !== $first->getPath()) and ((string) $first->getPath() != (string) $second->getPath()));
+        return $first->getPath() === $second->getPath();
     }
 
     /**
@@ -43,12 +43,7 @@ class RequestMatcher
      */
     public static function matchHost(Request $first, Request $second)
     {
-        if (null !== $first->getHost()
-           && !preg_match('#'.str_replace('#', '\\#', $first->getHost()).'#i', $second->getHost())) {
-            return false;
-        }
-
-        return true;
+        return $first->getHost() === $second->getHost();
     }
 
     /**
@@ -61,15 +56,9 @@ class RequestMatcher
      */
     public static function matchHeaders(Request $first, Request $second)
     {
-        $firstHeaders = $first->getHeaders();
-        foreach ($second->getHeaders() as $key => $pattern) {
-            if (!array_key_exists($key, $firstHeaders)
-                || $pattern !== $firstHeaders[$key]) {
-                return false;
-            }
-        }
+        // Use array_filter to ignore headers which are null.
 
-        return true;
+        return array_filter($first->getHeaders()) === array_filter($second->getHeaders());
     }
 
     /**
@@ -82,11 +71,7 @@ class RequestMatcher
      */
     public static function matchBody(Request $first, Request $second)
     {
-        if (null !== $first->getBody() && (string) $first->getBody() != (string) $second->getBody() ) {
-            return false;
-        }
-
-        return true;
+        return $first->getBody() === $second->getBody();
     }
 
     /**
@@ -99,11 +84,7 @@ class RequestMatcher
      */
     public static function matchPostFields(Request $first, Request $second)
     {
-        if (null !== $first->getPostFields() && $first->getPostFields() != $second->getPostFields()) {
-            return false;
-        }
-
-        return true;
+        return $first->getPostFields() === $second->getPostFields();
     }
 
     /**
@@ -116,9 +97,6 @@ class RequestMatcher
      */
     public static function matchQueryString(Request $first, Request $second)
     {
-        if (null !== $first->getQuery() && $first->getQuery() != $second->getQuery()) {
-            return false;
-        }
-        return true;
+        return $first->getQuery() === $second->getQuery();
     }
 }

@@ -61,6 +61,19 @@ class RequestMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(RequestMatcher::matchHeaders($first, $second));
     }
 
+    public function testHeaderMatchingDisallowsMissingHeaders()
+    {
+        $first = new Request('GET', 'http://example.com', array('Accept' => 'Everything', 'MyHeader' => 'value'));
+        $second = new Request('GET', 'http://example.com', array('Accept' => 'Everything'));
+
+        $this->assertFalse(RequestMatcher::matchHeaders($first, $second));
+
+        $first = new Request('GET', 'http://example.com', array('Accept' => 'Everything'));
+        $second = new Request('GET', 'http://example.com', array('Accept' => 'Everything', 'MyHeader' => 'value'));
+
+        $this->assertFalse(RequestMatcher::matchHeaders($first, $second));
+    }
+
     public function testHeaderMatchingAllowsEmptyVals()
     {
         $first = new Request('GET', 'http://example.com', array('Accept' => null, 'Content-Type' => 'application/json'));
