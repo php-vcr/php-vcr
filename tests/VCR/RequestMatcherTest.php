@@ -28,6 +28,11 @@ class RequestMatcherTest extends \PHPUnit_Framework_TestCase
         $second = new Request('GET', 'http://example.com/second/path', array());
 
         $this->assertFalse(RequestMatcher::matchUrl($first, $second));
+
+        $first = new Request('GET', 'http://example.com/second', array());
+        $second = new Request('GET', 'http://example.com/second/path', array());
+
+        $this->assertFalse(RequestMatcher::matchUrl($first, $second));
     }
 
     public function testMatchingHost()
