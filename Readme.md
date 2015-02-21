@@ -7,7 +7,7 @@
 
 This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
 
-Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.
+Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests. A bit of documentation can be found on the [php-vcr website](http://php-vcr.github.io).
 
 Disclaimer: Doing this in PHP is not as easy as in programming languages which support monkey patching (I'm looking at you, Ruby) – this project is not yet fully tested, so please use at your own risk!
 
@@ -15,20 +15,16 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 
 * Automatically records and replays your HTTP(s) interactions with minimal setup/configuration code.
 * Supports common http functions and extensions
-  * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification
+  * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification (except `$http_response_header` see #96)
   * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) by adding `\VCR\VCR\turnOn();` in your `tests/boostrap.php`
   * curl(), by adding `\VCR\VCR::turnOn();` in your `tests/boostrap.php`
-* The same request can receive different responses in different tests--just use different cassettes.
-* Disables all HTTP requests that you don't explicitly allow (except SoapClient if not configured).
-* Request matching is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
+* The same request can receive different responses in different tests -- just use different cassettes.
+* Disables all HTTP requests that you don't explicitly allow by [setting the record mode](http://php-vcr.github.io/documentation/configuration/)
+* [Request matching](http://php-vcr.github.io/documentation/configuration/) is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
   implement a custom request matcher to handle any need.
 * The recorded requests and responses are stored on disk in a serialization format of your choice
   (currently YAML and JSON are built in, and you can easily implement your own custom serializer)
 * Supports PHPUnit annotations.
-* Todo: Recorded requests and responses can easily be inspected and edited.
-* Todo: Automatically filters confidential or private information like passwords, auth tokens and emails.
-* Todo: Automatically re-records cassettes on a configurable regular interval to keep them fresh and current.
-* Todo: Has a good documentation ;-)
 
 ## Usage example
 
@@ -40,20 +36,20 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     public function testShouldInterceptStreamWrapper()
     {
         // After turning on the VCR will intercept all requests
-        VCR::turnOn();
+        \VCR\VCR::turnOn();
 
         // Record requests and responses in cassette file 'example'
-        VCR::insertCassette('example');
+        \VCR\VCR::insertCassette('example');
 
         // Following request will be recorded once and replayed in future test runs
         $result = file_get_contents('http://example.com');
         $this->assertNotEmpty($result);
 
         // To stop recording requests, eject the cassette
-        VCR::eject();
+        \VCR\VCR::eject();
 
         // Turn off VCR to stop intercepting requests
-        VCR::turnOff();
+        \VCR\VCR::turnOff();
     }
 
     public function testShouldThrowExceptionIfNoCasettePresent()
@@ -63,7 +59,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
             "Invalid http request. No cassette inserted. Please make sure to insert "
             . "a cassette in your unit test using VCR::insertCassette('name');"
         );
-        VCR::turnOn();
+        \VCR\VCR::turnOn();
         // If there is no cassette inserted, a request throws an exception
         file_get_contents('http://example.com');
     }
