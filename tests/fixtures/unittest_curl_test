@@ -5,7 +5,6 @@
         url: 'http://google.com/'
         headers:
             Host: google.com
-            Content-Length: 0
     response:
         status: 301
         headers:

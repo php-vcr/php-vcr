@@ -5,9 +5,12 @@
         url: 'http://example.com'
         headers:
             Host: example.com
-            Content-Length: '0'
+        body: Here is the POST content
     response:
-        status: 200
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: OK
         headers:
             Accept-Ranges: bytes
             Cache-Control: max-age=604800
@@ -19,4 +22,4 @@
             Server: 'EOS (lax004/2813)'
             x-ec-custom-error: '1'
             Content-Length: '1270'
-        body: "This is a guzzle test dummy."
+        body: "This is a POST test dummy."

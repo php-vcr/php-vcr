@@ -4,9 +4,11 @@ namespace VCR\LibraryHooks;
 
 use VCR\Request;
 use VCR\Response;
+use VCR\CodeTransform\AbstractCodeTransform;
 use VCR\Util\Assertion;
 use VCR\Util\HttpUtil;
 use VCR\Util\StreamHelper;
+use VCR\Util\StreamProcessor;
 
 /**
  * Library hook for streamWrapper functions using stream_wrapper_register().
@@ -39,10 +41,45 @@ class StreamWrapperHook implements LibraryHook
     public $context;
 
     /**
+     * @var AbstractCodeTransform
+     */
+    private static $codeTransformer;
+
+    /**
+     * @var StreamProcessor
+     */
+    private static $processor;
+
+    /**
+     * @var Response Last response processed.
+     */
+    private static $lastResponse;
+
+    /**
+     * Creates a new Stream Wrapper hook instance.
+     *
+     * @param AbstractCodeTransform  $codeTransformer
+     * @param StreamProcessor $processor
+     */
+    public function __construct($codeTransformer = null, $processor = null)
+    {
+        if ($codeTransformer) {
+            self::$codeTransformer = $codeTransformer;
+        }
+        if ($processor) {
+            self::$processor = $processor;
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public function enable(\Closure $requestCallback)
     {
+        self::$codeTransformer->register();
+        self::$processor->appendCodeTransformer(self::$codeTransformer);
+        self::$processor->intercept();
+
         Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
         self::$requestCallback = $requestCallback;
         stream_wrapper_unregister('http');
@@ -91,6 +128,7 @@ class StreamWrapperHook implements LibraryHook
 
         $requestCallback = self::$requestCallback;
         $this->response = $requestCallback($request);
+        self::$lastResponse = $this->response;
 
         return true;
     }
@@ -230,5 +268,20 @@ class StreamWrapperHook implements LibraryHook
     public function stream_metadata($path, $option, $var)
     {
         return false;
+    }
+
+    /**
+     * Get last response processed.
+     */
+    protected static function getLastResponse() {
+        return self::$lastResponse;
+    }
+
+    /**
+     * Should mimic the format returned by PHP when using http_response_header.
+     * See: http://php.net/manual/en/reserved.variables.httpresponseheader.php.
+     */
+    public static function getLastResponseHeaders() {
+        return HttpUtil::buildHeaders(self::getLastResponse());
     }
 }
