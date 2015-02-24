@@ -3,6 +3,7 @@
 namespace VCR\Storage;
 
 use VCR\Util\Assertion;
+use VCR\VCRException;
 
 /**
  * Abstract base for reading and storing records.
@@ -50,12 +51,21 @@ abstract class AbstractStorage implements Storage
     /**
      * Creates a new file store.
      *
+     * If the cassetteName contains PATH_SEPARATORs, subfolders of the
+     * cassettePath are autocreated when not existing.
+     *
      * @param string $cassettePath Path to the cassette directory.
-     * @param string $cassetteName Path to a file, will be created if not existing.
+     * @param string $cassetteName Path to the cassette file, relative to the path.
      */
     public function __construct($cassettePath, $cassetteName, $defaultContent = '[]')
     {
-        $file = $cassettePath . DIRECTORY_SEPARATOR . $cassetteName;
+        Assertion::directory($cassettePath, 'Cassette path "{$cassettePath}" is not existing or not a directory');
+
+        $file = rtrim($cassettePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $cassetteName;
+
+        if (!is_dir(dirname($file))) {
+            mkdir(dirname($file), 0777, true);
+        }
 
         if (!file_exists($file) || 0 === filesize($file)) {
             file_put_contents($file, $defaultContent);
@@ -104,6 +114,8 @@ abstract class AbstractStorage implements Storage
      */
     public function __destruct()
     {
-        fclose($this->handle);
+        if (is_resource($this->handle)) {
+            fclose($this->handle);
+        }
     }
 }
