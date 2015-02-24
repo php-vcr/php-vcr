@@ -59,7 +59,7 @@ abstract class AbstractStorage implements Storage
      */
     public function __construct($cassettePath, $cassetteName, $defaultContent = '[]')
     {
-        Assertion::directory($cassettePath, 'Cassette path "{$cassettePath}" is not existing or not a directory');
+        Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' is not existing or not a directory");
 
         $file = rtrim($cassettePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $cassetteName;
 
