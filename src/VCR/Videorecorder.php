@@ -223,7 +223,7 @@ class Videorecorder
             return $response;
         }
 
-        if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
+        if (VCR::MODE_NONE === $this->config->getMode() || VCR::MODE_ONCE === $this->config->getMode() && $this->cassette->isNew() === false) {
             throw new \LogicException(
                 "The request does not match a previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
                 . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
