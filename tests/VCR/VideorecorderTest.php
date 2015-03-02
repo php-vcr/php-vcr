@@ -135,12 +135,12 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             'LogicException',
-            "\nThe request does not match any previously recorded request. The closest match was request"
-            . " #1 of 2.\n"
+            "The request does not match any previously recorded request and the record 'mode' is set to 'none'."
+            . " The closest match was request #1 of 2.\n"
             . " Stored request: Method: POST\n"
             . "Current request: Method: GET\n"
-            . "The 'mode' is set to 'none'. If you want to send the request anyway, make sure your 'mode' "
-            . " is set to 'new_episodes'.");
+            . "If you want to send the request anyway, make sure your 'mode' "
+            . "is set to 'new_episodes'. Please see http://php-vcr.github.io/documentation/configuration/#record-modes.");
 
         $client = $this->getMockBuilder('\VCR\Util\HttpClient')->getMock();
         $configuration = new Configuration();

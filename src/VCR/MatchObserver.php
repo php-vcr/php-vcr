@@ -30,31 +30,27 @@ class MatchObserver
         }
     }
 
-    public function complain() {
+    public function getMismatchMessage() {
         if (count($this->requestToMatchersMap) == 0) {
-            return;
+            return "";
         }
 
         $hash = $this->getClosestRequestHash();
-        $errorString = $this->buildErrorString($hash);
+        $message = $this->buildMismatchMessage($hash);
 
-        throw new \LogicException($errorString);
+        return $message;
     }
 
-    protected function buildErrorString($hash) {
+    protected function buildMismatchMessage($hash) {
         $count = count($this->requestToMatchersMap);
-        $errorString = "\nThe request does not match any previously recorded request. The closest match was request"
-            . " #{$this->requestToCountMap[$hash]} of {$count}.\n";
+        $message = "The closest match was request #{$this->requestToCountMap[$hash]} of {$count}.\n";
         $matchers = $this->requestToMatchersMap[$hash];
         foreach ($matchers as $matcher) {
             list($first, $second) = $this->requestToRequestsMap[$hash];
-            $errorString .= $matcher->getMismatchDescription($first, $second);
-            $errorString .= "\n";
+            $message .= $matcher->getMismatchMessage($first, $second);
+            $message .= "\n";
         }
-        $errorString .= "The 'mode' is set to 'none'. If you want to send the request anyway, make sure your 'mode' "
-            . " is set to 'new_episodes'."
-            . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes.";
-        return $errorString;
+        return $message;
     }
 
     protected function getClosestRequestHash() {

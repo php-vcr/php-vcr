@@ -227,12 +227,14 @@ class Videorecorder
         }
 
         if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
-            $this->getMatchObserver()->complain();
-            // Match observer didn't complain. Complain generically here.
-            throw new \LogicException(
-                "The request does not match any previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
-                . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
-                . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes.");
+            $message = "The request does not match any previously recorded request and the record 'mode' is set to '{$this->config->getMode()}'. ";
+            $mismatchMessage = $this->getMatchObserver()->getMismatchMessage();
+            if ($mismatchMessage) {
+                $message .= "$mismatchMessage";
+            }
+            $message .= "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
+                      . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes.";
+            throw new \LogicException($message);
         }
 
         $this->disableLibraryHooks();

@@ -17,7 +17,7 @@ class MethodMatcher extends RequestMatcher implements IRequestMatcher {
         return $equal;
     }
 
-    public function getMismatchDescription(Request $first, Request $second) {
+    public function getMismatchMessage(Request $first, Request $second) {
         $message = " Stored request: Method: {$first->getMethod()}\n"
                    . "Current request: Method: {$second->getMethod()}";
         return $message;
