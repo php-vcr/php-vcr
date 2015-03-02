@@ -71,10 +71,10 @@ abstract class AbstractStorage implements Storage
         if (!file_exists($this->filePath) || 0 === filesize($this->filePath)) {
             file_put_contents($this->filePath, $defaultContent);
             $this->isNew = true;
-        } else {
-            Assertion::file($this->filePath, "Specified path '{$this->filePath}' is not a file.");
-            Assertion::readable($this->filePath, "Specified file '{$this->filePath}' must be readable.");
         }
+
+        Assertion::file($this->filePath, "Specified path '{$this->filePath}' is not a file.");
+        Assertion::readable($this->filePath, "Specified file '{$this->filePath}' must be readable.");
 
         $this->handle = fopen($this->filePath, 'r+');
     }
