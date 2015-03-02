@@ -335,4 +335,8 @@ class Request
         $this->postFiles[] = $file;
     }
 
+    public function getIdentityHash() {
+        return spl_object_hash($this);
+    }
+
 }

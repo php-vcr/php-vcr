@@ -56,7 +56,7 @@ class Cassette
      */
     public function hasResponse(Request $request)
     {
-        return $this->playback($request) !== null;
+        return $this->getResponse($request) !== null;
     }
 
     /**
@@ -68,6 +68,10 @@ class Cassette
      */
     public function playback(Request $request)
     {
+        return $this->getResponse($request);
+    }
+
+    public function getResponse(Request $request) {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
             if ($storedRequest->matches($request, $this->getRequestMatchers())) {
