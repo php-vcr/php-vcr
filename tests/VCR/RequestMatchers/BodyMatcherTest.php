@@ -14,23 +14,23 @@ class BodyMatcherTest extends RequestMatcherTestCase
 
     public function testMatch()
     {
-        $first = new Request('GET', 'http://example.com', array());
+        $first = new Request('POST', 'http://example.com', array());
         $first->setBody('test');
-        $second = new Request('GET', 'http://example.com', array());
+        $second = new Request('POST', 'http://example.com', array());
         $second->setBody('test');
 
-        $this->assertTrue($this->matcher->match($first, $second));
+        $this->assertTrue($this->matcher->match($first, $second), 'Bodies should be equal');
 
-        $first = new Request('GET', 'http://example.com', array());
+        $first = new Request('POST', 'http://example.com', array());
         $first->setBody('test');
         $second = new Request('POST', 'http://example.com', array());
         $second->setBody('different');
 
-        $this->assertFalse($this->matcher->match($first, $second));
+        $this->assertFalse($this->matcher->match($first, $second), 'Bodies should be different.');
     }
 
     public function testGetMismatchMessage() {
-        $first = new Request('GET', 'http://example.com', array());
+        $first = new Request('POST', 'http://example.com', array());
         $first->setBody('test');
         $second = new Request('POST', 'http://example.com', array());
         $second->setBody('different');
