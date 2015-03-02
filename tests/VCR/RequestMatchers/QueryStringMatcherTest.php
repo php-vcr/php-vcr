@@ -6,15 +6,15 @@ use \VCR\Request;
 
 class QueryStringMatcherTest extends RequestMatcherTestCase
 {
-	private $matcher;
+    private $matcher;
 
-	public function setUp() {
-		$this->matcher = new QueryStringMatcher();
-	}
+    public function setUp() {
+        $this->matcher = new QueryStringMatcher();
+    }
 
     public function testMatch()
     {
-    	$first = new Request('GET', 'http://example.com/search?query=test', array());
+        $first = new Request('GET', 'http://example.com/search?query=test', array());
         $second = new Request('GET', 'http://example.com/search?query=test', array());
 
         $this->assertTrue($this->matcher->match($first, $second));
@@ -26,7 +26,7 @@ class QueryStringMatcherTest extends RequestMatcherTestCase
     }
 
     public function testGetMismatchMessage() {
-    	$first = new Request('GET', 'http://example.com/search?query=first', array());
+        $first = new Request('GET', 'http://example.com/search?query=first', array());
         $second = new Request('GET', 'http://example.com/search?query=second', array());
 
         $mismatchMessage = $this->matcher->getMismatchMessage($first, $second);

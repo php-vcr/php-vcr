@@ -54,6 +54,14 @@ class MatchObserver
     }
 
     protected function getClosestRequestHash() {
+        // Here's my plan for this: If there's only one request, return it. If
+        // there are multiple, order them by count of mismatches, and if there
+        // is a single winner, return it. If there is not, then SUM a
+        // getProximityValue() value on each matcher (per request). The
+        // proximity value will be the levenshtein value for simple strings
+        // (method, url, host, etc). For arrays, transform them into one long
+        // string and again use the levenshtein value.
+
         // For the moment for testing, just return the first one
         reset($this->requestToMatchersMap);
         $firstKey = key($this->requestToMatchersMap);

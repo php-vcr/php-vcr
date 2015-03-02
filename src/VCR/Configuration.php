@@ -99,15 +99,6 @@ class Configuration
      * @var array List of RequestMatcher names and callbacks.
      */
     private $availableRequestMatchers = array();
-    // private $availableRequestMatchers = array(
-        // 'method'       => array('VCR\RequestMatcher', 'matchMethod'),
-        // 'url'          => array('VCR\RequestMatcher', 'matchUrl'),
-        // 'host'         => array('VCR\RequestMatcher', 'matchHost'),
-        // 'headers'      => array('VCR\RequestMatcher', 'matchHeaders'),
-        // 'body'         => array('VCR\RequestMatcher', 'matchBody'),
-        // 'post_fields'  => array('VCR\RequestMatcher', 'matchPostFields'),
-        // 'query_string' => array('VCR\RequestMatcher', 'matchQueryString'),
-    // );
 
     /**
      * A whitelist is a list of paths.
@@ -399,7 +390,13 @@ class Configuration
 
     protected function createAvailableMatchers() {
         $matchers = array(
-            new RequestMatchers\MethodMatcher()
+            new RequestMatchers\MethodMatcher(),
+            new RequestMatchers\UrlMatcher(),
+            new RequestMatchers\HostMatcher(),
+            new RequestMatchers\HeadersMatcher(),
+            new RequestMatchers\BodyMatcher(),
+            new RequestMatchers\PostFieldsMatcher(),
+            new RequestMatchers\QueryStringMatcher(),
         );
         foreach ($matchers as $matcher) {
             $matcher->setMatchObserver($this->getMatchObserver());
