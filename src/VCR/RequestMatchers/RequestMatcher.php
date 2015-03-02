@@ -16,4 +16,10 @@ abstract class RequestMatcher implements IRequestMatcher {
         $this->matchObserver = $observer;
         return $this;
     }
+
+    public function buildSimpleMismatchMessage($prefix, $firstMessage, $secondMessage) {
+        $message = " Stored request: {$prefix}: {$firstMessage}\n"
+                 . "Current request: {$prefix}: {$secondMessage}";
+        return $message;
+    }
 }

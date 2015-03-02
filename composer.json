@@ -24,6 +24,6 @@
     },
 
     "autoload": {
-        "classmap": ["src/"]
+        "classmap": ["src/", "tests/"]
     }
 }

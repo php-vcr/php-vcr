@@ -4,12 +4,12 @@ namespace VCR\RequestMatchers;
 
 use \VCR\Request;
 
-class MethodMatcherTest extends RequestMatcherTestCase
+class UrlMatcherTest extends RequestMatcherTestCase
 {
 	private $matcher;
 
 	public function setUp() {
-		$this->matcher = new MethodMatcher();
+		$this->matcher = new UrlMatcher();
 	}
 
     public function testMatch()
@@ -20,17 +20,17 @@ class MethodMatcherTest extends RequestMatcherTestCase
         $this->assertTrue($this->matcher->match($first, $second));
 
         $first = new Request('GET', 'http://example.com', array());
-        $second = new Request('POST', 'http://example.com', array());
+        $second = new Request('GET', 'http://example2.com', array());
 
         $this->assertFalse($this->matcher->match($first, $second));
     }
 
     public function testGetMismatchMessage() {
     	$first = new Request('GET', 'http://example.com', array());
-        $second = new Request('POST', 'http://example.com', array());
+        $second = new Request('GET', 'http://example2.com', array());
 
         $mismatchMessage = $this->matcher->getMismatchMessage($first, $second);
-        $expectedMessage = $this->buildSimpleExpectedMessage('Method', 'GET', 'POST');
+        $expectedMessage = $this->buildSimpleExpectedMessage('URL', 'http://example.com', 'http://example2.com');
         $this->assertEquals($mismatchMessage, $expectedMessage);
     }
 }
