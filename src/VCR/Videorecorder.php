@@ -216,7 +216,10 @@ class Videorecorder
             );
         }
 
+        $this->getMatchObserver()->startObserving();
+
         if ($this->cassette->hasResponse($request)) {
+            $this->getMatchObserver()->stopObserving();
             $this->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, new BeforePlaybackEvent($request, $this->cassette));
             $response = $this->cassette->playback($request);
             $this->dispatch(VCREvents::VCR_AFTER_PLAYBACK, new AfterPlaybackEvent($request, $response, $this->cassette));
@@ -224,8 +227,10 @@ class Videorecorder
         }
 
         if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
+            $this->getMatchObserver()->complain();
+            // Match observer didn't complain. Complain generically here.
             throw new \LogicException(
-                "The request does not match a previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
+                "The request does not match any previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
                 . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
                 . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes.");
         }
@@ -276,6 +281,10 @@ class Videorecorder
                 }
             );
         }
+    }
+
+    protected function getMatchObserver() {
+        return $this->config->getMatchObserver();
     }
 
     /**

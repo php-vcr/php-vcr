@@ -14,6 +14,11 @@ use VCR\Util\Assertion;
  */
 class Configuration
 {
+    public function __construct() {
+        $this->matchObserver = new MatchObserver();
+        $this->createAvailableMatchers();
+    }
+
     /**
      * @var string Path where cassette files should be stored.
      */
@@ -77,6 +82,11 @@ class Configuration
      */
     private $enabledRequestMatchers;
 
+    private $matchObserver;
+    public function getMatchObserver() {
+        return $this->matchObserver;
+    }
+
     /**
      * Format:
      * array(
@@ -88,15 +98,16 @@ class Configuration
      *
      * @var array List of RequestMatcher names and callbacks.
      */
-    private $availableRequestMatchers = array(
-        'method'       => array('VCR\RequestMatcher', 'matchMethod'),
-        'url'          => array('VCR\RequestMatcher', 'matchUrl'),
-        'host'         => array('VCR\RequestMatcher', 'matchHost'),
-        'headers'      => array('VCR\RequestMatcher', 'matchHeaders'),
-        'body'         => array('VCR\RequestMatcher', 'matchBody'),
-        'post_fields'  => array('VCR\RequestMatcher', 'matchPostFields'),
-        'query_string' => array('VCR\RequestMatcher', 'matchQueryString'),
-    );
+    private $availableRequestMatchers = array();
+    // private $availableRequestMatchers = array(
+        // 'method'       => array('VCR\RequestMatcher', 'matchMethod'),
+        // 'url'          => array('VCR\RequestMatcher', 'matchUrl'),
+        // 'host'         => array('VCR\RequestMatcher', 'matchHost'),
+        // 'headers'      => array('VCR\RequestMatcher', 'matchHeaders'),
+        // 'body'         => array('VCR\RequestMatcher', 'matchBody'),
+        // 'post_fields'  => array('VCR\RequestMatcher', 'matchPostFields'),
+        // 'query_string' => array('VCR\RequestMatcher', 'matchQueryString'),
+    // );
 
     /**
      * A whitelist is a list of paths.
@@ -384,5 +395,15 @@ class Configuration
             . "create it or set a different cassette path using "
             . "\\VCR\\VCR::configure()->setCassettePath('directory')."
         );
+    }
+
+    protected function createAvailableMatchers() {
+        $matchers = array(
+            new RequestMatchers\MethodMatcher()
+        );
+        foreach ($matchers as $matcher) {
+            $matcher->setMatchObserver($this->getMatchObserver());
+            $this->availableRequestMatchers[$matcher->getName()] = array($matcher, 'match');
+        }
     }
 }
