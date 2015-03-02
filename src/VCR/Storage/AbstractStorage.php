@@ -54,30 +54,29 @@ abstract class AbstractStorage implements Storage
      * If the cassetteName contains PATH_SEPARATORs, subfolders of the
      * cassettePath are autocreated when not existing.
      *
-     * @param string $cassettePath Path to the cassette directory.
-     * @param string $cassetteName Path to the cassette file, relative to the path.
+     * @param string  $cassettePath   Path to the cassette directory.
+     * @param string  $cassetteName   Path to the cassette file, relative to the path.
+     * @param string  $defaultContent Default data for this cassette if its not existing
      */
     public function __construct($cassettePath, $cassetteName, $defaultContent = '[]')
     {
         Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' is not existing or not a directory");
 
-        $file = rtrim($cassettePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $cassetteName;
+        $this->filePath = rtrim($cassettePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $cassetteName;
 
-        if (!is_dir(dirname($file))) {
-            mkdir(dirname($file), 0777, true);
+        if (!is_dir(dirname($this->filePath))) {
+            mkdir(dirname($this->filePath), 0777, true);
         }
 
-        if (!file_exists($file) || 0 === filesize($file)) {
-            file_put_contents($file, $defaultContent);
-
+        if (!file_exists($this->filePath) || 0 === filesize($this->filePath)) {
+            file_put_contents($this->filePath, $defaultContent);
             $this->isNew = true;
+        } else {
+            Assertion::file($this->filePath, "Specified path '{$this->filePath}' is not a file.");
+            Assertion::readable($this->filePath, "Specified file '{$this->filePath}' must be readable.");
         }
 
-        Assertion::file($file, "Specified path '{$file}' is not a file.");
-        Assertion::readable($file, "Specified file '{$file}' must be readable.");
-        Assertion::writeable($file, "Specified path '{$file}' must be writeable.");
-
-        $this->handle = fopen($file, 'r+');
+        $this->handle = fopen($this->filePath, 'r+');
     }
 
     /**

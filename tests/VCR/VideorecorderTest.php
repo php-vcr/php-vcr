@@ -143,7 +143,7 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
         return $client;
     }
 
-    protected function getCassetteMock($request, $response, $mode = 'new_episodes', $isNew = false)
+    protected function getCassetteMock($request, $response, $mode = VCR::MODE_NEW_EPISODES, $isNew = false)
     {
         $cassette = $this->getMockBuilder('\VCR\Cassette')
             ->disableOriginalConstructor()
@@ -155,7 +155,7 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->will($this->returnValue(false));
 
-        if ($mode == 'new_episodes' || $mode == 'once' && $isNew === true) {
+        if (VCR::MODE_NEW_EPISODES === $mode || VCR::MODE_ONCE === $mode && $isNew === true) {
             $cassette
                 ->expects($this->once())
                 ->method('record')

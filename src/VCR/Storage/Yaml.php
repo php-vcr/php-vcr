@@ -4,6 +4,7 @@ namespace VCR\Storage;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
+use VCR\Util\Assertion;
 
 /**
  * Yaml based storage for records.
@@ -44,6 +45,8 @@ class Yaml extends AbstractStorage
      */
     public function storeRecording(array $recording)
     {
+        Assertion::writeable($this->filePath, "Specified path '{$this->filePath}' must be writeable.");
+
         fseek($this->handle, -1, SEEK_END);
         fwrite($this->handle, "\n" . $this->yamlDumper->dump(array($recording), 4));
         fflush($this->handle);

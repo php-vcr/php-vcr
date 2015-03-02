@@ -30,9 +30,8 @@ class AbstractStorageTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('\VCR\VCRException', "Cassette path 'vfs://test/foo' is not existing or not a directory");
 
         vfsStream::setup('test');
-        $this->storage = new TestStorage(vfsStream::url('test/foo'), 'file');
+        new TestStorage(vfsStream::url('test/foo'), 'file');
     }
-
 }
 
 class TestStorage extends AbstractStorage

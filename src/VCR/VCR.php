@@ -13,6 +13,21 @@ namespace VCR;
  */
 class VCR
 {
+    /**
+     * Always allow to do HTTP requests and add to the cassette. Default mode.
+     */
+    const MODE_NEW_EPISODES = 'new_episodes';
+
+    /**
+     * Only allow new HTTP requests when the cassette is newly created.
+     */
+    const MODE_ONCE = 'once';
+
+    /**
+     * Treat the fixtures as read only and never allow new HTTP requests.
+     */
+    const MODE_NONE = 'none';
+
     public static function __callStatic($method, $parameters)
     {
         $instance = VCRFactory::get('VCR\Videorecorder');

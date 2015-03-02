@@ -2,6 +2,8 @@
 
 namespace VCR\Storage;
 
+use VCR\Util\Assertion;
+
 /**
  * Json based storage for records.
  *
@@ -15,6 +17,8 @@ class Json extends AbstractStorage
      */
     public function storeRecording(array $recording)
     {
+        Assertion::writeable($this->filePath, "Specified path '{$this->filePath}' must be writeable.");
+
         fseek($this->handle, -1, SEEK_END);
         if (ftell($this->handle) > 2) {
             fwrite($this->handle, ',');
