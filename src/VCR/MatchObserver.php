@@ -19,7 +19,7 @@ class MatchObserver
     }
 
     public function markMismatch(Request $first, Request $second, $matcher) {
-        $hash = spl_object_hash($first);
+        $hash = $first->getIdentityHash();
         if (array_key_exists($hash, $this->requestToMatchersMap)) {
             $this->requestToMatchersMap[$hash][] = $matcher;
         } else {
