@@ -287,6 +287,9 @@ class Configuration
      * Enables specified RequestMatchers by its name.
      *
      * @param array $matchers List of RequestMatcher names to enable.
+     * 
+     * @return Configuration
+     *
      * @throws \InvalidArgumentException If a specified request matcher does not exist.
      */
     public function enableRequestMatchers(array $matchers)
@@ -296,6 +299,8 @@ class Configuration
             throw new \InvalidArgumentException("Request matchers don't exist: " . join(', ', $invalidMatchers));
         }
         $this->enabledRequestMatchers = $matchers;
+        
+        return $this;
     }
 
     /**
