@@ -37,6 +37,92 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::turnOff();
     }
 
+    protected function doPostRequest($options = array()) {
+        $defaultOptions = array(
+            'url' => 'http://example.com',
+            'content' => 'Here is the POST content'
+        );
+        $options = array_merge($defaultOptions, $options);
+        $http = array(
+            'method' => 'POST',
+            'content' => $options['content']
+        );
+        $context = stream_context_create(array('http' => $http));
+        $result = file_get_contents($options['url'], false, $context);
+        return $result;
+    }
+
+    public function testShouldInterceptStreamWrapperWithPost()
+    {
+        VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
+        VCR::turnOn();
+        VCR::insertCassette('unittest_post_test');
+        $result = $this->doPostRequest();
+        $this->assertEquals('This is a POST test dummy.', $result, 'Stream wrapper call was not intercepted.');
+        VCR::eject();
+        VCR::turnOff();
+    }
+
+    public function testShouldInterceptUseOfHttpResponseHeaderLocalVariable()
+    {
+        VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
+        VCR::turnOn();
+        VCR::insertCassette('unittest_post_test');
+        $this->doPostRequest();
+        $headers = $http_response_header;
+        $expectedHeaders = array(
+            0 => 'HTTP/1.1 200 OK',
+            1 => 'Accept-Ranges: bytes',
+            2 => 'Cache-Control: max-age=604800',
+            3 => 'Content-Type: text/html',
+            4 => 'Date: Fri, 25 Apr 2014 09:14:54 GMT',
+            5 => 'Etag: "359670651"',
+            6 => 'Expires: Fri, 02 May 2014 09:14:54 GMT',
+            7 => 'Last-Modified: Fri, 09 Aug 2013 23:54:35 GMT',
+            8 => 'Server: EOS (lax004/2813)',
+            9 => 'x-ec-custom-error: 1',
+            10 => 'Content-Length: 1270'
+        );
+        $this->assertEquals($expectedHeaders, $headers);
+        VCR::eject();
+        VCR::turnOff();
+    }
+
+    public function testShouldInterceptUseOfHttpResponseHeaderLocalVariableWithMultipleRequests() {
+        VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
+        VCR::turnOn();
+        VCR::insertCassette('unittest_2_posts_test');
+        $this->doPostRequest(array('url' => 'http://example.com/post/1'));
+        $headers = $http_response_header;
+        $expectedHeaders = array(
+            0 => 'HTTP/1.1 200 OK',
+        );
+        $this->assertEquals($expectedHeaders[0], $headers[0]);
+        $this->doPostRequest(array('url' => 'http://example.com/post/2'));
+        $headers = $http_response_header;
+        $expectedHeaders = array(
+            0 => 'HTTP/1.1 201 Created',
+        );
+        $this->assertEquals($expectedHeaders[0], $headers[0]);
+        VCR::eject();
+        VCR::turnOff();
+    }
+
+    public function testShouldNotInterceptUseOfHttpResponseHeaderLocalVariableAssignment()
+    {
+        VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
+        VCR::turnOn();
+        VCR::insertCassette('unittest_post_test');
+        $this->doPostRequest();
+        $someValue = "some value";
+        $http_response_header = $someValue;
+        $myVariableName = 'http_response_header';
+        // We use $$myVariableName so the CodeTransformer won't transform our test assertion.
+        $this->assertEquals($someValue, $$myVariableName);
+        VCR::eject();
+        VCR::turnOff();
+    }
+
     public function testShouldInterceptCurlLibrary()
     {
         VCR::configure()->enableLibraryHooks(array('curl'));

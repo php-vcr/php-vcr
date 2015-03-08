@@ -69,6 +69,14 @@ class VCRFactory
         );
     }
 
+    protected function createVCRLibraryHooksStreamWrapperHook()
+    {
+        return new LibraryHooks\StreamWrapperHook(
+            $this->getOrCreate('VCR\CodeTransform\StreamProcessorCodeTransform'),
+            $this->getOrCreate('VCR\Util\StreamProcessor')
+        );
+    }
+
     /**
      * Returns the same VCRFactory instance on ever call (singleton).
      *
