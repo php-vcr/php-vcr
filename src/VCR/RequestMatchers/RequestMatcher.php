@@ -2,18 +2,18 @@
 
 namespace VCR\RequestMatchers;
 
-use VCR\MatchObserver;
+use VCR\MismatchExplainer;
 use VCR\Request;
 
 abstract class RequestMatcher implements IRequestMatcher {
-    private $matchObserver;
+    private $mismatchExplainer;
 
-    public function getMatchObserver() {
-        return $this->matchObserver;
+    public function getMismatchExplainer() {
+        return $this->mismatchExplainer;
     }
 
-    public function setMatchObserver(MatchObserver $observer) {
-        $this->matchObserver = $observer;
+    public function setMismatchExplainer(MismatchExplainer $mismatchExplainer) {
+        $this->mismatchExplainer = $mismatchExplainer;
         return $this;
     }
 

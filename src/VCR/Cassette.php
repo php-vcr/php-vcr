@@ -71,7 +71,7 @@ class Cassette
         return $this->getResponse($request);
     }
 
-    public function getResponse(Request $request) {
+    protected function getResponse(Request $request) {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
             if ($storedRequest->matches($request, $this->getRequestMatchers())) {
@@ -80,6 +80,13 @@ class Cassette
         }
 
         return null;
+    }
+
+    public function collectMismatches(MismatchExplainer $mismatchExplainer) {
+        foreach ($this->storage as $recording) {
+            $storedRequest = Request::fromArray($recording['request']);
+            $storedRequest->collectMismatches($request, $this->getRequestMatchers(), $mismatchExplainer);
+        }
     }
 
     /**

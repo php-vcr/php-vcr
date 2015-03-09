@@ -216,10 +216,7 @@ class Videorecorder
             );
         }
 
-        $this->getMatchObserver()->startObserving();
-
         if ($this->cassette->hasResponse($request)) {
-            $this->getMatchObserver()->stopObserving();
             $this->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, new BeforePlaybackEvent($request, $this->cassette));
             $response = $this->cassette->playback($request);
             $this->dispatch(VCREvents::VCR_AFTER_PLAYBACK, new AfterPlaybackEvent($request, $response, $this->cassette));
@@ -227,14 +224,17 @@ class Videorecorder
         }
 
         if ($this->config->getMode() == 'none' || $this->config->getMode() == 'once' && $this->cassette->isNew() === false) {
-            $message = "The request does not match any previously recorded request and the record 'mode' is set to '{$this->config->getMode()}'. ";
-            $mismatchMessage = $this->getMatchObserver()->getMismatchMessage();
-            if ($mismatchMessage) {
-                $message .= "$mismatchMessage";
-            }
-            $message .= "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
-                      . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes.";
-            throw new \LogicException($message);
+            // $message = "The request does not match any previously recorded request and the record 'mode' is set to '{$this->config->getMode()}'. ";
+            // $mismatchMessage = $this->getMismatchExplainer()->getMismatchMessage();
+            // if ($mismatchMessage) {
+            //     $message .= "$mismatchMessage";
+            // }
+            // $message .= "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
+            //           . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes.";
+            // throw new \LogicException($message);
+            $mismatchExplainer = new MismatchExplainer($request);
+            $this->cassette->collectMismatches($mismatchExplainer);
+            throw new \LogicException($mismatchExplainer->getMismatchMessage());
         }
 
         $this->disableLibraryHooks();
@@ -283,10 +283,6 @@ class Videorecorder
                 }
             );
         }
-    }
-
-    protected function getMatchObserver() {
-        return $this->config->getMatchObserver();
     }
 
     /**

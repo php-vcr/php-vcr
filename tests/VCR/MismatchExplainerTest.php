@@ -9,16 +9,16 @@ use VCR\RequestMatchers\UrlMatcher;
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class MatchObserverTest extends \PHPUnit_Framework_TestCase
+class MismatchExplainerTest extends \PHPUnit_Framework_TestCase
 {
-    private $matchObserver;
+    private $mismatchExplainer;
 
     public function setUp() {
-        $proxy = new ProxyBuilder('\VCR\MatchObserver');
-        $this->matchObserver = $proxy
+        $proxy = new ProxyBuilder('\VCR\MismatchExplainer');
+        $this->mismatchExplainer = $proxy
             ->setMethods(array('getClosestRequestHash'))
             ->getProxy();
-        $this->matchObserver->startObserving();
+        $this->mismatchExplainer->startObserving();
     }
 
     protected function runMatch($first, $second, $matcherName = '') {
@@ -29,7 +29,7 @@ class MatchObserverTest extends \PHPUnit_Framework_TestCase
             default:
                 $matcher = new MethodMatcher();
         }
-        $matcher->setMatchObserver($this->matchObserver);
+        $matcher->setMismatchExplainer($this->mismatchExplainer);
         $matcher->match($first, $second);
     }
 
@@ -56,14 +56,14 @@ class MatchObserverTest extends \PHPUnit_Framework_TestCase
         $currentRequest = new Request('GET', 'http://example.com/common/path', array());
         $storedRequest1 = new Request('GET', 'http://example.com/common/path', array());
         $this->runMatch($storedRequest1, $currentRequest);
-        $this->assertEmpty($this->matchObserver->getMismatchMessage());
+        $this->assertEmpty($this->mismatchExplainer->getMismatchMessage());
     }
 
     public function testGetClosestRequestHashReturnsOnlyRequest() {
         $currentRequest = new Request('GET', 'http://example.com/common/path', array());
         $storedRequest1 = new Request('POST', 'http://example.com/common/path', array());
         $this->runMatch($storedRequest1, $currentRequest);
-        $this->assertCorrectHash($this->matchObserver->getClosestRequestHash(), $storedRequest1->getIdentityHash());
+        $this->assertCorrectHash($this->mismatchExplainer->getClosestRequestHash(), $storedRequest1->getIdentityHash());
     }
 
     public function testGetClosestRequestHashReturnsExactMatch() {
@@ -71,7 +71,7 @@ class MatchObserverTest extends \PHPUnit_Framework_TestCase
         $storedRequest1 = new Request('GET', 'http://example.com/common/path', array());
         $storedRequest2 = new Request('POST', 'http://example.com/common/path', array());
         $this->runMatches(array($storedRequest1, $storedRequest2), $currentRequest);
-        $this->assertCorrectHash($this->matchObserver->getClosestRequestHash(), $storedRequest2->getIdentityHash());
+        $this->assertCorrectHash($this->mismatchExplainer->getClosestRequestHash(), $storedRequest2->getIdentityHash());
     }
 
     public function testGetClosestRequestHashReturnsFirstWhenTwoDifferBySameAmount() {
@@ -80,7 +80,7 @@ class MatchObserverTest extends \PHPUnit_Framework_TestCase
         $storedRequest2 = new Request('GET', 'gttp://example.com/common/path', array());
         $this->runMatches($storedRequest1, $currentRequest, array('method', 'url'));
         $this->runMatches($storedRequest2, $currentRequest, array('method', 'url'));
-        $this->assertCorrectHash($this->matchObserver->getClosestRequestHash(), $storedRequest1->getIdentityHash());
+        $this->assertCorrectHash($this->mismatchExplainer->getClosestRequestHash(), $storedRequest1->getIdentityHash());
     }
 
     // public function testGetClosestRequestHashReturnsSecondWhenItHasFewerMarkedMismatches() {
@@ -88,7 +88,7 @@ class MatchObserverTest extends \PHPUnit_Framework_TestCase
     //     $storedRequest1 = new Request('GDT', 'gttp://example.com/common/path', array());
     //     $storedRequest2 = new Request('GET', 'gttp://example.com/common/path', array());
     //     $this->runMatches(array($storedRequest1, $storedRequest2), $currentRequest, array('method', 'url'));
-    //     $this->assertCorrectHash($this->matchObserver->getClosestRequestHash(), $storedRequest2->getIdentityHash());
+    //     $this->assertCorrectHash($this->mismatchExplainer->getClosestRequestHash(), $storedRequest2->getIdentityHash());
     // }
 
     // public function testGetClosestRequestHashReturnsSecondWhenMinimallyCloser() {
@@ -97,7 +97,7 @@ class MatchObserverTest extends \PHPUnit_Framework_TestCase
     //     $storedRequest2 = new Request('GQT', 'gttp://example.com/common/path', array());
     //     $this->runMatch($storedRequest1, $currentRequest);
     //     $this->runMatch($storedRequest2, $currentRequest, 'url');
-    //     $this->assertEquals($this->matchObserver->getClosestRequestHash(), $storedRequest2->getIdentityHash());
+    //     $this->assertEquals($this->mismatchExplainer->getClosestRequestHash(), $storedRequest2->getIdentityHash());
     // }
 
 }

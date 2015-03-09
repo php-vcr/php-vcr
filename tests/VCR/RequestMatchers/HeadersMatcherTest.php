@@ -38,10 +38,10 @@ class HeadersMatcherTest extends RequestMatcherTestCase
         $this->assertFalse($this->matcher->match($first, $second));
     }
 
-    public function testHeaderMatchingAllowsEmptyVals()
+    public function testHeaderMatchingIgnoresEmptyVals()
     {
         $first = new Request('GET', 'http://example.com', array('Accept' => null, 'Content-Type' => 'application/json'));
-        $second = new Request('GET', 'http://example.com', array('Accept' => null, 'Content-Type' => 'application/json'));
+        $second = new Request('GET', 'http://example.com', array('AnotherHeader' => null, 'Content-Type' => 'application/json'));
 
         $this->assertTrue($this->matcher->match($first, $second));
     }

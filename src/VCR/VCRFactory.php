@@ -69,6 +69,23 @@ class VCRFactory
         );
     }
 
+    protected function createVCRConfiguration() {
+        $config = new Configuration();
+        $matchers = array(
+            new RequestMatchers\MethodMatcher(),
+            new RequestMatchers\UrlMatcher(),
+            new RequestMatchers\HostMatcher(),
+            new RequestMatchers\HeadersMatcher(),
+            new RequestMatchers\BodyMatcher(),
+            new RequestMatchers\PostFieldsMatcher(),
+            new RequestMatchers\QueryStringMatcher(),
+        );
+        foreach ($matchers as $matcher) {
+            $config->addRequestMatcher($matcher->getName(), array($matcher, 'match'));
+        }
+        return $config;
+    }
+
     /**
      * Returns the same VCRFactory instance on ever call (singleton).
      *

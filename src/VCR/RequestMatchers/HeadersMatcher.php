@@ -14,6 +14,6 @@ class HeadersMatcher extends SimpleMatcher implements IRequestMatcher {
     }
 
     public function getRequestValue(Request $request) {
-        return print_r($request->getHeaders(), true);
+        return print_r(array_filter($request->getHeaders()), true);
     }
 }

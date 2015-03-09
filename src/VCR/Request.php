@@ -75,6 +75,13 @@ class Request
         return true;
     }
 
+    public function collectMismatches(Request $request, array $requestMatchers, MismatchExplainer $mismatchExplainer) {
+        // convert simple callables here to CallableRequestMatcher
+        foreach ($requestMatchers as $matcher) {
+            $matcher->checkMatch($this, $request, $mismatchExplainer);
+        }
+    }
+
     /**
      * Returns an array representation of this request.
      *

@@ -14,11 +14,6 @@ use VCR\Util\Assertion;
  */
 class Configuration
 {
-    public function __construct() {
-        $this->matchObserver = new MatchObserver();
-        $this->createAvailableMatchers();
-    }
-
     /**
      * @var string Path where cassette files should be stored.
      */
@@ -81,11 +76,6 @@ class Configuration
      * @var array Names of the RequestMatchers which are enabled.
      */
     private $enabledRequestMatchers;
-
-    private $matchObserver;
-    public function getMatchObserver() {
-        return $this->matchObserver;
-    }
 
     /**
      * Format:
@@ -386,21 +376,5 @@ class Configuration
             . "create it or set a different cassette path using "
             . "\\VCR\\VCR::configure()->setCassettePath('directory')."
         );
-    }
-
-    protected function createAvailableMatchers() {
-        $matchers = array(
-            new RequestMatchers\MethodMatcher(),
-            new RequestMatchers\UrlMatcher(),
-            new RequestMatchers\HostMatcher(),
-            new RequestMatchers\HeadersMatcher(),
-            new RequestMatchers\BodyMatcher(),
-            new RequestMatchers\PostFieldsMatcher(),
-            new RequestMatchers\QueryStringMatcher(),
-        );
-        foreach ($matchers as $matcher) {
-            $matcher->setMatchObserver($this->getMatchObserver());
-            $this->availableRequestMatchers[$matcher->getName()] = array($matcher, 'match');
-        }
     }
 }
