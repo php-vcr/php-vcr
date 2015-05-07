@@ -1,0 +1,8 @@
+{
+  "require": {
+    "rmccue/requests": "> 1.0"
+  },
+  "autoload": {
+    "classmap": ["src/"]
+  }
+}
