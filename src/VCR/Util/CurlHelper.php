@@ -61,7 +61,7 @@ class CurlHelper
             $headerList += HttpUtil::formatHeadersForCurl($response->getHeaders());
             $headerList[] = '';
             foreach ($headerList as $header) {
-                call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $header);
+                call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $header . "\r\n");
             }
         }
 
