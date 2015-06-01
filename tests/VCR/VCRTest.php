@@ -145,7 +145,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testShouldDispatchBeforeAfterHttpRequestAndBeforeRecordWhenCassetteHasNoResponse()
+    public function testShouldDispatchAllEventsWhenCassetteHasNoResponse()
     {
         vfsStream::setup('testDir');
         VCR::configure()
@@ -158,9 +158,33 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         $this->doCurlGetRequest('http://google.com/');
 
         $this->assertEquals(
-            array(VCREvents::VCR_BEFORE_HTTP_REQUEST, VCREvents::VCR_AFTER_HTTP_REQUEST, VCREvents::VCR_BEFORE_RECORD),
+            array(
+                VCREvents::VCR_BEFORE_PLAYBACK,
+                VCREvents::VCR_AFTER_PLAYBACK,
+                VCREvents::VCR_BEFORE_HTTP_REQUEST,
+                VCREvents::VCR_AFTER_HTTP_REQUEST,
+                VCREvents::VCR_BEFORE_RECORD
+            ),
             $this->getRecordedEventNames()
         );
+        VCR::eject();
+        VCR::turnOff();
+    }
+
+    public function testCouldModifyRequestInOrderToReturnTheCassetteRecordedResponse()
+    {
+        VCR::configure()
+            ->enableLibraryHooks(array('curl'))
+            ->setMode(VCR::MODE_NONE);
+        VCR::turnOn();
+        VCR::insertCassette('unittest_curl_test');
+
+        VCR::getEventDispatcher()->addListener(VCREvents::VCR_BEFORE_PLAYBACK, function (Event $event) {
+            $event->getRequest()->setUrl('http://google.com/');
+        });
+        $output = $this->doCurlGetRequest('http://example.org/');
+        $this->assertEquals('This is a curl test dummy.', $output);
+
         VCR::eject();
         VCR::turnOff();
     }
