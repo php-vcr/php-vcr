@@ -79,13 +79,13 @@ class Cassette
      * @param Request $request Request to check if it was recorded.
      * @param boolean $dispatchEvents Whether to dispatch events or not. Default is false.
      *
-     * @return boolean True if a response was recorded for specified request.
+     * @return Response|null Response for specified request.
      */
     protected function getResponse(Request $request, $dispatchEvents = false) {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
             if ($dispatchEvents) {
-                $this->config->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, new BeforePlaybackEvent($request, $this));
+                $this->config->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, new BeforePlaybackEvent($storedRequest, $this));
             }
             if ($storedRequest->matches($request, $this->getRequestMatchers())) {
                 return Response::fromArray($recording['response']);
