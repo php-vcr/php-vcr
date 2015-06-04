@@ -10,10 +10,17 @@ use org\bovigo\vfs\vfsStream;
  */
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
+    public static function resetCassettePath() {
+        VCR::configure()->setCassettePath('tests/fixtures') ;
+    }
 
     public static function setupBeforeClass()
     {
-       VCR::configure()->setCassettePath('tests/fixtures') ;
+       self::resetCassettePath();
+    }
+
+    public function setUp() {
+        $this->events = array();
     }
 
     public function testUseStaticCallsNotInitialized()
@@ -142,7 +149,6 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         );
         VCR::eject();
         VCR::turnOff();
-
     }
 
     public function testShouldDispatchBeforeAfterHttpRequestAndBeforeRecordWhenCassetteHasNoResponse()
@@ -163,6 +169,33 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         );
         VCR::eject();
         VCR::turnOff();
+        self::resetCassettePath();
+    }
+
+    public function testBeforePlaybackIsDispatchedForEachCassetteInteraction() {
+        $counts = array();
+        VCR::configure()
+            ->setMode('none')
+            ->enableLibraryHooks(array('curl'))
+            ->getEventDispatcher()->addListener(VCREvents::VCR_BEFORE_PLAYBACK, function(Event $event) use (&$counts) {
+                $eventName = $event->getName();
+                if (isset($counts[$eventName])) {
+                    $counts[$eventName] += 1;
+                } else {
+                    $counts[$eventName] = 1;
+                }
+            });
+        VCR::turnOn();
+        VCR::insertCassette('unittest_event_test');
+
+        $this->doCurlGetRequest('http://google.com/');
+
+        $this->assertEquals(
+            array(VCREvents::VCR_BEFORE_PLAYBACK => 2),
+            $counts
+        );
+        VCR::eject();
+        VCR::turnOff();
     }
 
     private function recordAllEvents()
@@ -175,7 +208,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
             VCREvents::VCR_BEFORE_RECORD,
         );
         foreach ($allEventsToListen as $eventToListen) {
-            VCR::getEventDispatcher()->addListener($eventToListen, array($this, 'recordEvent'));
+            VCR::configure()->getEventDispatcher()->addListener($eventToListen, array($this, 'recordEvent'));
         }
     }
 

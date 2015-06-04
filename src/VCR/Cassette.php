@@ -4,6 +4,7 @@ namespace VCR;
 
 use VCR\Storage\Storage;
 use VCR\Util\Assertion;
+use VCR\Event\BeforePlaybackEvent;
 
 /**
  * A Cassette records and plays back pairs of Requests and Responses in a Storage.
@@ -56,7 +57,7 @@ class Cassette
      */
     public function hasResponse(Request $request)
     {
-        return $this->playback($request) !== null;
+        return $this->getResponse($request, true) !== null;
     }
 
     /**
@@ -68,8 +69,24 @@ class Cassette
      */
     public function playback(Request $request)
     {
+        return $this->getResponse($request);
+    }
+
+    /**
+     * Returns a response for given request or null if not found.
+     * Optionally dispatches VCR_BEFORE_PLAYBACK event.
+     *
+     * @param Request $request Request to check if it was recorded.
+     * @param boolean $dispatchEvents Whether to dispatch events or not. Default is false.
+     *
+     * @return boolean True if a response was recorded for specified request.
+     */
+    protected function getResponse(Request $request, $dispatchEvents = false) {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
+            if ($dispatchEvents) {
+                $this->config->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, new BeforePlaybackEvent($request, $this));
+            }
             if ($storedRequest->matches($request, $this->getRequestMatchers())) {
                 return Response::fromArray($recording['response']);
             }
