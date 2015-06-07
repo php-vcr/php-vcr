@@ -216,10 +216,11 @@ class Videorecorder
             );
         }
 
-        if ($this->cassette->hasResponse($request)) {
-            $this->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, new BeforePlaybackEvent($request, $this->cassette));
-            $response = $this->cassette->playback($request);
-            $this->dispatch(VCREvents::VCR_AFTER_PLAYBACK, new AfterPlaybackEvent($request, $response, $this->cassette));
+        $this->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, new BeforePlaybackEvent($request, $this->cassette));
+        $response = $this->cassette->playback($request);
+        $this->dispatch(VCREvents::VCR_AFTER_PLAYBACK, new AfterPlaybackEvent($request, $response, $this->cassette));
+
+        if ($response !== null) {
             return $response;
         }
 

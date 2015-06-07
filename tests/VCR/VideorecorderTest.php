@@ -147,13 +147,8 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
     {
         $cassette = $this->getMockBuilder('\VCR\Cassette')
             ->disableOriginalConstructor()
-            ->setMethods(array('hasResponse', 'record', 'playback', 'isNew'))
+            ->setMethods(array('record', 'playback', 'isNew'))
             ->getMock();
-        $cassette
-            ->expects($this->once())
-            ->method('hasResponse')
-            ->with($request)
-            ->will($this->returnValue(false));
 
         if (VCR::MODE_NEW_EPISODES === $mode || VCR::MODE_ONCE === $mode && $isNew === true) {
             $cassette
