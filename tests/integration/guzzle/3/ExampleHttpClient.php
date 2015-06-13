@@ -24,6 +24,25 @@ class ExampleHttpClient
 
         return null;
     }
+    
+    public function post($url, $body)
+    {
+        $client = new Client();
+        
+        try {
+            $request = $client->post($url);
+            $request->setBody($body);
+            $response = $request->send();
+
+            return json_decode($response->getBody(), true);
+        } catch (ClientErrorResponseException $e) {
+            if ($e->getResponse()->getStatusCode() !== 404) {
+                throw $e;
+            }
+        }
+
+        return null;
+    }
 }
 
 
