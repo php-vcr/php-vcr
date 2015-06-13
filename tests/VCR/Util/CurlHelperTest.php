@@ -241,4 +241,125 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedBody, file_get_contents($testFile));
     }
+
+    /**
+     * @dataProvider getCurlOptionProvider()
+     *
+     * @param Response $response
+     * @param integer $curlOption cURL option to get.
+     * @param mixed $expectedCurlOptionValue Expected value of cURL option
+     */
+    public function testGetCurlOptionFromResponse(Response $response, $curlOption, $expectedCurlOptionValue)
+    {
+        $this->assertEquals(
+            $expectedCurlOptionValue,
+            CurlHelper::getCurlOptionFromResponse($response, $curlOption)
+        );
+    }
+
+    public function getCurlOptionProvider()
+    {
+        return array(
+            array(
+                Response::fromArray(
+                    array(
+                        'status'    => array(
+                            'http_version' => '1.1',
+                            'code' => 200,
+                            'message' => 'OK',
+                        ),
+                        'headers'   => array(
+                            'Host' => 'localhost:8000',
+                            'Connection' => 'close',
+                            'Content-type' => 'text/html; charset=UTF-8',
+
+                        ),
+                    )
+                ),
+                CURLINFO_HEADER_SIZE,
+                100,
+            ),
+            array(
+                Response::fromArray(
+                    array(
+                        'status'    => array(
+                            'http_version' => '1.1',
+                            'code' => 404,
+                            'message' => 'Not Found',
+                        ),
+                        'headers'   => array(
+                            'Host' => 'localhost:8000',
+                            'Connection' => 'close',
+                            'Content-type' => 'text/html; charset=UTF-8',
+
+                        ),
+                    )
+                ),
+                CURLINFO_HEADER_SIZE,
+                107,
+            ),
+            array(
+                Response::fromArray(
+                    array(
+                        'status'    => array(
+                            'http_version' => '1.1',
+                            'code' => 200,
+                            'message' => 'OK',
+                        ),
+                        'headers'   => array(
+                            'Host' => 'localhost:8000',
+                            'Connection' => 'close',
+                            'Content-type' => 'text/html; charset=UTF-8',
+                            'X-Powered-By' => 'PHP/5.6.4-4ubuntu6',
+                        ),
+                    )
+                ),
+                CURLINFO_HEADER_SIZE,
+                134,
+            ),
+            array(
+                Response::fromArray(
+                    array(
+                        'status'    => array(
+                            'http_version' => '1.1',
+                            'code' => 200,
+                            'message' => 'OK',
+                        ),
+                        'headers'   => array(
+                            'Host' => 'localhost:8000',
+                            'Connection' => 'close',
+                            'Content-type' => 'text/html; charset=UTF-8',
+                            'Cache-Control' => 'no-cache, must-revalidate',
+                            'Pragma' => 'no-cache',
+                        ),
+                    )
+                ),
+                CURLINFO_HEADER_SIZE,
+                160,
+            ),
+            array(
+                Response::fromArray(
+                    array(
+                        'status'    => array(
+                            'http_version' => '1.1',
+                            'code' => 200,
+                            'message' => 'OK',
+                        ),
+                        'headers'   => array(
+                            'Host' => 'localhost:8000',
+                            'Connection' => 'close',
+                            'X-Powered-By' => 'PHP/5.6.4-4ubuntu6',
+                            'Expires' => 'Sat, 26 Jul 1997 05:00:00 GMT',
+                            'Last-Modified' => 'Sat, 13 Jun 2015 20:36:15 GMT',
+                            'Cache-Control' => 'no-store, no-cache, must-revalidate',
+                            'Pragma' => 'no-cache',
+                            'Content-type' => 'text/html; charset=UTF-8',
+                        ),
+                    )
+                ),
+                CURLINFO_HEADER_SIZE,
+                290,
+            ),
+        );
+    }
 }
