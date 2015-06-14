@@ -99,4 +99,17 @@ class HttpUtil
              . ' ' . $response->getStatusCode()
              . ' ' . $response->getStatusMessage();
     }
+
+    /**
+     * Returns a HTTP status line with headers from specified response.
+     *
+     * @param Response $response
+     * @return string HTTP status line.
+     */
+    public static function formatAsStatusWithHeadersString(Response $response)
+    {
+        $headers = self::formatHeadersForCurl($response->getHeaders());
+        array_unshift($headers, self::formatAsStatusString($response));
+        return join("\r\n", $headers) . "\r\n\r\n";
+    }
 }

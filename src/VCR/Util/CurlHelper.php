@@ -68,9 +68,7 @@ class CurlHelper
         $body = $response->getBody();
 
         if (!empty($curlOptions[CURLOPT_HEADER])) {
-            $headers = HttpUtil::formatHeadersForCurl($response->getHeaders());
-            array_unshift($headers, HttpUtil::formatAsStatusString($response));
-            $body = join("\r\n", $headers) . "\r\n\r\n" . $body;
+            $body = HttpUtil::formatAsStatusWithHeadersString($response) . $body;
         }
 
         if (isset($curlOptions[CURLOPT_WRITEFUNCTION])) {
@@ -101,7 +99,7 @@ class CurlHelper
             case 0: // 0 == array of all curl options
                 $info = array();
                 foreach (self::$curlInfoList as $option => $key) {
-                   $info[$key] = $response->getCurlInfo($key);
+                    $info[$key] = $response->getCurlInfo($key);
                 }
                 break;
             case CURLINFO_HTTP_CODE:
@@ -109,6 +107,9 @@ class CurlHelper
                 break;
             case CURLINFO_SIZE_DOWNLOAD:
                 $info = $response->getHeader('Content-Length');
+                break;
+            case CURLINFO_HEADER_SIZE:
+                $info =  mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
                 break;
             default:
                 $info = $response->getCurlInfo($option);
