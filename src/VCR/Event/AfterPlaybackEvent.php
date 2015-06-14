@@ -6,7 +6,6 @@ use VCR\Cassette;
 use VCR\Request;
 use VCR\Response;
 use Symfony\Component\EventDispatcher\Event;
-use VCR\Util\Assertion;
 
 class AfterPlaybackEvent extends Event
 {
@@ -27,13 +26,12 @@ class AfterPlaybackEvent extends Event
 
     /**
      * @param Request $request
-     * @param Response|null $response
+     * @param Response $response
      * @param Cassette $cassette
      */
-    public function __construct(Request $request, $response, Cassette $cassette)
+    public function __construct(Request $request, Response $response, Cassette $cassette)
     {
         $this->request = $request;
-        Assertion::nullOrIsInstanceOf($response, 'VCR\Response');
         $this->response = $response;
         $this->cassette = $cassette;
     }
@@ -47,10 +45,7 @@ class AfterPlaybackEvent extends Event
     }
 
     /**
-     * Returns the response for the intercepted request
-     * or null if there is no response matching to the request.
-     *
-     * @return null|Response
+     * @return Response
      */
     public function getResponse()
     {
