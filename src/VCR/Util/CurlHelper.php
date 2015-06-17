@@ -191,7 +191,7 @@ class CurlHelper
      *
      * @param Request  $request Request to set cURL option to.
      */
-    public function validateCurlPOSTBody(Request $request)
+    public static function validateCurlPOSTBody(Request $request)
     {
         $readFunction = $request->getCurlOption(CURLOPT_READFUNCTION);
         if (is_null($readFunction)) {
