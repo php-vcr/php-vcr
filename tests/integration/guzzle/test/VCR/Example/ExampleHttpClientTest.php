@@ -11,7 +11,7 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_GET_URL = 'http://httpbin.org/get';
     const TEST_POST_URL = 'http://httpbin.org/post';
-    const TEST_POST_BODY = 'foo=bar';
+    const TEST_POST_BODY = '{"foo":"bar"}';
 
     protected $ignoreHeaders = array(
         'Accept',
@@ -22,9 +22,7 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        // Configure virtual filesystem.
-        vfsStream::setup('testDir');
-        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
+        \VCR\VCR::configure()->setCassettePath('/tmp');
     }
 
     public function testRequestGETDirect()

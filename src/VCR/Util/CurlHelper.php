@@ -175,6 +175,7 @@ class CurlHelper
             case CURLOPT_HEADER:
             case CURLOPT_WRITEFUNCTION:
             case CURLOPT_HEADERFUNCTION:
+            case CURLOPT_UPLOAD:
                 // Ignore header, file and writer functions.
                 // These options are stored and will be handled later in handleOutput().
                 break;

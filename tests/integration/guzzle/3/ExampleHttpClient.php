@@ -31,7 +31,7 @@ class ExampleHttpClient
         
         try {
             $request = $client->post($url);
-            $request->setBody($body);
+            $request->setBody($body, 'application/json');
             $response = $request->send();
 
             return json_decode($response->getBody(), true);
