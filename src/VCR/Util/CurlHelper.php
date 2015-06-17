@@ -190,8 +190,9 @@ class CurlHelper
      * CURLOPT_INFILESIZE is set if CURLOPT_READFUNCTION is set.
      *
      * @param Request  $request Request to set cURL option to.
+     * @param resource $curlHandle cURL handle associated with the request.
      */
-    public static function validateCurlPOSTBody(Request $request)
+    public static function validateCurlPOSTBody(Request $request, $curlHandle = null)
     {
         $readFunction = $request->getCurlOption(CURLOPT_READFUNCTION);
         if (is_null($readFunction)) {

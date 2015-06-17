@@ -184,7 +184,7 @@ class CurlHook implements LibraryHook
     public static function curlExec($curlHandle)
     {
         $request = self::$requests[(int) $curlHandle];
-        CurlHelper::validateCurlPOSTBody($request);
+        CurlHelper::validateCurlPOSTBody($request, $curlHandle);
         
         $requestCallback = self::$requestCallback;
         self::$responses[(int) $curlHandle] = $requestCallback($request);

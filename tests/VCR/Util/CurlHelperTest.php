@@ -144,6 +144,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $callback = function ($curlHandle, $fileHandle, $size) {};
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, $callback, curl_init());
+        CurlHelper::validateCurlPOSTBody($request, curl_init());
     }
 
     public function testSetCurlOptionReadFunction()
@@ -162,6 +163,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_INFILESIZE, strlen($expected));
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, $callback, curl_init());
+        CurlHelper::validateCurlPOSTBody($request, curl_init());
 
         $this->assertEquals($expected, $request->getBody());
     }
