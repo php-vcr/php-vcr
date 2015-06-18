@@ -12,8 +12,6 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
     const TEST_GET_URL = 'http://httpbin.org/get';
     const TEST_POST_URL = 'http://httpbin.org/post';
     const TEST_POST_BODY = '{"foo":"bar"}';
-    
-    private $cassetteName;
 
     protected $ignoreHeaders = array(
         'Accept',
@@ -24,8 +22,8 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        \VCR\VCR::configure()->setCassettePath('/tmp');
-        $this->cassetteName = substr(md5(rand()), 0, 10);
+        vfsStream::setup('testDir');
+        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
     public function testRequestGETDirect()
@@ -95,7 +93,7 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
     protected function requestGETIntercepted()
     {
         \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette($this->cassetteName);
+        \VCR\VCR::insertCassette('test-cassette.yml');
         $info = $this->requestGET();
         \VCR\VCR::turnOff();
 
@@ -105,7 +103,7 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
     protected function requestPOSTIntercepted()
     {
         \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette($this->cassetteName);
+        \VCR\VCR::insertCassette('test-cassette.yml');
         $info = $this->requestPOST();
         \VCR\VCR::turnOff();
 
