@@ -14,11 +14,21 @@ class HttpUtil
      */
     public static function parseHeaders(array $headers)
     {
+        $headerGroups = array();
         $headerList = array();
 
+        // Collect matching headers into groups
         foreach ($headers as $line) {
             list ($key, $value) = explode(': ', $line);
-            $headerList[$key] = $value;
+            if (!isset($headerGroups[$key])) {
+                $headerGroups[$key] = array();
+            }
+            $headerGroups[$key][] = $value;
+        }
+        
+        // Collapse groups
+        foreach ($headerGroups as $key => $values) {
+            $headerList[$key] = implode(', ', $values);
         }
 
         return $headerList;
