@@ -6,7 +6,7 @@ class HttpUtilTest extends \PHPUnit_Framework_TestCase
 {
     public function testParseResponseBasic()
     {
-        $raw = "HTTP/1.1 201 Created\r\nContent-Type: text/html\r\nDate: Fri, 19 Jun 2015 16:05:18 GMT\r\nVary: Accept-Encoding\r\nContent-Length: 0";
+        $raw = "HTTP/1.1 201 Created\r\nContent-Type: text/html\r\nDate: Fri, 19 Jun 2015 16:05:18 GMT\r\nVary: Accept-Encoding\r\nContent-Length: 0\r\n\r\n";
         list($status, $headers, $body) = HttpUtil::parseResponse($raw);
         
         $expectedHeaders = array(
@@ -23,7 +23,7 @@ class HttpUtilTest extends \PHPUnit_Framework_TestCase
     
     public function testParseResponseMultipleHeaders()
     {
-        $raw = "HTTP/1.1 201 Created\r\nContent-Type: text/html\r\nDate: Fri, 19 Jun 2015 16:05:18 GMT\r\nVary: Accept, Accept-Language, Expect\r\nVary: Accept-Encoding\r\nContent-Length: 0";
+        $raw = "HTTP/1.1 201 Created\r\nContent-Type: text/html\r\nDate: Fri, 19 Jun 2015 16:05:18 GMT\r\nVary: Accept, Accept-Language, Expect\r\nVary: Accept-Encoding\r\nContent-Length: 0\r\n\r\n";
         list($status, $headers, $body) = HttpUtil::parseResponse($raw);
         
         $expectedHeaders = array(
