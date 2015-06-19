@@ -45,8 +45,6 @@ class Yaml extends AbstractStorage
      */
     public function storeRecording(array $recording)
     {
-        Assertion::writeable($this->filePath, "Specified path '{$this->filePath}' must be writeable.");
-
         fseek($this->handle, -1, SEEK_END);
         fwrite($this->handle, "\n" . $this->yamlDumper->dump(array($recording), 4));
         fflush($this->handle);
