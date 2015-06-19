@@ -3,6 +3,9 @@
 namespace VCR;
 
 use VCR\Util\Assertion;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Configuration stores a Videorecorders configuration options.
@@ -142,6 +145,11 @@ class Configuration
         VCR::MODE_ONCE,
         VCR::MODE_NONE,
     );
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * Returns the current blacklist.
@@ -384,5 +392,36 @@ class Configuration
             . "create it or set a different cassette path using "
             . "\\VCR\\VCR::configure()->setCassettePath('directory')."
         );
+    }
+
+    /**
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher)
+    {
+        $this->eventDispatcher = $dispatcher;
+    }
+
+    /**
+     * @return EventDispatcherInterface
+     */
+    public function getEventDispatcher()
+    {
+        if (!$this->eventDispatcher) {
+            $this->eventDispatcher = new EventDispatcher();
+        }
+        return $this->eventDispatcher;
+    }
+
+    /**
+     * Dispatches an event to all registered listeners.
+     *
+     * @param string $eventName The name of the event to dispatch.
+     * @param Event $event The event to pass to the event handlers/listeners.
+     * @return Event
+     */
+    public function dispatch($eventName, Event $event = null)
+    {
+        return $this->getEventDispatcher()->dispatch($eventName, $event);
     }
 }

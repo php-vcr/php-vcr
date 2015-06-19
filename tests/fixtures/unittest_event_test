@@ -1,0 +1,41 @@
+
+-
+    request:
+        method: GET
+        url: 'http://google2.com/'
+        headers:
+            Host: google.com
+            Content-Length: 0
+    response:
+        status: 301
+        headers:
+            Location: 'http://www.google.com/'
+            Content-Type: 'text/html; charset=UTF-8'
+            Date: 'Mon, 13 May 2013 08:15:58 GMT'
+            Expires: 'Wed, 12 Jun 2013 08:15:58 GMT'
+            Cache-Control: 'public, max-age=2592000'
+            Server: gws
+            Content-Length: '219'
+            X-XSS-Protection: '1; mode=block'
+            X-Frame-Options: SAMEORIGIN
+        body: "This is a curl test dummy."
+-
+    request:
+        method: GET
+        url: 'http://google.com/'
+        headers:
+            Host: google.com
+            Content-Length: 0
+    response:
+        status: 301
+        headers:
+            Location: 'http://www.google.com/'
+            Content-Type: 'text/html; charset=UTF-8'
+            Date: 'Mon, 13 May 2013 08:15:58 GMT'
+            Expires: 'Wed, 12 Jun 2013 08:15:58 GMT'
+            Cache-Control: 'public, max-age=2592000'
+            Server: gws
+            Content-Length: '219'
+            X-XSS-Protection: '1; mode=block'
+            X-Frame-Options: SAMEORIGIN
+        body: "This is a curl test dummy."
