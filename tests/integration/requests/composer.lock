@@ -1,29 +1,30 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5e3ca679810dc93c28d4f49705b5974d",
+    "hash": "303893793d342ad6bc638d303f69a4dd",
     "packages": [
         {
             "name": "rmccue/requests",
-            "version": "v1.6.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rmccue/Requests.git",
-                "reference": "6aac485666c2955077d77b796bbdd25f0013a4ea"
+                "reference": "51c64e399b23a9e7de8cf37146197b1f15117934"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rmccue/Requests/zipball/6aac485666c2955077d77b796bbdd25f0013a4ea",
-                "reference": "6aac485666c2955077d77b796bbdd25f0013a4ea",
+                "url": "https://api.github.com/repos/rmccue/Requests/zipball/51c64e399b23a9e7de8cf37146197b1f15117934",
+                "reference": "51c64e399b23a9e7de8cf37146197b1f15117934",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2"
             },
             "require-dev": {
+                "requests/test-server": "dev-master",
                 "satooshi/php-coveralls": "dev-master"
             },
             "type": "library",
@@ -53,13 +54,15 @@
                 "iri",
                 "sockets"
             ],
-            "time": "2014-05-18 04:59:02"
+            "time": "2015-06-19 06:54:50"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "rmccue/requests": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

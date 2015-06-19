@@ -1,7 +1,8 @@
 {
   "require": {
-    "rmccue/requests": "> 1.0"
+    "rmccue/requests": "dev-master"
   },
+  "minimum-stability": "dev",
   "autoload": {
     "classmap": ["src/"]
   }
