@@ -158,7 +158,12 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         $this->doCurlGetRequest('http://google.com/');
 
         $this->assertEquals(
-            array(VCREvents::VCR_BEFORE_HTTP_REQUEST, VCREvents::VCR_AFTER_HTTP_REQUEST, VCREvents::VCR_BEFORE_RECORD),
+            array(
+                VCREvents::VCR_BEFORE_PLAYBACK,
+                VCREvents::VCR_BEFORE_HTTP_REQUEST,
+                VCREvents::VCR_AFTER_HTTP_REQUEST,
+                VCREvents::VCR_BEFORE_RECORD
+            ),
             $this->getRecordedEventNames()
         );
         VCR::eject();
