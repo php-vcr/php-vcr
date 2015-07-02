@@ -61,7 +61,12 @@ class HttpUtil
      */
     public static function parseResponse($response)
     {
-        list($rawHeader, $rawBody) = explode("\r\n\r\n", $response, 2);
+        if (strpos($response, 'HTTP/1.1 100 Continue') === 0) {
+            list($continueHeader, $rawHeader, $rawBody) = explode("\r\n\r\n", $response, 3);
+        }
+        else {
+            list($rawHeader, $rawBody) = explode("\r\n\r\n", $response, 2);
+        }
 
         // Parse headers and status.
         $headers = self::parseRawHeader($rawHeader);
