@@ -16,8 +16,8 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 * Automatically records and replays your HTTP(s) interactions with minimal setup/configuration code.
 * Supports common http functions and extensions
   * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification (except `$http_response_header` see #96)
-  * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) by adding `\VCR\VCR\turnOn();` in your `tests/boostrap.php`
-  * curl(), by adding `\VCR\VCR::turnOn();` in your `tests/boostrap.php`
+  * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) by adding `\VCR\VCR\turnOn();` in your `tests/bootstrap.php`
+  * curl(), by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
 * The same request can receive different responses in different tests -- just use different cassettes.
 * Disables all HTTP requests that you don't explicitly allow by [setting the record mode](http://php-vcr.github.io/documentation/configuration/)
 * [Request matching](http://php-vcr.github.io/documentation/configuration/) is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
