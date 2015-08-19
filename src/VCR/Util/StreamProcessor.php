@@ -284,18 +284,15 @@ class StreamProcessor
      *
      * @return integer      Should return as many elements as stat() does.
      */
-    public function url_stat($path)
+    public function url_stat($path, $flags)
     {
         $this->restore();
-        try {
+        if ($flags & STREAM_URL_STAT_QUIET) {
+            set_error_handler(null);
             $result = @stat($path);
-        } catch (\ErrorException $e) {
-            // PHPUnit running in process isolation (processIsolation="true")
-            // throws an \ErrorException for any PHP warning.
-
-            // In this case we surpress errors.
-            // See https://github.com/php-vcr/php-vcr/pull/35 for more information.
-            return;
+            restore_error_handler();
+        } else {
+            $result = stat($path);
         }
         $this->intercept();
 

@@ -49,22 +49,24 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         });
 
         $processor = new StreamProcessor();
-        $processor->url_stat('tests/fixtures/streamprocessor_data');
+        $processor->url_stat('tests/fixtures/streamprocessor_data', 0);
 
         restore_error_handler();
     }
 
-    public function testUrlStatFileNotFoundExpectNoException()
+    /**
+     * @expectedException PHPUnit_Framework_Error_Warning
+     */
+    public function testUrlStatFileNotFound()
     {
-        $test = $this;
-        set_error_handler(function($errno, $errstr, $errfile, $errline) use ($test) {
-            throw new \ErrorException($errstr, $errno, $errno, $errfile, $errline);
-        });
-
         $processor = new StreamProcessor();
-        $processor->url_stat('file_not_found');
+        $processor->url_stat('file_not_found', 0);
+    }
 
-        restore_error_handler();
+    public function testQuietUrlStatFileNotFoundToBeQuiet()
+    {
+        $processor = new StreamProcessor();
+        $processor->url_stat('file_not_found', STREAM_URL_STAT_QUIET);
     }
 
     public function testDirOpendir()
