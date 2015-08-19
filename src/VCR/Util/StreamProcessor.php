@@ -280,9 +280,10 @@ class StreamProcessor
      *
      * @link http://www.php.net/manual/en/streamwrapper.url-stat.php
      *
-     * @param  string $path The file path or URL to stat.
+     * @param  string  $path  The file path or URL to stat.
+     * @param  integer $flags Holds additional flags set by the streams API.
      *
-     * @return integer      Should return as many elements as stat() does.
+     * @return integer        Should return as many elements as stat() does.
      */
     public function url_stat($path, $flags)
     {
