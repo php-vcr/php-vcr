@@ -42,10 +42,10 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldHandleSOAPVersion11()
     {
-        $expectedHeaders = [
+        $expectedHeaders = array(
             'Content-Type' => 'text/xml; charset=utf-8;',
             'SOAPAction' => 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP',
-        ];
+        );
         $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
 
         $client = new \SoapClient(
