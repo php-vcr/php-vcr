@@ -78,10 +78,7 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $test = $this;
         set_error_handler(function($errno, $errstr, $errfile, $errline) use ($test) {
-            $test->assertEquals(
-                'opendir(not_found): failed to open dir: No such file or directory',
-                $errstr
-            );
+            $test->assertContains('opendir(not_found', $errstr);
         });
 
         $processor = new StreamProcessor();
@@ -115,6 +112,10 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
     {
         if (version_compare(PHP_VERSION, '5.4.0', '<')) {
             $this->markTestSkipped('Behavior is only applicable and testable for PHP 5.4+');
+        }
+
+        if (!function_exists('posix_getuid')) {
+            $this->markTestSkipped('Requires "posix_getuid" function.');
         }
 
         $mock = $this->getStreamProcessorMock();

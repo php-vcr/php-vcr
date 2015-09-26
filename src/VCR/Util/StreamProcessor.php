@@ -102,6 +102,8 @@ class StreamProcessor
             return true;
         }
 
+        $uri = $this->normalizePath($uri);
+
         foreach ($whiteList as $path) {
             if (strpos($uri, $path) !== false) {
                 return true;
@@ -120,6 +122,8 @@ class StreamProcessor
      */
     protected function isBlacklisted($uri)
     {
+        $uri = $this->normalizePath($uri);
+
         foreach (static::$configuration->getBlackList() as $path) {
             if (strpos($uri, $path) !== false) {
                 return true;
@@ -616,5 +620,21 @@ class StreamProcessor
         foreach (static::$codeTransformers as $codeTransformer) {
             stream_filter_append($stream, $codeTransformer::NAME, STREAM_FILTER_READ);
         }
+    }
+
+    /**
+     * Normalizes the path, to always use the slash as directory separator.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    private function normalizePath($path)
+    {
+        if (DIRECTORY_SEPARATOR !== '/') {
+            return str_replace(DIRECTORY_SEPARATOR, '/', $path);
+        }
+
+        return $path;
     }
 }
