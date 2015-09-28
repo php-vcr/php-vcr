@@ -58,8 +58,11 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldHandleSOAPVersion12()
     {
-        $expectedHeader = 'application/soap+xml; charset=utf-8; action="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP"';
-        $this->soapHook->enable($this->getHeaderCheckCallback($expectedHeader));
+        $expectedHeaders = array(
+            'Content-Type' => 'application/soap+xml; charset=utf-8; action="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP"',
+        );
+
+        $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
 
         $client = new \SoapClient(
             'http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL',
@@ -77,19 +80,6 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $testClass = $this;
         return function () use ($testClass) {
             return new Response(200, array(), $testClass->expected);
-        };
-    }
-
-    /**
-     * @param string $expectedHeader
-     * @return \callable
-     */
-    protected function getHeaderCheckCallback($expectedHeader)
-    {
-        $test = $this;
-        return function (Request $request) use ($test, $expectedHeader) {
-            $test->assertEquals($expectedHeader, $request->getHeader('Content-Type'));
-            return new Response(200, array(), '');
         };
     }
 

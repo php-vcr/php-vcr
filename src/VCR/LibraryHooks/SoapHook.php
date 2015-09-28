@@ -70,15 +70,12 @@ class SoapHook implements LibraryHook
 
         $vcrRequest = new Request('POST', $location);
 
-        switch ($version) {
-            case SOAP_1_1:
-                $vcrRequest->setHeader('Content-Type', 'text/xml; charset=utf-8;');
-                $vcrRequest->setHeader('SOAPAction', $action);
-                break;
+        if ($version === SOAP_1_1) {
+            $vcrRequest->setHeader('Content-Type', 'text/xml; charset=utf-8;');
+            $vcrRequest->setHeader('SOAPAction', $action);
 
-            case SOAP_1_2:
-                $vcrRequest->setHeader('Content-Type', sprintf('application/soap+xml; charset=utf-8; action="%s"', $action));
-                break;
+        } else { // >= SOAP_1_2
+            $vcrRequest->setHeader('Content-Type', sprintf('application/soap+xml; charset=utf-8; action="%s"', $action));
         }
 
         $vcrRequest->setBody($request);
