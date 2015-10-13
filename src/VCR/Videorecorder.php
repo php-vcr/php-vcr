@@ -232,7 +232,10 @@ class Videorecorder
             throw new \LogicException(
                 "The request does not match a previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
                 . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
-                . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes.");
+                . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes."
+                ."\nCassette: ".$this->cassette->getName()
+                ."\nRequest: ".print_r($request->toArray(), true)
+            );
         }
 
         $this->disableLibraryHooks();
