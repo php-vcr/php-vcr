@@ -139,4 +139,29 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('\VCR\LibraryHooks\SoapHook', $client->getLibraryHook());
     }
+
+    public function testGetLastWhateverBeforeRequest()
+    {
+        $client = new SoapClient(self::WSDL);
+
+        $this->assertNull($client->__getLastRequest());
+        $this->assertNull($client->__getLastResponse());
+    }
+
+    public function testGetLastWhateverAfterRequest()
+    {
+        $request  = 'Knorx ist groß';
+        $response = 'some value';
+
+        $hook = $this->getLibraryHookMock(true);
+        $hook->expects($this->once())->method('doRequest')->will($this->returnValue($response));
+
+        $client = new SoapClient(self::WSDL);
+        $client->setLibraryHook($hook);
+
+        $client->__doRequest($request, self::WSDL, self::ACTION, SOAP_1_2, 0);
+
+        $this->assertEquals($request, $client->__getLastRequest());
+        $this->assertEquals($response, $client->__getLastResponse());
+    }
 }

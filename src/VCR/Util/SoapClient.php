@@ -17,6 +17,10 @@ class SoapClient extends \SoapClient
 
     protected $options = array();
 
+    protected $response;
+
+    protected $request;
+
     public function __construct($wsdl, $options = array()) {
        $this->options = $options;
        parent::__construct($wsdl, $options);
@@ -37,6 +41,8 @@ class SoapClient extends \SoapClient
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
+        $this->request = $request;
+
         $soapHook = $this->getLibraryHook();
 
         if ($soapHook->isEnabled()) {
@@ -45,7 +51,19 @@ class SoapClient extends \SoapClient
             $response = $this->realDoRequest($request, $location, $action, $version, $one_way);
         }
 
+        $this->response = $response;
+
         return $one_way ? null : $response;
+    }
+
+    public function __getLastRequest()
+    {
+        return $this->request;
+    }
+
+    public function __getLastResponse()
+    {
+        return $this->response;
     }
 
     /**
