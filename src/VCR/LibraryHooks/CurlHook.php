@@ -154,6 +154,13 @@ class CurlHook implements LibraryHook
         return \call_user_func_array(array(__CLASS__, $localMethod), $args);
     }
 
+    public static function curlReset($curlHandle)
+    {
+        \curl_reset($curlHandle);
+        self::$requests[(int) $curlHandle] = new Request('GET', null);
+        self::$curlOptions[(int) $curlHandle] = array();
+    }
+
     /**
      * Initialize a cURL session.
      *
