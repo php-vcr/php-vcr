@@ -17,8 +17,14 @@ class SoapClient extends \SoapClient
 
     protected $options = array();
 
+    /**
+     * @var string
+     */
     protected $response;
 
+    /**
+     * @var string
+     */
     protected $request;
 
     public function __construct($wsdl, $options = array()) {
@@ -56,11 +62,17 @@ class SoapClient extends \SoapClient
         return $one_way ? null : $response;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function __getLastRequest()
     {
         return $this->request;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function __getLastResponse()
     {
         return $this->response;
