@@ -4,3 +4,4 @@
 coverage/*
 notes.md
 tests/fixtures/cassette*
+composer.lock
