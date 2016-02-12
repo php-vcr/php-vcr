@@ -46,9 +46,9 @@ class CurlHook implements LibraryHook
     protected static $multiHandles = array();
 
     /**
-     * @var resource Last active curl_multi_exec() handle.
+     * @var array Last active curl_multi_exec() handles.
      */
-    protected static $multiExecLastCh;
+    protected static $multiExecLastChs = array();
 
     /**
      * @var AbstractCodeTransform
@@ -253,7 +253,7 @@ class CurlHook implements LibraryHook
         if (isset(self::$multiHandles[(int) $multiHandle])) {
             foreach (self::$multiHandles[(int) $multiHandle] as $curlHandle) {
                 if (!isset(self::$responses[(int) $curlHandle])) {
-                    self::$multiExecLastCh = $curlHandle;
+                    self::$multiExecLastChs[] = $curlHandle;
                     self::curlExec($curlHandle);
                 }
             }
@@ -271,13 +271,12 @@ class CurlHook implements LibraryHook
      */
     public static function curlMultiInfoRead()
     {
-        if (self::$multiExecLastCh) {
+        if (!empty(self::$multiExecLastChs)) {
             $info = array(
                 'msg' => CURLMSG_DONE,
-                'handle' => self::$multiExecLastCh,
+                'handle' => array_pop(self::$multiExecLastChs),
                 'result' => CURLE_OK
             );
-            self::$multiExecLastCh = null;
 
             return $info;
         }
