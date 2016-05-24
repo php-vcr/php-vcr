@@ -155,7 +155,7 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('playback')
             ->with($request)
-            ->will($this->returnValue(null));
+            ->will($this->throwException(new \OutOfBoundsException()));
 
         if (VCR::MODE_NEW_EPISODES === $mode || VCR::MODE_ONCE === $mode && $isNew === true) {
             $cassette

@@ -56,7 +56,12 @@ class Cassette
      */
     public function hasResponse(Request $request)
     {
-        return $this->playback($request) !== null;
+        try {
+            $response = $this->playback($request);
+            return $response !== null;
+        } catch (\OutOfBoundsException $e) {
+            return false;
+        }
     }
 
     /**
@@ -64,18 +69,30 @@ class Cassette
      *
      * @param Request $request Request.
      *
-     * @return Response|null Response for specified request.
+     * @return Response Response for specified request.
+     *
+     * @throws \OutOfBoundsException
+     *   Thrown if the cassette does not contain the response.
      */
     public function playback(Request $request)
     {
+        $storedRequestData = array();
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
             if ($storedRequest->matches($request, $this->getRequestMatchers())) {
                 return Response::fromArray($recording['response']);
             }
+            $storedRequestData[] = $storedRequest->toArray();
         }
 
-        return null;
+        throw new \OutOfBoundsException(
+          'Casette does not contain request. It has to be recorded to support playback.'
+          . "\nCassette: " . $this->getName()
+          . "\nPath: " . $this->config->getCassettePath()
+          . "\nRequest: " . print_r($request->toArray(), true)
+          . "\nStored requests: " . print_r($storedRequestData, true)
+          . "\nRequest matchers: " . print_r($this->config->getRequestMatchers(), true)
+        );
     }
 
     /**
