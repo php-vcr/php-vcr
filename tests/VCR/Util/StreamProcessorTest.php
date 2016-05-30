@@ -6,6 +6,23 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
+     * test flock with file_put_contents
+     */
+    public function testFlockWithFilePutContents()
+    {
+        $processor = new StreamProcessor();
+        $processor->intercept();
+
+        $testData = 'test data';
+        $testFilePath = 'tests/fixtures/file_put_contents';
+        $res = file_put_contents($testFilePath, $testData, LOCK_EX);
+        unlink($testFilePath);
+
+        $processor->restore();
+        $this->assertEquals(strlen($testData), $res);
+    }
+
+    /**
      * @dataProvider streamOpenAppendFilterProvider
      * @param  boolean $expected
      * @param  boolean $shouldProcess

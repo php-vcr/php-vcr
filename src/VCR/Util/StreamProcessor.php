@@ -463,6 +463,7 @@ class StreamProcessor
      */
     public function stream_lock($operation)
     {
+        $operation = ($operation == 0 ? LOCK_EX : $operation);
         return flock($this->resource, $operation);
     }
 
