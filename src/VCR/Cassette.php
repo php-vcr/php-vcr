@@ -68,10 +68,22 @@ class Cassette
      */
     public function playback(Request $request)
     {
-        foreach ($this->storage as $recording) {
-            $storedRequest = Request::fromArray($recording['request']);
-            if ($storedRequest->matches($request, $this->getRequestMatchers())) {
-                return Response::fromArray($recording['response']);
+        if ($this->config->getMode() === VCR::MODE_STRICT) {
+            if ($this->storage->valid()) {
+                $recording = $this->storage->current();
+                $this->storage->next();
+
+                $storedRequest = Request::fromArray($recording['request']);
+                if ($storedRequest->matches($request, $this->getRequestMatchers())) {
+                    return Response::fromArray($recording['response']);
+                }
+            }
+        } else {
+            foreach ($this->storage as $recording) {
+                $storedRequest = Request::fromArray($recording['request']);
+                if ($storedRequest->matches($request, $this->getRequestMatchers())) {
+                    return Response::fromArray($recording['response']);
+                }
             }
         }
 
@@ -118,6 +130,11 @@ class Cassette
     public function isNew()
     {
         return $this->storage->isNew();
+    }
+
+    public function isFinished()
+    {
+        return !$this->storage->valid();
     }
 
     /**
