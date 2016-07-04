@@ -93,7 +93,7 @@ class HttpUtil
         $curlHeaders = array();
 
         foreach ($headers as $key => $value) {
-            $curlHeaders[] = $key . ': ' . $value;
+            $curlHeaders[] = $key . ': ' . ($value ? $value : '""');
         }
 
         return $curlHeaders;
