@@ -8,7 +8,7 @@ namespace VCR\Example;
  */
 class ExampleSoapClient
 {
-    const EXAMPLE_WSDL = 'http://www.w3schools.com/webservices/tempconvert.asmx?wsdl';
+    const EXAMPLE_WSDL = 'http://www.w3schools.com/xml/tempconvert.asmx?WSDL';
 
     public function call($zip = '10')
     {
