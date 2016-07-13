@@ -31,6 +31,13 @@ class Cassette
     protected $storage;
 
     /**
+     * Tracks the number of occurrence of a given request
+     *
+     * @var array
+     */
+    protected $indexTable = array();
+
+    /**
      * Creates a new cassette.
      *
      * @param  string           $name    Name of the cassette.
@@ -68,10 +75,15 @@ class Cassette
      */
     public function playback(Request $request)
     {
+        // Track how many times the same request occurs
+        $this->iterateIndex($request);
+
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
-            if ($storedRequest->matches($request, $this->getRequestMatchers())) {
-                return Response::fromArray($recording['response']);
+            if ($this->indexTable[$request->getHash()] === $recording['index']) {
+                if ($storedRequest->matches($request, $this->getRequestMatchers())) {
+                    return Response::fromArray($recording['response']);
+                }
             }
         }
 
@@ -94,7 +106,9 @@ class Cassette
 
         $recording = array(
             'request'  => $request->toArray(),
-            'response' => $response->toArray()
+            'response' => $response->toArray(),
+            // Save the nth time that this request was executed
+            'index' => $this->indexTable[$request->getHash()]
         );
 
         $this->storage->storeRecording($recording);
@@ -120,6 +134,11 @@ class Cassette
         return $this->storage->isNew();
     }
 
+    public function resetIndex()
+    {
+        $this->indexTable = array();
+    }
+
     /**
      * Returns a list of callbacks to configured request matchers.
      *
@@ -128,5 +147,14 @@ class Cassette
     protected function getRequestMatchers()
     {
         return $this->config->getRequestMatchers();
+    }
+
+    protected function iterateIndex(Request $request)
+    {
+        $hash = $request->getHash();
+        if (!isset($this->indexTable[$hash])) {
+            $this->indexTable[$hash] = -1;
+        }
+        $this->indexTable[$hash]++;
     }
 }

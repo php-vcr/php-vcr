@@ -19,6 +19,7 @@
             Date: 'Fri, 25 Apr 2014 09:22:59 GMT'
             Content-Length: '756'
         body: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetCityWeatherByZIPResponse xmlns="http://ws.cdyne.com/WeatherWS/"><GetCityWeatherByZIPResult><Success>true</Success><ResponseText>City Found</ResponseText><State>NY</State><City>New York</City><WeatherStationCity>White Plains</WeatherStationCity><WeatherID>3</WeatherID><Description>Mostly Cloudy</Description><Temperature>1337</Temperature><RelativeHumidity>75</RelativeHumidity><Wind>NE7</Wind><Pressure>30.12F</Pressure><Visibility /><WindChill /><Remarks /></GetCityWeatherByZIPResult></GetCityWeatherByZIPResponse></soap:Body></soap:Envelope>'
+    index: 0
 -
     request:
         method: POST
@@ -43,3 +44,4 @@
             Date: 'Sat, 21 Feb 2015 14:09:36 GMT'
             Content-Length: '753'
         body: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetCityWeatherByZIPResponse xmlns="http://ws.cdyne.com/WeatherWS/"><GetCityWeatherByZIPResult><Success>true</Success><ResponseText>City Found</ResponseText><State>NY</State><City>New York</City><WeatherStationCity>White Plains</WeatherStationCity><WeatherID>15</WeatherID><Description>N/A</Description><Temperature>63</Temperature><RelativeHumidity>87</RelativeHumidity><Wind>E7</Wind><Pressure>29.97S</Pressure><Visibility /><WindChill /><Remarks /></GetCityWeatherByZIPResult></GetCityWeatherByZIPResponse></soap:Body></soap:Envelope>'
+    index: 1
