@@ -134,6 +134,11 @@ class Cassette
         return $this->storage->isNew();
     }
 
+    public function resetIndex()
+    {
+        $this->indexTable = [];
+    }
+
     /**
      * Returns a list of callbacks to configured request matchers.
      *

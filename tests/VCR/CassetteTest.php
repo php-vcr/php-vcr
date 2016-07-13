@@ -36,11 +36,14 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request('GET', 'https://example.com');
         $response1 = new Response(200, array(), 'sometest');
-        $response2 = new Response(200, array(), 'sometest');
+        $response2 = new Response(200, array(), 'sometest2');
         $this->cassette->record($request, $response1);
         $this->cassette->record($request, $response2);
 
+        $this->resetIndex();
+
         $this->assertEquals($response1->toArray(), $this->cassette->playback($request)->toArray());
+        $this->assertEquals($response2->toArray(), $this->cassette->playback($request)->toArray());
     }
 
     public function testPlaybackAlreadyRecordedRequest()
@@ -48,6 +51,8 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
         $request = new Request('GET', 'https://example.com');
         $response = new Response(200, array(), 'sometest');
         $this->cassette->record($request, $response);
+
+        $this->resetIndex();
 
         $this->assertEquals($response->toArray(), $this->cassette->playback($request)->toArray());
     }
@@ -65,6 +70,15 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
         $response = new Response(200, array(), 'sometest');
         $this->cassette->record($request, $response);
 
+        $this->resetIndex();
+
         $this->assertTrue($this->cassette->hasResponse($request), 'Expected true if request was found.');
+    }
+
+    private function resetIndex()
+    {
+        // needed to simulate that a testcase has been run, and we are
+        // rerunning the same tests again, thus needing to load from cassette
+        $this->cassette->resetIndex();
     }
 }
