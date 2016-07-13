@@ -35,7 +35,7 @@ class Cassette
      *
      * @var array
      */
-    protected $indexTable = [];
+    protected $indexTable = array();
 
     /**
      * Creates a new cassette.
@@ -136,7 +136,7 @@ class Cassette
 
     public function resetIndex()
     {
-        $this->indexTable = [];
+        $this->indexTable = array();
     }
 
     /**
