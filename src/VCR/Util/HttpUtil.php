@@ -93,7 +93,8 @@ class HttpUtil
         $curlHeaders = array();
 
         foreach ($headers as $key => $value) {
-            $curlHeaders[] = $key . ': ' . ($value ? $value : '""');
+            if ($key === 'SOAPAction' && !$value) $value = '""';
+            $curlHeaders[] = $key . ': ' . $value;
         }
 
         return $curlHeaders;
