@@ -31,7 +31,13 @@ class HttpClient
         curl_setopt($ch, CURLOPT_FAILONERROR, false);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
-        list($status, $headers, $body) = HttpUtil::parseResponse(curl_exec($ch));
+        $response = curl_exec($ch);
+
+        if ($response === false) {
+          throw new \VCR\VCRException(curl_error($ch), curl_errno($ch));
+        }
+
+        list($status, $headers, $body) = HttpUtil::parseResponse($response);
 
         return new Response(
             HttpUtil::parseStatus($status),
