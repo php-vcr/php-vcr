@@ -24,15 +24,17 @@ matrix:
         php: 5.6
       - env: TEST_DIR=tests/integration/soap
         php: 5.6
+      - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
+        php: 5.6
   allow_failures:
     - php: hhvm-nightly
     - php: 7.0
 
 before_install:
-  - composer install && cd ${TEST_DIR}
+  - composer self-update && cd ${TEST_DIR}
 
 install:
-  - composer install
+  - composer update $COMPOSER_FLAGS
 
 script:
   - phpunit --coverage-clover=coverage.clover
