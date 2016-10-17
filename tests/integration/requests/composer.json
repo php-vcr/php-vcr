@@ -1,0 +1,9 @@
+{
+  "require": {
+    "rmccue/requests": "dev-master"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "classmap": ["src/"]
+  }
+}
