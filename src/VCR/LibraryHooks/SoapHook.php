@@ -47,6 +47,10 @@ class SoapHook implements LibraryHook
             throw new \BadMethodCallException('For soap support you need to install the soap extension.');
         }
 
+        if (!class_exists('\DOMDocument')) {
+            throw new \BadMethodCallException('For soap support you need to install the xml extension.');
+        }
+
         $this->processor = $processor;
         $this->codeTransformer = $codeTransformer;
     }
