@@ -5,9 +5,9 @@ namespace VCR\Example;
 use org\bovigo\vfs\vfsStream;
 
 /**
- * Checks cdyne.com for local weather information.
+ * Converts temperature units from webservicex
  *
- * @link http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL
+ * @link http://www.webservicex.net/New/Home/ServiceDetail/31
  */
 class ExampleSoapClientTest extends \PHPUnit_Framework_TestCase
 {
