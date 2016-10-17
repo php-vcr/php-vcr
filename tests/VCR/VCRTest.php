@@ -184,9 +184,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function recordEvent(Event $event)
+    public function recordEvent(Event $event, $eventName)
     {
-        $this->events[$event->getName()] = $event;
+        $this->events[$eventName] = $event;
     }
 
     private function getRecordedEventNames()
