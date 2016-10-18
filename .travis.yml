@@ -32,7 +32,7 @@ before_install:
   - cd ${TEST_DIR}
 
 install:
-  - composer update -o $COMPOSER_FLAGS
+  - composer update $COMPOSER_FLAGS
 
 script:
   - phpunit --coverage-clover=coverage.clover
