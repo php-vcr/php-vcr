@@ -19,7 +19,7 @@
 
     "require-dev": {
         "phpunit/phpunit": "^4.7",
-        "mikey179/vfsStream": "^1.2.0",
+        "mikey179/vfsStream": "^1.2",
         "lapistano/proxy-object": "^2.1"
     },
 
