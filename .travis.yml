@@ -26,10 +26,9 @@ matrix:
         php: 5.6
   allow_failures:
     - php: hhvm-nightly
-    - php: 7.0
 
 before_install:
-  - composer install && cd ${TEST_DIR}
+  - composer update && cd ${TEST_DIR}
 
 install:
   - composer install
