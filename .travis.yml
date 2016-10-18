@@ -29,10 +29,11 @@ matrix:
 
 before_install:
   - composer self-update
-  - cd ${TEST_DIR}
 
 install:
-  - composer update $COMPOSER_FLAGS
+  - composer update -o $COMPOSER_FLAGS
+  - cd ${TEST_DIR}
+  - composer update -o $COMPOSER_FLAGS
 
 script:
   - phpunit --coverage-clover=coverage.clover
@@ -40,9 +41,6 @@ script:
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
-
-# Faster builds on travis setup not using sudo.
-sudo: false
 
 cache:
   directories:
