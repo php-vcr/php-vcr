@@ -32,11 +32,12 @@ before_install:
 
 install:
   - composer update -o $COMPOSER_FLAGS
+  - PHPUNIT_BIN=$(pwd)/vendor/bin/phpunit
   - cd ${TEST_DIR}
   - composer update -o $COMPOSER_FLAGS
 
 script:
-  - ./vendor/bin/phpunit --coverage-clover=coverage.clover
+  - $PHPUNIT_BIN --coverage-clover=coverage.clover
 
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
