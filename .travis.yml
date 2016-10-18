@@ -12,7 +12,11 @@ matrix:
         php: 5.5
       - env: TEST_DIR=.
         php: 5.6
+      - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
+        php: 5.6
       - env: TEST_DIR=.
+        php: 7.0
+      - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
         php: 7.0
       - env: TEST_DIR=tests/integration/guzzle/3
         php: 5.6
@@ -24,10 +28,11 @@ matrix:
         php: 5.6
 
 before_install:
-  - composer update && cd ${TEST_DIR}
+  - composer self-update
+  - cd ${TEST_DIR}
 
 install:
-  - composer install
+  - composer update -o $COMPOSER_FLAGS
 
 script:
   - phpunit --coverage-clover=coverage.clover
