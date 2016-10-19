@@ -19,7 +19,7 @@ class HttpUtil
 
         // Collect matching headers into groups
         foreach ($headers as $line) {
-            list ($key, $value) = explode(': ', $line);
+            list ($key, $value) = explode(': ', $line, 2);
             if (!isset($headerGroups[$key])) {
                 $headerGroups[$key] = array();
             }

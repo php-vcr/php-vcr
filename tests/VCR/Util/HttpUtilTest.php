@@ -128,4 +128,16 @@ class HttpUtilTest extends \PHPUnit_Framework_TestCase
         $outputArray = HttpUtil::parseHeaders($inputArray);
         $this->assertEquals($excpetedHeaders, $outputArray);
     }
+
+    public function testParseHeadersIncludingColons()
+    {
+        $inputArray = array(
+            'dropbox-api-result: {"name": "a_file.txt"}'
+        );
+        $excpetedHeaders = array(
+            'dropbox-api-result' => '{"name": "a_file.txt"}'
+        );
+        $outputArray = HttpUtil::parseHeaders($inputArray);
+        $this->assertEquals($excpetedHeaders, $outputArray);
+    }
 }
