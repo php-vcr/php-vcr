@@ -13,7 +13,7 @@ class AbstractCodeTransformTest extends \PHPUnit_framework_TestCase
         );
 
         $filter = $this->getMockBuilder('\VCR\CodeTransform\AbstractCodeTransform')
-            ->setMethods(array($defaults))
+            ->setMethods($defaults)
             ->getMockForAbstractClass();
 
         if (in_array('transformCode', $methods)) {
