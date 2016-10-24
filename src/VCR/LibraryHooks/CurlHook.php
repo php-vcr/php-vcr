@@ -176,8 +176,6 @@ class CurlHook implements LibraryHook
      *
      * @link http://www.php.net/manual/en/function.curl-reset.php
      * @param resource $curlHandle A cURL handle returned by curl_init().
-     *
-     * @return void
      */
     public static function curlReset($curlHandle)
     {
@@ -217,8 +215,6 @@ class CurlHook implements LibraryHook
      * @link http://www.php.net/manual/en/function.curl-multi-add-handle.php
      * @param resource $multiHandle A cURL multi handle returned by curl_multi_init().
      * @param resource $curlHandle  A cURL handle returned by curl_init().
-     *
-     * @return void
      */
     public static function curlMultiAddHandle($multiHandle, $curlHandle)
     {
@@ -235,8 +231,6 @@ class CurlHook implements LibraryHook
      * @link http://www.php.net/manual/en/function.curl-multi-remove-handle.php
      * @param resource $multiHandle A cURL multi handle returned by curl_multi_init().
      * @param resource $curlHandle A cURL handle returned by curl_init().
-     *
-     * @return void
      */
     public static function curlMultiRemoveHandle($multiHandle, $curlHandle)
     {
@@ -333,8 +327,6 @@ class CurlHook implements LibraryHook
      * @link http://www.php.net/manual/en/function.curl-setopt-array.php
      * @param resource $curlHandle A cURL handle returned by curl_init().
      * @param array    $options    An array specifying which options to set and their values.
-     *
-     * @return void
      */
     public static function curlSetoptArray($curlHandle, $options)
     {
