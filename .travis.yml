@@ -6,6 +6,8 @@ matrix:
   include:
       - env: TEST_DIR=.
         php: 5.3
+      - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
+        php: 5.3
       - env: TEST_DIR=.
         php: 5.4
       - env: TEST_DIR=.
@@ -31,10 +33,10 @@ before_install:
   - composer self-update
 
 install:
-  - composer update -o $COMPOSER_FLAGS
+  - composer update --prefer-source -o $COMPOSER_FLAGS
   - PHPUNIT_BIN=$(pwd)/vendor/bin/phpunit
   - cd ${TEST_DIR}
-  - composer update -o $COMPOSER_FLAGS
+  - composer update --prefer-source -o $COMPOSER_FLAGS
 
 script:
   - $PHPUNIT_BIN --coverage-clover=coverage.clover
