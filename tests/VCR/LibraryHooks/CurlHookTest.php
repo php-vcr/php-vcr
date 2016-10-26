@@ -304,6 +304,31 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @requires PHP 5.5.0
+     */
+    public function testShouldResetRequest()
+    {
+        $testClass = $this;
+        $this->curlHook->enable(
+            function (Request $request) use ($testClass) {
+                $testClass->assertEquals(
+                    'GET',
+                    $request->getMethod(),
+                    ''
+                );
+                return new Response(200);
+            }
+        );
+
+        $curlHandle = curl_init("http://example.com");
+        curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_reset($curlHandle);
+        curl_exec($curlHandle);
+
+        $this->curlHook->disable();
+    }
+
+    /**
      * @return \callable
      */
     protected function getTestCallback()

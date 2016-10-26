@@ -172,6 +172,19 @@ class CurlHook implements LibraryHook
     }
 
     /**
+     * Reset a cURL session.
+     *
+     * @link http://www.php.net/manual/en/function.curl-reset.php
+     * @param resource $curlHandle A cURL handle returned by curl_init().
+     */
+    public static function curlReset($curlHandle)
+    {
+        \curl_reset($curlHandle);
+        self::$requests[(int) $curlHandle] = new Request('GET', null);
+        self::$curlOptions[(int) $curlHandle] = array();
+    }
+
+    /**
      * Perform a cURL session.
      *
      * @link http://www.php.net/manual/en/function.curl-exec.php
@@ -185,7 +198,7 @@ class CurlHook implements LibraryHook
     {
         $request = self::$requests[(int) $curlHandle];
         CurlHelper::validateCurlPOSTBody($request, $curlHandle);
-        
+
         $requestCallback = self::$requestCallback;
         self::$responses[(int) $curlHandle] = $requestCallback($request);
 
@@ -202,8 +215,6 @@ class CurlHook implements LibraryHook
      * @link http://www.php.net/manual/en/function.curl-multi-add-handle.php
      * @param resource $multiHandle A cURL multi handle returned by curl_multi_init().
      * @param resource $curlHandle  A cURL handle returned by curl_init().
-     *
-     * @return integer Returns 0 on success, or one of the CURLM_XXX errors code.
      */
     public static function curlMultiAddHandle($multiHandle, $curlHandle)
     {
@@ -220,8 +231,6 @@ class CurlHook implements LibraryHook
      * @link http://www.php.net/manual/en/function.curl-multi-remove-handle.php
      * @param resource $multiHandle A cURL multi handle returned by curl_multi_init().
      * @param resource $curlHandle A cURL handle returned by curl_init().
-     *
-     * @return integer  Returns 0 on success, or one of the CURLM_XXX error codes.
      */
     public static function curlMultiRemoveHandle($multiHandle, $curlHandle)
     {
@@ -318,8 +327,6 @@ class CurlHook implements LibraryHook
      * @link http://www.php.net/manual/en/function.curl-setopt-array.php
      * @param resource $curlHandle A cURL handle returned by curl_init().
      * @param array    $options    An array specifying which options to set and their values.
-     *
-     * @return boolean|null              Returns TRUE if all options were successfully set.
      */
     public static function curlSetoptArray($curlHandle, $options)
     {
