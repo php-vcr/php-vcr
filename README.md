@@ -67,6 +67,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 ```
 
 You can use annotations in PHPUnit by using [phpunit-testlistener-vcr](https://github.com/php-vcr/phpunit-testlistener-vcr):
+
 ``` php
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
@@ -110,8 +111,8 @@ Composer installs all dependencies except extensions like curl.
 In order to run all tests you need to get development dependencies using composer:
 
 ``` php
-composer install --dev
-phpunit ./tests
+composer install
+./vendor/bin/phpunit
 ```
 
 ## Changelog
