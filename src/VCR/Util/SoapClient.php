@@ -48,7 +48,7 @@ class SoapClient extends \SoapClient
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
         // Save a copy of the request, not the request itself -- see issue #153
-        $this->request = '' . $request;
+        $this->request = (string) $request;
 
         $soapHook = $this->getLibraryHook();
 
