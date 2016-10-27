@@ -112,7 +112,7 @@ In order to run all tests you need to get development dependencies using compose
 
 ``` php
 composer install
-./vendor/bin/phpunit
+composer test
 ```
 
 ## Changelog
