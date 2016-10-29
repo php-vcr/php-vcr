@@ -204,7 +204,8 @@ class Videorecorder
      *
      * @return Response                Response for the intercepted request.
      * @throws \BadMethodCallException If there was no cassette inserted.
-     * @throws \LogicException         If the mode is set to none or once and the cassette did not have a matching response.
+     * @throws \LogicException         If the mode is set to none or once and
+     *                                 the cassette did not have a matching response.
      */
     public function handleRequest(Request $request)
     {
@@ -228,13 +229,20 @@ class Videorecorder
             return $response;
         }
 
-        if (VCR::MODE_NONE === $this->config->getMode() || VCR::MODE_ONCE === $this->config->getMode() && $this->cassette->isNew() === false) {
+        if (VCR::MODE_NONE === $this->config->getMode()
+            || VCR::MODE_ONCE === $this->config->getMode()
+            && $this->cassette->isNew() === false
+        ) {
             throw new \LogicException(
-                "The request does not match a previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
-                . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
-                . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes."
-                ."\nCassette: ".$this->cassette->getName()
-                ."\nRequest: ".print_r($request->toArray(), true)
+                sprintf(
+                    "The request does not match a previously recorded request and the 'mode' is set to '%s'. "
+                    . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
+                    . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes."
+                    . "\nCassette: %s \n Request: %s",
+                    $this->config->getMode(),
+                    $this->cassette->getName(),
+                    print_r($request->toArray(), true)
+                )
             );
         }
 

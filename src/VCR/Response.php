@@ -55,8 +55,7 @@ class Response
     {
         $body = $this->getBody();
         // Base64 encode when binary
-        if (
-            strpos($this->getContentType(), 'application/x-gzip') !== false
+        if (strpos($this->getContentType(), 'application/x-gzip') !== false
             || $this->getHeader('Content-Transfer-Encoding') == 'binary'
         ) {
             $body = base64_encode($body);

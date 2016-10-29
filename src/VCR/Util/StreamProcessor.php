@@ -161,7 +161,8 @@ class StreamProcessor
      *
      * @param  string  $path       Specifies the URL that was passed to the original function.
      * @param  string  $mode       The mode used to open the file, as detailed for fopen().
-     * @param  integer $options    Holds additional flags set by the streams API. It can hold one or more of the following values OR'd together.
+     * @param  integer $options    Holds additional flags set by the streams API.
+     *                             It can hold one or more of the following values OR'd together.
      * @param  string  $openedPath If the path is opened successfully, and STREAM_USE_PATH is set in options,
      *                             opened_path should be set to the full path of the file/resource that was
      *                             actually opened.

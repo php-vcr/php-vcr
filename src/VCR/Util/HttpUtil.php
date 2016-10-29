@@ -42,7 +42,11 @@ class HttpUtil
      */
     public static function parseStatus($status)
     {
-        Assertion::startsWith($status, 'HTTP/', "Invalid HTTP status '$status', expected format like: 'HTTP/1.1 200 OK'.");
+        Assertion::startsWith(
+            $status,
+            'HTTP/',
+            "Invalid HTTP status '$status', expected format like: 'HTTP/1.1 200 OK'."
+        );
 
         $part = explode(' ', $status, 3);
 
