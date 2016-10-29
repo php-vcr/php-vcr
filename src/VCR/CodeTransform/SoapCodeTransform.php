@@ -20,7 +20,7 @@ class SoapCodeTransform extends AbstractCodeTransform
    * @inheritdoc
    */
   protected function transformCode($code)
-    {
-        return preg_replace(self::$patterns, self::$replacements, $code);
-    }
+  {
+      return preg_replace(self::$patterns, self::$replacements, $code);
+  }
 }

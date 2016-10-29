@@ -104,7 +104,8 @@ abstract class AbstractStorage implements Storage
      *
      * @return boolean TRUE if created, FALSE if not
      */
-    public function isNew() {
+    public function isNew()
+    {
         return $this->isNew;
     }
 

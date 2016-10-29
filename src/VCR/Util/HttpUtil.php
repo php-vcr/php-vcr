@@ -19,7 +19,7 @@ class HttpUtil
 
         // Collect matching headers into groups
         foreach ($headers as $line) {
-            list ($key, $value) = explode(': ', $line, 2);
+            list($key, $value) = explode(': ', $line, 2);
             if (!isset($headerGroups[$key])) {
                 $headerGroups[$key] = array();
             }
@@ -78,7 +78,8 @@ class HttpUtil
      * @param string $header
      * @return array
      */
-    public static function parseRawHeader($rawHeader) {
+    public static function parseRawHeader($rawHeader)
+    {
         return explode("\r\n", trim($rawHeader));
     }
 

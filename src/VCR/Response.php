@@ -1,6 +1,7 @@
 <?php
 
 namespace VCR;
+
 use VCR\Util\Assertion;
 
 /**
@@ -37,7 +38,7 @@ class Response
      * @param string $body
      * @param array $curlInfo
      */
-    function __construct($status, array $headers = array(), $body = null, array $curlInfo = array())
+    public function __construct($status, array $headers = array(), $body = null, array $curlInfo = array())
     {
         $this->setStatus($status);
         $this->headers = $headers;

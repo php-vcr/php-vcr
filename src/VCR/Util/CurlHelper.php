@@ -165,8 +165,8 @@ class CurlHelper
                 foreach ($value as $header) {
                     $headerParts = explode(': ', $header, 2);
                     if (!isset($headerParts[1])) {
-                       $headerParts[0] = rtrim($headerParts[0], ':');
-                       $headerParts[1] = null;
+                        $headerParts[0] = rtrim($headerParts[0], ':');
+                        $headerParts[1] = null;
                     }
                     $request->setHeader($headerParts[0], $headerParts[1]);
                 }
@@ -201,7 +201,7 @@ class CurlHelper
         
         // Guzzle 4 sometimes sets the post body in CURLOPT_POSTFIELDS even if
         // they have already set CURLOPT_READFUNCTION.
-        if ($request->getBody()){
+        if ($request->getBody()) {
             return;
         }
         

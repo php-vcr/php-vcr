@@ -287,7 +287,7 @@ class Configuration
      * Enables specified RequestMatchers by its name.
      *
      * @param array $matchers List of RequestMatcher names to enable.
-     * 
+     *
      * @return Configuration
      *
      * @throws \InvalidArgumentException If a specified request matcher does not exist.
