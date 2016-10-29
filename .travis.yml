@@ -40,7 +40,7 @@ install:
 
 script:
   - $PHPUNIT_BIN --coverage-clover=coverage.clover
-  - $PHPCS_BIN --standard=psr2 --exclude=PSR1.Methods.CamelCapsMethodName src
+  - $PHPCS_BIN --standard=psr2 --exclude=PSR1.Methods.CamelCapsMethodName $TRAVIS_BUILD_DIR/src
 
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
