@@ -2,10 +2,10 @@
 $config = Symfony\CS\Config\Config::create()
     ->level('psr2')
     ->fixers(
-        [
+        array(
             'single_blank_line_before_namespace',
             'concat_with_spaces',
-        ]
+        )
     )
     ->finder(
         Symfony\CS\Finder\DefaultFinder::create()
