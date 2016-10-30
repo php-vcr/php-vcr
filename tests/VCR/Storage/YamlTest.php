@@ -19,7 +19,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     public function testIterateOneObject()
     {
         $this->iterateAndTest(
-            "-". "\n"
+            "-" . "\n"
             . "    para1: val1",
             array(
                 array('para1' => 'val1'),
@@ -31,9 +31,9 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     public function testIterateTwoObjects()
     {
         $this->iterateAndTest(
-            "-". "\n"
+            "-" . "\n"
             . "    para1: val1" . "\n"
-            . "-". "\n"
+            . "-" . "\n"
             . "   para2: val2",
             array(
                 array('para1' => 'val1'),
@@ -46,10 +46,10 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     public function testIterateFirstNestedObject()
     {
         $this->iterateAndTest(
-            "-". "\n"
+            "-" . "\n"
             . "    para1:" . "\n"
             . "        para2: val2" . "\n"
-            . "-". "\n"
+            . "-" . "\n"
             . "    para3: val3",
             array(
                 array('para1' => array('para2' => 'val2')),
@@ -62,7 +62,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
     public function testIterateSecondNestedObject()
     {
         $this->iterateAndTest(
-            "-". "\n"
+            "-" . "\n"
             . "    para1: val1" . "\n"
             . "-" . "\n"
             . "    para2:" . "\n"
