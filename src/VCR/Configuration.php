@@ -381,7 +381,7 @@ class Configuration
         Assertion::directory(
             $cassettePath,
             "Cassette path '{$cassettePath}' is not a directory. Please either "
-            . "create it or set a different cassette path using "
+            . 'create it or set a different cassette path using '
             . "\\VCR\\VCR::configure()->setCassettePath('directory')."
         );
     }

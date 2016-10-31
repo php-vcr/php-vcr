@@ -5,6 +5,8 @@ $config = Symfony\CS\Config\Config::create()
         array(
             'single_blank_line_before_namespace',
             'concat_with_spaces',
+            'single_quote',
+            'braces',
         )
     )
     ->finder(

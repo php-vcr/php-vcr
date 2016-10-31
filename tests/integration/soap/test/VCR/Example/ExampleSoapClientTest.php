@@ -18,17 +18,20 @@ class ExampleSoapClientTest extends \PHPUnit_Framework_TestCase
         \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
-    public function testCallDirectly() {
+    public function testCallDirectly()
+    {
         $actual = $this->callSoap();
         $this->assertInternalType('integer', $actual);
     }
 
-    public function testCallIntercepted() {
+    public function testCallIntercepted()
+    {
         $actual = $this->callSoapIntercepted();
         $this->assertInternalType('integer', $actual);
     }
 
-    public function testCallDirectlyEqualsIntercepted() {
+    public function testCallDirectlyEqualsIntercepted()
+    {
         $this->assertEquals($this->callSoap(), $this->callSoapIntercepted());
     }
 
@@ -47,5 +50,4 @@ class ExampleSoapClientTest extends \PHPUnit_Framework_TestCase
 
         return $result;
     }
-
 }

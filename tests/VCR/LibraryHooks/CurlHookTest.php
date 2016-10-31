@@ -277,7 +277,7 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, $callCount, 'Hook should have been called twice.');
         $this->assertEquals(
-            array("msg" => 1, "result" => 0, "handle" => $curlHandle2),
+            array('msg' => 1, 'result' => 0, 'handle' => $curlHandle2),
             $lastInfo,
             'When called the first time curl_multi_info_read should return last curl info.'
         );
@@ -320,8 +320,8 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $curlHandle = curl_init("http://example.com");
-        curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, "DELETE");
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_reset($curlHandle);
         curl_exec($curlHandle);
 

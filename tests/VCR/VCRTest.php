@@ -10,10 +10,9 @@ use org\bovigo\vfs\vfsStream;
  */
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
-
     public static function setupBeforeClass()
     {
-       VCR::configure()->setCassettePath('tests/fixtures') ;
+        VCR::configure()->setCassettePath('tests/fixtures') ;
     }
 
     public function testUseStaticCallsNotInitialized()
@@ -81,7 +80,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             'BadMethodCallException',
-            "Invalid http request. No cassette inserted. Please make sure to insert "
+            'Invalid http request. No cassette inserted. Please make sure to insert '
             . "a cassette in your unit test using VCR::insertCassette('name');"
         );
 
@@ -142,7 +141,6 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         );
         VCR::eject();
         VCR::turnOff();
-
     }
 
     public function testShouldDispatchBeforeAfterHttpRequestAndBeforeRecordWhenCassetteHasNoResponse()

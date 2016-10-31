@@ -206,7 +206,7 @@ class CurlHelper
         }
         
         $bodySize = $request->getCurlOption(CURLOPT_INFILESIZE);
-        Assertion::notEmpty($bodySize, "To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.");
+        Assertion::notEmpty($bodySize, 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $body = call_user_func_array($readFunction, array($curlHandle, fopen('php://memory', 'r'), $bodySize));
         $request->setBody($body);
     }
