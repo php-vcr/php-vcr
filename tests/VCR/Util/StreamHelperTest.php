@@ -3,8 +3,8 @@ namespace VCR\Util;
 
 use VCR\Request;
 
-class StreamHelperTest extends \PHPUnit_Framework_TestCase {
-
+class StreamHelperTest extends \PHPUnit_Framework_TestCase
+{
     public function streamContexts()
     {
         $test = $this;
@@ -74,7 +74,8 @@ class StreamHelperTest extends \PHPUnit_Framework_TestCase {
      * @param $context
      * @param $testCallback
      */
-    public function testStreamHttpContext($context, $testCallback) {
+    public function testStreamHttpContext($context, $testCallback)
+    {
         $context = stream_context_create(array(
             'http' => $context
         ));

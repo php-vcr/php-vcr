@@ -34,11 +34,13 @@ before_install:
 install:
   - composer update --prefer-source -o $COMPOSER_FLAGS
   - PHPUNIT_BIN=$(pwd)/vendor/bin/phpunit
+  - PHPCS_FIXER_BIN=$(pwd)/vendor/bin/php-cs-fixer
   - cd ${TEST_DIR}
   - composer update --prefer-source -o $COMPOSER_FLAGS
 
 script:
   - $PHPUNIT_BIN --coverage-clover=coverage.clover
+  - $PHPCS_FIXER_BIN fix --dry-run --diff $TRAVIS_BUILD_DIR
 
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar

@@ -19,7 +19,7 @@ class HttpUtil
 
         // Collect matching headers into groups
         foreach ($headers as $line) {
-            list ($key, $value) = explode(': ', $line, 2);
+            list($key, $value) = explode(': ', $line, 2);
             if (!isset($headerGroups[$key])) {
                 $headerGroups[$key] = array();
             }
@@ -42,7 +42,11 @@ class HttpUtil
      */
     public static function parseStatus($status)
     {
-        Assertion::startsWith($status, 'HTTP/', "Invalid HTTP status '$status', expected format like: 'HTTP/1.1 200 OK'.");
+        Assertion::startsWith(
+            $status,
+            'HTTP/',
+            "Invalid HTTP status '$status', expected format like: 'HTTP/1.1 200 OK'."
+        );
 
         $part = explode(' ', $status, 3);
 
@@ -78,7 +82,8 @@ class HttpUtil
      * @param string $header
      * @return array
      */
-    public static function parseRawHeader($rawHeader) {
+    public static function parseRawHeader($rawHeader)
+    {
         return explode("\r\n", trim($rawHeader));
     }
 

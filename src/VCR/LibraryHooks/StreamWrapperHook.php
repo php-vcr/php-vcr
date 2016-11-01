@@ -174,7 +174,7 @@ class StreamWrapperHook implements LibraryHook
      * @return array See stat().
      */
 
-    public function url_stat($path,$flags)
+    public function url_stat($path, $flags)
     {
         return array();
     }
@@ -194,23 +194,23 @@ class StreamWrapperHook implements LibraryHook
         switch ($whence) {
             case SEEK_SET:
                 if ($offset < strlen($this->response->getBody()) && $offset >= 0) {
-                     $this->position = $offset;
+                    $this->position = $offset;
 
-                     return true;
+                    return true;
                 }
                 break;
             case SEEK_CUR:
                 if ($offset >= 0) {
-                     $this->position += $offset;
+                    $this->position += $offset;
 
-                     return true;
+                    return true;
                 }
                 break;
             case SEEK_END:
                 if (strlen($this->response->getBody()) + $offset >= 0) {
-                     $this->position = strlen($this->response->getBody()) + $offset;
+                    $this->position = strlen($this->response->getBody()) + $offset;
 
-                     return true;
+                    return true;
                 }
         }
 

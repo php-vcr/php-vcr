@@ -27,9 +27,10 @@ class SoapClient extends \SoapClient
      */
     protected $request;
 
-    public function __construct($wsdl, $options = array()) {
-       $this->options = $options;
-       parent::__construct($wsdl, $options);
+    public function __construct($wsdl, $options = array())
+    {
+        $this->options = $options;
+        parent::__construct($wsdl, $options);
     }
 
     /**
