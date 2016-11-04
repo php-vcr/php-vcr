@@ -3,6 +3,7 @@ namespace VCR\Util;
 
 use VCR\Request;
 use VCR\Response;
+use VCR\VCRException;
 
 /**
  * Sends requests over the HTTP protocol.
@@ -13,6 +14,7 @@ class HttpClient
      * Returns a response for specified HTTP request.
      *
      * @param Request $request HTTP Request to send.
+     * @throws \VCR\VCRException on curl error
      *
      * @return Response Response for specified request.
      */
@@ -34,7 +36,7 @@ class HttpClient
         $response = curl_exec($ch);
 
         if ($response === false) {
-          throw new \VCR\VCRException(curl_error($ch), curl_errno($ch));
+          throw new VCRException(curl_error($ch), curl_errno($ch));
         }
 
         list($status, $headers, $body) = HttpUtil::parseResponse($response);
