@@ -266,6 +266,16 @@ class Configuration
     }
 
     /**
+     * Returns a list of valid names for request matchers, to pass to enableRequestMatchers.
+     *
+     * @return array List of strings, each representing a valid matcher name.
+     */
+    public function getAvailableRequestMatcherNames()
+    {
+        return array_keys($this->availableRequestMatchers);
+    }
+
+    /**
      * Adds a new RequestMatcher callback.
      *
      * @param string $name Name of the RequestMatcher.
@@ -299,7 +309,7 @@ class Configuration
             throw new \InvalidArgumentException("Request matchers don't exist: " . join(', ', $invalidMatchers));
         }
         $this->enabledRequestMatchers = $matchers;
-        
+
         return $this;
     }
 
