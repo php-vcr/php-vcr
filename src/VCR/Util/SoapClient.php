@@ -50,6 +50,9 @@ class SoapClient extends \SoapClient
     {
         // Save a copy of the request, not the request itself -- see issue #153
         $this->request = (string) $request;
+        if (array_key_exists('encoding', $this->options)) {
+            $request = $this->request = preg_replace('/encoding="UTF-8"/', sprintf('encoding="%s"', $this->options['encoding']), $this->request);
+        }
 
         $soapHook = $this->getLibraryHook();
 
