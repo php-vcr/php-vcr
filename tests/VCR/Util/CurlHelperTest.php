@@ -127,6 +127,16 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $request->getHeaders());
     }
 
+    public function testSetCurlOptionOnRequestPostFieldsSetsPostMethod()
+    {
+        $request = new Request('GET', 'example.com');
+        $payload = json_encode(array('some' => 'test'));
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+
+        $this->assertEquals('POST', $request->getMethod());
+    }
+
     public function testSetCurlOptionReadFunctionToNull()
     {
         $request = new Request('POST', 'example.com');
