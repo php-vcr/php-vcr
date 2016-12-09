@@ -8,7 +8,6 @@ use VCR\Configuration;
 use VCR\CodeTransform\SoapCodeTransform;
 use VCR\Util\StreamProcessor;
 
-
 /**
  * Test if intercepting http/https using soap works.
  */
