@@ -226,7 +226,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $expectedCh = curl_init();
         $expectedBody = 'example response';
         $curlOptions = array(
-            CURLOPT_WRITEFUNCTION => function($ch, $body) use ($test, $expectedCh, $expectedBody) {
+            CURLOPT_WRITEFUNCTION => function ($ch, $body) use ($test, $expectedCh, $expectedBody) {
                 $test->assertEquals($expectedCh, $ch);
                 $test->assertEquals($expectedBody, $body);
 

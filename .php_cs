@@ -1,6 +1,6 @@
 <?php
 $config = Symfony\CS\Config\Config::create()
-    ->level('psr2')
+    ->level(Symfony\CS\FixerInterface::PSR2_LEVEL)
     ->fixers(
         array(
             'single_blank_line_before_namespace',
@@ -10,7 +10,7 @@ $config = Symfony\CS\Config\Config::create()
         )
     )
     ->finder(
-        Symfony\CS\Finder\DefaultFinder::create()
+        Symfony\CS\Finder::create()
             ->exclude('vendor')
             ->exclude('docs')
             ->in(__DIR__)

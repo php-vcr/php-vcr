@@ -44,7 +44,7 @@ install:
 
 script:
   - $PHPUNIT_BIN --coverage-clover=coverage.clover
-  - $PHPCS_FIXER_BIN fix --dry-run --diff $TRAVIS_BUILD_DIR
+  - $PHPCS_FIXER_BIN fix --config-file=.php_cs --dry-run --diff $TRAVIS_BUILD_DIR
 
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
