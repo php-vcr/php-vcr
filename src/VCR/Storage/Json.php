@@ -17,6 +17,7 @@ class Json extends AbstractStorage
      */
     public function storeRecording(array $recording)
     {
+        $this->ensureFileIsWritable();
         fseek($this->handle, -1, SEEK_END);
         if (ftell($this->handle) > 2) {
             fwrite($this->handle, ',');
@@ -37,6 +38,7 @@ class Json extends AbstractStorage
      */
     public function next()
     {
+        $this->ensureFileIsReadable();
         $this->current = json_decode($this->readNextRecord(), true);
         ++$this->position;
     }
@@ -87,6 +89,7 @@ class Json extends AbstractStorage
      */
     public function rewind()
     {
+        $this->ensureFileIsReadable();
         rewind($this->handle);
         $this->isEOF = false;
         $this->position = 0;

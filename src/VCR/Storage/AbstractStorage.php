@@ -63,9 +63,12 @@ abstract class AbstractStorage implements Storage
         Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' is not existing or not a directory");
 
         $this->filePath = rtrim($cassettePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $cassetteName;
+    }
 
+    protected function ensureFileIsReadable()
+    {
         if (!is_dir(dirname($this->filePath))) {
-            mkdir(dirname($this->filePath), 0777, true);
+            mkdir(dirname($this->filePath), umask(), true);
         }
 
         if (!file_exists($this->filePath) || 0 === filesize($this->filePath)) {
@@ -76,7 +79,20 @@ abstract class AbstractStorage implements Storage
         Assertion::file($this->filePath, "Specified path '{$this->filePath}' is not a file.");
         Assertion::readable($this->filePath, "Specified file '{$this->filePath}' must be readable.");
 
-        $this->handle = fopen($this->filePath, 'r+');
+        $this->handle = fopen($this->filePath, 'rb');
+    }
+
+    protected function ensureFileIsWritable()
+    {
+        if () {
+            $this->handle = fopen($this->filePath, 'rb+');
+            return;
+        }
+
+        $info = stream_get_meta_data($this->handle);
+        if (is_resource($this->handle) && $info['mode'] === 'rb') {
+            $this->handle = fopen($this->filePath, 'rb+');
+        }
     }
 
     /**

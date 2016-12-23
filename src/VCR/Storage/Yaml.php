@@ -45,6 +45,7 @@ class Yaml extends AbstractStorage
      */
     public function storeRecording(array $recording)
     {
+        $this->ensureFileIsWritable();
         fseek($this->handle, -1, SEEK_END);
         fwrite($this->handle, "\n" . $this->yamlDumper->dump(array($recording), 4));
         fflush($this->handle);
@@ -57,6 +58,7 @@ class Yaml extends AbstractStorage
      */
     public function next()
     {
+        $this->ensureFileIsReadable();
         $recording = $this->yamlParser->parse($this->readNextRecord());
         $this->current = $recording[0];
         ++$this->position;
@@ -109,6 +111,7 @@ class Yaml extends AbstractStorage
      */
     public function rewind()
     {
+        $this->ensureFileIsReadable();
         rewind($this->handle);
         $this->isEOF = false;
         $this->isValidPosition = true;
