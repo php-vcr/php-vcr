@@ -402,4 +402,26 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    public function testSetCurlOptionCustomRequest()
+    {
+        $request = new Request('POST', 'http://example.com');
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_CUSTOMREQUEST, 'PUT');
+
+        $this->assertEquals('PUT', $request->getCurlOption(CURLOPT_CUSTOMREQUEST));
+    }
+
+    public function testCurlCustomRequestAlwaysOverridesMethod()
+    {
+        $request = new Request('POST', 'http://example.com');
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_CUSTOMREQUEST, 'DELETE');
+
+        $this->assertEquals('DELETE', $request->getMethod());
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, array('some' => 'test'));
+
+        $this->assertEquals('DELETE', $request->getMethod());
+    }
 }

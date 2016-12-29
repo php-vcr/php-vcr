@@ -215,4 +215,19 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $request = new Request('GET', 'http://example.com:5000/foo?param=key');
         $this->assertEquals('example.com:5000', $request->getHost());
     }
+
+    public function testCurlCustomRequestOverridesMethod()
+    {
+        $postRequest = new Request('POST', 'http://example.com');
+        $getRequest = new Request('GET', 'http://example.com');
+
+        $this->assertEquals('POST', $postRequest->getMethod());
+        $this->assertEquals('GET', $getRequest->getMethod());
+
+        $postRequest->setCurlOption(CURLOPT_CUSTOMREQUEST, 'PUT');
+        $getRequest->setCurlOption(CURLOPT_CUSTOMREQUEST, 'POST');
+
+        $this->assertEquals('PUT', $postRequest->getMethod());
+        $this->assertEquals('POST', $getRequest->getMethod());
+    }
 }

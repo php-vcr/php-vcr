@@ -148,6 +148,10 @@ class Request
      */
     public function getMethod()
     {
+        if ($this->getCurlOption(CURLOPT_CUSTOMREQUEST) !== null) {
+            return $this->getCurlOption(CURLOPT_CUSTOMREQUEST);
+        }
+
         return $this->method;
     }
 
