@@ -160,7 +160,6 @@ class CurlHelper
                 } else {
                     $request->setBody($value);
                 }
-                $request->setMethod('POST');
                 break;
             case CURLOPT_HTTPHEADER:
                 foreach ($value as $header) {
