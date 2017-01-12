@@ -5,7 +5,7 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/coverage.png?s=15cf1644c8cf37a868e03cfba809a5e24c78f285)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/quality-score.png?s=4f638dbca5eb51fb9c87a1dd45c5df94687d85bd)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
 
-This is a port of [VCR](http://github.com/vcr/vcr) for ruby.
+This is a port of the [VCR](http://github.com/vcr/vcr) Ruby library to PHP.
 
 Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests. A bit of documentation can be found on the [php-vcr website](http://php-vcr.github.io).
 
