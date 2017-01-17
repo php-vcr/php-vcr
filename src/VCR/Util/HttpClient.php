@@ -36,7 +36,7 @@ class HttpClient
         $response = curl_exec($ch);
 
         if ($response === false) {
-          throw new VCRException(curl_error($ch), curl_errno($ch));
+            throw new VCRException(curl_error($ch), curl_errno($ch));
         }
 
         list($status, $headers, $body) = HttpUtil::parseResponse($response);
