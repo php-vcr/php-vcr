@@ -6,6 +6,9 @@ use VCR\Response;
 
 /**
  * Sends requests over the HTTP protocol.
+ *
+ * This client uses the `curl` handler to send the request, regardless
+ * of which LibraryHook is used to capture the user's original request.
  */
 class HttpClient
 {
@@ -15,6 +18,8 @@ class HttpClient
      * @param Request $request HTTP Request to send.
      *
      * @return Response Response for specified request.
+     *
+     * @throws HttpClientException
      */
     public function send(Request $request)
     {
@@ -31,7 +36,24 @@ class HttpClient
         curl_setopt($ch, CURLOPT_FAILONERROR, false);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
-        list($status, $headers, $body) = HttpUtil::parseResponse(curl_exec($ch));
+        $response = curl_exec($ch);
+        if (false === $response) {
+            // The request failed.
+            //
+            // Throw an exception which a) will allow the CurlHook to fully
+            // simulate curl's behaviour to the calling code and b) will at
+            // least give a helpful error message for the other LibraryHooks
+
+            $curlInfo = curl_getinfo($ch);
+            $curlError = curl_error($ch);
+            $curlErrorNo = curl_errno($ch);
+            throw new HttpClientException(
+                "$curlErrorNo: $curlError",
+                $curlInfo,
+                $curlError,
+                $curlErrorNo);
+        }
+        list($status, $headers, $body) = HttpUtil::parseResponse($response);
 
         return new Response(
             HttpUtil::parseStatus($status),

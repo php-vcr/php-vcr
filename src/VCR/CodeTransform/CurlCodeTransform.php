@@ -8,6 +8,8 @@ class CurlCodeTransform extends AbstractCodeTransform
 
     private static $patterns = array(
         '/(?<!::|->|\w_)\\\?curl_init\s*\(/i'                => '\VCR\LibraryHooks\CurlHook::curl_init(',
+        '/(?<!::|->|\w_)\\\?curl_errno\s*\(/i'               => '\VCR\LibraryHooks\CurlHook::curl_errno(',
+        '/(?<!::|->|\w_)\\\?curl_error\s*\(/i'               => '\VCR\LibraryHooks\CurlHook::curl_error(',
         '/(?<!::|->|\w_)\\\?curl_exec\s*\(/i'                => '\VCR\LibraryHooks\CurlHook::curl_exec(',
         '/(?<!::|->|\w_)\\\?curl_getinfo\s*\(/i'             => '\VCR\LibraryHooks\CurlHook::curl_getinfo(',
         '/(?<!::|->|\w_)\\\?curl_setopt\s*\(/i'              => '\VCR\LibraryHooks\CurlHook::curl_setopt(',

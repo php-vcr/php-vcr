@@ -12,6 +12,7 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
     const TEST_GET_URL = 'http://httpbin.org/get';
     const TEST_POST_URL = 'http://httpbin.org/post';
     const TEST_POST_BODY = '{"foo":"bar"}';
+    const TEST_TIMEOUT_URL = 'http://httpbin.org/delay/120';
 
     protected $ignoreHeaders = array(
         'Accept',
@@ -66,11 +67,40 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->requestPOSTIntercepted(), $this->requestPOSTIntercepted());
     }
 
-    protected function requestGET()
+    public function testFailedRequest()
+    {
+        $interceptedEx = null;
+        try {
+            $this->requestGETIntercepted(self::TEST_TIMEOUT_URL, array('timeout' => 1));
+            $this->fail("expected a request exception");
+        } catch (\Exception $e) {
+            $interceptedEx = $e;
+        }
+
+        $notInterceptedEx = null;
+        try {
+            $this->requestGET(self::TEST_TIMEOUT_URL, array('timeout' => 1));
+            $this->fail("expected a request exception");
+        } catch (\Exception $e) {
+            $notInterceptedEx = $e;
+        }
+
+        $this->assertEquals(
+            get_class($notInterceptedEx),
+            get_class($interceptedEx));
+        $this->assertEquals(
+            $notInterceptedEx->getMessage(),
+            $interceptedEx->getMessage());
+        $this->assertEquals(
+            $notInterceptedEx->getCode(),
+            $interceptedEx->getCode());
+    }
+
+    protected function requestGET($url = self::TEST_GET_URL, $options = array())
     {
         $exampleClient = new ExampleHttpClient();
 
-        $response = $exampleClient->get(self::TEST_GET_URL);
+        $response = $exampleClient->get($url, $options);
         foreach ($this->ignoreHeaders as $header) {
             unset($response['headers'][$header]);
         }
@@ -90,11 +120,11 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
         return $response;
     }
 
-    protected function requestGETIntercepted()
+    protected function requestGETIntercepted($url = self::TEST_GET_URL, $options = array())
     {
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('test-cassette.yml');
-        $info = $this->requestGET();
+        $info = $this->requestGET($url, $options);
         \VCR\VCR::turnOff();
 
         return $info;
