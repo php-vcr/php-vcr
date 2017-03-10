@@ -67,7 +67,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::turnOn();
         VCR::insertCassette('unittest_soap_test');
 
-        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
+        $client = new \SoapClient('https://web.archive.org/web/20161213164919/http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
         $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
         $temperature = $actual->GetCityWeatherByZIPResult->Temperature;
 
