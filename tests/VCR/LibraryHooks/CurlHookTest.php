@@ -176,8 +176,29 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
         curl_close($curlHandle);
 
-        $this->assertEquals(200, $infoHttpCode, 'HTTP status not set.');
+        $this->assertSame(200, $infoHttpCode, 'HTTP status not set.');
+
         $this->curlHook->disable();
+    }
+
+   /**
+    * @see https://github.com/php-vcr/php-vcr/issues/136
+    */
+    public function testShouldReturnCurlInfoStatusCodeAsInteger()
+    {
+      $stringStatusCode = "200";
+      $integerStatusCode = 200;
+      $this->curlHook->enable($this->getTestCallback($stringStatusCode));
+
+      $curlHandle = curl_init('http://example.com');
+      curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+      curl_exec($curlHandle);
+      $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+      curl_close($curlHandle);
+
+      $this->assertSame($integerStatusCode, $infoHttpCode, 'HTTP status not set.');
+
+      $this->curlHook->disable();
     }
 
     public function testShouldReturnCurlInfoAll()
@@ -340,11 +361,11 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
     /**
      * @return \callable
      */
-    protected function getTestCallback()
+    protected function getTestCallback($statusCode = 200)
     {
         $testClass = $this;
-        return function () use ($testClass) {
-            return new Response(200, array(), $testClass->expected);
+        return function () use ($statusCode, $testClass) {
+            return new Response($statusCode, array(), $testClass->expected);
         };
     }
 }
