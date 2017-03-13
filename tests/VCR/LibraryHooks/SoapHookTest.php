@@ -30,7 +30,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
     {
         $this->soapHook->enable($this->getContentCheckCallback());
 
-        $client = new \SoapClient('https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/weather.wsdl', array('soap_version' => SOAP_1_2));
+        $client = new \SoapClient('https://raw.githubusercontent.com/louismrose/php-vcr/issue136-integer-status-codes-for-braintree/tests/fixtures/weather.wsdl', array('soap_version' => SOAP_1_2));
         $client->setLibraryHook($this->soapHook);
         $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
 
@@ -48,7 +48,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
 
         $client = new \SoapClient(
-            'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/weather.wsdl',
+            'https://raw.githubusercontent.com/louismrose/php-vcr/issue136-integer-status-codes-for-braintree/tests/fixtures/weather.wsdl',
             array('soap_version' => SOAP_1_1)
         );
         $client->setLibraryHook($this->soapHook);
@@ -64,7 +64,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
 
         $client = new \SoapClient(
-            'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/weather.wsdl',
+            'https://raw.githubusercontent.com/louismrose/php-vcr/issue136-integer-status-codes-for-braintree/tests/fixtures/weather.wsdl',
             array('soap_version' => SOAP_1_2)
         );
         $client->setLibraryHook($this->soapHook);
@@ -76,7 +76,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $this->soapHook->enable($this->getContentCheckCallback());
 
         $client = new \SoapClient(
-            'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/weather.wsdl',
+            'https://raw.githubusercontent.com/louismrose/php-vcr/issue136-integer-status-codes-for-braintree/tests/fixtures/weather.wsdl',
             array('soap_version' => SOAP_1_1, 'trace' => 1)
         );
         $client->setLibraryHook($this->soapHook);

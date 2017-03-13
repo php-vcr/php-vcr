@@ -8,7 +8,7 @@ use VCR\Util\SoapClient;
 
 class SoapClientTest extends \PHPUnit_Framework_TestCase
 {
-    const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/weather.wsdl';
+    const WSDL = 'https://raw.githubusercontent.com/louismrose/php-vcr/issue136-integer-status-codes-for-braintree/tests/fixtures/weather.wsdl';
     const ACTION = 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP';
 
     protected function getLibraryHookMock($enabled)
