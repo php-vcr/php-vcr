@@ -161,7 +161,8 @@ class StreamProcessor
      *
      * @param  string  $path       Specifies the URL that was passed to the original function.
      * @param  string  $mode       The mode used to open the file, as detailed for fopen().
-     * @param  integer $options    Holds additional flags set by the streams API. It can hold one or more of the following values OR'd together.
+     * @param  integer $options    Holds additional flags set by the streams API.
+     *                             It can hold one or more of the following values OR'd together.
      * @param  string  $openedPath If the path is opened successfully, and STREAM_USE_PATH is set in options,
      *                             opened_path should be set to the full path of the file/resource that was
      *                             actually opened.
@@ -293,7 +294,7 @@ class StreamProcessor
     {
         $this->restore();
         if ($flags & STREAM_URL_STAT_QUIET) {
-            set_error_handler(function() {
+            set_error_handler(function () {
                 // Use native error handler
                 return false;
             });
@@ -463,6 +464,7 @@ class StreamProcessor
      */
     public function stream_lock($operation)
     {
+        $operation = ($operation === 0 ? LOCK_EX : $operation);
         return flock($this->resource, $operation);
     }
 

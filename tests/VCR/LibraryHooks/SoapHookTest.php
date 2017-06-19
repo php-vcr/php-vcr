@@ -8,7 +8,6 @@ use VCR\Configuration;
 use VCR\CodeTransform\SoapCodeTransform;
 use VCR\Util\StreamProcessor;
 
-
 /**
  * Test if intercepting http/https using soap works.
  */
@@ -70,6 +69,22 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         );
         $client->setLibraryHook($this->soapHook);
         $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+    }
+
+    public function testShouldReturnLastRequestWithTraceOn()
+    {
+        $this->soapHook->enable($this->getContentCheckCallback());
+
+        $client = new \SoapClient(
+            'http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL',
+            array('soap_version' => SOAP_1_1, 'trace' => 1)
+        );
+        $client->setLibraryHook($this->soapHook);
+        $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+        $actual = $client->__getLastRequest();
+
+        $this->soapHook->disable();
+        $this->assertTrue(!is_null($actual), '__getLastRequest() returned NULL.');
     }
 
     /**

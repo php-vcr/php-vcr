@@ -127,9 +127,19 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $request->getHeaders());
     }
 
+    public function testSetCurlOptionOnRequestPostFieldsSetsPostMethod()
+    {
+        $request = new Request('GET', 'example.com');
+        $payload = json_encode(array('some' => 'test'));
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+
+        $this->assertEquals('POST', $request->getMethod());
+    }
+
     public function testSetCurlOptionReadFunctionToNull()
     {
-	    $request = new Request('POST', 'example.com');
+        $request = new Request('POST', 'example.com');
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, null, curl_init());
 
@@ -141,7 +151,8 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $request = new Request('POST', 'example.com');
 
-        $callback = function ($curlHandle, $fileHandle, $size) {};
+        $callback = function ($curlHandle, $fileHandle, $size) {
+        };
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, $callback, curl_init());
         CurlHelper::validateCurlPOSTBody($request, curl_init());
@@ -215,7 +226,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $expectedCh = curl_init();
         $expectedBody = 'example response';
         $curlOptions = array(
-            CURLOPT_WRITEFUNCTION => function($ch, $body) use ($test, $expectedCh, $expectedBody) {
+            CURLOPT_WRITEFUNCTION => function ($ch, $body) use ($test, $expectedCh, $expectedBody) {
                 $test->assertEquals($expectedCh, $ch);
                 $test->assertEquals($expectedBody, $body);
 

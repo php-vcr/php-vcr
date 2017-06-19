@@ -154,8 +154,8 @@ class Videorecorder
     {
         Assertion::true($this->isOn, 'Please turn on VCR before ejecting a cassette, use: VCR::turnOn().');
 
-	$cassette = $this->cassette;
-	$this->cassette = null;
+        $cassette = $this->cassette;
+        $this->cassette = null;
 
         if ($cassette && $this->config->getMode() === VCR::MODE_STRICT && !$cassette->isFinished()) {
             throw new \LogicException(
@@ -212,14 +212,15 @@ class Videorecorder
      *
      * @return Response                Response for the intercepted request.
      * @throws \BadMethodCallException If there was no cassette inserted.
-     * @throws \LogicException         If the mode is set to none or once and the cassette did not have a matching response.
+     * @throws \LogicException         If the mode is set to none or once and
+     *                                 the cassette did not have a matching response.
      */
     public function handleRequest(Request $request)
     {
         if ($this->cassette === null) {
             throw new \BadMethodCallException(
-                "Invalid http request. No cassette inserted. "
-                . "Please make sure to insert a cassette in your unit test using "
+                'Invalid http request. No cassette inserted. '
+                . 'Please make sure to insert a cassette in your unit test using '
                 . "VCR::insertCassette('name');"
             );
         }
@@ -236,14 +237,20 @@ class Videorecorder
             return $response;
         }
 
-        if (in_array($this->config->getMode(), array(VCR::MODE_NONE, VCR::MODE_STRICT)) ||
-            VCR::MODE_ONCE === $this->config->getMode() && $this->cassette->isNew() === false) {
+        if (
+            in_array($this->config->getMode(), array(VCR::MODE_NONE, VCR::MODE_STRICT))
+            || (VCR::MODE_ONCE === $this->config->getMode() && $this->cassette->isNew() === false)
+        ) {
             throw new \LogicException(
-                "The request does not match a previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
-                . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
-                . "Please see http://php-vcr.github.io/documentation/configuration/#record-modes."
-                ."\nCassette: ".$this->cassette->getName()
-                ."\nRequest: ".print_r($request->toArray(), true)
+                sprintf(
+                    "The request does not match a previously recorded request and the 'mode' is set to '%s'. "
+                    . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
+                    . 'Please see http://php-vcr.github.io/documentation/configuration/#record-modes.'
+                    . "\nCassette: %s \n Request: %s",
+                    $this->config->getMode(),
+                    $this->cassette->getName(),
+                    print_r($request->toArray(), true)
+                )
             );
         }
 
@@ -274,6 +281,7 @@ class Videorecorder
             $hook->disable();
         }
     }
+
     /**
      * Enables configured library hooks.
      *

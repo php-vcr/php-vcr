@@ -5,9 +5,9 @@ namespace VCR\Example;
 use org\bovigo\vfs\vfsStream;
 
 /**
- * Checks cdyne.com for local weather information.
+ * Converts temperature units from webservicex
  *
- * @link http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL
+ * @link http://www.webservicex.net/New/Home/ServiceDetail/31
  */
 class ExampleSoapClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,17 +18,20 @@ class ExampleSoapClientTest extends \PHPUnit_Framework_TestCase
         \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
-    public function testCallDirectly() {
+    public function testCallDirectly()
+    {
         $actual = $this->callSoap();
         $this->assertInternalType('integer', $actual);
     }
 
-    public function testCallIntercepted() {
+    public function testCallIntercepted()
+    {
         $actual = $this->callSoapIntercepted();
         $this->assertInternalType('integer', $actual);
     }
 
-    public function testCallDirectlyEqualsIntercepted() {
+    public function testCallDirectlyEqualsIntercepted()
+    {
         $this->assertEquals($this->callSoap(), $this->callSoapIntercepted());
     }
 
@@ -47,5 +50,4 @@ class ExampleSoapClientTest extends \PHPUnit_Framework_TestCase
 
         return $result;
     }
-
 }

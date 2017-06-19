@@ -40,7 +40,7 @@ class Cassette
      */
     public function __construct($name, Configuration $config, Storage $storage)
     {
-        Assertion::string($name, "Cassette name must be a string, " . \gettype($name) . " given.");
+        Assertion::string($name, 'Cassette name must be a string, ' . \gettype($name) . ' given.');
 
         $this->name = $name;
         $this->config = $config;

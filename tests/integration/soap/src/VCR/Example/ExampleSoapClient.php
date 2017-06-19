@@ -2,19 +2,19 @@
 namespace VCR\Example;
 
 /**
- * Checks cdyne.com for local weather information.
+ * Converts temperature units from webservicex
  *
- * @link http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL
+ * @link http://www.webservicex.net/New/Home/ServiceDetail/31
  */
 class ExampleSoapClient
 {
-    const EXAMPLE_WSDL = 'http://www.w3schools.com/webservices/tempconvert.asmx?wsdl';
+    const EXAMPLE_WSDL = 'http://www.webservicex.net/ConvertTemperature.asmx?WSDL';
 
     public function call($zip = '10')
     {
         $client = new \SoapClient(self::EXAMPLE_WSDL, array('soap_version' => SOAP_1_2));
-        $response = $client->CelsiusToFahrenheit(array('Celsius' => $zip));
+        $response = $client->ConvertTemp(array('Temperature' => $zip, 'FromUnit' => 'degreeCelsius', 'ToUnit' => 'degreeFahrenheit'));
 
-        return (int) $response->CelsiusToFahrenheitResult;
+        return (int) $response->ConvertTempResult;
     }
 }

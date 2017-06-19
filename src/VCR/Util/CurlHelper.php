@@ -160,13 +160,14 @@ class CurlHelper
                 } else {
                     $request->setBody($value);
                 }
+                $request->setMethod('POST');
                 break;
             case CURLOPT_HTTPHEADER:
                 foreach ($value as $header) {
                     $headerParts = explode(': ', $header, 2);
                     if (!isset($headerParts[1])) {
-                       $headerParts[0] = rtrim($headerParts[0], ':');
-                       $headerParts[1] = null;
+                        $headerParts[0] = rtrim($headerParts[0], ':');
+                        $headerParts[1] = null;
                     }
                     $request->setHeader($headerParts[0], $headerParts[1]);
                 }
@@ -201,12 +202,12 @@ class CurlHelper
         
         // Guzzle 4 sometimes sets the post body in CURLOPT_POSTFIELDS even if
         // they have already set CURLOPT_READFUNCTION.
-        if ($request->getBody()){
+        if ($request->getBody()) {
             return;
         }
         
         $bodySize = $request->getCurlOption(CURLOPT_INFILESIZE);
-        Assertion::notEmpty($bodySize, "To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.");
+        Assertion::notEmpty($bodySize, 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $body = call_user_func_array($readFunction, array($curlHandle, fopen('php://memory', 'r'), $bodySize));
         $request->setBody($body);
     }

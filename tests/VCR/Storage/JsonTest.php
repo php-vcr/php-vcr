@@ -103,7 +103,6 @@ class JsonTest extends \PHPUnit_Framework_TestCase
         $this->jsonObject->storeRecording($stored);
 
         $this->assertJson(file_get_contents($this->filePath));
-
     }
 
     public function testStoreRecordingWhenBlankFileAlreadyExists()

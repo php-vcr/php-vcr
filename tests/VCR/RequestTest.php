@@ -119,7 +119,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testStorePostFile()
     {
-
         $file = array(
             'fieldName'   => 'field_name',
             'contentType' => 'application/octet-stream',

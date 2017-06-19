@@ -4,3 +4,4 @@
 coverage/*
 notes.md
 tests/fixtures/cassette*
+/.php_cs.cache

@@ -4,7 +4,6 @@ namespace VCR\CodeTransform;
 
 class AbstractCodeTransformTest extends \PHPUnit_framework_TestCase
 {
-
     protected function getFilter(array $methods = array())
     {
         $defaults = array_merge(
@@ -13,11 +12,10 @@ class AbstractCodeTransformTest extends \PHPUnit_framework_TestCase
         );
 
         $filter = $this->getMockBuilder('\VCR\CodeTransform\AbstractCodeTransform')
-            ->setMethods(array($defaults))
+            ->setMethods($defaults)
             ->getMockForAbstractClass();
 
         if (in_array('transformCode', $methods)) {
-
             $filter
                 ->expects($this->once())
                 ->method('transformCode')

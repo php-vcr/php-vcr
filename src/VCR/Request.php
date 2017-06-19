@@ -41,7 +41,7 @@ class Request
      * @param string $url
      * @param array $headers
      */
-    function __construct($method, $url, array $headers = array())
+    public function __construct($method, $url, array $headers = array())
     {
         $this->method = $method;
         $this->headers = $headers;
@@ -200,7 +200,7 @@ class Request
         $host = parse_url($this->getUrl(), PHP_URL_HOST);
 
         if ($port = parse_url($this->getUrl(), PHP_URL_PORT)) {
-          $host .= ':' . $port;
+            $host .= ':' . $port;
         }
 
         return $host;
@@ -234,7 +234,8 @@ class Request
      * @param $key
      * @return mixed
      */
-    public function getCurlOption($key) {
+    public function getCurlOption($key)
+    {
         if (empty($this->curlOptions[$key])) {
             return null;
         }
@@ -334,5 +335,4 @@ class Request
     {
         $this->postFiles[] = $file;
     }
-
 }
