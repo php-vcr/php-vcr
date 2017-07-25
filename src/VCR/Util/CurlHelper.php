@@ -157,7 +157,9 @@ class CurlHelper
                     if (count($value) == 0) {
                         $request->removeHeader('Content-Type');
                     }
-                } else {
+                } elseif (!empty($value)) {
+                    // Empty values are ignored to be consistent with how requests are read out of
+                    // storage using \VCR\Request::fromArray(array $request).
                     $request->setBody($value);
                 }
                 $request->setMethod('POST');

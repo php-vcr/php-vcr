@@ -71,6 +71,18 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($payload, (string) $request->getBody());
     }
 
+    public function testSetCurlOptionOnRequestPostFieldsEmptyString()
+    {
+        $request = new Request('POST', 'example.com');
+        $payload = '';
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+
+        // This is consistent with how requests are read out of storage using
+        // \VCR\Request::fromArray(array $request).
+        $this->assertSame(null, $request->getBody());
+    }
+
     public function testSetCurlOptionOnRequestSetSingleHeader()
     {
         $request = new Request('GET', 'example.com');
