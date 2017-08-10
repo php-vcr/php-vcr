@@ -89,11 +89,19 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
             get_class($notInterceptedEx),
             get_class($interceptedEx));
         $this->assertEquals(
-            $notInterceptedEx->getMessage(),
-            $interceptedEx->getMessage());
+            $this->normaliseTimeoutExceptionMessage($notInterceptedEx->getMessage()),
+            $this->normaliseTimeoutExceptionMessage($interceptedEx->getMessage()));
         $this->assertEquals(
             $notInterceptedEx->getCode(),
             $interceptedEx->getCode());
+    }
+
+    /**
+     * The timeout exception message includes the exact time taken, which can
+     * vary a bit, but we don't want the test to fail due to timing jitter
+     */
+    private function normaliseTimeoutExceptionMessage($msg) {
+        return preg_replace('/after \d+ milliseconds/', 'after nnn milliseconds', $msg);
     }
 
     protected function requestGET($url = self::TEST_GET_URL, $options = array())
