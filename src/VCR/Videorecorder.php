@@ -256,8 +256,11 @@ class Videorecorder
 
             $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
             $this->cassette->record($request, $response);
-        } finally {
             $this->enableLibraryHooks();
+        } catch (Exception $e) {
+            // (This simulates a "finally" block; we should change to "finally" when we have PHP >= 5.3)
+            $this->enableLibraryHooks();
+            throw $e;
         }
 
         return $response;

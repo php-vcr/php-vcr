@@ -95,9 +95,8 @@ class StreamWrapperHookTest extends \PHPUnit_Framework_TestCase
             $this->fail("expected exception");
         } catch (Exception $e) {
             $errWithHook = $e;
-        } finally {
-            VCR::turnOff();
         }
+        VCR::turnOff();
 
         // Here, we'd like to be able to do:
         // $this->assertEquals($errWithoutHook, $errWithHook);
