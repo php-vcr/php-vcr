@@ -220,6 +220,33 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("HTTP/1.1 200 OK\r\n\r\n" . $response->getBody(), $output);
     }
 
+    public function testHandleOutputHeaderFunction()
+    {
+        $actualHeaders = array();
+        $curlOptions = array(
+            CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$actualHeaders) {
+                $actualHeaders[] = $header;
+            },
+        );
+        $status = array(
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1',
+        );
+        $headers = array(
+            'Content-Length' => 0,
+        );
+        $response = new Response($status, $headers, 'example response');
+        CurlHelper::handleOutput($response, $curlOptions, curl_init());
+
+        $expected = array(
+            'HTTP/1.1 200 OK',
+            'Content-Length: 0',
+            ''
+        );
+        $this->assertEquals($expected, $actualHeaders);
+    }
+
     public function testHandleResponseUsesWriteFunction()
     {
         $test = $this;
