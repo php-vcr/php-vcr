@@ -103,7 +103,7 @@ class CurlHelper
                 }
                 break;
             case CURLINFO_HTTP_CODE:
-                $info = $response->getStatusCode();
+                $info = (int)$response->getStatusCode();
                 break;
             case CURLINFO_SIZE_DOWNLOAD:
                 $info = $response->getHeader('Content-Length');
