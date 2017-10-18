@@ -132,7 +132,9 @@ class Request
     public function setUrl($url)
     {
         $this->url = $url;
-        $this->setHeader('Host', $this->getHost());
+        if (! array_key_exists('Host', $this->headers)) {
+            $this->setHeader('Host', $this->getHost());
+        }
     }
 
     /**

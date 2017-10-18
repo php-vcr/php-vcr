@@ -216,6 +216,22 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('example.com:5000', $request->getHost());
     }
 
+    public function testDoNotOverwriteHostHeader()
+    {
+        $this->request = new Request(
+          'GET',
+          'http://example.com',
+          array('User-Agent' => 'Unit-Test', 'Host' => 'www.example.com'));
+
+        $this->assertEquals(
+            array(
+                'User-Agent' => 'Unit-Test',
+                'Host'       => 'www.example.com'
+            ),
+            $this->request->getHeaders()
+        );
+    }
+
     public function testCurlCustomRequestOverridesMethod()
     {
         $postRequest = new Request('POST', 'http://example.com');
