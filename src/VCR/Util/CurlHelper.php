@@ -140,7 +140,7 @@ class CurlHelper
                 $request->setUrl($value);
                 break;
             case CURLOPT_CUSTOMREQUEST:
-                $request->setMethod($value);
+                $request->setCurlOption(CURLOPT_CUSTOMREQUEST, $value);
                 break;
             case CURLOPT_POST:
                 if ($value == true) {
