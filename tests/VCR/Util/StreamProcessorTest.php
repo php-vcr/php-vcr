@@ -58,6 +58,33 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function streamOpenFileModesWhichDoNotCreateFiles()
+    {
+        return array(
+            array('r'),
+            array('rb'),
+            array('rt'),
+            array('r+')
+        );
+    }
+    /**
+     * @dataProvider streamOpenFileModesWhichDoNotCreateFiles
+     */
+    public function testStreamOpenShouldNotFailOnNonExistingFile($fileMode)
+    {
+        $test = $this;
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test) {
+            $test->fail('should not throw errors');
+        });
+
+        $processor = new StreamProcessor();
+
+        $result = $processor->stream_open('tests/fixtures/unknown', $fileMode, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, $fullPath);
+        $this->assertFalse($result);
+
+        restore_error_handler();
+    }
+
     public function testUrlStatSuccessfully()
     {
         $test = $this;

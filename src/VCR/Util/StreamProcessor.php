@@ -171,6 +171,10 @@ class StreamProcessor
      */
     public function stream_open($path, $mode, $options, &$openedPath)
     {
+        if ('r' === substr($mode, 0, 1) && !is_file($path)) {
+            return false;
+        }
+
         $this->restore();
 
         if (isset($this->context)) {
