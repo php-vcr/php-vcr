@@ -132,7 +132,7 @@ class Request
     public function setUrl($url)
     {
         $this->url = $url;
-        if (! array_key_exists('Host', $this->headers)) {
+        if ($this->hasHeader('Host') === false || $this->getHeader('Host') === null) {
             $this->setHeader('Host', $this->getHost());
         }
     }
@@ -172,6 +172,15 @@ class Request
     public function getHeader($key)
     {
         return $this->headers[$key];
+    }
+
+    /**
+     * @param $key
+     * @return boolean
+     */
+    public function hasHeader($key)
+    {
+        return array_key_exists($key, $this->headers);
     }
 
     /**
