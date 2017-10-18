@@ -141,9 +141,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
                 'host' => 'example.com'
             ),
             'body'      => 'Test response',
-            'curl_info' => [
+            'curl_info' => array(
                 'content_type' => 'text/html'
-            ]
+            )
         );
 
         $response = Response::fromArray($expectedArray);
