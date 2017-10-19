@@ -36,7 +36,8 @@ class CurlHelper
         CURLINFO_SSL_VERIFYRESULT => 'ssl_verify_result',
         CURLINFO_CONTENT_LENGTH_DOWNLOAD => 'download_content_length',
         CURLINFO_CONTENT_LENGTH_UPLOAD => 'upload_content_length',
-        CURLINFO_CONTENT_TYPE => 'content_type'
+        CURLINFO_CONTENT_TYPE => 'content_type',
+        CURLAUTH_NTLM => 'ntlm'
     );
 
     /**
@@ -55,17 +56,28 @@ class CurlHelper
      */
     public static function handleOutput(Response $response, array $curlOptions, $ch)
     {
+
+        $body = $response->getBody();
+        $ntlm = FALSE;
+        // Ugly hack for NTLM.
+        if (strpos($body, 'HTTP/1.1 200 OK') === 0) {
+          $ntlm = TRUE;
+          // Adjust the body.
+          $body_parts = explode("\r\n", $body);
+          $body = array_pop($body_parts);
+        }
         // If there is a header function set, feed the http status and headers to it.
         if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
             $headerList = array(HttpUtil::formatAsStatusString($response));
             $headerList = array_merge($headerList, HttpUtil::formatHeadersForCurl($response->getHeaders()));
             $headerList[] = '';
             foreach ($headerList as $header) {
+                if ($ntlm && $header == 'HTTP/1.1 401 Unauthorized') {
+                   $header = 'HTTP/1.1 200 OK';
+                }
                 call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $header);
             }
         }
-
-        $body = $response->getBody();
 
         if (!empty($curlOptions[CURLOPT_HEADER])) {
             $body = HttpUtil::formatAsStatusWithHeadersString($response) . $body;
