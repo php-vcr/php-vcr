@@ -186,19 +186,19 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
     */
     public function testShouldReturnCurlInfoStatusCodeAsInteger()
     {
-      $stringStatusCode = "200";
-      $integerStatusCode = 200;
-      $this->curlHook->enable($this->getTestCallback($stringStatusCode));
+        $stringStatusCode = '200';
+        $integerStatusCode = 200;
+        $this->curlHook->enable($this->getTestCallback($stringStatusCode));
 
-      $curlHandle = curl_init('http://example.com');
-      curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
-      curl_exec($curlHandle);
-      $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
-      curl_close($curlHandle);
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+        $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        curl_close($curlHandle);
 
-      $this->assertSame($integerStatusCode, $infoHttpCode, 'HTTP status not set.');
+        $this->assertSame($integerStatusCode, $infoHttpCode, 'HTTP status not set.');
 
-      $this->curlHook->disable();
+        $this->curlHook->disable();
     }
 
     public function testShouldReturnCurlInfoAll()
