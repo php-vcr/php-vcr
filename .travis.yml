@@ -40,12 +40,13 @@ install:
   - composer update --prefer-source -o $COMPOSER_FLAGS
   - PHPUNIT_BIN=$(pwd)/vendor/bin/phpunit
   - PHPCS_FIXER_BIN=$(pwd)/vendor/bin/php-cs-fixer
+  - $PHPCS_FIXER_BIN --version | grep -q "2.*.*" && PHPCS_FIXER_CONFIG_FLAG="--config=.php_cs.dist" || PHPCS_FIXER_CONFIG_FLAG="--config-file=.php_cs.dist"
   - cd ${TEST_DIR}
   - composer update --prefer-source -o $COMPOSER_FLAGS
 
 script:
   - $PHPUNIT_BIN --coverage-clover=coverage.clover
-  - test $TEST_DIR = "." && $PHPCS_FIXER_BIN fix --config-file=.php_cs --dry-run --diff $TRAVIS_BUILD_DIR || echo "Continue without php-cs-fixer"
+  - test $TEST_DIR = "." && $PHPCS_FIXER_BIN fix $PHPCS_FIXER_CONFIG_FLAG --dry-run --diff $TRAVIS_BUILD_DIR || echo "Continue without php-cs-fixer"
 
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
