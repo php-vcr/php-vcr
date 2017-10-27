@@ -166,13 +166,13 @@ class StreamWrapperHook implements LibraryHook
         return array();
     }
 
-     /**
-     * Retrieve information about a file resource.
-     *
-     * @link http://www.php.net/manual/en/streamwrapper.url-stat.php
-     *
-     * @return array See stat().
-     */
+    /**
+    * Retrieve information about a file resource.
+    *
+    * @link http://www.php.net/manual/en/streamwrapper.url-stat.php
+    *
+    * @return array See stat().
+    */
 
     public function url_stat($path, $flags)
     {

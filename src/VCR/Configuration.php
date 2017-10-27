@@ -319,11 +319,11 @@ class Configuration
         return $this;
     }
 
-   /**
-     * Returns a list of whitelisted paths.
-     *
-     * @return array
-     */
+    /**
+      * Returns a list of whitelisted paths.
+      *
+      * @return array
+      */
     public function getWhiteList()
     {
         return $this->whiteList;
@@ -345,11 +345,11 @@ class Configuration
         return $this;
     }
 
-   /**
-     * Returns the current mode.
-     *
-     * @return string
-     */
+    /**
+      * Returns the current mode.
+      *
+      * @return string
+      */
     public function getMode()
     {
         return $this->mode;

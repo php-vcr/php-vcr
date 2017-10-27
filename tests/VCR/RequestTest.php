@@ -221,7 +221,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->request = new Request(
           'GET',
           'http://example.com',
-          array('User-Agent' => 'Unit-Test', 'Host' => 'www.example.com'));
+          array('User-Agent' => 'Unit-Test', 'Host' => 'www.example.com')
+        );
 
         $this->assertEquals(
             array(
