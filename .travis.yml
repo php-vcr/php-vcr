@@ -20,7 +20,7 @@ matrix:
       php: 7.0
     - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
       php: 7.0
-    - env: TEST_DIR=.
+    - env: TEST_DIR=. PHP_CS_FIXER=true
       php: 7.1
     - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
       php: 7.1
@@ -38,14 +38,13 @@ before_install:
 
 install:
   - composer update --prefer-source -o $COMPOSER_FLAGS
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then wget http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O $(pwd)/php-cs-fixer; fi
+  - if [ "${PHP_CS_FIXER}" = "true" ]; then wget http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar && php ./php-cs-fixer-v2.phar fix --dry-run --diff $TRAVIS_BUILD_DIR; fi
   - PHPUNIT_BIN=$(pwd)/vendor/bin/phpunit
   - cd ${TEST_DIR}
   - composer update --prefer-source -o $COMPOSER_FLAGS
 
 script:
   - $PHPUNIT_BIN --coverage-clover=coverage.clover
-  - test $TEST_DIR = "." && $(pwd)/php-cs-fixer fix --config=.php_cs.dist --dry-run --diff $TRAVIS_BUILD_DIR || echo "Continue without php-cs-fixer"
 
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
