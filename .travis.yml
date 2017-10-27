@@ -38,13 +38,13 @@ before_install:
 
 install:
   - composer update --prefer-source -o $COMPOSER_FLAGS
-  - if [ "${PHP_CS_FIXER}" = "true" ]; then wget http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar && php ./php-cs-fixer-v2.phar fix --dry-run --diff $TRAVIS_BUILD_DIR; fi
   - PHPUNIT_BIN=$(pwd)/vendor/bin/phpunit
   - cd ${TEST_DIR}
   - composer update --prefer-source -o $COMPOSER_FLAGS
 
 script:
   - $PHPUNIT_BIN --coverage-clover=coverage.clover
+  - if [ "${PHP_CS_FIXER}" = "true" ]; then wget http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar && php ./php-cs-fixer-v2.phar fix --dry-run --diff $TRAVIS_BUILD_DIR; fi
 
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
