@@ -1,23 +1,20 @@
 <?php
 
-$cacheFile = getenv('TRAVIS') ? getenv('HOME') . '/.php_cs.cache' : __DIR__ . '/.php_cs.cache';
-$config = PhpCsFixer\Config::create()
-    ->setRules(array(
+return PhpCsFixer\Config::create()
+    ->setRules([
         '@PSR2' => true,
         'single_blank_line_before_namespace' => true,
-        'concat_space' => array('spacing' => 'one'),
+        'concat_space' => ['spacing' => 'one'],
         'single_quote' => true,
         'braces' => true,
-    ))
+    ])
+
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->exclude('vendor')
             ->exclude('docs')
             ->in(__DIR__)
     )
-    ->setCacheFile($cacheFile)
-    ->setUsingCache(true)
-    ->setRiskyAllowed(true);
 
-return $config;
+    ->setRiskyAllowed(true);
 
