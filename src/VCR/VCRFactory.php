@@ -13,11 +13,11 @@ class VCRFactory
 
     protected static $instance;
 
-   /**
-    * Creates a new VCRFactory instance.
-    *
-    * @param Configuration $config
-    */
+    /**
+     * Creates a new VCRFactory instance.
+     *
+     * @param Configuration $config
+     */
     protected function __construct($config = null)
     {
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');

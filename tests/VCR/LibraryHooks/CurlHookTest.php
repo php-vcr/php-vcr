@@ -181,9 +181,9 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $this->curlHook->disable();
     }
 
-   /**
-    * @see https://github.com/php-vcr/php-vcr/issues/136
-    */
+    /**
+     * @see https://github.com/php-vcr/php-vcr/issues/136
+     */
     public function testShouldReturnCurlInfoStatusCodeAsInteger()
     {
         $stringStatusCode = '200';
