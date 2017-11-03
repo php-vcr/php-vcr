@@ -28,6 +28,11 @@ class VCR
      */
     const MODE_NONE = 'none';
 
+    /**
+     * Treat as read only and require all requests to be replayed in order.
+     */
+    const MODE_STRICT = 'strict';
+
     public static function __callStatic($method, $parameters)
     {
         $instance = VCRFactory::get('VCR\Videorecorder');
