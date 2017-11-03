@@ -237,8 +237,8 @@ class Videorecorder
             return $response;
         }
 
-        if (in_array($this->config->getMode(), array(VCR::MODE_NONE, VCR::MODE_STRICT))
-            || VCR::MODE_ONCE === $this->config->getMode()
+        if (VCR::MODE_NONE === $this->config->getMode()
+            || in_array($this->config->getMode(), array(VCR::MODE_ONCE, VCR::MODE_STRICT))
             && $this->cassette->isNew() === false
         ) {
             throw new \LogicException(
