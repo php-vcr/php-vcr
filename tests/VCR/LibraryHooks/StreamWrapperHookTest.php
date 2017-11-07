@@ -65,10 +65,10 @@ class StreamWrapperHookTest extends \PHPUnit_Framework_TestCase
         $hook->stream_open('http://example.com', 'r', 0, $openedPath);
 
         $this->assertArrayHasKey('headers', $hook);
-        $expected = [
+        $expected = array(
             'HTTP/1.1 200 OK',
             'Content-Type: text/plain'
-        ];
+        );
         $this->assertEquals($expected, $hook['headers']);
     }
 }
