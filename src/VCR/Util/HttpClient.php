@@ -1,4 +1,5 @@
 <?php
+
 namespace VCR\Util;
 
 use VCR\Request;
