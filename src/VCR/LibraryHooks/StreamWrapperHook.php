@@ -264,7 +264,7 @@ class StreamWrapperHook implements LibraryHook, ArrayAccess
                 $this->response->getStatusCode(),
                 $this->response->getStatusMessage()
             );
-            $headers = [$httpHeader];
+            $headers = array($httpHeader);
             foreach ($this->response->getHeaders() as $header => $value) {
                 $headers[] = "{$header}: {$value}";
             }
