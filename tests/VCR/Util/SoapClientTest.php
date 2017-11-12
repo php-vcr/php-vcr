@@ -5,8 +5,9 @@ namespace VCR\Util;
 use lapistano\ProxyObject\ProxyBuilder;
 use VCR\VCRException;
 use VCR\Util\SoapClient;
+use PHPUnit\Framework\TestCase;
 
-class SoapClientTest extends \PHPUnit_Framework_TestCase
+class SoapClientTest extends TestCase
 {
     const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl';
     const ACTION = 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP';

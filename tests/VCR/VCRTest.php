@@ -4,11 +4,12 @@ namespace VCR;
 
 use Symfony\Component\EventDispatcher\Event;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class VCRTest extends \PHPUnit_Framework_TestCase
+class VCRTest extends TestCase
 {
     public static function setupBeforeClass()
     {

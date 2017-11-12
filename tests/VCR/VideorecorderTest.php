@@ -4,11 +4,12 @@ namespace VCR;
 
 use lapistano\ProxyObject\ProxyBuilder;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Videorecorder.
  */
-class VideorecorderTest extends \PHPUnit_Framework_TestCase
+class VideorecorderTest extends TestCase
 {
     public function testCreateVideorecorder()
     {

@@ -3,11 +3,12 @@
 namespace VCR;
 
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class CassetteTest extends \PHPUnit_Framework_TestCase
+class CassetteTest extends TestCase
 {
 
     /**

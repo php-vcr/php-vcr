@@ -2,10 +2,12 @@
 
 namespace VCR;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test VCRs response object.
  */
-class ResponseTest extends \PHPUnit_Framework_TestCase
+class ResponseTest extends TestCase
 {
     public function testGetHeaders()
     {

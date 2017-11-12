@@ -2,10 +2,12 @@
 
 namespace VCR;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  *
  */
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends TestCase
 {
     /**
      * @var Configuration

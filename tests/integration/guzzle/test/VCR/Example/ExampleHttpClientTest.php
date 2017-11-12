@@ -3,11 +3,12 @@
 namespace VCR\Example;
 
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests example request.
  */
-class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
+class ExampleHttpClientTest extends TestCase
 {
     const TEST_GET_URL = 'http://httpbin.org/get';
     const TEST_POST_URL = 'http://httpbin.org/post';

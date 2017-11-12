@@ -3,8 +3,9 @@
 namespace VCR\Event;
 
 use VCR\Request;
+use PHPUnit\Framework\TestCase;
 
-class BeforeHttpRequestEventTest extends \PHPUnit_Framework_TestCase
+class BeforeHttpRequestEventTest extends TestCase
 {
     /**
      * @var BeforeHttpRequestEvent

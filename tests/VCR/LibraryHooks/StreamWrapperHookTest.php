@@ -4,11 +4,12 @@ namespace VCR\LibraryHooks;
 
 use VCR\Request;
 use VCR\Response;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test if intercepting http/https using stream wrapper works.
  */
-class StreamWrapperHookTest extends \PHPUnit_Framework_TestCase
+class StreamWrapperHookTest extends TestCase
 {
     public function testEnable()
     {

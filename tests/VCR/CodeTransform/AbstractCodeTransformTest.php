@@ -2,7 +2,9 @@
 
 namespace VCR\CodeTransform;
 
-class AbstractCodeTransformTest extends \PHPUnit_framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class AbstractCodeTransformTest extends TestCase
 {
     protected function getFilter(array $methods = array())
     {

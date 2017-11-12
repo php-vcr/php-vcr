@@ -6,8 +6,9 @@ use VCR\Request;
 use VCR\Cassette;
 use VCR\Configuration;
 use VCR\Storage;
+use PHPUnit\Framework\TestCase;
 
-class BeforePlaybackEventTest extends \PHPUnit_Framework_TestCase
+class BeforePlaybackEventTest extends TestCase
 {
     /**
      * @var BeforePlaybackEvent
