@@ -1,4 +1,5 @@
 <?php
+
 namespace VCR\Util;
 
 use Assert\Assertion as BaseAssertion;
