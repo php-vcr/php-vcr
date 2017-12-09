@@ -136,9 +136,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testGetStorage()
     {
         $class = $this->config->getStorage();
-        $this->assertTrue(in_array('Iterator', class_implements($class)));
-        $this->assertTrue(in_array('Traversable', class_implements($class)));
-        $this->assertTrue(in_array('VCR\Storage\AbstractStorage', class_parents($class)));
+        $this->assertContains('Iterator', class_implements($class));
+        $this->assertContains('Traversable', class_implements($class));
+        $this->assertContains('VCR\Storage\AbstractStorage', class_parents($class));
     }
 
     public function testWhitelist()

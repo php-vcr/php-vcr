@@ -51,7 +51,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     public function testGetBodyNoneDefined()
     {
         $response = Response::fromArray(array());
-        $this->assertEquals(null, $response->getBody(true));
+        $this->assertNull($response->getBody(true));
     }
 
     public function testRestoreBodyFromArray()
