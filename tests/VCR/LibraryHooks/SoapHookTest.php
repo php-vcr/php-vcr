@@ -38,7 +38,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
 
         $this->soapHook->disable();
         $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
-        $this->assertEquals(true, $actual->GetCityWeatherByZIPResult->Success, 'Response was not returned.');
+        $this->assertTrue($actual->GetCityWeatherByZIPResult->Success, 'Response was not returned.');
     }
 
     public function testShouldHandleSOAPVersion11()
@@ -86,7 +86,7 @@ class SoapHookTest extends \PHPUnit_Framework_TestCase
         $actual = $client->__getLastRequest();
 
         $this->soapHook->disable();
-        $this->assertTrue(!is_null($actual), '__getLastRequest() returned NULL.');
+        $this->assertNotNull($actual, '__getLastRequest() returned NULL.');
     }
 
     /**

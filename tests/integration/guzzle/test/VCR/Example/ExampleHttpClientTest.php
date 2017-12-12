@@ -50,7 +50,7 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertValidPOSTResponse($this->requestPOST());
     }
-    
+
     public function testRequestPOSTIntercepted()
     {
         $this->assertValidPOSTResponse($this->requestPOSTIntercepted());
@@ -112,20 +112,20 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
 
     protected function assertValidGETResponse($info)
     {
-        $this->assertTrue(is_array($info), 'Response is not an array.');
+        $this->assertInternalType('array', $info, 'Response is not an array.');
         $this->assertArrayHasKey('url', $info, "Key 'url' not found.");
         $this->assertEquals(self::TEST_GET_URL, $info['url'], "Value for key 'url' wrong.");
         $this->assertArrayHasKey('headers', $info, "Key 'headers' not found.");
-        $this->assertTrue(is_array($info['headers']), 'Headers is not an array.');
+        $this->assertInternalType('array', $info['headers'], 'Headers is not an array.');
     }
-    
+
     protected function assertValidPOSTResponse($info)
     {
-        $this->assertTrue(is_array($info), 'Response is not an array.');
+        $this->assertInternalType('array', $info, 'Response is not an array.');
         $this->assertArrayHasKey('url', $info, "Key 'url' not found.");
         $this->assertEquals(self::TEST_POST_URL, $info['url'], "Value for key 'url' wrong.");
         $this->assertArrayHasKey('headers', $info, "Key 'headers' not found.");
-        $this->assertTrue(is_array($info['headers']), 'Headers is not an array.');
+        $this->assertInternalType('array', $info['headers'], 'Headers is not an array.');
         $this->assertEquals(self::TEST_POST_BODY, $info['data'], 'Correct request body was not sent.');
     }
 }

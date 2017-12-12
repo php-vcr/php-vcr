@@ -115,7 +115,7 @@ class YamlTest extends \PHPUnit_Framework_TestCase
         foreach ($this->yamlObject as $recording) {
             $actual[] = $recording;
         }
-        $this->assertEquals(2, count($actual), 'More that two recordings stores.');
+        $this->assertCount(2, $actual, 'More that two recordings stores.');
         $this->assertEquals($expected, $actual[0], 'Storing and reading first recording failed.');
         $this->assertEquals($expected, $actual[1], 'Storing and reading second recording failed.');
     }

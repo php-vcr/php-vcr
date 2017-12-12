@@ -80,7 +80,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
         // This is consistent with how requests are read out of storage using
         // \VCR\Request::fromArray(array $request).
-        $this->assertSame(null, $request->getBody());
+        $this->assertNull($request->getBody());
     }
 
     public function testSetCurlOptionOnRequestSetSingleHeader()

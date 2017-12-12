@@ -211,8 +211,8 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $info = curl_getinfo($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
-        $this->assertEquals(21, count($info), 'curl_getinfo() should return 21 values.');
+        $this->assertInternalType('array', $info, 'curl_getinfo() should return an array.');
+        $this->assertCount(21, $info, 'curl_getinfo() should return 21 values.');
         $this->curlHook->disable();
     }
 
@@ -226,7 +226,7 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $info = curl_getinfo($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
+        $this->assertInternalType('array', $info, 'curl_getinfo() should return an array.');
         $this->assertArrayHasKey('url', $info);
         $this->assertArrayHasKey('content_type', $info);
         $this->assertArrayHasKey('http_code', $info);
