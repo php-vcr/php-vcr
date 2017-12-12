@@ -7,11 +7,12 @@ use VCR\Response;
 use VCR\Util\Assertion;
 use VCR\Util\HttpUtil;
 use VCR\Util\StreamHelper;
+use ArrayAccess;
 
 /**
  * Library hook for streamWrapper functions using stream_wrapper_register().
  */
-class StreamWrapperHook implements LibraryHook
+class StreamWrapperHook implements LibraryHook, ArrayAccess
 {
     /**
      * @var \Closure Callback which will be executed when a request is intercepted.
@@ -155,6 +156,18 @@ class StreamWrapperHook implements LibraryHook
     }
 
     /**
+     * This method is called to set options on the stream.
+     *
+     * @link http://php.net/manual/en/streamwrapper.stream-set-option.php
+     * @return boolean Returns TRUE on success or FALSE on failure.
+     *                 If option is not implemented, FALSE should be returned.
+     */
+    public function stream_set_option($option, $arg1, $arg2)
+    {
+        return true;
+    }
+
+    /**
      * Retrieve information about a file resource.
      *
      * @link http://www.php.net/manual/en/streamwrapper.stream-stat.php
@@ -228,6 +241,78 @@ class StreamWrapperHook implements LibraryHook
      * @return boolean Returns TRUE on success or FALSE on failure.
      */
     public function stream_metadata($path, $option, $var)
+    {
+        return false;
+    }
+
+    /**
+     * Emulate accessing headers inside the wrapper data.
+     *
+     * This allows libraries that consume the stream API to access headers.
+     *
+     * @link http://php.net/manual/en/context.http.php
+     * @param string $key The key to read. Only 'headers' is implemented.
+     *
+     * @return array|bool Either an array of headers or false
+     */
+    public function offsetGet($key)
+    {
+        if ($key === 'headers') {
+            $httpHeader = sprintf(
+                'HTTP/%s %s %s',
+                $this->response->getHttpVersion(),
+                $this->response->getStatusCode(),
+                $this->response->getStatusMessage()
+            );
+            $headers = [$httpHeader];
+            foreach ($this->response->getHeaders() as $header => $value) {
+                $headers[] = "{$header}: {$value}";
+            }
+            return $headers;
+        }
+        return false;
+    }
+
+    /**
+     * Part of the ArrayAccess Interface.
+     *
+     * Not implemented
+     *
+     * @param string $key The key to set.
+     * @param mixed $value The value to set
+     *
+     * @return bool Always false
+     */
+    public function offsetSet($key, $value)
+    {
+        return false;
+    }
+
+    /**
+     * Check if a metadata key exists.
+     *
+     * @param string $key The key to check.
+     *
+     * @return bool True if the key exists, false otherwise
+     */
+    public function offsetExists($key)
+    {
+        if ($key === 'headers') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Part of the ArrayAccess Interface.
+     *
+     * Not implemented
+     *
+     * @param string $key The key to unset
+     *
+     * @return bool Always false
+     */
+    public function offsetUnset($key)
     {
         return false;
     }
