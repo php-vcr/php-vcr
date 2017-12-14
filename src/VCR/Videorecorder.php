@@ -159,7 +159,11 @@ class Videorecorder
 
         if ($cassette && $this->config->getMode() === VCR::MODE_STRICT && !$cassette->isFinished()) {
             throw new \LogicException(
-               'Strict playback was requested but the cassette did not play in its entirety.'
+                sprintf(
+                    'Strict playback was requested but the cassette did not play in its entirety.'
+                    . "\nCassette: %s",
+                    $cassette->getName()
+                )
             );
         }
     }
