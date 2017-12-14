@@ -22,9 +22,12 @@ class CassetteTest extends TestCase
         $this->cassette = new Cassette('test', new Configuration(), new Storage\Yaml(vfsStream::url('test/'), 'json_test'));
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage Cassette name must be a string, array given.
+     */
     public function testInvalidCassetteName()
     {
-        $this->setExpectedException('\VCR\VCRException', 'Cassette name must be a string, array given.');
         new Cassette(array(), new Configuration(), new Storage\Yaml(vfsStream::url('test/'), 'json_test'));
     }
 

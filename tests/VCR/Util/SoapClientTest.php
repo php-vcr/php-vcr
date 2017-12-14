@@ -119,7 +119,10 @@ class SoapClientTest extends TestCase
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
 
-        $this->setExpectedException($exception);
+        method_exists($this, 'setExpectedException')
+            ? $this->setExpectedException($exception)
+            : $this->expectException($exception);
+
 
         $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, SOAP_1_2);
     }

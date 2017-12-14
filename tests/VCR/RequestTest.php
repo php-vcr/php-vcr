@@ -58,13 +58,17 @@ class RequestTest extends TestCase
         $this->assertFalse($this->request->matches($request, array(array('VCR\RequestMatcher', 'matchMethod'))));
     }
 
+    /**
+     * @expectedException BadFunctionCallException
+     * @expectedExceptionMessage Matcher could not be executed. Array
+     * (
+     *    [0] => some
+     *    [1] => method
+     * )
+     */
     public function testMatchesThrowsExceptionIfMatcherNotFound()
     {
         $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-        $this->setExpectedException(
-            '\BadFunctionCallException',
-            "Matcher could not be executed. Array\n(\n    [0] => some\n    [1] => method\n)\n"
-        );
         $this->request->matches($request, array(array('some', 'method')));
     }
 

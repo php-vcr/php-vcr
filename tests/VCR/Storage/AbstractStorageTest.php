@@ -26,10 +26,12 @@ class AbstractStorageTest extends TestCase
         $this->assertTrue($fs->getChild('folder')->hasChild('file'));
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage Cassette path 'vfs://test/foo' is not existing or not a directory
+     */
     public function testRootNotExisting()
     {
-        $this->setExpectedException('\VCR\VCRException', "Cassette path 'vfs://test/foo' is not existing or not a directory");
-
         vfsStream::setup('test');
         new TestStorage(vfsStream::url('test/foo'), 'file');
     }

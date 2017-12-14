@@ -159,9 +159,12 @@ class CurlHelperTest extends TestCase
         $this->assertNull($request->getCurlOption(CURLOPT_READFUNCTION));
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.
+     */
     public function testSetCurlOptionReadFunctionMissingSize()
     {
-        $this->setExpectedException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $request = new Request('POST', 'example.com');
 
         $callback = function ($curlHandle, $fileHandle, $size) {
