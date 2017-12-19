@@ -7,11 +7,12 @@ use VCR\Response;
 use VCR\Configuration;
 use VCR\CodeTransform\CurlCodeTransform;
 use VCR\Util\StreamProcessor;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test if intercepting http/https using curl works.
  */
-class CurlHookTest extends \PHPUnit_Framework_TestCase
+class CurlHookTest extends TestCase
 {
     public $expected = 'example response body';
     /**

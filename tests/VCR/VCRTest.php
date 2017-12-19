@@ -4,24 +4,25 @@ namespace VCR;
 
 use Symfony\Component\EventDispatcher\Event;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class VCRTest extends \PHPUnit_Framework_TestCase
+class VCRTest extends TestCase
 {
     public static function setupBeforeClass()
     {
         VCR::configure()->setCassettePath('tests/fixtures') ;
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage Please turn on VCR before inserting a cassette, use: VCR::turnOn()
+     */
     public function testUseStaticCallsNotInitialized()
     {
         VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
-        $this->setExpectedException(
-            'VCR\VCRException',
-            'Please turn on VCR before inserting a cassette, use: VCR::turnOn()'
-        );
         VCR::insertCassette('some_name');
     }
 
@@ -76,14 +77,12 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::turnOff();
     }
 
+    /**
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage Invalid http request. No cassette inserted. Please make sure to insert a cassette in your unit test using VCR::insertCassette('name');
+     */
     public function testShouldThrowExceptionIfNoCassettePresent()
     {
-        $this->setExpectedException(
-            'BadMethodCallException',
-            'Invalid http request. No cassette inserted. Please make sure to insert '
-            . "a cassette in your unit test using VCR::insertCassette('name');"
-        );
-
         VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
         VCR::turnOn();
         // If there is no cassette inserted, a request should throw an exception
@@ -101,12 +100,14 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         // TODO: Check of cassette was changed
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testDoesNotBlockThrowingExceptions()
     {
         $this->configureVirtualCassette();
 
         VCR::turnOn();
-        $this->setExpectedException('InvalidArgumentException');
         VCR::insertCassette('unittest_cassette1');
         throw new \InvalidArgumentException('test');
     }

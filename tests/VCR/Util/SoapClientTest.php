@@ -5,8 +5,9 @@ namespace VCR\Util;
 use lapistano\ProxyObject\ProxyBuilder;
 use VCR\VCRException;
 use VCR\Util\SoapClient;
+use PHPUnit\Framework\TestCase;
 
-class SoapClientTest extends \PHPUnit_Framework_TestCase
+class SoapClientTest extends TestCase
 {
     const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl';
     const ACTION = 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP';
@@ -118,7 +119,10 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
 
-        $this->setExpectedException($exception);
+        method_exists($this, 'setExpectedException')
+            ? $this->setExpectedException($exception)
+            : $this->expectException($exception);
+
 
         $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, SOAP_1_2);
     }

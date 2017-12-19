@@ -5,8 +5,9 @@ namespace VCR\Util;
 use org\bovigo\vfs\vfsStream;
 use VCR\Request;
 use VCR\Response;
+use PHPUnit\Framework\TestCase;
 
-class CurlHelperTest extends \PHPUnit_Framework_TestCase
+class CurlHelperTest extends TestCase
 {
     /**
      * @dataProvider getHttpMethodsProvider()
@@ -158,9 +159,12 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($request->getCurlOption(CURLOPT_READFUNCTION));
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.
+     */
     public function testSetCurlOptionReadFunctionMissingSize()
     {
-        $this->setExpectedException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $request = new Request('POST', 'example.com');
 
         $callback = function ($curlHandle, $fileHandle, $size) {

@@ -7,8 +7,9 @@ use VCR\Cassette;
 use VCR\Configuration;
 use VCR\Storage;
 use VCR\Response;
+use PHPUnit\Framework\TestCase;
 
-class BeforeRecordEventTest extends \PHPUnit_Framework_TestCase
+class BeforeRecordEventTest extends TestCase
 {
     /**
      * @var BeforeRecordEvent

@@ -2,10 +2,12 @@
 
 namespace VCR;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  *
  */
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends TestCase
 {
     /**
      * @var Configuration
@@ -17,14 +19,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->config = new Configuration;
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage Cassette path 'invalid_path' is not a directory. Please either create it or set a different cassette path using \VCR\VCR::configure()->setCassettePath('directory').
+     */
     public function testSetCassettePathThrowsErrorOnInvalidPath()
     {
-        $this->setExpectedException(
-            'VCR\VCRException',
-            "Cassette path 'invalid_path' is not a directory. Please either "
-            . 'create it or set a different cassette path using '
-            . "\\VCR\\VCR::configure()->setCassettePath('directory')."
-        );
         $this->config->setCassettePath('invalid_path');
     }
 
@@ -62,9 +62,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Library hooks don't exist: non_existing
+     */
     public function testEnableLibraryHooksFailsWithWrongHookName()
     {
-        $this->setExpectedException('InvalidArgumentException', "Library hooks don't exist: non_existing");
         $this->config->enableLibraryHooks(array('non_existing'));
     }
 
@@ -80,24 +83,33 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Request matchers don't exist: wrong, name
+     */
     public function testEnableRequestMatchersFailsWithNoExistingName()
     {
-        $this->setExpectedException('InvalidArgumentException', "Request matchers don't exist: wrong, name");
         $this->config->enableRequestMatchers(array('wrong', 'name'));
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage A request matchers name must be at least one character long. Found ''
+     */
     public function testAddRequestMatcherFailsWithNoName()
     {
-        $this->setExpectedException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
         $expected = function ($first, $second) {
             return true;
         };
         $this->config->addRequestMatcher('', $expected);
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage Request matcher 'example' is not callable.
+     */
     public function testAddRequestMatcherFailsWithWrongCallback()
     {
-        $this->setExpectedException('VCR\VCRException', "Request matcher 'example' is not callable.");
         $this->config->addRequestMatcher('example', array());
     }
 
@@ -127,9 +139,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage Storage 'Does not exist' not available.
+     */
     public function testSetStorageInvalidName()
     {
-        $this->setExpectedException('VCR\VCRException', "Storage 'Does not exist' not available.");
         $this->config->setStorage('Does not exist');
     }
 
@@ -159,9 +174,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->config->getBlackList());
     }
 
+    /**
+     * @expectedException VCR\VCRException
+     * @expectedExceptionMessage Mode 'invalid' does not exist.
+     */
     public function testSetModeInvalidName()
     {
-        $this->setExpectedException('VCR\VCRException', "Mode 'invalid' does not exist.");
         $this->config->setMode('invalid');
     }
 }

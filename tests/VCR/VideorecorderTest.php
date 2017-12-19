@@ -4,11 +4,12 @@ namespace VCR;
 
 use lapistano\ProxyObject\ProxyBuilder;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Videorecorder.
  */
-class VideorecorderTest extends \PHPUnit_Framework_TestCase
+class VideorecorderTest extends TestCase
 {
     public function testCreateVideorecorder()
     {
@@ -58,14 +59,12 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($response, $videorecorder->handleRequest($request));
     }
 
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage The request does not match a previously recorded request and the 'mode' is set to 'none'. If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'.
+     */
     public function testHandleRequestThrowsExceptionWhenModeIsNone()
     {
-        $this->setExpectedException(
-            'LogicException',
-            "The request does not match a previously recorded request and the 'mode' is set to 'none'. "
-            . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'."
-        );
-
         $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
         $response = new Response(200, array(), 'example response');
         $client = $this->getMockBuilder('\VCR\Util\HttpClient')->getMock();
@@ -106,14 +105,12 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($response, $videorecorder->handleRequest($request));
     }
 
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage The request does not match a previously recorded request and the 'mode' is set to 'once'. If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'.
+     */
     public function testHandleRequestThrowsExceptionWhenModeIsOnceAndCassetteIsOld()
     {
-        $this->setExpectedException(
-            'LogicException',
-            "The request does not match a previously recorded request and the 'mode' is set to 'once'. "
-            . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'."
-        );
-
         $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
         $response = new Response(200, array(), 'example response');
         $client = $this->getMockBuilder('\VCR\Util\HttpClient')->getMock();

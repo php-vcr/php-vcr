@@ -2,10 +2,12 @@
 
 namespace VCR\Util;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Tests TextUtil methods.
  */
-class TextUtilTest extends \PHPUnit_Framework_TestCase
+class TextUtilTest extends TestCase
 {
     /**
      * @dataProvider curlMethodsProvider

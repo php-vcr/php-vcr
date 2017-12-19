@@ -3,8 +3,9 @@
 namespace VCR\CodeTransform;
 
 use lapistano\ProxyObject\ProxyBuilder;
+use PHPUnit\Framework\TestCase;
 
-class SoapCodeTransformTest extends \PHPUnit_Framework_TestCase
+class SoapCodeTransformTest extends TestCase
 {
     /**
      * @dataProvider codeSnippetProvider
