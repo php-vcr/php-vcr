@@ -7,12 +7,12 @@ use GuzzleHttp\Exception\ClientException;
 
 class ExampleHttpClient
 {
-    public function get($url)
+    public function get($url, $options = array())
     {
         $client = new Client();
 
         try {
-            $response = $client->get($url);
+            $response = $client->get($url, $options);
             return $response->json();
         } catch (ClientException $e) {
             if ($e->getCode() !== 404) {

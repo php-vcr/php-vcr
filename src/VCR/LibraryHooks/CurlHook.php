@@ -4,9 +4,9 @@ namespace VCR\LibraryHooks;
 
 use VCR\Util\Assertion;
 use VCR\Request;
-use VCR\Response;
 use VCR\CodeTransform\AbstractCodeTransform;
 use VCR\Util\CurlHelper;
+use VCR\Util\HttpClientException;
 use VCR\Util\StreamProcessor;
 use VCR\Util\TextUtil;
 
@@ -31,7 +31,7 @@ class CurlHook implements LibraryHook
     protected static $requests = array();
 
     /**
-     * @var Response[] All responses which have been intercepted.
+     * @var array of Response or HttpClientException: All responses which have been intercepted.
      */
     protected static $responses = array();
 
@@ -200,7 +200,18 @@ class CurlHook implements LibraryHook
         CurlHelper::validateCurlPOSTBody($request, $curlHandle);
 
         $requestCallback = self::$requestCallback;
-        self::$responses[(int) $curlHandle] = $requestCallback($request);
+        try {
+            self::$responses[(int)$curlHandle] = $requestCallback($request);
+        } catch (\VCR\Util\HttpClientException $e) {
+            // Store the exception to allow later replies to curl_info, curl_error
+            // etc. on this handle:
+            self::$responses[(int)$curlHandle] = $e;
+
+            // On a CURL error (timeout, host not found etc.), the callback
+            // options will be ignored and the curl_exec function will just
+            // return false.
+            return false;
+        }
 
         return CurlHelper::handleOutput(
             self::$responses[(int) $curlHandle],
@@ -295,8 +306,15 @@ class CurlHook implements LibraryHook
      */
     public static function curlGetinfo($curlHandle, $option = 0)
     {
+        $response = self::$responses[(int)$curlHandle];
+        if ($response instanceof HttpClientException) {
+            return CurlHelper::getCurlOptionFromException(
+                $response,
+                $option
+            );
+        }
         return CurlHelper::getCurlOptionFromResponse(
-            self::$responses[(int) $curlHandle],
+            $response,
             $option
         );
     }
@@ -333,6 +351,38 @@ class CurlHook implements LibraryHook
             foreach ($options as $option => $value) {
                 static::curlSetopt($curlHandle, $option, $value);
             }
+        }
+    }
+
+    /**
+     * Return a string containing the last error for the current session.
+     *
+     * @link http://php.net/manual/en/function.curl-error.php
+     * @param resource $curlHandle A cURL handle returned by curl_init().
+     * @return string the error message or '' (the empty string) if no error occurred.
+     */
+    public static function curlError($curlHandle) {
+        $ex = self::$responses[(int) $curlHandle];
+        if ($ex instanceof HttpClientException) {
+            return $ex->curlError;
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Return the last error number.
+     *
+     * @link http://php.net/manual/en/function.curl-errno.php
+     * @param resource $curlHandle A cURL handle returned by curl_init().
+     * @return int Returns the error number or 0 (zero) if no error occurred.
+     */
+    public static function curlErrno($curlHandle) {
+        $ex = self::$responses[(int) $curlHandle];
+        if ($ex instanceof HttpClientException) {
+            return $ex->curlErrorNo;
+        } else {
+            return 0;
         }
     }
 }

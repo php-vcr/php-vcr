@@ -126,6 +126,25 @@ class CurlHelper
     }
 
     /**
+     * Returns a cURL option from a HttpClientException.
+     *
+     * @param  HttpClientException $response exception to get cURL option from.
+     * @param  integer $option cURL option to get.
+     *
+     * @throws \BadMethodCallException
+     * @return mixed Value of the cURL option.
+     */
+    public static function getCurlOptionFromException(HttpClientException $exception, $option = 0)
+    {
+        if ($option == 0) { // 0 == array of all curl options
+            return $exception->curlInfo;
+        } else if (isset($exception->curlInfo[$option])) {
+            return $exception->curlInfo[$option];
+        }
+        return false;
+    }
+
+    /**
      * Sets a cURL option on a Request.
      *
      * @param Request  $request Request to set cURL option to.
