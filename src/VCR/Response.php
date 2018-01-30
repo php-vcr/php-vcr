@@ -31,6 +31,10 @@ class Response
     protected $curlInfo = array();
 
     protected $httpVersion;
+    /**
+     * @var string
+     */
+    protected $effectiveUrl;
 
     /**
      * @param string|array $status
@@ -44,6 +48,7 @@ class Response
         $this->headers = $headers;
         $this->body = $body;
         $this->curlInfo = $curlInfo;
+        $this->effectiveUrl = isset($curlInfo['url']) ? $curlInfo['url'] : '';
     }
 
     /**
@@ -63,9 +68,10 @@ class Response
 
         return array_filter(
             array(
-                'status'    => $this->status,
-                'headers'   => $this->getHeaders(),
-                'body'      => $body
+                'status'        => $this->status,
+                'headers'       => $this->getHeaders(),
+                'body'          => $body,
+                'effective_url' => $this->getEffectiveUrl()
             )
         );
     }
@@ -94,7 +100,8 @@ class Response
         return new static(
             isset($response['status']) ? $response['status'] : 200,
             isset($response['headers']) ? $response['headers'] : array(),
-            $body
+            $body,
+            ['url' => isset($response['url']) ? $response['url'] : '']
         );
     }
 
@@ -166,6 +173,14 @@ class Response
     public function getStatusMessage()
     {
         return $this->status['message'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getEffectiveUrl()
+    {
+        return $this->effectiveUrl;
     }
 
     /**
