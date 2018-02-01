@@ -101,7 +101,7 @@ class Response
             isset($response['status']) ? $response['status'] : 200,
             isset($response['headers']) ? $response['headers'] : array(),
             $body,
-            ['url' => isset($response['url']) ? $response['url'] : '']
+            array('url' => isset($response['url']) ? $response['url'] : '')
         );
     }
 
