@@ -19,7 +19,7 @@ class HttpUtil
 
         // Collect matching headers into groups
         foreach ($headers as $line) {
-            list($key, $value) = explode(': ', $line, 2);
+            list($key, $value) = array_pad(explode(': ', $line, 2), 2, '');
             if (!isset($headerGroups[$key])) {
                 $headerGroups[$key] = array();
             }
@@ -66,8 +66,8 @@ class HttpUtil
     public static function parseResponse($response)
     {
         $response = str_replace("HTTP/1.1 100 Continue\r\n\r\n", '', $response);
-            
-        list($rawHeader, $rawBody) = explode("\r\n\r\n", $response, 2);
+
+		list($rawHeader, $rawBody) = array_pad(explode("\r\n\r\n", $response, 2), 2, '');
 
         // Parse headers and status.
         $headers = self::parseRawHeader($rawHeader);
