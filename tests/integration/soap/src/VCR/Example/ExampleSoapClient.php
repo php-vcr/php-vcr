@@ -9,13 +9,13 @@ namespace VCR\Example;
  */
 class ExampleSoapClient
 {
-    const EXAMPLE_WSDL = 'http://www.webservicex.net/ConvertTemperature.asmx?WSDL';
+    const EXAMPLE_WSDL = 'http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL';
 
-    public function call($zip = '10')
+    public function call($number = 12)
     {
         $client = new \SoapClient(self::EXAMPLE_WSDL, array('soap_version' => SOAP_1_2));
-        $response = $client->ConvertTemp(array('Temperature' => $zip, 'FromUnit' => 'degreeCelsius', 'ToUnit' => 'degreeFahrenheit'));
+        $response = $client->NumberToWords(array('ubiNum' => $number));
 
-        return (int) $response->ConvertTempResult;
+        return trim((string) $response->NumberToWordsResult);
     }
 }

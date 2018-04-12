@@ -21,13 +21,15 @@ class ExampleSoapClientTest extends \PHPUnit_Framework_TestCase
     public function testCallDirectly()
     {
         $actual = $this->callSoap();
-        $this->assertInternalType('integer', $actual);
+        $this->assertInternalType('string', $actual);
+        $this->assertEquals('twelve', $actual);
     }
 
     public function testCallIntercepted()
     {
         $actual = $this->callSoapIntercepted();
-        $this->assertInternalType('integer', $actual);
+        $this->assertInternalType('string', $actual);
+        $this->assertEquals('twelve', $actual);
     }
 
     public function testCallDirectlyEqualsIntercepted()
@@ -38,7 +40,7 @@ class ExampleSoapClientTest extends \PHPUnit_Framework_TestCase
     protected function callSoap()
     {
         $soapClient = new ExampleSoapClient();
-        return $soapClient->call('10013'); // somewhere in New York
+        return $soapClient->call(12);
     }
 
     protected function callSoapIntercepted()
