@@ -8,6 +8,7 @@
     <testsuites>
         <testsuite>
             <directory>../test</directory>
+            <directory>test</directory>
         </testsuite>
     </testsuites>
 
