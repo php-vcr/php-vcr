@@ -182,6 +182,7 @@ class CurlHook implements LibraryHook
         \curl_reset($curlHandle);
         self::$requests[(int) $curlHandle] = new Request('GET', null);
         self::$curlOptions[(int) $curlHandle] = array();
+        unset(self::$responses[(int) $curlHandle]);
     }
 
     /**
