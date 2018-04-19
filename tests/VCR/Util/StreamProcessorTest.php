@@ -98,8 +98,27 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         restore_error_handler();
     }
 
+    public function testWritableForUnknownUser()
+    {
+        // This test should run in a Virtualbox VM using NFS to mount
+        // the tests fixtures, see https://github.com/php-vcr/php-vcr/issues/103.
+
+        // If it doesn't run the test also has value but doesn't test the bug.
+        $file = 'tests/fixtures/streamprocessor_data_wrong_user';
+
+        $processor = new StreamProcessor();
+        $processor->restore();
+        $this->assertTrue(is_writeable($file), "$file is not writable in the first place.");
+
+        $processor->intercept();
+        $this->assertTrue(is_writeable($file), "$file is not writable while intercepting.");
+
+        $processor->restore();
+        $this->assertTrue(is_writeable($file), "$file is not writable after intercepting.");
+    }
+
     /**
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException \PHPUnit_Framework_Error_Warning
      */
     public function testUrlStatFileNotFound()
     {

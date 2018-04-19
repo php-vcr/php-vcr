@@ -2,6 +2,7 @@
 
 namespace VCR\Util;
 
+use VCR\CodeTransform\StreamProcessorCodeTransform;
 use VCR\Configuration;
 use VCR\CodeTransform\AbstractCodeTransform;
 
@@ -61,6 +62,10 @@ class StreamProcessor
     {
         if ($configuration) {
             static::$configuration = $configuration;
+
+            $codeTransformer = new StreamProcessorCodeTransform();
+            $codeTransformer->register();
+            $this->appendCodeTransformer($codeTransformer);
         }
     }
 
@@ -573,6 +578,24 @@ class StreamProcessor
                 break;
         }
         $this->intercept();
+
+        return $result;
+    }
+
+    /**
+     * Tells whether the filename is writable.
+     *
+     * @link http://php.net/manual/en/function.is-writable.php
+     * @param string $filename The filename being checked.
+     */
+    public static function is_writable($filename)
+    {
+        $hook = new self;
+        $hook->restore();
+
+        $result = is_writable($filename);
+
+        $hook->intercept();
 
         return $result;
     }
