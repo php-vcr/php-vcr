@@ -381,9 +381,6 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(curl_setopt_array(
             $curlHandle,
             'test'
-            //array(
-                //CURLOPT_HTTPHEADER => []
-            //)
         ));
 
         $this->curlHook->disable();
