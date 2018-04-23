@@ -330,9 +330,10 @@ class CurlHook implements LibraryHook
     public static function curlSetoptArray($curlHandle, $options)
     {
         if (is_array($options)) {
-            $return_values = array_map(function ($option, $value) use ($curlHandle) {
+            $curlSetopt = function ($option, $value) use ($curlHandle) {
                 return static::curlSetopt($curlHandle, $option, $value);
-            }, array_keys($options), $options);
+            };
+            $return_values = array_map($curlSetopt, array_keys($options), $options);
 
             return !in_array(false, $return_values);
         }
