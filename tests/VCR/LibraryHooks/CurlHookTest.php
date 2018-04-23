@@ -358,6 +358,37 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $this->curlHook->disable();
     }
 
+    public function testCurlSetoptArrayShouldReturnTrueIfOptionsAreSuccessful()
+    {
+        $this->curlHook->enable($this->getTestCallback());
+        $curlHandle = curl_init('http://example.com');
+
+        $this->assertTrue(curl_setopt_array(
+            $curlHandle,
+            array(
+                CURLOPT_RETURNTRANSFER => true
+            )
+        ));
+
+        $this->curlHook->disable();
+    }
+
+    public function testCurlSetoptArrayShouldReturnFalseIfOptionNotArray()
+    {
+        $this->curlHook->enable($this->getTestCallback());
+        $curlHandle = curl_init('http://example.com');
+
+        $this->assertFalse(curl_setopt_array(
+            $curlHandle,
+            'test'
+            //array(
+                //CURLOPT_HTTPHEADER => []
+            //)
+        ));
+
+        $this->curlHook->disable();
+    }
+
     /**
      * @return \callable
      */
