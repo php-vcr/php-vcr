@@ -171,7 +171,8 @@ class StreamProcessor
      */
     public function stream_open($path, $mode, $options, &$openedPath)
     {
-        if ('r' === substr($mode, 0, 1) && !is_file($path)) {
+        // file_exists catches paths like /dev/urandom that are missed by is_file.
+        if ('r' === substr($mode, 0, 1) && !file_exists($path)) {
             return false;
         }
 
