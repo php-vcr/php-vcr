@@ -75,14 +75,12 @@ class Yaml extends AbstractStorage
 
         $isInRecord = false;
         $recording = '';
-        $lastChar = null;
 
-        while (false !== ($char = fgetc($this->handle))) {
-            $isNewArrayStart = ($char === '-') && ($lastChar === "\n" || $lastChar === null);
-            $lastChar = $char;
+        while (false !== ($line = fgets($this->handle))) {
+            $isNewArrayStart = strpos($line, '-') === 0;
 
             if ($isInRecord && $isNewArrayStart) {
-                fseek($this->handle, -1, SEEK_CUR);
+                fseek($this->handle, -strlen($line), SEEK_CUR);
                 break;
             }
 
@@ -91,11 +89,11 @@ class Yaml extends AbstractStorage
             }
 
             if ($isInRecord) {
-                $recording .= $char;
+                $recording .= $line;
             }
         }
 
-        if ($char == false) {
+        if ($line == false) {
             $this->isEOF = true;
         }
 
