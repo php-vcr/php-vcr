@@ -1,7 +1,6 @@
 ![PHP-VCR](https://user-images.githubusercontent.com/133832/27151811-0d95c6c4-514c-11e7-834e-eff1eec2ea16.png)
 
 [![Build Status](https://travis-ci.org/php-vcr/php-vcr.svg?branch=master)](https://travis-ci.org/php-vcr/php-vcr)
-[![Dependency Status](http://www.versioneye.com/user/projects/525a6160632bac1e35000001/badge.png)](http://www.versioneye.com/user/projects/525a6160632bac1e35000001)
 [![Code Coverage](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/coverage.png?s=15cf1644c8cf37a868e03cfba809a5e24c78f285)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/quality-score.png?s=4f638dbca5eb51fb9c87a1dd45c5df94687d85bd)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
 
@@ -123,6 +122,7 @@ composer test
 
 ## Copyright
 Copyright (c) 2013-2016 Adrian Philipp. Released under the terms of the MIT license. See LICENSE for details.
+[Contributors](https://github.com/php-vcr/php-vcr/graphs/contributors)
 
 <!--
 name of the projects and all sub-modules and libraries (sometimes they are named different and very confusing to new users)
