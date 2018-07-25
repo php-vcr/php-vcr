@@ -10,8 +10,8 @@ use org\bovigo\vfs\vfsStream;
  */
 class AsyncTest extends \PHPUnit_Framework_TestCase
 {
-    const TEST_GET_URL = 'http://api.chew.pro/trbmb';
-    const TEST_GET_URL_2 = 'http://api.chew.pro/trbmb?foo=42';
+    const TEST_GET_URL = 'https://api.chew.pro/trbmb';
+    const TEST_GET_URL_2 = 'https://api.chew.pro/trbmb?foo=42';
 
     public function setUp()
     {

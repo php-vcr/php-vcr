@@ -9,8 +9,8 @@ use org\bovigo\vfs\vfsStream;
  */
 class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
 {
-    const TEST_GET_URL = 'http://api.chew.pro/trbmb';
-    const TEST_POST_URL = 'http://httpbin.org/post';
+    const TEST_GET_URL = 'https://api.chew.pro/trbmb';
+    const TEST_POST_URL = 'https://httpbin.org/post';
     const TEST_POST_BODY = '{"foo":"bar"}';
 
     protected $ignoreHeaders = array(
