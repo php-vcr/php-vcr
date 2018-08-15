@@ -162,7 +162,6 @@ class CurlHelper
                     // storage using \VCR\Request::fromArray(array $request).
                     $request->setBody($value);
                 }
-                $request->setMethod('POST');
                 break;
             case CURLOPT_HTTPHEADER:
                 foreach ($value as $header) {
