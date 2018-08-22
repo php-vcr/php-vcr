@@ -58,7 +58,7 @@ class CurlHelper
         // If there is a header function set, feed the http status and headers to it.
         if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
             $headerList = array(HttpUtil::formatAsStatusString($response));
-            $headerList += HttpUtil::formatHeadersForCurl($response->getHeaders());
+            $headerList = array_merge($headerList, HttpUtil::formatHeadersForCurl($response->getHeaders()));
             $headerList[] = '';
             foreach ($headerList as $header) {
                 call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $header);
@@ -103,7 +103,7 @@ class CurlHelper
                 }
                 break;
             case CURLINFO_HTTP_CODE:
-                $info = $response->getStatusCode();
+                $info = (int)$response->getStatusCode();
                 break;
             case CURLINFO_SIZE_DOWNLOAD:
                 $info = $response->getHeader('Content-Length');
@@ -140,7 +140,7 @@ class CurlHelper
                 $request->setUrl($value);
                 break;
             case CURLOPT_CUSTOMREQUEST:
-                $request->setMethod($value);
+                $request->setCurlOption(CURLOPT_CUSTOMREQUEST, $value);
                 break;
             case CURLOPT_POST:
                 if ($value == true) {
@@ -157,16 +157,19 @@ class CurlHelper
                     if (count($value) == 0) {
                         $request->removeHeader('Content-Type');
                     }
-                } else {
+                } elseif (!empty($value)) {
+                    // Empty values are ignored to be consistent with how requests are read out of
+                    // storage using \VCR\Request::fromArray(array $request).
                     $request->setBody($value);
                 }
+                $request->setMethod('POST');
                 break;
             case CURLOPT_HTTPHEADER:
                 foreach ($value as $header) {
                     $headerParts = explode(': ', $header, 2);
                     if (!isset($headerParts[1])) {
-                       $headerParts[0] = rtrim($headerParts[0], ':');
-                       $headerParts[1] = null;
+                        $headerParts[0] = rtrim($headerParts[0], ':');
+                        $headerParts[1] = null;
                     }
                     $request->setHeader($headerParts[0], $headerParts[1]);
                 }
@@ -201,12 +204,12 @@ class CurlHelper
         
         // Guzzle 4 sometimes sets the post body in CURLOPT_POSTFIELDS even if
         // they have already set CURLOPT_READFUNCTION.
-        if ($request->getBody()){
+        if ($request->getBody()) {
             return;
         }
         
         $bodySize = $request->getCurlOption(CURLOPT_INFILESIZE);
-        Assertion::notEmpty($bodySize, "To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.");
+        Assertion::notEmpty($bodySize, 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $body = call_user_func_array($readFunction, array($curlHandle, fopen('php://memory', 'r'), $bodySize));
         $request->setBody($body);
     }

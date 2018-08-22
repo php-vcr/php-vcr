@@ -41,7 +41,7 @@ class Request
      * @param string $url
      * @param array $headers
      */
-    function __construct($method, $url, array $headers = array())
+    public function __construct($method, $url, array $headers = array())
     {
         $this->method = $method;
         $this->headers = $headers;
@@ -132,7 +132,9 @@ class Request
     public function setUrl($url)
     {
         $this->url = $url;
-        $this->setHeader('Host', $this->getHost());
+        if ($this->hasHeader('Host') === false || $this->getHeader('Host') === null) {
+            $this->setHeader('Host', $this->getHost());
+        }
     }
 
     /**
@@ -148,6 +150,10 @@ class Request
      */
     public function getMethod()
     {
+        if ($this->getCurlOption(CURLOPT_CUSTOMREQUEST) !== null) {
+            return $this->getCurlOption(CURLOPT_CUSTOMREQUEST);
+        }
+
         return $this->method;
     }
 
@@ -166,6 +172,15 @@ class Request
     public function getHeader($key)
     {
         return $this->headers[$key];
+    }
+
+    /**
+     * @param $key
+     * @return boolean
+     */
+    public function hasHeader($key)
+    {
+        return array_key_exists($key, $this->headers);
     }
 
     /**
@@ -200,7 +215,7 @@ class Request
         $host = parse_url($this->getUrl(), PHP_URL_HOST);
 
         if ($port = parse_url($this->getUrl(), PHP_URL_PORT)) {
-          $host .= ':' . $port;
+            $host .= ':' . $port;
         }
 
         return $host;
@@ -234,7 +249,8 @@ class Request
      * @param $key
      * @return mixed
      */
-    public function getCurlOption($key) {
+    public function getCurlOption($key)
+    {
         if (empty($this->curlOptions[$key])) {
             return null;
         }
@@ -334,5 +350,4 @@ class Request
     {
         $this->postFiles[] = $file;
     }
-
 }

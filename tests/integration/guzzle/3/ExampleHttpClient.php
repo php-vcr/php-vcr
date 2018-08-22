@@ -44,5 +44,3 @@ class ExampleHttpClient
         return null;
     }
 }
-
-

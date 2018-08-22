@@ -21,7 +21,8 @@ class StreamHelper
      *
      * @return Request
      */
-    public static function createRequestFromStreamContext($context, $path, Request $existing = null) {
+    public static function createRequestFromStreamContext($context, $path, Request $existing = null)
+    {
         $http = self::getHttpOptionsFromContext($context);
         $request = $existing;
 
@@ -68,7 +69,8 @@ class StreamHelper
      * @see http://php.net/manual/en/context.http.php
      * @return array HTTP options.
      */
-    protected static function getHttpOptionsFromContext($context) {
+    protected static function getHttpOptionsFromContext($context)
+    {
         if (!$context) {
             return array();
         }

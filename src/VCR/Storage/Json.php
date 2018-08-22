@@ -53,8 +53,12 @@ class Json extends AbstractStorage
         $record = '';
 
         while (false !== ($char = fgetc($this->handle))) {
-            if ($char === '{') {++$depth;}
-            if ($char === '}') {--$depth;}
+            if ($char === '{') {
+                ++$depth;
+            }
+            if ($char === '}') {
+                --$depth;
+            }
 
             if (!$isInRecord && $char === '{') {
                 $isInRecord = true;

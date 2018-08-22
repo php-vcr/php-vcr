@@ -1,0 +1,20 @@
+<?php
+
+return PhpCsFixer\Config::create()
+    ->setRules([
+        '@PSR2' => true,
+        'single_blank_line_before_namespace' => true,
+        'concat_space' => ['spacing' => 'one'],
+        'single_quote' => true,
+        'braces' => true,
+    ])
+
+    ->setFinder(
+        PhpCsFixer\Finder::create()
+            ->exclude('vendor')
+            ->exclude('docs')
+            ->in(__DIR__)
+    )
+
+    ->setRiskyAllowed(true);
+

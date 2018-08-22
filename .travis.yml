@@ -1,48 +1,58 @@
 language: php
+dist: precise
 
-# Test php-vcr with all relevant PHP versions but only use PHP 5.6 for integration tests.
 matrix:
   fast_finish: true
   include:
-      - env: TEST_DIR=.
-        php: 5.3
-      - env: TEST_DIR=.
-        php: 5.4
-      - env: TEST_DIR=.
-        php: 5.5
-      - env: TEST_DIR=.
-        php: 5.6
-      - env: TEST_DIR=.
-        php: 7.0
-      - env: TEST_DIR=.
-        php: hhvm-nightly
-      - env: TEST_DIR=tests/integration/guzzle/3
-        php: 5.6
-      - env: TEST_DIR=tests/integration/guzzle/4
-        php: 5.6
-      - env: TEST_DIR=tests/integration/guzzle/5
-        php: 5.6
-      - env: TEST_DIR=tests/integration/soap
-        php: 5.6
-  allow_failures:
-    - php: hhvm-nightly
-    - php: 7.0
+    - env: TEST_DIR=.
+      php: 5.3
+    - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
+      php: 5.3
+    - env: TEST_DIR=.
+      php: 5.4
+    - env: TEST_DIR=.
+      php: 5.5
+    - env: TEST_DIR=.
+      php: 5.6
+    - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
+      php: 5.6
+    - env: TEST_DIR=.
+      php: 7.0
+    - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
+      php: 7.0
+    - env: TEST_DIR=.
+      php: 7.1
+    - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
+      php: 7.1
+    - env: TEST_DIR=. PHP_CS_FIXER=true
+      php: 7.2
+    - env: TEST_DIR=tests/integration/guzzle/3
+      php: 5.6
+    - env: TEST_DIR=tests/integration/guzzle/4
+      php: 5.6
+    - env: TEST_DIR=tests/integration/guzzle/5
+      php: 5.6
+    - env: TEST_DIR=tests/integration/guzzle/6
+      php: 5.6
+    - env: TEST_DIR=tests/integration/soap
+      php: 5.6
 
 before_install:
-  - composer install && cd ${TEST_DIR}
+  - composer self-update
 
 install:
-  - composer install
+  - composer update --prefer-source -o $COMPOSER_FLAGS
+  - PHPUNIT_BIN=$(pwd)/vendor/bin/phpunit
+  - cd ${TEST_DIR}
+  - composer update --prefer-source -o $COMPOSER_FLAGS
 
 script:
-  - phpunit --coverage-clover=coverage.clover
+  - $PHPUNIT_BIN --coverage-clover=coverage.clover
+  - if [ "${PHP_CS_FIXER}" = "true" ]; then wget http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar && php ./php-cs-fixer-v2.phar fix --dry-run --diff $TRAVIS_BUILD_DIR; fi
 
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
-
-# Faster builds on travis setup not using sudo.
-sudo: false
 
 cache:
   directories:
@@ -50,4 +60,5 @@ cache:
     - tests/integration/guzzle/3/vendor
     - tests/integration/guzzle/4/vendor
     - tests/integration/guzzle/5/vendor
+    - tests/integration/guzzle/6/vendor
     - $HOME/.composer/cache

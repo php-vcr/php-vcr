@@ -9,8 +9,8 @@ use org\bovigo\vfs\vfsStream;
  */
 class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
 {
-    const TEST_GET_URL = 'http://httpbin.org/get';
-    const TEST_POST_URL = 'http://httpbin.org/post';
+    const TEST_GET_URL = 'https://api.chew.pro/trbmb';
+    const TEST_POST_URL = 'https://httpbin.org/post';
     const TEST_POST_BODY = '{"foo":"bar"}';
 
     protected $ignoreHeaders = array(
@@ -26,44 +26,32 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
         \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
-    public function testRequestGETDirect()
+    public function testRequestGET()
     {
-        $this->assertValidGETResponse($this->requestGET());
+        \VCR\VCR::turnOn();
+        \VCR\VCR::insertCassette('test-cassette.yml');
+        $originalRequest = $this->requestGET();
+        $this->assertValidGETResponse($originalRequest);
+        $interceptedRequest = $this->requestGET();
+        $this->assertValidGETResponse($interceptedRequest);
+        $this->assertEquals($originalRequest, $interceptedRequest);
+        $repeatInterceptedRequest = $this->requestGET();
+        $this->assertEquals($interceptedRequest, $repeatInterceptedRequest);
+        \VCR\VCR::turnOff();
     }
 
-    public function testRequestGETIntercepted()
+    public function testRequestPOST()
     {
-        $this->assertValidGETResponse($this->requestGETIntercepted());
-    }
-
-    public function testRequestGETDirectEqualsIntercepted()
-    {
-        $this->assertEquals($this->requestGET(), $this->requestGETIntercepted());
-    }
-
-    public function testRequestGETInterceptedIsRepeatable()
-    {
-        $this->assertEquals($this->requestGETIntercepted(), $this->requestGETIntercepted());
-    }
-
-    public function testRequestPOSTDirect()
-    {
-        $this->assertValidPOSTResponse($this->requestPOST());
-    }
-    
-    public function testRequestPOSTIntercepted()
-    {
-        $this->assertValidPOSTResponse($this->requestPOSTIntercepted());
-    }
-
-    public function testRequestPOSTDirectEqualsIntercepted()
-    {
-        $this->assertEquals($this->requestPOST(), $this->requestPOSTIntercepted());
-    }
-
-    public function testRequestPOSTInterceptedIsRepeatable()
-    {
-        $this->assertEquals($this->requestPOSTIntercepted(), $this->requestPOSTIntercepted());
+        \VCR\VCR::turnOn();
+        \VCR\VCR::insertCassette('test-cassette.yml');
+        $originalRequest = $this->requestPOST();
+        $this->assertValidPOSTResponse($originalRequest);
+        $interceptedRequest = $this->requestPOST();
+        $this->assertValidPOSTResponse($interceptedRequest);
+        $this->assertEquals($originalRequest, $interceptedRequest);
+        $repeatInterceptedRequest = $this->requestPOST();
+        $this->assertEquals($interceptedRequest, $repeatInterceptedRequest);
+        \VCR\VCR::turnOff();
     }
 
     protected function requestGET()
@@ -71,9 +59,6 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
         $exampleClient = new ExampleHttpClient();
 
         $response = $exampleClient->get(self::TEST_GET_URL);
-        foreach ($this->ignoreHeaders as $header) {
-            unset($response['headers'][$header]);
-        }
 
         return $response;
     }
@@ -86,18 +71,9 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
         foreach ($this->ignoreHeaders as $header) {
             unset($response['headers'][$header]);
         }
+        unset($response['origin']);
 
         return $response;
-    }
-
-    protected function requestGETIntercepted()
-    {
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('test-cassette.yml');
-        $info = $this->requestGET();
-        \VCR\VCR::turnOff();
-
-        return $info;
     }
 
     protected function requestPOSTIntercepted()
@@ -112,20 +88,17 @@ class ExampleHttpClientTest extends \PHPUnit_Framework_TestCase
 
     protected function assertValidGETResponse($info)
     {
-        $this->assertTrue(is_array($info), 'Response is not an array.');
-        $this->assertArrayHasKey('url', $info, "Key 'url' not found.");
-        $this->assertEquals(self::TEST_GET_URL, $info['url'], "Value for key 'url' wrong.");
-        $this->assertArrayHasKey('headers', $info, "Key 'headers' not found.");
-        $this->assertTrue(is_array($info['headers']), 'Headers is not an array.');
+        $this->assertInternalType('array', $info, 'Response is not an array.');
+        $this->assertArrayHasKey('0', $info, 'API did not return any value.');
     }
-    
+
     protected function assertValidPOSTResponse($info)
     {
-        $this->assertTrue(is_array($info), 'Response is not an array.');
+        $this->assertInternalType('array', $info, 'Response is not an array.');
         $this->assertArrayHasKey('url', $info, "Key 'url' not found.");
         $this->assertEquals(self::TEST_POST_URL, $info['url'], "Value for key 'url' wrong.");
         $this->assertArrayHasKey('headers', $info, "Key 'headers' not found.");
-        $this->assertTrue(is_array($info['headers']), 'Headers is not an array.');
-        $this->assertEquals(self::TEST_POST_BODY, $info['data'], "Correct request body was not sent.");
+        $this->assertInternalType('array', $info['headers'], 'Headers is not an array.');
+        $this->assertEquals(self::TEST_POST_BODY, $info['data'], 'Correct request body was not sent.');
     }
 }

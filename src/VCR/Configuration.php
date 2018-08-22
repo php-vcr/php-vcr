@@ -287,7 +287,7 @@ class Configuration
      * Enables specified RequestMatchers by its name.
      *
      * @param array $matchers List of RequestMatcher names to enable.
-     * 
+     *
      * @return Configuration
      *
      * @throws \InvalidArgumentException If a specified request matcher does not exist.
@@ -319,11 +319,11 @@ class Configuration
         return $this;
     }
 
-   /**
-     * Returns a list of whitelisted paths.
-     *
-     * @return array
-     */
+    /**
+      * Returns a list of whitelisted paths.
+      *
+      * @return array
+      */
     public function getWhiteList()
     {
         return $this->whiteList;
@@ -345,11 +345,11 @@ class Configuration
         return $this;
     }
 
-   /**
-     * Returns the current mode.
-     *
-     * @return string
-     */
+    /**
+      * Returns the current mode.
+      *
+      * @return string
+      */
     public function getMode()
     {
         return $this->mode;
@@ -381,7 +381,7 @@ class Configuration
         Assertion::directory(
             $cassettePath,
             "Cassette path '{$cassettePath}' is not a directory. Please either "
-            . "create it or set a different cassette path using "
+            . 'create it or set a different cassette path using '
             . "\\VCR\\VCR::configure()->setCassettePath('directory')."
         );
     }

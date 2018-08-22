@@ -10,10 +10,9 @@ use org\bovigo\vfs\vfsStream;
  */
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
-
     public static function setupBeforeClass()
     {
-       VCR::configure()->setCassettePath('tests/fixtures') ;
+        VCR::configure()->setCassettePath('tests/fixtures') ;
     }
 
     public function testUseStaticCallsNotInitialized()
@@ -68,7 +67,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::turnOn();
         VCR::insertCassette('unittest_soap_test');
 
-        $client = new \SoapClient('http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL', array('soap_version' => SOAP_1_2));
+        $client = new \SoapClient('https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl', array('soap_version' => SOAP_1_2));
         $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
         $temperature = $actual->GetCityWeatherByZIPResult->Temperature;
 
@@ -77,11 +76,29 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         VCR::turnOff();
     }
 
+    public function testShouldNotInterceptCallsToDevUrandom()
+    {
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            $this->markTestSkipped('/dev/urandom is not supported on Windows');
+        }
+
+        VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
+        VCR::turnOn();
+        VCR::insertCassette('unittest_urandom_test');
+
+        // Just trying to open this will cause an exception if you're using is_file to filter
+        // which paths to intercept.
+        $output = file_get_contents('/dev/urandom', false, null, 0, 16);
+
+        VCR::eject();
+        VCR::turnOff();
+    }
+
     public function testShouldThrowExceptionIfNoCassettePresent()
     {
         $this->setExpectedException(
             'BadMethodCallException',
-            "Invalid http request. No cassette inserted. Please make sure to insert "
+            'Invalid http request. No cassette inserted. Please make sure to insert '
             . "a cassette in your unit test using VCR::insertCassette('name');"
         );
 
@@ -142,7 +159,6 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         );
         VCR::eject();
         VCR::turnOff();
-
     }
 
     public function testShouldDispatchBeforeAfterHttpRequestAndBeforeRecordWhenCassetteHasNoResponse()
@@ -184,9 +200,9 @@ class VCRTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function recordEvent(Event $event)
+    public function recordEvent(Event $event, $eventName)
     {
-        $this->events[$event->getName()] = $event;
+        $this->events[$eventName] = $event;
     }
 
     private function getRecordedEventNames()

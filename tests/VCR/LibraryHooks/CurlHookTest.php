@@ -176,7 +176,28 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
         curl_close($curlHandle);
 
-        $this->assertEquals(200, $infoHttpCode, 'HTTP status not set.');
+        $this->assertSame(200, $infoHttpCode, 'HTTP status not set.');
+
+        $this->curlHook->disable();
+    }
+
+    /**
+     * @see https://github.com/php-vcr/php-vcr/issues/136
+     */
+    public function testShouldReturnCurlInfoStatusCodeAsInteger()
+    {
+        $stringStatusCode = '200';
+        $integerStatusCode = 200;
+        $this->curlHook->enable($this->getTestCallback($stringStatusCode));
+
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+        $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        curl_close($curlHandle);
+
+        $this->assertSame($integerStatusCode, $infoHttpCode, 'HTTP status not set.');
+
         $this->curlHook->disable();
     }
 
@@ -190,8 +211,8 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $info = curl_getinfo($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
-        $this->assertEquals(21, count($info), 'curl_getinfo() should return 21 values.');
+        $this->assertInternalType('array', $info, 'curl_getinfo() should return an array.');
+        $this->assertCount(21, $info, 'curl_getinfo() should return 21 values.');
         $this->curlHook->disable();
     }
 
@@ -205,7 +226,7 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $info = curl_getinfo($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertTrue(is_array($info), 'curl_getinfo() should return an array.');
+        $this->assertInternalType('array', $info, 'curl_getinfo() should return an array.');
         $this->assertArrayHasKey('url', $info);
         $this->assertArrayHasKey('content_type', $info);
         $this->assertArrayHasKey('http_code', $info);
@@ -266,8 +287,10 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         curl_multi_add_handle($curlMultiHandle, $curlHandle2);
 
         $mh = curl_multi_exec($curlMultiHandle);
-        $lastInfo = curl_multi_info_read($mh);
-        $afterLastInfo = curl_multi_info_read($mh);
+
+        $lastInfo       = curl_multi_info_read($mh);
+        $secondLastInfo = curl_multi_info_read($mh);
+        $afterLastInfo  = curl_multi_info_read($mh);
 
         curl_multi_remove_handle($curlMultiHandle, $curlHandle1);
         curl_multi_remove_handle($curlMultiHandle, $curlHandle2);
@@ -277,10 +300,17 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, $callCount, 'Hook should have been called twice.');
         $this->assertEquals(
-            array("msg" => 1, "result" => 0, "handle" => $curlHandle2),
+            array('msg' => 1, 'result' => 0, 'handle' => $curlHandle2),
             $lastInfo,
             'When called the first time curl_multi_info_read should return last curl info.'
         );
+
+        $this->assertEquals(
+            array('msg' => 1, 'result' => 0, 'handle' => $curlHandle1),
+            $secondLastInfo,
+            'When called the second time curl_multi_info_read should return second to last curl info.'
+        );
+
         $this->assertFalse($afterLastInfo, 'Multi info called the last time should return false.');
     }
 
@@ -304,13 +334,38 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \callable
+     * @requires PHP 5.5.0
      */
-    protected function getTestCallback()
+    public function testShouldResetRequest()
     {
         $testClass = $this;
-        return function () use ($testClass) {
-            return new Response(200, array(), $testClass->expected);
+        $this->curlHook->enable(
+            function (Request $request) use ($testClass) {
+                $testClass->assertEquals(
+                    'GET',
+                    $request->getMethod(),
+                    ''
+                );
+                return new Response(200);
+            }
+        );
+
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_reset($curlHandle);
+        curl_exec($curlHandle);
+
+        $this->curlHook->disable();
+    }
+
+    /**
+     * @return \callable
+     */
+    protected function getTestCallback($statusCode = 200)
+    {
+        $testClass = $this;
+        return function () use ($statusCode, $testClass) {
+            return new Response($statusCode, array(), $testClass->expected);
         };
     }
 }

@@ -6,6 +6,23 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
+     * test flock with file_put_contents
+     */
+    public function testFlockWithFilePutContents()
+    {
+        $processor = new StreamProcessor();
+        $processor->intercept();
+
+        $testData = 'test data';
+        $testFilePath = 'tests/fixtures/file_put_contents';
+        $res = file_put_contents($testFilePath, $testData, LOCK_EX);
+        unlink($testFilePath);
+
+        $processor->restore();
+        $this->assertEquals(strlen($testData), $res);
+    }
+
+    /**
      * @dataProvider streamOpenAppendFilterProvider
      * @param  boolean $expected
      * @param  boolean $shouldProcess
@@ -41,10 +58,37 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function streamOpenFileModesWhichDoNotCreateFiles()
+    {
+        return array(
+            array('r'),
+            array('rb'),
+            array('rt'),
+            array('r+')
+        );
+    }
+    /**
+     * @dataProvider streamOpenFileModesWhichDoNotCreateFiles
+     */
+    public function testStreamOpenShouldNotFailOnNonExistingFile($fileMode)
+    {
+        $test = $this;
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test) {
+            $test->fail('should not throw errors');
+        });
+
+        $processor = new StreamProcessor();
+
+        $result = $processor->stream_open('tests/fixtures/unknown', $fileMode, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, $fullPath);
+        $this->assertFalse($result);
+
+        restore_error_handler();
+    }
+
     public function testUrlStatSuccessfully()
     {
         $test = $this;
-        set_error_handler(function($errno, $errstr, $errfile, $errline) use ($test) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test) {
             $test->fail('should not throw errors');
         });
 
@@ -79,7 +123,7 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
     public function testDirOpendirNotFound()
     {
         $test = $this;
-        set_error_handler(function($errno, $errstr, $errfile, $errline) use ($test) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test) {
             $test->assertContains('opendir(not_found', $errstr);
         });
 

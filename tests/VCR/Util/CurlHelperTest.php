@@ -71,6 +71,18 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($payload, (string) $request->getBody());
     }
 
+    public function testSetCurlOptionOnRequestPostFieldsEmptyString()
+    {
+        $request = new Request('POST', 'example.com');
+        $payload = '';
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+
+        // This is consistent with how requests are read out of storage using
+        // \VCR\Request::fromArray(array $request).
+        $this->assertNull($request->getBody());
+    }
+
     public function testSetCurlOptionOnRequestSetSingleHeader()
     {
         $request = new Request('GET', 'example.com');
@@ -127,9 +139,19 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $request->getHeaders());
     }
 
+    public function testSetCurlOptionOnRequestPostFieldsSetsPostMethod()
+    {
+        $request = new Request('GET', 'example.com');
+        $payload = json_encode(array('some' => 'test'));
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+
+        $this->assertEquals('POST', $request->getMethod());
+    }
+
     public function testSetCurlOptionReadFunctionToNull()
     {
-	    $request = new Request('POST', 'example.com');
+        $request = new Request('POST', 'example.com');
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, null, curl_init());
 
@@ -141,7 +163,8 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $request = new Request('POST', 'example.com');
 
-        $callback = function ($curlHandle, $fileHandle, $size) {};
+        $callback = function ($curlHandle, $fileHandle, $size) {
+        };
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, $callback, curl_init());
         CurlHelper::validateCurlPOSTBody($request, curl_init());
@@ -209,13 +232,40 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("HTTP/1.1 200 OK\r\n\r\n" . $response->getBody(), $output);
     }
 
+    public function testHandleOutputHeaderFunction()
+    {
+        $actualHeaders = array();
+        $curlOptions = array(
+            CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$actualHeaders) {
+                $actualHeaders[] = $header;
+            },
+        );
+        $status = array(
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1',
+        );
+        $headers = array(
+            'Content-Length' => 0,
+        );
+        $response = new Response($status, $headers, 'example response');
+        CurlHelper::handleOutput($response, $curlOptions, curl_init());
+
+        $expected = array(
+            'HTTP/1.1 200 OK',
+            'Content-Length: 0',
+            ''
+        );
+        $this->assertEquals($expected, $actualHeaders);
+    }
+
     public function testHandleResponseUsesWriteFunction()
     {
         $test = $this;
         $expectedCh = curl_init();
         $expectedBody = 'example response';
         $curlOptions = array(
-            CURLOPT_WRITEFUNCTION => function($ch, $body) use ($test, $expectedCh, $expectedBody) {
+            CURLOPT_WRITEFUNCTION => function ($ch, $body) use ($test, $expectedCh, $expectedBody) {
                 $test->assertEquals($expectedCh, $ch);
                 $test->assertEquals($expectedBody, $body);
 
@@ -363,5 +413,27 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
                 290,
             ),
         );
+    }
+
+    public function testSetCurlOptionCustomRequest()
+    {
+        $request = new Request('POST', 'http://example.com');
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_CUSTOMREQUEST, 'PUT');
+
+        $this->assertEquals('PUT', $request->getCurlOption(CURLOPT_CUSTOMREQUEST));
+    }
+
+    public function testCurlCustomRequestAlwaysOverridesMethod()
+    {
+        $request = new Request('POST', 'http://example.com');
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_CUSTOMREQUEST, 'DELETE');
+
+        $this->assertEquals('DELETE', $request->getMethod());
+
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, array('some' => 'test'));
+
+        $this->assertEquals('DELETE', $request->getMethod());
     }
 }

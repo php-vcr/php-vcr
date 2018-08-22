@@ -51,7 +51,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     public function testGetBodyNoneDefined()
     {
         $response = Response::fromArray(array());
-        $this->assertEquals(null, $response->getBody(true));
+        $this->assertNull($response->getBody(true));
     }
 
     public function testRestoreBodyFromArray()
@@ -118,17 +118,6 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $response = new Response(200, array(), null, $curlOptions);
 
         $this->assertEquals($curlOptions, $response->getCurlInfo());
-    }
-
-    public function testGetCurlInfoFromArray()
-    {
-        $this->markTestSkipped('Is there a reason to store the cURL info?');
-        $curlOptions = array('option' => 'value');
-
-        $response = new Response(200, array(), null, $curlOptions);
-        $restoredResponse = Response::fromArray($response->toArray());
-
-        $this->assertEquals($curlOptions, $restoredResponse->getCurlInfo());
     }
 
     public function testToArray()

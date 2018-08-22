@@ -1,6 +1,7 @@
 <?php
 
 namespace VCR;
+
 use VCR\Util\Assertion;
 
 /**
@@ -37,7 +38,7 @@ class Response
      * @param string $body
      * @param array $curlInfo
      */
-    function __construct($status, array $headers = array(), $body = null, array $curlInfo = array())
+    public function __construct($status, array $headers = array(), $body = null, array $curlInfo = array())
     {
         $this->setStatus($status);
         $this->headers = $headers;
@@ -54,8 +55,7 @@ class Response
     {
         $body = $this->getBody();
         // Base64 encode when binary
-        if (
-            strpos($this->getContentType(), 'application/x-gzip') !== false
+        if (strpos($this->getContentType(), 'application/x-gzip') !== false
             || $this->getHeader('Content-Transfer-Encoding') == 'binary'
         ) {
             $body = base64_encode($body);

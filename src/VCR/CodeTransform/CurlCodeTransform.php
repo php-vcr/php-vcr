@@ -15,7 +15,8 @@ class CurlCodeTransform extends AbstractCodeTransform
         '/(?<!::|->|\w_)\\\?curl_multi_add_handle\s*\(/i'    => '\VCR\LibraryHooks\CurlHook::curl_multi_add_handle(',
         '/(?<!::|->|\w_)\\\?curl_multi_remove_handle\s*\(/i' => '\VCR\LibraryHooks\CurlHook::curl_multi_remove_handle(',
         '/(?<!::|->|\w_)\\\?curl_multi_exec\s*\(/i'          => '\VCR\LibraryHooks\CurlHook::curl_multi_exec(',
-        '/(?<!::|->|\w_)\\\?curl_multi_info_read\s*\(/i'     => '\VCR\LibraryHooks\CurlHook::curl_multi_info_read('
+        '/(?<!::|->|\w_)\\\?curl_multi_info_read\s*\(/i'     => '\VCR\LibraryHooks\CurlHook::curl_multi_info_read(',
+        '/(?<!::|->|\w_)\\\?curl_reset\s*\(/i'               => '\VCR\LibraryHooks\CurlHook::curl_reset('
     );
 
     /**
