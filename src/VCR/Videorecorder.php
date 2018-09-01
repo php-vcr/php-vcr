@@ -153,7 +153,19 @@ class Videorecorder
     public function eject()
     {
         Assertion::true($this->isOn, 'Please turn on VCR before ejecting a cassette, use: VCR::turnOn().');
+
+        $cassette = $this->cassette;
         $this->cassette = null;
+
+        if ($cassette && $this->config->getMode() === VCR::MODE_STRICT && !$cassette->isFinished()) {
+            throw new \LogicException(
+                sprintf(
+                    'Strict playback was requested but the cassette did not play in its entirety.'
+                    . "\nCassette: %s",
+                    $cassette->getName()
+                )
+            );
+        }
     }
 
     /**
@@ -230,7 +242,7 @@ class Videorecorder
         }
 
         if (VCR::MODE_NONE === $this->config->getMode()
-            || VCR::MODE_ONCE === $this->config->getMode()
+            || in_array($this->config->getMode(), array(VCR::MODE_ONCE, VCR::MODE_STRICT))
             && $this->cassette->isNew() === false
         ) {
             throw new \LogicException(
