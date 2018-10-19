@@ -72,6 +72,7 @@ class StreamProcessor
     public function intercept()
     {
         if (!$this->isIntercepting) {
+            ini_set('opcache.enable', 0);
             stream_wrapper_unregister(self::PROTOCOL);
             $this->isIntercepting = stream_wrapper_register(self::PROTOCOL, __CLASS__);
         }
