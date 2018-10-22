@@ -2,18 +2,17 @@
 
 namespace VCR\Util;
 
-use VCR\Response;
 use VCR\Request;
 
 class HttpClientTest extends \PHPUnit_Framework_TestCase
 {
-    public function testCreateHttpClient()
+    public function testHttpClientOnError()
     {
-        $this->assertInstanceOf('\VCR\Util\HttpClient', new HttpClient());
-    }
+        $httpClient = new HttpClient();
+        // Request on a closed port
+        $request = new Request('GET', 'http://localhost:9934');
 
-    public function testCreateHttpClientWithMock()
-    {
-        $this->assertInstanceOf('\VCR\Util\HttpClient', new HttpClient());
+        $this->expectException('VCR\\VCRException');
+        $httpClient->send($request);
     }
 }
