@@ -7,7 +7,7 @@ namespace VCR\CodeTransform;
  *
  * @package VCR\CodeTransform
  */
-abstract class AbstractCodeTransform extends \PHP_User_Filter
+abstract class AbstractCodeTransform extends \php_user_filter
 {
     const NAME = 'vcr_abstract_filter';
 

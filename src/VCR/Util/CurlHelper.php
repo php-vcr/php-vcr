@@ -17,7 +17,6 @@ class CurlHelper
         //"certinfo"?
         CURLINFO_HTTP_CODE => 'http_code',
         CURLINFO_EFFECTIVE_URL => 'url',
-        CURLINFO_FILETIME => 'filetime',
         CURLINFO_TOTAL_TIME => 'total_time',
         CURLINFO_NAMELOOKUP_TIME => 'namelookup_time',
         CURLINFO_CONNECT_TIME => 'connect_time',
