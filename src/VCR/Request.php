@@ -53,7 +53,7 @@ class Request
      * with specified request matcher callbacks.
      *
      * @param  Request $request Request to check if it matches the current one.
-     * @param  \callable[] $requestMatchers Request matcher callbacks.
+     * @param  callable[] $requestMatchers Request matcher callbacks.
      *
      * @throws \BadFunctionCallException If one of the specified request matchers is not callable.
      * @return boolean True if specified request matches the current one.
