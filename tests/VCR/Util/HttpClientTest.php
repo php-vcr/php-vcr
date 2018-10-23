@@ -12,7 +12,7 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
         // Request on a closed port
         $request = new Request('GET', 'http://localhost:9934');
 
-        $this->expectException('VCR\\VCRException');
+        $this->setExpectedException('VCR\\Util\\CurlException');
         $httpClient->send($request);
     }
 }

@@ -16,6 +16,8 @@ class HttpClient
      * @param Request $request HTTP Request to send.
      *
      * @return Response Response for specified request.
+     *
+     * @throws CurlException In case of cURL error
      */
     public function send(Request $request)
     {
@@ -32,7 +34,11 @@ class HttpClient
         curl_setopt($ch, CURLOPT_FAILONERROR, false);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
-        list($status, $headers, $body) = HttpUtil::parseResponse(curl_exec($ch));
+        $result = curl_exec($ch);
+        if ($result === false) {
+            throw CurlException::create($ch);
+        }
+        list($status, $headers, $body) = HttpUtil::parseResponse($result);
 
         return new Response(
             HttpUtil::parseStatus($status),
