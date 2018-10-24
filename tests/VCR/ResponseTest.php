@@ -120,6 +120,15 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($curlOptions, $response->getCurlInfo());
     }
 
+    public function testRestoreCurlInfoFromArray()
+    {
+        $expectedCurlOptions = array('option' => 'value');
+        $response = new Response(200, array(), null, $expectedCurlOptions);
+        $restoredResponse = Response::fromArray($response->toArray());
+
+        $this->assertEquals($expectedCurlOptions, $response->getCurlInfo());
+    }
+
     public function testToArray()
     {
         $expectedArray = array(
@@ -131,7 +140,10 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
             'headers'   => array(
                 'host' => 'example.com'
             ),
-            'body'      => 'Test response'
+            'body'      => 'Test response',
+            'curl_info' => array(
+                'content_type' => 'text/html'
+            )
         );
 
         $response = Response::fromArray($expectedArray);
