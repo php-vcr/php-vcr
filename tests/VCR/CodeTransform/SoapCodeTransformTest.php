@@ -3,20 +3,24 @@
 namespace VCR\CodeTransform;
 
 use lapistano\ProxyObject\ProxyBuilder;
+use PHPUnit\Framework\TestCase;
 
-class SoapCodeTransformTest extends \PHPUnit_Framework_TestCase
+class SoapCodeTransformTest extends TestCase
 {
     /**
      * @dataProvider codeSnippetProvider
      */
     public function testTransformCode($expected, $code)
     {
-        $proxy = new ProxyBuilder('\VCR\CodeTransform\SoapCodeTransform');
-        $filter = $proxy
-            ->setMethods(array('transformCode'))
-            ->getProxy();
+        $codeTransform = new class extends SoapCodeTransform {
+            // A proxy to access the protected transformCode method.
+            public function publicTransformCode(string $code): string
+            {
+                return $this->transformCode($code);
+            }
+        };
 
-        $this->assertEquals($expected, $filter->transformCode($code));
+        $this->assertEquals($expected, $codeTransform->publicTransformCode($code));
     }
 
     public function codeSnippetProvider()

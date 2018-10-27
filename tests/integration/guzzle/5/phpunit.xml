@@ -6,7 +6,7 @@
 >
 
     <testsuites>
-        <testsuite>
+        <testsuite name="Guzzle 5 test suite">
             <directory>../test</directory>
         </testsuite>
     </testsuites>

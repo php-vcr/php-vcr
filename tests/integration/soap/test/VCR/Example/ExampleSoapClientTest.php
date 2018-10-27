@@ -3,13 +3,14 @@
 namespace VCR\Example;
 
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Converts temperature units from webservicex
  *
  * @link http://www.webservicex.net/New/Home/ServiceDetail/31
  */
-class ExampleSoapClientTest extends \PHPUnit_Framework_TestCase
+class ExampleSoapClientTest extends TestCase
 {
     public function setUp()
     {

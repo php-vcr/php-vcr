@@ -2,6 +2,7 @@
 
 namespace VCR\LibraryHooks;
 
+use PHPUnit\Framework\TestCase;
 use VCR\Request;
 use VCR\Response;
 use VCR\Configuration;
@@ -11,7 +12,7 @@ use VCR\Util\StreamProcessor;
 /**
  * Test if intercepting http/https using soap works.
  */
-class SoapHookTest extends \PHPUnit_Framework_TestCase
+class SoapHookTest extends TestCase
 {
     const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl';
 
