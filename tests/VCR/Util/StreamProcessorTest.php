@@ -2,7 +2,10 @@
 
 namespace VCR\Util;
 
-class StreamProcessorTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error\Warning;
+
+class StreamProcessorTest extends TestCase
 {
 
     /**
@@ -85,6 +88,9 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         restore_error_handler();
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testUrlStatSuccessfully()
     {
         $test = $this;
@@ -98,15 +104,16 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         restore_error_handler();
     }
 
-    /**
-     * @expectedException PHPUnit_Framework_Error_Warning
-     */
     public function testUrlStatFileNotFound()
     {
         $processor = new StreamProcessor();
+        $this->expectException(Warning::class);
         $processor->url_stat('file_not_found', 0);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testQuietUrlStatFileNotFoundToBeQuiet()
     {
         $processor = new StreamProcessor();
