@@ -86,7 +86,7 @@ abstract class AbstractStorage implements Storage
     /**
      * Returns the current record.
      *
-     * @return array Parsed current record.
+     * @return array|null Parsed current record.
      */
     public function current()
     {

@@ -22,7 +22,7 @@ class Response
      */
     protected $headers = array();
     /**
-     * @var string
+     * @var string|null
      */
     protected $body;
     /**
@@ -35,7 +35,7 @@ class Response
     /**
      * @param string|array $status
      * @param array $headers
-     * @param string $body
+     * @param string|null $body
      * @param array $curlInfo
      */
     public function __construct($status, array $headers = array(), $body = null, array $curlInfo = array())
@@ -103,7 +103,7 @@ class Response
      */
     public function getBody()
     {
-        return $this->body;
+        return $this->body ?: '';
     }
 
     /**

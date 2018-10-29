@@ -2,6 +2,7 @@
 
 namespace VCR;
 
+use Assert\Assertion;
 use function sprintf;
 use VCR\Exceptions\InvalidHostException;
 
@@ -15,7 +16,7 @@ class Request
      */
     protected $method;
     /**
-     * @var string
+     * @var string|null
      */
     protected $url;
     /**
@@ -203,7 +204,7 @@ class Request
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -211,17 +212,20 @@ class Request
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getHost()
     {
-        $host = parse_url($this->getUrl(), PHP_URL_HOST);
+        $url = $this->getUrl();
+        Assertion::string($url);
+
+        $host = parse_url($url, PHP_URL_HOST);
 
         if ($host === null) {
             throw InvalidHostException::create($this->getUrl());
         }
 
-        if ($port = parse_url($this->getUrl(), PHP_URL_PORT)) {
+        if ($port = parse_url($url, PHP_URL_PORT)) {
             $host .= ':' . $port;
         }
 
@@ -229,19 +233,23 @@ class Request
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPath()
     {
-        return parse_url($this->getUrl(), PHP_URL_PATH);
+        $url = $this->getUrl();
+        Assertion::string($url);
+        return parse_url($url, PHP_URL_PATH);
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getQuery()
     {
-        return parse_url($this->getUrl(), PHP_URL_QUERY);
+        $url = $this->getUrl();
+        Assertion::string($url);
+        return parse_url($url, PHP_URL_QUERY);
     }
 
     /**

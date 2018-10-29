@@ -92,6 +92,7 @@ class SoapHook implements LibraryHook
 
         /* @var \VCR\Response $response */
         $requestCallback = self::$requestCallback;
+        Assertion::isCallable($requestCallback);
         $response = $requestCallback($vcrRequest);
 
         return $response->getBody();

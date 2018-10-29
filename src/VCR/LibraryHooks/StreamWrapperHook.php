@@ -91,6 +91,7 @@ class StreamWrapperHook implements LibraryHook
         $request = StreamHelper::createRequestFromStreamContext($this->context, $path);
 
         $requestCallback = self::$requestCallback;
+        Assertion::isCallable($requestCallback);
         try {
             $this->response = $requestCallback($request);
             return true;

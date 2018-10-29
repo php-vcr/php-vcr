@@ -13,6 +13,8 @@ parameters:
         - '#Parameter .* \\$response of static method VCR\\\\Util\\\\HttpUtil::parseResponse\\(\\) expects string, string\\|true given.#'
         # PHPStan cannot detect that strrpos will succeed (because of Assertion above) in HttpUtil::parseStatus
         - '#Parameter .* \\$str of function substr expects string, string\\|false given.#'
+        # It turns out that curl_init DOES accept null as first parameter, even if it is not documented.
+        - '#Parameter .* $url of function curl_init expects string, string\\|null given.#'
 includes:
 #    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
 	- vendor/phpstan/phpstan-beberlei-assert/extension.neon

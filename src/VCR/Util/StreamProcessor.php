@@ -555,7 +555,7 @@ class StreamProcessor
     public function stream_metadata($path, $option, $value)
     {
         $this->restore();
-        $result = null;
+        $result = false;
 
         switch ($option) {
             case STREAM_META_TOUCH:
