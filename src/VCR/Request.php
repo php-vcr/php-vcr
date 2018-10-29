@@ -16,7 +16,7 @@ class Request
      */
     protected $url;
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $headers = array();
     /**
@@ -158,7 +158,7 @@ class Request
     }
 
     /**
-     * @return array
+     * @return array<string,string>
      */
     public function getHeaders()
     {
@@ -166,8 +166,8 @@ class Request
     }
 
     /**
-     * @param $key
-     * @return mixed
+     * @param string $key
+     * @return string
      */
     public function getHeader($key)
     {
@@ -175,7 +175,7 @@ class Request
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @return boolean
      */
     public function hasHeader($key)
@@ -246,7 +246,7 @@ class Request
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @return mixed
      */
     public function getCurlOption($key)
@@ -312,8 +312,8 @@ class Request
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param string $value
      */
     public function setHeader($key, $value)
     {
@@ -321,7 +321,7 @@ class Request
     }
 
     /**
-     * @param $key
+     * @param string $key
      */
     public function removeHeader($key)
     {
@@ -329,8 +329,8 @@ class Request
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      */
     public function setPostField($key, $value)
     {
@@ -338,8 +338,8 @@ class Request
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      */
     public function setCurlOption($key, $value)
     {

@@ -1,5 +1,7 @@
 parameters:
     ignoreErrors:
         - "#Call to an undefined static method SoapClient::__construct\\(\\)#"
+        - "#Access to an undefined property object::\\$data\\.#"
+        - "#Access to an undefined property object::\\$datalen\\.#"
 #includes:
 #    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
