@@ -7,7 +7,7 @@
         "test": "./vendor/bin/phpunit",
         "lint": "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run --config-file=.php_cs",
         "fix": "./vendor/bin/php-cs-fixer fix --verbose --diff --config-file=.php_cs",
-        "phpstan": "phpstan analyse src -c phpstan.neon --level=5 --no-progress -vvv"
+        "phpstan": "phpstan analyse src -c phpstan.neon --level=6 --no-progress -vvv"
     },
 
     "authors": [
@@ -28,7 +28,8 @@
     "require-dev": {
         "phpunit/phpunit": "^7.4.3",
         "mikey179/vfsStream": "^1.2",
-        "phpstan/phpstan": "^0.10.5"
+        "phpstan/phpstan": "^0.10.5",
+        "phpstan/phpstan-beberlei-assert": "^0.10.0"
     },
 
     "autoload": {

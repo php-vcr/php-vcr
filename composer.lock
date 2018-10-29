@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1354b1a85494d7a07315f638d1921a27",
+    "content-hash": "372c55d1526a601af19752af85c33075",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1494,6 +1494,54 @@
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
             "time": "2018-10-20T17:24:55+00:00"
+        },
+        {
+            "name": "phpstan/phpstan-beberlei-assert",
+            "version": "0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan-beberlei-assert.git",
+                "reference": "612836107af207a89974758ad1cb6ea0430d18a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan-beberlei-assert/zipball/612836107af207a89974758ad1cb6ea0430d18a6",
+                "reference": "612836107af207a89974758ad1cb6ea0430d18a6",
+                "shasum": ""
+            },
+            "require": {
+                "nikic/php-parser": "^4.0",
+                "php": "~7.1",
+                "phpstan/phpstan": "^0.10"
+            },
+            "require-dev": {
+                "beberlei/assert": "^2.9.5",
+                "consistence/coding-standard": "^3.0.1",
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
+                "jakub-onderka/php-parallel-lint": "^1.0",
+                "phing/phing": "^2.16.0",
+                "phpstan/phpstan-phpunit": "^0.10",
+                "phpstan/phpstan-strict-rules": "^0.10",
+                "phpunit/phpunit": "^7.1.3",
+                "slevomat/coding-standard": "^4.5.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.10-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PHPStan\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan beberlei/assert extension",
+            "time": "2018-06-23T17:18:41+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
