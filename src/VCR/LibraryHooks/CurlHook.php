@@ -16,7 +16,7 @@ use VCR\Util\TextUtil;
 class CurlHook implements LibraryHook
 {
     /**
-     * @var \Closure Callback which will be executed when a request is intercepted.
+     * @var \Closure|null Callback which will be executed when a request is intercepted.
      */
     protected static $requestCallback;
 

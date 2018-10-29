@@ -107,7 +107,7 @@ class Response
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getCurlInfo($option = null)
     {

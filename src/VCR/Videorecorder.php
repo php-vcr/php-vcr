@@ -45,7 +45,7 @@ class Videorecorder
     protected $factory;
 
     /**
-     * @var Cassette Cassette on which to store requests and responses.
+     * @var Cassette|null Cassette on which to store requests and responses.
      */
     protected $cassette;
 

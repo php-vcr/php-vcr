@@ -14,7 +14,7 @@ use VCR\Util\StreamHelper;
 class StreamWrapperHook implements LibraryHook
 {
     /**
-     * @var \Closure Callback which will be executed when a request is intercepted.
+     * @var \Closure|null Callback which will be executed when a request is intercepted.
      */
     protected static $requestCallback;
 
