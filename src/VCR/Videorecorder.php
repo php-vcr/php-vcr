@@ -248,12 +248,20 @@ class Videorecorder
 
         $this->disableLibraryHooks();
 
-        $this->dispatch(VCREvents::VCR_BEFORE_HTTP_REQUEST, new BeforeHttpRequestEvent($request));
-        $response = $this->client->send($request);
-        $this->dispatch(VCREvents::VCR_AFTER_HTTP_REQUEST, new AfterHttpRequestEvent($request, $response));
+        try {
+            $this->dispatch(VCREvents::VCR_BEFORE_HTTP_REQUEST, new BeforeHttpRequestEvent($request));
+            $response = $this->client->send($request);
+            $this->dispatch(VCREvents::VCR_AFTER_HTTP_REQUEST, new AfterHttpRequestEvent($request, $response));
 
-        $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
-        $this->cassette->record($request, $response);
+            $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
+            $this->cassette->record($request, $response);
+        } catch (\Exception $e) {
+            $this->enableLibraryHooks();
+            throw $e;
+        } catch (\Throwable $e) {
+            $this->enableLibraryHooks();
+            throw $e;
+        }
         $this->enableLibraryHooks();
 
         return $response;

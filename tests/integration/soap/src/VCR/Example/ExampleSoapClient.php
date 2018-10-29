@@ -18,4 +18,10 @@ class ExampleSoapClient
 
         return trim((string) $response->NumberToWordsResult);
     }
+
+    public function callBadUrl()
+    {
+        // The port is not open. This leads to an error
+        $client = new \SoapClient('http://localhost:9945', array('soap_version' => SOAP_1_2));
+    }
 }

@@ -6,6 +6,7 @@ use VCR\Util\Assertion;
 use VCR\Request;
 use VCR\Response;
 use VCR\CodeTransform\AbstractCodeTransform;
+use VCR\Util\CurlException;
 use VCR\Util\CurlHelper;
 use VCR\Util\StreamProcessor;
 use VCR\Util\TextUtil;
@@ -49,6 +50,11 @@ class CurlHook implements LibraryHook
      * @var array Last active curl_multi_exec() handles.
      */
     protected static $multiExecLastChs = array();
+
+    /**
+     * @var CurlException[] Last cURL error, as a CurlException.
+     */
+    protected static $lastErrors = array();
 
     /**
      * @var AbstractCodeTransform
@@ -197,17 +203,22 @@ class CurlHook implements LibraryHook
      */
     public static function curlExec($curlHandle)
     {
-        $request = self::$requests[(int) $curlHandle];
-        CurlHelper::validateCurlPOSTBody($request, $curlHandle);
+        try {
+            $request = self::$requests[(int) $curlHandle];
+            CurlHelper::validateCurlPOSTBody($request, $curlHandle);
 
-        $requestCallback = self::$requestCallback;
-        self::$responses[(int) $curlHandle] = $requestCallback($request);
+            $requestCallback = self::$requestCallback;
+            self::$responses[(int) $curlHandle] = $requestCallback($request);
 
-        return CurlHelper::handleOutput(
-            self::$responses[(int) $curlHandle],
-            self::$curlOptions[(int) $curlHandle],
-            $curlHandle
-        );
+            return CurlHelper::handleOutput(
+                self::$responses[(int) $curlHandle],
+                self::$curlOptions[(int) $curlHandle],
+                $curlHandle
+            );
+        } catch (CurlException $e) {
+            self::$lastErrors[(int) $curlHandle] = $e;
+            return false;
+        }
     }
 
     /**
@@ -296,10 +307,16 @@ class CurlHook implements LibraryHook
      */
     public static function curlGetinfo($curlHandle, $option = 0)
     {
-        return CurlHelper::getCurlOptionFromResponse(
-            self::$responses[(int) $curlHandle],
-            $option
-        );
+        if (isset(self::$responses[(int) $curlHandle])) {
+            return CurlHelper::getCurlOptionFromResponse(
+                self::$responses[(int) $curlHandle],
+                $option
+            );
+        } elseif (isset(self::$lastErrors[(int) $curlHandle])) {
+            return self::$lastErrors[(int) $curlHandle]->getInfo();
+        } else {
+            throw new \RuntimeException('Unexpected error, could not find curl_getinfo in response or errors');
+        }
     }
 
     /**
@@ -335,5 +352,40 @@ class CurlHook implements LibraryHook
                 static::curlSetopt($curlHandle, $option, $value);
             }
         }
+    }
+
+    /**
+     * Return a string containing the last error for the current session
+     *
+     * @link https://php.net/manual/en/function.curl-error.php
+     * @param resource $curlHandle
+     *
+     * @return string the error message or '' (the empty string) if no
+     * error occurred.
+     */
+    public static function curlError($curlHandle)
+    {
+        if (isset(self::$lastErrors[(int) $curlHandle])) {
+            return self::$lastErrors[(int) $curlHandle]->getMessage();
+        }
+        return '';
+    }
+
+    /**
+     * Return the last error number
+     *
+     * @link https://php.net/manual/en/function.curl-errno.php
+     *
+     * @param resource $curlHandle
+     *
+     * @return int the error number or 0 (zero) if no error
+     * occurred.
+     */
+    public static function curlErrno($curlHandle)
+    {
+        if (isset(self::$lastErrors[(int) $curlHandle])) {
+            return self::$lastErrors[(int) $curlHandle]->getCode();
+        }
+        return 0;
     }
 }
