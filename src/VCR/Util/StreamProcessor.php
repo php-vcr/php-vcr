@@ -496,8 +496,9 @@ class StreamProcessor
                 return stream_set_write_buffer($this->resource, $arg1);
             case STREAM_OPTION_READ_BUFFER:
                 return stream_set_read_buffer($this->resource, $arg1);
-            case STREAM_OPTION_CHUNK_SIZE:
-                return stream_set_chunk_size($this->resource, $arg1);
+            // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
+            /*case STREAM_OPTION_CHUNK_SIZE:
+                return stream_set_chunk_size($this->resource, $arg1);*/
         }
     }
 
