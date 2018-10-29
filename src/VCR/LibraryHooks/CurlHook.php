@@ -132,7 +132,7 @@ class CurlHook implements LibraryHook
     /**
      * Calls the intercepted curl method if library hook is disabled, otherwise the real one.
      *
-     * @param string $method cURL method to call, example: curl_info()
+     * @param callable&string $method cURL method to call, example: curl_info()
      * @param array  $args   cURL arguments for this function.
      *
      * @return mixed  cURL function return type.
@@ -166,13 +166,15 @@ class CurlHook implements LibraryHook
      * @link http://www.php.net/manual/en/function.curl-init.php
      * @param string $url (Optional) url.
      *
-     * @return resource cURL handle.
+     * @return resource|false cURL handle.
      */
     public static function curlInit($url = null)
     {
         $curlHandle = \curl_init($url);
-        self::$requests[(int) $curlHandle] = new Request('GET', $url);
-        self::$curlOptions[(int) $curlHandle] = array();
+        if ($curlHandle !== false) {
+            self::$requests[(int) $curlHandle] = new Request('GET', $url);
+            self::$curlOptions[(int) $curlHandle] = array();
+        }
 
         return $curlHandle;
     }

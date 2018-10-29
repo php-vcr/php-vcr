@@ -38,7 +38,7 @@ class StreamProcessor
     protected static $codeTransformers = array();
 
     /**
-     * @var resource Resource for the currently opened file.
+     * @var resource|false Resource for the currently opened file.
      */
     protected $resource;
 
@@ -236,8 +236,8 @@ class StreamProcessor
      * @link http://www.php.net/manual/en/streamwrapper.stream-read.php
      * @param  int $count How many bytes of data from the current position should be returned.
      *
-     * @return string If there are less than count bytes available, return as many as are available.
-     *                If no more data is available, return either FALSE or an empty string.
+     * @return string|false If there are less than count bytes available, return as many as are available.
+     *                      If no more data is available, return either FALSE or an empty string.
      */
     public function stream_read($count)
     {
@@ -264,7 +264,7 @@ class StreamProcessor
      *
      * @link http://www.php.net/manual/en/streamwrapper.stream-stat.php
      *
-     * @return array See stat().
+     * @return array<int|string, int>|false See stat().
      */
     public function stream_stat()
     {
@@ -278,7 +278,7 @@ class StreamProcessor
      *
      * @link http://www.php.net/manual/en/streamwrapper.stream-tell.php
      *
-     * @return integer Should return the current position of the stream.
+     * @return integer|false Should return the current position of the stream.
      */
     public function stream_tell()
     {
@@ -451,7 +451,7 @@ class StreamProcessor
      *
      * @param  integer $cast_as Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or
      *                          STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
-     * @return resource         Should return the underlying stream resource used by the wrapper, or FALSE.
+     * @return resource|false   Should return the underlying stream resource used by the wrapper, or FALSE.
      */
     public function stream_cast($cast_as)
     {
@@ -513,7 +513,7 @@ class StreamProcessor
      *
      * @param  string $data Should be stored into the underlying stream.
      *
-     * @return int
+     * @return int|false
      */
     public function stream_write($data)
     {

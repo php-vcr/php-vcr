@@ -14,7 +14,7 @@ class HttpClientTest extends TestCase
         // Request on a closed port
         $request = new Request('GET', 'http://localhost:9934');
 
-        $this->setExpectedException('VCR\\Util\\CurlException');
+        $this->expectException(CurlException::class);
         $httpClient->send($request);
     }
 }
