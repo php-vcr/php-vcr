@@ -2,6 +2,9 @@
 
 namespace VCR;
 
+use function sprintf;
+use VCR\Exceptions\InvalidHostException;
+
 /**
  * Encapsulates a HTTP request.
  */
@@ -20,7 +23,7 @@ class Request
      */
     protected $headers = array();
     /**
-     * @var string
+     * @var string|null
      */
     protected $body;
     /**
@@ -127,18 +130,18 @@ class Request
     }
 
     /**
-     * @param string $url
+     * @param string|null $url
      */
     public function setUrl($url)
     {
         $this->url = $url;
-        if ($this->hasHeader('Host') === false || $this->getHeader('Host') === null) {
+        if ($url !== null && $this->hasHeader('Host') === false) {
             $this->setHeader('Host', $this->getHost());
         }
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getBody()
     {
@@ -214,6 +217,10 @@ class Request
     {
         $host = parse_url($this->getUrl(), PHP_URL_HOST);
 
+        if ($host === null) {
+            throw InvalidHostException::create($this->getUrl());
+        }
+
         if ($port = parse_url($this->getUrl(), PHP_URL_PORT)) {
             $host .= ':' . $port;
         }
@@ -285,7 +292,7 @@ class Request
     }
 
     /**
-     * @param string $body
+     * @param string|null $body
      */
     public function setBody($body)
     {
@@ -315,7 +322,7 @@ class Request
      * @param string $key
      * @param string $value
      */
-    public function setHeader($key, $value)
+    public function setHeader(string $key, string $value)
     {
         $this->headers[$key] = $value;
     }
