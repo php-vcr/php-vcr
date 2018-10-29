@@ -45,7 +45,7 @@ cache:
   directories:
     - vendor
     - tests/integration/guzzle/3/vendor
-    - tests/integration/guzzle/4/vendor
+#    - tests/integration/guzzle/4/vendor
     - tests/integration/guzzle/5/vendor
     - tests/integration/guzzle/6/vendor
     - tests/integration/soap/vendor

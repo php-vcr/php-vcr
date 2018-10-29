@@ -6,12 +6,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 use VCR\Util\CurlException;
 
 /**
  * Tests behaviour when an error occurs.
  */
-class ErrorTest extends \PHPUnit_Framework_TestCase
+class ErrorTest extends TestCase
 {
     const TEST_GET_URL = 'http://localhost:9959';
 
