@@ -22,6 +22,9 @@ class HttpClient
     public function send(Request $request)
     {
         $ch = curl_init($request->getUrl());
+
+        Assertion::isResource($ch, "Could not init curl with URL '{$request->getUrl()}'");
+
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
         curl_setopt($ch, CURLOPT_HTTPHEADER, HttpUtil::formatHeadersForCurl($request->getHeaders()));
         if (!is_null($request->getBody())) {
