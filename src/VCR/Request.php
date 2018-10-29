@@ -253,7 +253,7 @@ class Request
     }
 
     /**
-     * @param string $key
+     * @param int $key
      * @return mixed
      */
     public function getCurlOption($key)
@@ -345,7 +345,7 @@ class Request
     }
 
     /**
-     * @param string $key
+     * @param int $key
      * @param mixed $value
      */
     public function setCurlOption($key, $value)

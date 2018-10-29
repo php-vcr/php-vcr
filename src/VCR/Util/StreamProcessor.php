@@ -179,9 +179,9 @@ class StreamProcessor
         $this->restore();
 
         if (isset($this->context)) {
-            $this->resource = fopen($path, $mode, $options & STREAM_USE_PATH, $this->context);
+            $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH), $this->context);
         } else {
-            $this->resource = fopen($path, $mode, $options & STREAM_USE_PATH);
+            $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH));
         }
 
         if ($options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
@@ -390,9 +390,9 @@ class StreamProcessor
     {
         $this->restore();
         if (isset($this->context)) {
-            $result = mkdir($path, $mode, $options, $this->context);
+            $result = mkdir($path, $mode, (bool) ($options &  STREAM_MKDIR_RECURSIVE), $this->context);
         } else {
-            $result = mkdir($path, $mode, $options);
+            $result = mkdir($path, $mode, (bool) ($options &  STREAM_MKDIR_RECURSIVE));
         }
         $this->intercept();
 
@@ -489,7 +489,7 @@ class StreamProcessor
     {
         switch ($option) {
             case STREAM_OPTION_BLOCKING:
-                return stream_set_blocking($this->resource, $arg1);
+                return stream_set_blocking($this->resource, (bool) $arg1);
             case STREAM_OPTION_READ_TIMEOUT:
                 return stream_set_timeout($this->resource, $arg1, $arg2);
             case STREAM_OPTION_WRITE_BUFFER:
