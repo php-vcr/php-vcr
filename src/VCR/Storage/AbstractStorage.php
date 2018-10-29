@@ -24,7 +24,7 @@ abstract class AbstractStorage implements Storage
     protected $filePath;
 
     /**
-     * @var array Current parsed record.
+     * @var array|null Current parsed record.
      */
     protected $current;
 

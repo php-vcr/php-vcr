@@ -25,7 +25,7 @@ class Configuration
      * A value of null means all hooks are enabled.
      *
      * @see \VCR\LibraryHooks\LibraryHook
-     * @var array List of enabled LibraryHook names.
+     * @var array|null List of enabled LibraryHook names.
      */
     private $enabledLibraryHooks;
 
@@ -207,7 +207,7 @@ class Configuration
      */
     public function getLibraryHooks()
     {
-        if (is_null($this->enabledLibraryHooks)) {
+        if ($this->enabledLibraryHooks === null) {
             return array_values($this->availableLibraryHooks);
         }
 
@@ -255,7 +255,7 @@ class Configuration
      */
     public function getRequestMatchers()
     {
-        if (is_null($this->enabledRequestMatchers)) {
+        if ($this->enabledRequestMatchers === null) {
             return array_values($this->availableRequestMatchers);
         }
 

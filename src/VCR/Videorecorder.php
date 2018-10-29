@@ -55,7 +55,7 @@ class Videorecorder
     protected $isOn = false;
 
     /**
-     * @var EventDispatcherInterface
+     * @var EventDispatcherInterface|null
      */
     protected $eventDispatcher;
 
