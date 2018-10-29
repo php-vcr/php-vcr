@@ -3,5 +3,7 @@ parameters:
         - "#Call to an undefined static method SoapClient::__construct\\(\\)#"
         - "#Access to an undefined property object::\\$data\\.#"
         - "#Access to an undefined property object::\\$datalen\\.#"
+        # Cast to string is necessary to work around a PHP bug. See SoapClient::__doRequest
+        - "#Casting to string something that's already string\\.#"
 #includes:
 #    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon

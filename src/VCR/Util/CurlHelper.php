@@ -168,7 +168,7 @@ class CurlHelper
                     $headerParts = explode(': ', $header, 2);
                     if (!isset($headerParts[1])) {
                         $headerParts[0] = rtrim($headerParts[0], ':');
-                        $headerParts[1] = null;
+                        $headerParts[1] = '';
                     }
                     $request->setHeader($headerParts[0], $headerParts[1]);
                 }

@@ -41,7 +41,7 @@ class Request
 
     /**
      * @param string $method
-     * @param string $url
+     * @param string|null $url
      * @param array $headers
      */
     public function __construct($method, $url, array $headers = array())

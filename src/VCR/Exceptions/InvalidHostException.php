@@ -1,6 +1,5 @@
 <?php
 
-
 namespace VCR\Exceptions;
 
 use InvalidArgumentException;
