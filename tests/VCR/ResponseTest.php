@@ -2,10 +2,12 @@
 
 namespace VCR;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test VCRs response object.
  */
-class ResponseTest extends \PHPUnit_Framework_TestCase
+class ResponseTest extends TestCase
 {
     public function testGetHeaders()
     {
@@ -45,13 +47,13 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 
         $response = Response::fromArray(array('body' => $expectedBody));
 
-        $this->assertEquals($expectedBody, $response->getBody(true));
+        $this->assertEquals($expectedBody, $response->getBody());
     }
 
     public function testGetBodyNoneDefined()
     {
         $response = Response::fromArray(array());
-        $this->assertNull($response->getBody(true));
+        $this->assertEmpty($response->getBody());
     }
 
     public function testRestoreBodyFromArray()
@@ -60,7 +62,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $response = new Response(200, array(), $body);
         $restoredResponse = Response::fromArray($response->toArray());
 
-        $this->assertEquals($body, $restoredResponse->getBody(true));
+        $this->assertEquals($body, $restoredResponse->getBody());
     }
 
     public function testBase64EncodeCompressedBody()
@@ -81,7 +83,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         );
         $response = Response::fromArray($responseArray);
 
-        $this->assertEquals($body, $response->getBody(true));
+        $this->assertEquals($body, $response->getBody());
     }
 
     public function testRestoreCompressedBody()
@@ -90,7 +92,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $response = new Response(200, array('Content-Type' => 'application/x-gzip'), $body);
         $restoredResponse = Response::fromArray($response->toArray());
 
-        $this->assertEquals($body, $restoredResponse->getBody(true));
+        $this->assertEquals($body, $restoredResponse->getBody());
     }
 
     public function testGetStatus()

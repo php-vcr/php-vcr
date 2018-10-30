@@ -2,6 +2,10 @@
 
 namespace VCR;
 
+use Assert\Assertion;
+use function sprintf;
+use VCR\Exceptions\InvalidHostException;
+
 /**
  * Encapsulates a HTTP request.
  */
@@ -12,15 +16,15 @@ class Request
      */
     protected $method;
     /**
-     * @var string
+     * @var string|null
      */
     protected $url;
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $headers = array();
     /**
-     * @var string
+     * @var string|null
      */
     protected $body;
     /**
@@ -38,7 +42,7 @@ class Request
 
     /**
      * @param string $method
-     * @param string $url
+     * @param string|null $url
      * @param array $headers
      */
     public function __construct($method, $url, array $headers = array())
@@ -53,7 +57,7 @@ class Request
      * with specified request matcher callbacks.
      *
      * @param  Request $request Request to check if it matches the current one.
-     * @param  \callable[] $requestMatchers Request matcher callbacks.
+     * @param  callable[] $requestMatchers Request matcher callbacks.
      *
      * @throws \BadFunctionCallException If one of the specified request matchers is not callable.
      * @return boolean True if specified request matches the current one.
@@ -127,18 +131,18 @@ class Request
     }
 
     /**
-     * @param string $url
+     * @param string|null $url
      */
     public function setUrl($url)
     {
         $this->url = $url;
-        if ($this->hasHeader('Host') === false || $this->getHeader('Host') === null) {
+        if ($url !== null && $this->hasHeader('Host') === false) {
             $this->setHeader('Host', $this->getHost());
         }
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getBody()
     {
@@ -158,7 +162,7 @@ class Request
     }
 
     /**
-     * @return array
+     * @return array<string,string>
      */
     public function getHeaders()
     {
@@ -166,8 +170,8 @@ class Request
     }
 
     /**
-     * @param $key
-     * @return mixed
+     * @param string $key
+     * @return string
      */
     public function getHeader($key)
     {
@@ -175,7 +179,7 @@ class Request
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @return boolean
      */
     public function hasHeader($key)
@@ -200,7 +204,7 @@ class Request
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -208,13 +212,20 @@ class Request
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getHost()
     {
-        $host = parse_url($this->getUrl(), PHP_URL_HOST);
+        $url = $this->getUrl();
+        Assertion::string($url);
 
-        if ($port = parse_url($this->getUrl(), PHP_URL_PORT)) {
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if ($host === null) {
+            throw InvalidHostException::create($this->getUrl());
+        }
+
+        if ($port = parse_url($url, PHP_URL_PORT)) {
             $host .= ':' . $port;
         }
 
@@ -222,19 +233,23 @@ class Request
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPath()
     {
-        return parse_url($this->getUrl(), PHP_URL_PATH);
+        $url = $this->getUrl();
+        Assertion::string($url);
+        return parse_url($url, PHP_URL_PATH);
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getQuery()
     {
-        return parse_url($this->getUrl(), PHP_URL_QUERY);
+        $url = $this->getUrl();
+        Assertion::string($url);
+        return parse_url($url, PHP_URL_QUERY);
     }
 
     /**
@@ -246,7 +261,7 @@ class Request
     }
 
     /**
-     * @param $key
+     * @param int $key
      * @return mixed
      */
     public function getCurlOption($key)
@@ -285,7 +300,7 @@ class Request
     }
 
     /**
-     * @param string $body
+     * @param string|null $body
      */
     public function setBody($body)
     {
@@ -312,16 +327,16 @@ class Request
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param string $value
      */
-    public function setHeader($key, $value)
+    public function setHeader(string $key, string $value)
     {
         $this->headers[$key] = $value;
     }
 
     /**
-     * @param $key
+     * @param string $key
      */
     public function removeHeader($key)
     {
@@ -329,8 +344,8 @@ class Request
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      */
     public function setPostField($key, $value)
     {
@@ -338,8 +353,8 @@ class Request
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param int $key
+     * @param mixed $value
      */
     public function setCurlOption($key, $value)
     {

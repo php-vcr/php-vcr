@@ -6,7 +6,7 @@
 >
 
     <testsuites>
-        <testsuite>
+        <testsuite name="Soap test suite">
             <directory>./test</directory>
         </testsuite>
     </testsuites>

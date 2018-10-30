@@ -45,7 +45,7 @@ class Videorecorder
     protected $factory;
 
     /**
-     * @var Cassette Cassette on which to store requests and responses.
+     * @var Cassette|null Cassette on which to store requests and responses.
      */
     protected $cassette;
 
@@ -55,7 +55,7 @@ class Videorecorder
     protected $isOn = false;
 
     /**
-     * @var EventDispatcherInterface
+     * @var EventDispatcherInterface|null
      */
     protected $eventDispatcher;
 
@@ -248,12 +248,20 @@ class Videorecorder
 
         $this->disableLibraryHooks();
 
-        $this->dispatch(VCREvents::VCR_BEFORE_HTTP_REQUEST, new BeforeHttpRequestEvent($request));
-        $response = $this->client->send($request);
-        $this->dispatch(VCREvents::VCR_AFTER_HTTP_REQUEST, new AfterHttpRequestEvent($request, $response));
+        try {
+            $this->dispatch(VCREvents::VCR_BEFORE_HTTP_REQUEST, new BeforeHttpRequestEvent($request));
+            $response = $this->client->send($request);
+            $this->dispatch(VCREvents::VCR_AFTER_HTTP_REQUEST, new AfterHttpRequestEvent($request, $response));
 
-        $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
-        $this->cassette->record($request, $response);
+            $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
+            $this->cassette->record($request, $response);
+        } catch (\Exception $e) {
+            $this->enableLibraryHooks();
+            throw $e;
+        } catch (\Throwable $e) {
+            $this->enableLibraryHooks();
+            throw $e;
+        }
         $this->enableLibraryHooks();
 
         return $response;

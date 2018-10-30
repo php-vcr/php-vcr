@@ -38,7 +38,7 @@ class StreamProcessor
     protected static $codeTransformers = array();
 
     /**
-     * @var resource Resource for the currently opened file.
+     * @var resource|false Resource for the currently opened file.
      */
     protected $resource;
 
@@ -179,9 +179,9 @@ class StreamProcessor
         $this->restore();
 
         if (isset($this->context)) {
-            $this->resource = fopen($path, $mode, $options & STREAM_USE_PATH, $this->context);
+            $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH), $this->context);
         } else {
-            $this->resource = fopen($path, $mode, $options & STREAM_USE_PATH);
+            $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH));
         }
 
         if ($options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
@@ -236,8 +236,8 @@ class StreamProcessor
      * @link http://www.php.net/manual/en/streamwrapper.stream-read.php
      * @param  int $count How many bytes of data from the current position should be returned.
      *
-     * @return string If there are less than count bytes available, return as many as are available.
-     *                If no more data is available, return either FALSE or an empty string.
+     * @return string|false If there are less than count bytes available, return as many as are available.
+     *                      If no more data is available, return either FALSE or an empty string.
      */
     public function stream_read($count)
     {
@@ -264,7 +264,7 @@ class StreamProcessor
      *
      * @link http://www.php.net/manual/en/streamwrapper.stream-stat.php
      *
-     * @return array See stat().
+     * @return array<int|string, int>|false See stat().
      */
     public function stream_stat()
     {
@@ -278,7 +278,7 @@ class StreamProcessor
      *
      * @link http://www.php.net/manual/en/streamwrapper.stream-tell.php
      *
-     * @return integer Should return the current position of the stream.
+     * @return integer|false Should return the current position of the stream.
      */
     public function stream_tell()
     {
@@ -293,7 +293,7 @@ class StreamProcessor
      * @param  string  $path  The file path or URL to stat.
      * @param  integer $flags Holds additional flags set by the streams API.
      *
-     * @return integer        Should return as many elements as stat() does.
+     * @return array<int|string, int>|false Should return as many elements as stat() does.
      */
     public function url_stat($path, $flags)
     {
@@ -390,9 +390,9 @@ class StreamProcessor
     {
         $this->restore();
         if (isset($this->context)) {
-            $result = mkdir($path, $mode, $options, $this->context);
+            $result = mkdir($path, $mode, (bool) ($options &  STREAM_MKDIR_RECURSIVE), $this->context);
         } else {
-            $result = mkdir($path, $mode, $options);
+            $result = mkdir($path, $mode, (bool) ($options &  STREAM_MKDIR_RECURSIVE));
         }
         $this->intercept();
 
@@ -451,7 +451,7 @@ class StreamProcessor
      *
      * @param  integer $cast_as Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or
      *                          STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
-     * @return resource         Should return the underlying stream resource used by the wrapper, or FALSE.
+     * @return resource|false   Should return the underlying stream resource used by the wrapper, or FALSE.
      */
     public function stream_cast($cast_as)
     {
@@ -489,16 +489,20 @@ class StreamProcessor
     {
         switch ($option) {
             case STREAM_OPTION_BLOCKING:
-                return stream_set_blocking($this->resource, $arg1);
+                return stream_set_blocking($this->resource, (bool) $arg1);
             case STREAM_OPTION_READ_TIMEOUT:
                 return stream_set_timeout($this->resource, $arg1, $arg2);
             case STREAM_OPTION_WRITE_BUFFER:
-                return stream_set_write_buffer($this->resource, $arg1);
+                // stream_set_write_buffer returns 0 in case of success
+                return stream_set_write_buffer($this->resource, $arg1) === 0;
             case STREAM_OPTION_READ_BUFFER:
-                return stream_set_read_buffer($this->resource, $arg1);
-            case STREAM_OPTION_CHUNK_SIZE:
-                return stream_set_chunk_size($this->resource, $arg1);
+                // stream_set_read_buffer returns 0 in case of success
+                return stream_set_read_buffer($this->resource, $arg1) === 0;
+            // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
+            /*case STREAM_OPTION_CHUNK_SIZE:
+                return stream_set_chunk_size($this->resource, $arg1);*/
         }
+        return false;
     }
 
     /**
@@ -509,7 +513,7 @@ class StreamProcessor
      *
      * @param  string $data Should be stored into the underlying stream.
      *
-     * @return int
+     * @return int|false
      */
     public function stream_write($data)
     {
@@ -551,7 +555,7 @@ class StreamProcessor
     public function stream_metadata($path, $option, $value)
     {
         $this->restore();
-        $result = null;
+        $result = false;
 
         switch ($option) {
             case STREAM_META_TOUCH:

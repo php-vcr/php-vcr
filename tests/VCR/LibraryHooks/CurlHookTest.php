@@ -2,6 +2,7 @@
 
 namespace VCR\LibraryHooks;
 
+use PHPUnit\Framework\TestCase;
 use VCR\Request;
 use VCR\Response;
 use VCR\Configuration;
@@ -11,7 +12,7 @@ use VCR\Util\StreamProcessor;
 /**
  * Test if intercepting http/https using curl works.
  */
-class CurlHookTest extends \PHPUnit_Framework_TestCase
+class CurlHookTest extends TestCase
 {
     public $expected = 'example response body';
     /**
@@ -71,10 +72,10 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldNotInterceptCallWhenDisabled()
     {
-        $testClass = $this;
+        $intercepted = false;
         $this->curlHook->enable(
-            function () use ($testClass) {
-                $testClass->fail('This request should not have been intercepted.');
+            function () use (&$intercepted) {
+                $intercepted = true;
             }
         );
         $this->curlHook->disable();
@@ -84,6 +85,7 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
         curl_close($curlHandle);
+        $this->assertFalse($intercepted, 'This request should not have been intercepted.');
     }
 
     public function testShouldWriteFileOnFileDownload()
@@ -250,12 +252,18 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $this->curlHook->disable();
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldNotThrowErrorWhenDisabledTwice()
     {
         $this->curlHook->disable();
         $this->curlHook->disable();
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldNotThrowErrorWhenEnabledTwice()
     {
         $this->curlHook->enable($this->getTestCallback());
@@ -314,6 +322,9 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($afterLastInfo, 'Multi info called the last time should return false.');
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testShouldNotInterceptMultiCallWhenDisabled()
     {
         $testClass = $this;

@@ -3,20 +3,24 @@
 namespace VCR\CodeTransform;
 
 use lapistano\ProxyObject\ProxyBuilder;
+use PHPUnit\Framework\TestCase;
 
-class CurlCodeTransformTest extends \PHPUnit_Framework_TestCase
+class CurlCodeTransformTest extends TestCase
 {
     /**
      * @dataProvider codeSnippetProvider
      */
     public function testTransformCode($expected, $code)
     {
-        $proxy = new ProxyBuilder('\VCR\CodeTransform\CurlCodeTransform');
-        $filter = $proxy
-            ->setMethods(array('transformCode'))
-            ->getProxy();
+        $codeTransform = new class extends CurlCodeTransform {
+            // A proxy to access the protected transformCode method.
+            public function publicTransformCode(string $code): string
+            {
+                return $this->transformCode($code);
+            }
+        };
 
-        $this->assertEquals($expected, $filter->transformCode($code));
+        $this->assertEquals($expected, $codeTransform->publicTransformCode($code));
     }
 
     public function codeSnippetProvider()

@@ -5,6 +5,7 @@ namespace VCR\LibraryHooks;
 use VCR\Request;
 use VCR\Response;
 use VCR\Util\Assertion;
+use VCR\Util\CurlException;
 use VCR\Util\HttpUtil;
 use VCR\Util\StreamHelper;
 
@@ -14,7 +15,7 @@ use VCR\Util\StreamHelper;
 class StreamWrapperHook implements LibraryHook
 {
     /**
-     * @var \Closure Callback which will be executed when a request is intercepted.
+     * @var \Closure|null Callback which will be executed when a request is intercepted.
      */
     protected static $requestCallback;
 
@@ -90,9 +91,13 @@ class StreamWrapperHook implements LibraryHook
         $request = StreamHelper::createRequestFromStreamContext($this->context, $path);
 
         $requestCallback = self::$requestCallback;
-        $this->response = $requestCallback($request);
-
-        return true;
+        Assertion::isCallable($requestCallback);
+        try {
+            $this->response = $requestCallback($request);
+            return true;
+        } catch (CurlException $e) {
+            return false;
+        }
     }
 
     /**

@@ -24,7 +24,7 @@ abstract class AbstractStorage implements Storage
     protected $filePath;
 
     /**
-     * @var array Current parsed record.
+     * @var array|null Current parsed record.
      */
     protected $current;
 
@@ -76,13 +76,17 @@ abstract class AbstractStorage implements Storage
         Assertion::file($this->filePath, "Specified path '{$this->filePath}' is not a file.");
         Assertion::readable($this->filePath, "Specified file '{$this->filePath}' must be readable.");
 
-        $this->handle = fopen($this->filePath, 'r+');
+        $handle = fopen($this->filePath, 'r+');
+
+        Assertion::isResource($handle);
+
+        $this->handle = $handle;
     }
 
     /**
      * Returns the current record.
      *
-     * @return array Parsed current record.
+     * @return array|null Parsed current record.
      */
     public function current()
     {

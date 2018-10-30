@@ -9,10 +9,10 @@ class HttpUtil
     /**
      * Returns key value pairs of response headers.
      *
-     * @param array $headers List of headers. Example: ['Content-Type: text/html', '...']
-     * @return array Key/value pairs of headers, e.g. ['Content-Type' => 'text/html']
+     * @param string[] $headers List of headers. Example: ['Content-Type: text/html', '...']
+     * @return array<string,string> Key/value pairs of headers, e.g. ['Content-Type' => 'text/html']
      */
-    public static function parseHeaders(array $headers)
+    public static function parseHeaders(array $headers): array
     {
         $headerGroups = array();
         $headerList = array();
@@ -79,7 +79,7 @@ class HttpUtil
     /**
      * Returns an array of arrays for specified raw header string.
      *
-     * @param string $header
+     * @param string $rawHeader
      * @return array
      */
     public static function parseRawHeader($rawHeader)
