@@ -39,7 +39,7 @@ class TestStorage extends AbstractStorage
 {
     private $recording;
 
-    public function storeRecording(array $recording)
+    public function storeRecording(array $recording): void
     {
         $this->recording = $recording;
     }

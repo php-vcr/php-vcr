@@ -97,12 +97,6 @@ class ConfigurationTest extends TestCase
         $this->config->addRequestMatcher('', $expected);
     }
 
-    public function testAddRequestMatcherFailsWithWrongCallback()
-    {
-        $this->expectException('VCR\VCRException', "Request matcher 'example' is not callable.");
-        $this->config->addRequestMatcher('example', array());
-    }
-
     public function testAddRequestMatchers()
     {
         $expected = function () {

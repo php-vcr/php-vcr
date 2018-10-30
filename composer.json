@@ -29,7 +29,8 @@
         "phpunit/phpunit": "^7.4.3",
         "mikey179/vfsStream": "^1.2",
         "phpstan/phpstan": "^0.10.5",
-        "phpstan/phpstan-beberlei-assert": "^0.10.0"
+        "phpstan/phpstan-beberlei-assert": "^0.10.0",
+        "thecodingmachine/phpstan-strict-rules": "^0.10.6"
     },
 
     "autoload": {

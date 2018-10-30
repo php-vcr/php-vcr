@@ -16,5 +16,5 @@ parameters:
         # It turns out that curl_init DOES accept null as first parameter, even if it is not documented.
         - '#Parameter .* $url of function curl_init expects string, string\\|null given.#'
 includes:
-#    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
-	- vendor/phpstan/phpstan-beberlei-assert/extension.neon
+    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
+    - vendor/phpstan/phpstan-beberlei-assert/extension.neon

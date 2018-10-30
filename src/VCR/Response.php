@@ -2,6 +2,7 @@
 
 namespace VCR;
 
+use function var_dump;
 use VCR\Util\Assertion;
 
 /**
@@ -18,7 +19,7 @@ class Response
     );
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $headers = array();
     /**
@@ -26,7 +27,7 @@ class Response
      */
     protected $body;
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $curlInfo = array();
 
@@ -34,11 +35,11 @@ class Response
 
     /**
      * @param string|array $status
-     * @param array $headers
+     * @param array<string,string> $headers
      * @param string|null $body
-     * @param array $curlInfo
+     * @param array<string,mixed> $curlInfo
      */
-    public function __construct($status, array $headers = array(), $body = null, array $curlInfo = array())
+    public function __construct($status, array $headers = array(), ?string $body = null, array $curlInfo = array())
     {
         $this->setStatus($status);
         $this->headers = $headers;
@@ -49,9 +50,9 @@ class Response
     /**
      * Returns an array representation of this Response.
      *
-     * @return array Array representation of this Request.
+     * @return array<string,mixed> Array representation of this Request.
      */
-    public function toArray()
+    public function toArray(): array
     {
         $body = $this->getBody();
         // Base64 encode when binary
@@ -74,10 +75,10 @@ class Response
     /**
      * Creates a new Response from a specified array.
      *
-     * @param  array  $response Array representation of a Response.
+     * @param  array<string,mixed>  $response Array representation of a Response.
      * @return Response A new Response from a specified array
      */
-    public static function fromArray(array $response)
+    public static function fromArray(array $response): Response
     {
         $body = isset($response['body']) ? $response['body'] : null;
 
@@ -103,20 +104,19 @@ class Response
     /**
      * @return string
      */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body ?: '';
     }
 
     /**
-     * @return array|null
+     * @return array<string,mixed>|mixed|null
      */
-    public function getCurlInfo($option = null)
+    public function getCurlInfo(?string $option = null)
     {
         if (empty($option)) {
             return $this->curlInfo;
         }
-
         if (!isset($this->curlInfo[$option])) {
             return null;
         }
@@ -125,9 +125,9 @@ class Response
     }
 
     /**
-     * @return array
+     * @return array<string,string>
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -135,17 +135,17 @@ class Response
     /**
      * @return string
      */
-    public function getStatusCode()
+    public function getStatusCode(): string
     {
         return $this->status['code'];
     }
 
-    public function getContentType()
+    public function getContentType(): ?string
     {
         return $this->getHeader('Content-Type');
     }
 
-    public function getHeader($key)
+    public function getHeader(string $key): ?string
     {
         if (!isset($this->headers[$key])) {
             return null;
@@ -165,7 +165,7 @@ class Response
     /**
      * @return string
      */
-    public function getStatusMessage()
+    public function getStatusMessage(): string
     {
         return $this->status['message'];
     }
@@ -173,7 +173,7 @@ class Response
     /**
      * @param string|array $status
      */
-    protected function setStatus($status)
+    protected function setStatus($status): void
     {
         if (is_array($status)) {
             $this->status = $status;

@@ -19,7 +19,7 @@ class HttpClient
      *
      * @throws CurlException In case of cURL error
      */
-    public function send(Request $request)
+    public function send(Request $request): Response
     {
         $ch = curl_init($request->getUrl());
 

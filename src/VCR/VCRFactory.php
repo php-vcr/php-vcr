@@ -2,6 +2,11 @@
 
 namespace VCR;
 
+use VCR\LibraryHooks\CurlHook;
+use VCR\LibraryHooks\SoapHook;
+use VCR\Storage\AbstractStorage;
+use VCR\Util\StreamProcessor;
+
 class VCRFactory
 {
     /**
@@ -18,7 +23,7 @@ class VCRFactory
      *
      * @param Configuration $config
      */
-    protected function __construct($config = null)
+    protected function __construct(Configuration $config = null)
     {
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
     }
@@ -26,7 +31,7 @@ class VCRFactory
     /**
      * @return Videorecorder
      */
-    protected function createVCRVideorecorder()
+    protected function createVCRVideorecorder(): Videorecorder
     {
         return new Videorecorder(
             $this->config,
@@ -38,14 +43,14 @@ class VCRFactory
     /**
      * Provides an instance of the StreamProcessor.
      *
-     * @return \VCR\Util\StreamProcessor
+     * @return StreamProcessor
      */
-    protected function createVCRUtilStreamProcessor()
+    protected function createVCRUtilStreamProcessor(): StreamProcessor
     {
-        return new Util\StreamProcessor($this->config);
+        return new StreamProcessor($this->config);
     }
 
-    protected function createStorage($cassetteName)
+    protected function createStorage(string $cassetteName): AbstractStorage
     {
         $dsn = $this->config->getCassettePath();
         $class = $this->config->getStorage();
@@ -53,7 +58,7 @@ class VCRFactory
         return new $class($dsn, $cassetteName);
     }
 
-    protected function createVCRLibraryHooksSoapHook()
+    protected function createVCRLibraryHooksSoapHook(): SoapHook
     {
         return new LibraryHooks\SoapHook(
             $this->getOrCreate('VCR\CodeTransform\SoapCodeTransform'),
@@ -61,7 +66,7 @@ class VCRFactory
         );
     }
 
-    protected function createVCRLibraryHooksCurlHook()
+    protected function createVCRLibraryHooksCurlHook(): CurlHook
     {
         return new LibraryHooks\CurlHook(
             $this->getOrCreate('VCR\CodeTransform\CurlCodeTransform'),
@@ -76,7 +81,7 @@ class VCRFactory
      *
      * @return VCRFactory
      */
-    public static function getInstance(Configuration $config = null)
+    public static function getInstance(Configuration $config = null): self
     {
         if (!self::$instance) {
             self::$instance = new self($config);
@@ -89,11 +94,11 @@ class VCRFactory
      * Returns an instance for specified class name and parameters.
      *
      * @param string $className Class name to get a instance for.
-     * @param array $params Constructor arguments for this class.
+     * @param mixed[] $params Constructor arguments for this class.
      *
      * @return mixed An instance for specified class name and parameters.
      */
-    public static function get($className, $params = array())
+    public static function get(string $className, array $params = array())
     {
         return self::getInstance()->getOrCreate($className, $params);
     }
@@ -102,11 +107,11 @@ class VCRFactory
      * Returns an instance for specified classname and parameters.
      *
      * @param string $className Class name to get a instance for.
-     * @param array $params Constructor arguments for this class.
+     * @param mixed[] $params Constructor arguments for this class.
      *
      * @return mixed
      */
-    public function getOrCreate($className, $params = array())
+    public function getOrCreate(string $className, array $params = array())
     {
         $key = $className . join('-', $params);
 
@@ -135,7 +140,7 @@ class VCRFactory
      *
      * @return string
      */
-    protected function getMethodName($className)
+    protected function getMethodName(string $className): string
     {
         return 'create' . str_replace('\\', '', $className);
     }

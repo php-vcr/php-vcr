@@ -61,12 +61,11 @@ class SoapHook implements LibraryHook
      * @param string $action
      * @param integer $version
      * @param int $one_way
-     *
-     * @throws \VCR\VCRException It this method is called although VCR is disabled.
+     * @param array<string,mixed> $options
      *
      * @return string SOAP response.
      */
-    public function doRequest($request, $location, $action, $version, $one_way = 0, $options = array())
+    public function doRequest(string $request, string $location, string $action, int $version, int $one_way = 0, array $options = array()): string
     {
         if ($this->status === self::DISABLED) {
             throw new VCRException('Hook must be enabled.', VCRException::LIBRARY_HOOK_DISABLED);
@@ -101,7 +100,7 @@ class SoapHook implements LibraryHook
     /**
      * @inheritDoc
      */
-    public function enable(\Closure $requestCallback)
+    public function enable(\Closure $requestCallback): void
     {
         Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
         self::$requestCallback = $requestCallback;
@@ -120,7 +119,7 @@ class SoapHook implements LibraryHook
     /**
      * @inheritDoc
      */
-    public function disable()
+    public function disable(): void
     {
         if (!$this->isEnabled()) {
             return;
@@ -134,7 +133,7 @@ class SoapHook implements LibraryHook
     /**
      * @inheritDoc
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->status == self::ENABLED;
     }
