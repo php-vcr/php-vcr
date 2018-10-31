@@ -2,6 +2,8 @@
 
 namespace VCR\CodeTransform;
 
+use VCR\Util\Assertion;
+
 class CurlCodeTransform extends AbstractCodeTransform
 {
     const NAME = 'vcr_curl';
@@ -24,8 +26,10 @@ class CurlCodeTransform extends AbstractCodeTransform
     /**
      * @inheritdoc
      */
-    protected function transformCode($code)
+    protected function transformCode(string $code): string
     {
-        return preg_replace(array_keys(self::$patterns), array_values(self::$patterns), $code);
+        $transformedCode = preg_replace(array_keys(self::$patterns), array_values(self::$patterns), $code);
+        Assertion::string($transformedCode);
+        return $transformedCode;
     }
 }

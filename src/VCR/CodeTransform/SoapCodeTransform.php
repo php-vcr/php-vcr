@@ -2,6 +2,8 @@
 
 namespace VCR\CodeTransform;
 
+use VCR\Util\Assertion;
+
 class SoapCodeTransform extends AbstractCodeTransform
 {
     const NAME = 'vcr_soap';
@@ -19,8 +21,10 @@ class SoapCodeTransform extends AbstractCodeTransform
     /**
      * @inheritdoc
      */
-    protected function transformCode($code)
+    protected function transformCode(string $code): string
     {
-        return preg_replace(self::$patterns, self::$replacements, $code);
+        $transformedCode = preg_replace(self::$patterns, self::$replacements, $code);
+        Assertion::string($transformedCode);
+        return $transformedCode;
     }
 }

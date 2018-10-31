@@ -42,7 +42,7 @@ class StreamWrapperHook implements LibraryHook
     /**
      * @inheritDoc
      */
-    public function enable(\Closure $requestCallback)
+    public function enable(\Closure $requestCallback): void
     {
         Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
         self::$requestCallback = $requestCallback;
@@ -58,7 +58,7 @@ class StreamWrapperHook implements LibraryHook
     /**
      * @inheritDoc
      */
-    public function disable()
+    public function disable(): void
     {
         self::$requestCallback = null;
         stream_wrapper_restore('http');
@@ -70,7 +70,7 @@ class StreamWrapperHook implements LibraryHook
     /**
      * @inheritDoc
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->status == self::ENABLED;
     }
@@ -86,7 +86,7 @@ class StreamWrapperHook implements LibraryHook
      *
      * @return boolean Returns TRUE on success or FALSE on failure.
      */
-    public function stream_open($path, $mode, $options, &$opened_path)
+    public function stream_open(string $path, string $mode, int $options, ?string &$opened_path): bool
     {
         $request = StreamHelper::createRequestFromStreamContext($this->context, $path);
 
@@ -109,7 +109,7 @@ class StreamWrapperHook implements LibraryHook
      * @return string If there are less than count bytes available, return as many as are available.
      *                If no more data is available, return either FALSE or an empty string.
      */
-    public function stream_read($count)
+    public function stream_read(int $count): string
     {
         $ret = substr($this->response->getBody(), $this->position, $count);
         $this->position += strlen($ret);
@@ -127,7 +127,7 @@ class StreamWrapperHook implements LibraryHook
      *
      * @return int
      */
-    public function stream_write($data)
+    public function stream_write(string $data): int
     {
         throw new \BadMethodCallException('No writing possible');
     }
@@ -141,7 +141,7 @@ class StreamWrapperHook implements LibraryHook
      *
      * @return integer Should return the current position of the stream.
      */
-    public function stream_tell()
+    public function stream_tell(): int
     {
         return $this->position;
     }
@@ -154,7 +154,7 @@ class StreamWrapperHook implements LibraryHook
      * @return boolean Should return TRUE if the read/write position is at the end of the stream
      *                 and if no more data is available to be read, or FALSE otherwise.
      */
-    public function stream_eof()
+    public function stream_eof(): bool
     {
         return $this->position >= strlen($this->response->getBody());
     }
@@ -164,9 +164,9 @@ class StreamWrapperHook implements LibraryHook
      *
      * @link http://www.php.net/manual/en/streamwrapper.stream-stat.php
      *
-     * @return array See stat().
+     * @return array<int|string,int> See stat().
      */
-    public function stream_stat()
+    public function stream_stat(): array
     {
         return array();
     }
@@ -176,10 +176,10 @@ class StreamWrapperHook implements LibraryHook
     *
     * @link http://www.php.net/manual/en/streamwrapper.url-stat.php
     *
-    * @return array See stat().
+    * @return array<int|string,int> See stat().
     */
 
-    public function url_stat($path, $flags)
+    public function url_stat(string $path, int $flags): array
     {
         return array();
     }
@@ -194,7 +194,7 @@ class StreamWrapperHook implements LibraryHook
      *                         SEEK_END - Set position to end-of-file plus offset.
      * @return boolean Return TRUE if the position was updated, FALSE otherwise.
      */
-    public function stream_seek($offset, $whence)
+    public function stream_seek(int $offset, int $whence): bool
     {
         switch ($whence) {
             case SEEK_SET:
@@ -232,7 +232,7 @@ class StreamWrapperHook implements LibraryHook
      *
      * @return boolean Returns TRUE on success or FALSE on failure.
      */
-    public function stream_metadata($path, $option, $var)
+    public function stream_metadata(string $path, int $option, $var): bool
     {
         return false;
     }

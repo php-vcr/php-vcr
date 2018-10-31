@@ -25,7 +25,7 @@ interface LibraryHook
      * @throws \VCR\VCRException When specified callback is not callable.
      * @return void
      */
-    public function enable(\Closure $requestCallback);
+    public function enable(\Closure $requestCallback): void;
 
     /**
      * Disables library hook, so no http interactions of
@@ -33,12 +33,12 @@ interface LibraryHook
      *
      * @return void
      */
-    public function disable();
+    public function disable(): void;
 
     /**
      * Returns true if library hook is enabled, false otherwise.
      *
      * @return boolean True if library hook is enabled, false otherwise.
      */
-    public function isEnabled();
+    public function isEnabled(): bool;
 }

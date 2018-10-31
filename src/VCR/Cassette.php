@@ -38,10 +38,8 @@ class Cassette
      * @param  Storage          $storage Storage to use for requests and responses.
      * @throws \VCR\VCRException If cassette name is in an invalid format.
      */
-    public function __construct($name, Configuration $config, Storage $storage)
+    public function __construct(string $name, Configuration $config, Storage $storage)
     {
-        Assertion::string($name, 'Cassette name must be a string, ' . \gettype($name) . ' given.');
-
         $this->name = $name;
         $this->config = $config;
         $this->storage = $storage;
@@ -54,7 +52,7 @@ class Cassette
      *
      * @return boolean True if a response was recorded for specified request.
      */
-    public function hasResponse(Request $request)
+    public function hasResponse(Request $request): bool
     {
         return $this->playback($request) !== null;
     }
@@ -66,7 +64,7 @@ class Cassette
      *
      * @return Response|null Response for specified request.
      */
-    public function playback(Request $request)
+    public function playback(Request $request): ?Response
     {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
@@ -86,7 +84,7 @@ class Cassette
      *
      * @return void
      */
-    public function record(Request $request, Response $response)
+    public function record(Request $request, Response $response): void
     {
         if ($this->hasResponse($request)) {
             return;
@@ -105,7 +103,7 @@ class Cassette
      *
      * @return string Current cassette name.
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -115,7 +113,7 @@ class Cassette
      *
      * @return boolean
      */
-    public function isNew()
+    public function isNew(): bool
     {
         return $this->storage->isNew();
     }
@@ -123,9 +121,9 @@ class Cassette
     /**
      * Returns a list of callbacks to configured request matchers.
      *
-     * @return array List of callbacks to configured request matchers.
+     * @return callable[] List of callbacks to configured request matchers.
      */
-    protected function getRequestMatchers()
+    protected function getRequestMatchers(): array
     {
         return $this->config->getRequestMatchers();
     }

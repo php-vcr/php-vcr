@@ -15,7 +15,7 @@ class RequestMatcher
      *
      * @return boolean True if the method of both specified requests match.
      */
-    public static function matchMethod(Request $first, Request $second)
+    public static function matchMethod(Request $first, Request $second): bool
     {
         return $first->getMethod() == $second->getMethod();
     }
@@ -28,7 +28,7 @@ class RequestMatcher
      *
      * @return boolean True if the url of both specified requests match.
      */
-    public static function matchUrl(Request $first, Request $second)
+    public static function matchUrl(Request $first, Request $second): bool
     {
         return $first->getPath() === $second->getPath();
     }
@@ -41,7 +41,7 @@ class RequestMatcher
      *
      * @return boolean True if the host of both specified requests match.
      */
-    public static function matchHost(Request $first, Request $second)
+    public static function matchHost(Request $first, Request $second): bool
     {
         return $first->getHost() === $second->getHost();
     }
@@ -54,7 +54,7 @@ class RequestMatcher
      *
      * @return boolean True if the headers of both specified requests match.
      */
-    public static function matchHeaders(Request $first, Request $second)
+    public static function matchHeaders(Request $first, Request $second): bool
     {
         // Use array_filter to ignore headers which are null.
 
@@ -69,7 +69,7 @@ class RequestMatcher
      *
      * @return boolean True if the body of both specified requests match.
      */
-    public static function matchBody(Request $first, Request $second)
+    public static function matchBody(Request $first, Request $second): bool
     {
         return $first->getBody() === $second->getBody();
     }
@@ -82,7 +82,7 @@ class RequestMatcher
      *
      * @return boolean True if the post fields of both specified requests match.
      */
-    public static function matchPostFields(Request $first, Request $second)
+    public static function matchPostFields(Request $first, Request $second): bool
     {
         return $first->getPostFields() === $second->getPostFields();
     }
@@ -95,7 +95,7 @@ class RequestMatcher
      *
      * @return boolean True if the query string of both specified requests match.
      */
-    public static function matchQueryString(Request $first, Request $second)
+    public static function matchQueryString(Request $first, Request $second): bool
     {
         return $first->getQuery() === $second->getQuery();
     }

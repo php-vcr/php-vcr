@@ -33,10 +33,10 @@ class AbstractCodeTransformTest extends TestCase
         $filter = $this->getFilter();
         $filter->register();
 
-        $this->assertAttributeSame(true, 'isRegistered', $filter, 'First attempt to register failed.');
+        $this->assertContains(AbstractCodeTransform::NAME, stream_get_filters(), 'First attempt to register failed.');
 
         $filter->register();
 
-        $this->assertAttributeSame(true, 'isRegistered', $filter, 'Second attempt to register failed.');
+        $this->assertContains(AbstractCodeTransform::NAME, stream_get_filters(), 'Second attempt to register failed.');
     }
 }

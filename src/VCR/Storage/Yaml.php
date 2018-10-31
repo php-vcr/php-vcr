@@ -43,7 +43,7 @@ class Yaml extends AbstractStorage
     /**
      * @inheritDoc
      */
-    public function storeRecording(array $recording)
+    public function storeRecording(array $recording): void
     {
         fseek($this->handle, -1, SEEK_END);
         fwrite($this->handle, "\n" . $this->yamlDumper->dump(array($recording), 4));
@@ -67,7 +67,7 @@ class Yaml extends AbstractStorage
      *
      * @return string Next record in raw format.
      */
-    private function readNextRecord()
+    private function readNextRecord(): string
     {
         if ($this->isEOF) {
             $this->isValidPosition = false;

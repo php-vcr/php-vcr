@@ -58,7 +58,7 @@ abstract class AbstractStorage implements Storage
      * @param string  $cassetteName   Path to the cassette file, relative to the path.
      * @param string  $defaultContent Default data for this cassette if its not existing
      */
-    public function __construct($cassettePath, $cassetteName, $defaultContent = '[]')
+    public function __construct(string $cassettePath, string $cassetteName, string $defaultContent = '[]')
     {
         Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' is not existing or not a directory");
 
@@ -108,7 +108,7 @@ abstract class AbstractStorage implements Storage
      *
      * @return boolean TRUE if created, FALSE if not
      */
-    public function isNew()
+    public function isNew(): bool
     {
         return $this->isNew;
     }

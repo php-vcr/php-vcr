@@ -10,7 +10,7 @@ class CurlException extends \Exception
      * @param resource $ch The cURL handler
      * @return CurlException
      */
-    public static function create($ch)
+    public static function create($ch): self
     {
         $e = new CurlException(curl_error($ch), curl_errno($ch));
         $e->info = curl_getinfo($ch);
@@ -20,9 +20,9 @@ class CurlException extends \Exception
     /**
      * Returns the curl_info array.
      *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getInfo()
+    public function getInfo(): array
     {
         return $this->info;
     }

@@ -151,13 +151,16 @@ class VideorecorderTest extends TestCase
     {
         $cassette = $this->getMockBuilder('\VCR\Cassette')
             ->disableOriginalConstructor()
-            ->setMethods(array('record', 'playback', 'isNew'))
+            ->setMethods(array('record', 'playback', 'isNew', 'getName'))
             ->getMock();
         $cassette
             ->expects($this->once())
             ->method('playback')
             ->with($request)
             ->will($this->returnValue(null));
+        $cassette
+            ->method('getName')
+            ->will($this->returnValue('foobar'));
 
         if (VCR::MODE_NEW_EPISODES === $mode || VCR::MODE_ONCE === $mode && $isNew === true) {
             $cassette
