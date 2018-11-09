@@ -89,13 +89,14 @@ class Configuration
      * @var array<string,callable(Request $first, Request $second):bool> List of RequestMatcher names and callbacks.
      */
     private $availableRequestMatchers = array(
-        'method'       => array('VCR\RequestMatcher', 'matchMethod'),
-        'url'          => array('VCR\RequestMatcher', 'matchUrl'),
-        'host'         => array('VCR\RequestMatcher', 'matchHost'),
-        'headers'      => array('VCR\RequestMatcher', 'matchHeaders'),
-        'body'         => array('VCR\RequestMatcher', 'matchBody'),
-        'post_fields'  => array('VCR\RequestMatcher', 'matchPostFields'),
-        'query_string' => array('VCR\RequestMatcher', 'matchQueryString'),
+        'method'         => array(RequestMatcher::class, 'matchMethod'),
+        'url'            => array(RequestMatcher::class, 'matchUrl'),
+        'host'           => array(RequestMatcher::class, 'matchHost'),
+        'headers'        => array(RequestMatcher::class, 'matchHeaders'),
+        'body'           => array(RequestMatcher::class, 'matchBody'),
+        'post_fields'    => array(RequestMatcher::class, 'matchPostFields'),
+        'query_string'   => array(RequestMatcher::class, 'matchQueryString'),
+        'soap_operation' => array(RequestMatcher::class, 'matchSoapOperation'),
     );
 
     /**
