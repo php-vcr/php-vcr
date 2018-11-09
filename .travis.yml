@@ -10,6 +10,12 @@ matrix:
       php: 7.2
     - env: TEST_DIR=.
       php: 7.3
+    - env: TEST_DIR=tests/integration/apache
+      php: 7.2
+      dist: trusty
+      sudo: required
+      services:
+      - docker
     - env: TEST_DIR=tests/integration/guzzle/3
       php: 7.2
 # Guzzle 4 is not compatible with PHP >= 7.1 due to an error in the code that was only fixed in Guzzle 5.

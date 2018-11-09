@@ -1,0 +1,21 @@
+
+-
+    request:
+        method: GET
+        url: 'http://localhost/tests/integration/apache/www/target.html'
+        headers:
+            Host: localhost
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: OK
+        headers:
+            Date: 'Fri, 19 Oct 2018 14:13:53 GMT'
+            Server: 'Apache/2.4.25 (Debian)'
+            Last-Modified: 'Fri, 19 Oct 2018 13:54:38 GMT'
+            ETag: '"6-578953e8e6867"'
+            Accept-Ranges: bytes
+            Content-Length: '6'
+            Content-Type: text/html
+        body: foobar
