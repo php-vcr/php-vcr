@@ -166,7 +166,7 @@ class RequestMatcherTest extends TestCase
             'method' => 'POST',
             'url' => 'http://example.com',
             'headers' => array(),
-            'body' => "{}"
+            'body' => '{}'
         ]);
         $this->assertTrue(RequestMatcher::matchSoapOperation($storedRequest, $request), 'Operation is not SOAP message');
     }
