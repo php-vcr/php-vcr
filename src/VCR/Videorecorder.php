@@ -255,14 +255,9 @@ class Videorecorder
 
             $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
             $this->cassette->record($request, $response);
-        } catch (\Exception $e) {
+        } finally {
             $this->enableLibraryHooks();
-            throw $e;
-        } catch (\Throwable $e) {
-            $this->enableLibraryHooks();
-            throw $e;
         }
-        $this->enableLibraryHooks();
 
         return $response;
     }
