@@ -32,18 +32,21 @@ class Response
 
     protected $httpVersion;
 
+    protected $request;
+
     /**
      * @param string|array $status
      * @param array $headers
      * @param string $body
      * @param array $curlInfo
      */
-    public function __construct($status, array $headers = array(), $body = null, array $curlInfo = array())
+    public function __construct($status, array $headers = array(), $body = null, array $curlInfo = array(), Request $request = null)
     {
         $this->setStatus($status);
         $this->headers = $headers;
         $this->body = $body;
         $this->curlInfo = $curlInfo;
+        $this->request = $request;
     }
 
     /**
@@ -76,7 +79,7 @@ class Response
      * @param  array  $response Array representation of a Response.
      * @return Response A new Response from a specified array
      */
-    public static function fromArray(array $response)
+    public static function fromArray(array $response, Request $request = null)
     {
         $body = isset($response['body']) ? $response['body'] : null;
 
@@ -94,7 +97,9 @@ class Response
         return new static(
             isset($response['status']) ? $response['status'] : 200,
             isset($response['headers']) ? $response['headers'] : array(),
-            $body
+            $body,
+            array(),
+            $request
         );
     }
 
@@ -182,5 +187,15 @@ class Response
             Assertion::numeric($status, 'Response status must be either an array or a number.');
             $this->status['code'] = $status;
         }
+    }
+
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
     }
 }

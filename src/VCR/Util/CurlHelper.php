@@ -109,7 +109,10 @@ class CurlHelper
                 $info = $response->getHeader('Content-Length');
                 break;
             case CURLINFO_HEADER_SIZE:
-                $info =  mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
+                $info = mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
+                break;
+            case CURLINFO_HEADER_OUT:
+                $info = HttpUtil::formatAsRequestWithHeadersString($response->getRequest());
                 break;
             default:
                 $info = $response->getCurlInfo($option);
