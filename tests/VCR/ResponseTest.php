@@ -120,6 +120,27 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($curlOptions, $response->getCurlInfo());
     }
 
+    public function testSetsRequestInConstructor()
+    {
+        $expectedRequest = new Request('GET', 'https://localhost:8000', array());
+        $response = new Response(200, array(), null, array(), $expectedRequest);
+
+        $this->assertEquals($expectedRequest, $response->getRequest());
+    }
+
+    public function testSetsRequestInFromArray()
+    {
+        $body = 'this is an example body';
+        $responseArray = array(
+            'headers' => array('Content-Type' => 'application/x-gzip'),
+            'body'    => base64_encode($body)
+        );
+        $expectedRequest = new Request('GET', 'https://localhost:8000', array());
+        $response = Response::fromArray($responseArray, $expectedRequest);
+
+        $this->assertEquals($expectedRequest, $response->getRequest());
+    }
+
     public function testToArray()
     {
         $expectedArray = array(

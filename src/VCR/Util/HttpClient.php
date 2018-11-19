@@ -38,7 +38,8 @@ class HttpClient
             HttpUtil::parseStatus($status),
             HttpUtil::parseHeaders($headers),
             $body,
-            curl_getinfo($ch)
+            curl_getinfo($ch),
+            $request
         );
     }
 }

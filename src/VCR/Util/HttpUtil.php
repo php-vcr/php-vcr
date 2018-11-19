@@ -2,6 +2,7 @@
 
 namespace VCR\Util;
 
+use VCR\Request;
 use VCR\Response;
 
 class HttpUtil
@@ -127,6 +128,27 @@ class HttpUtil
     {
         $headers = self::formatHeadersForCurl($response->getHeaders());
         array_unshift($headers, self::formatAsStatusString($response));
+        return join("\r\n", $headers) . "\r\n\r\n";
+    }
+
+    /**
+     * Returns a HTTP request line from specified request.
+     *
+     * @param Response $response
+     * @return string HTTP request line.
+     */
+    public static function formatAsRequestLine(Request $request)
+    {
+        $path = $request->getPath();
+        return $request->getMethod()
+             . ' ' . (empty($path) ? '/' : $path)
+             . ' HTTP/1.1';
+    }
+
+    public static function formatAsRequestWithHeadersString(Request $request)
+    {
+        $headers = self::formatHeadersForCurl($request->getHeaders());
+        array_unshift($headers, self::formatAsRequestLine($request));
         return join("\r\n", $headers) . "\r\n\r\n";
     }
 }

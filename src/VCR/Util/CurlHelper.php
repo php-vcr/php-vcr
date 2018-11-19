@@ -109,7 +109,10 @@ class CurlHelper
                 $info = $response->getHeader('Content-Length');
                 break;
             case CURLINFO_HEADER_SIZE:
-                $info =  mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
+                $info = mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
+                break;
+            case CURLINFO_HEADER_OUT:
+                $info = HttpUtil::formatAsRequestWithHeadersString($response->getRequest());
                 break;
             default:
                 $info = $response->getCurlInfo($option);
@@ -121,7 +124,10 @@ class CurlHelper
         }
 
         $constants = get_defined_constants(true);
-        $constantNames = array_flip($constants['curl']);
+        $curlInfoConstants = array_filter($constants['curl'], function($k) {
+            return substr($k, 0, 8) === 'CURLINFO';
+        }, ARRAY_FILTER_USE_KEY);
+        $constantNames = array_flip($curlInfoConstants);
         throw new \BadMethodCallException("Not implemented: {$constantNames[$option]} ({$option}) ");
     }
 

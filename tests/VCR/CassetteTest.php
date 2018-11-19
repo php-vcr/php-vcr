@@ -50,6 +50,7 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
         $this->cassette->record($request, $response);
 
         $this->assertEquals($response->toArray(), $this->cassette->playback($request)->toArray());
+        $this->assertEquals($request, $this->cassette->playback($request)->getRequest());
     }
 
     public function testHasResponseNotFound()
