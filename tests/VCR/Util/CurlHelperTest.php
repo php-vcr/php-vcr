@@ -415,6 +415,32 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGetCurlOptionFromResponseWithUnImplementedOption()
+    {
+        $response = Response::fromArray(
+            array(
+                'status'    => array(
+                    'http_version' => '1.1',
+                    'code' => 200,
+                    'message' => 'OK',
+                ),
+                'headers'   => array(
+                    'Host' => 'localhost:8000',
+                    'Connection' => 'close',
+                    'Content-type' => 'text/html; charset=UTF-8',
+
+                ),
+            )
+        );
+
+        $this->setExpectedException(
+            'BadMethodCallException',
+            'Not implemented: CURLINFO_REDIRECT_TIME (3145747)'
+        );
+
+        CurlHelper::getCurlOptionFromResponse($response, CURLINFO_REDIRECT_TIME);
+    }
+
     public function testSetCurlOptionCustomRequest()
     {
         $request = new Request('POST', 'http://example.com');

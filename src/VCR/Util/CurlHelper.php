@@ -121,7 +121,10 @@ class CurlHelper
         }
 
         $constants = get_defined_constants(true);
-        $constantNames = array_flip($constants['curl']);
+        $curlInfoConstants = array_filter($constants['curl'], function($k) {
+            return substr($k, 0, 8) === 'CURLINFO';
+        }, ARRAY_FILTER_USE_KEY);
+        $constantNames = array_flip($curlInfoConstants);
         throw new \BadMethodCallException("Not implemented: {$constantNames[$option]} ({$option}) ");
     }
 
