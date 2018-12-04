@@ -121,7 +121,7 @@ composer test
 [Old changelog entries](docs/old-changelog.md)
 
 ## Copyright
-Copyright (c) 2013-2016 Adrian Philipp. Released under the terms of the MIT license. See LICENSE for details.
+Copyright (c) 2013-2018 Adrian Philipp. Released under the terms of the MIT license. See LICENSE for details.
 [Contributors](https://github.com/php-vcr/php-vcr/graphs/contributors)
 
 <!--
