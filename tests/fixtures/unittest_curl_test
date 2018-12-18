@@ -19,3 +19,4 @@
             X-XSS-Protection: '1; mode=block'
             X-Frame-Options: SAMEORIGIN
         body: "This is a curl test dummy."
+    index: 0

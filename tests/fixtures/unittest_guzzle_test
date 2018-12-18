@@ -20,3 +20,4 @@
             x-ec-custom-error: '1'
             Content-Length: '1270'
         body: "This is a guzzle test dummy."
+    index: 0
