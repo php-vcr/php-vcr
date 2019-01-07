@@ -2,6 +2,7 @@
 
 namespace VCR;
 
+use VCR\RequestMatchers\RequestMatcherInterface;
 use VCR\Storage\Storage;
 use VCR\Util\Assertion;
 
@@ -121,7 +122,7 @@ class Cassette
     /**
      * Returns a list of callbacks to configured request matchers.
      *
-     * @return callable[] List of callbacks to configured request matchers.
+     * @return RequestMatcherInterface[] List of callbacks to configured request matchers.
      */
     protected function getRequestMatchers(): array
     {

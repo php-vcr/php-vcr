@@ -3,6 +3,10 @@
 namespace VCR;
 
 use PHPUnit\Framework\TestCase;
+use VCR\RequestMatchers\BodyMatcher;
+use VCR\RequestMatchers\HeadersMatcher;
+use VCR\RequestMatchers\MethodMatcher;
+use VCR\RequestMatchers\RequestMatcherInterface;
 
 /**
  *
@@ -75,8 +79,8 @@ class ConfigurationTest extends TestCase
         $this->config->enableRequestMatchers(array('body', 'headers'));
         $this->assertEquals(
             array(
-                array('VCR\RequestMatcher', 'matchHeaders'),
-                array('VCR\RequestMatcher', 'matchBody'),
+                new HeadersMatcher(),
+                new BodyMatcher(),
             ),
             $this->config->getRequestMatchers()
         );
@@ -91,16 +95,16 @@ class ConfigurationTest extends TestCase
     public function testAddRequestMatcherFailsWithNoName()
     {
         $this->expectException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
-        $expected = function ($first, $second) {
-            return true;
-        };
-        $this->config->addRequestMatcher('', $expected);
+        $this->config->addRequestMatcher('', new MethodMatcher());
     }
 
     public function testAddRequestMatchers()
     {
-        $expected = function () {
-            return true;
+        $expected = new class implements RequestMatcherInterface {
+            public function match(Request $storedRequest, Request $request): bool
+            {
+                return true;
+            }
         };
         $this->config->addRequestMatcher('new_matcher', $expected);
         $this->assertContains($expected, $this->config->getRequestMatchers());

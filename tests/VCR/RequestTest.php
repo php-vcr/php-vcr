@@ -4,6 +4,8 @@ namespace VCR;
 
 use const CURLOPT_CUSTOMREQUEST;
 use PHPUnit\Framework\TestCase;
+use VCR\RequestMatchers\BodyMatcher;
+use VCR\RequestMatchers\MethodMatcher;
 
 /**
  * Test integration of PHPVCR with PHPUnit.
@@ -49,23 +51,21 @@ class RequestTest extends TestCase
     {
         $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
 
-        $this->assertTrue($this->request->matches($request, array(array('VCR\RequestMatcher', 'matchMethod'))));
+        $this->assertTrue($this->request->matches($request, array(new MethodMatcher())));
     }
 
     public function testDoesntMatch()
     {
         $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
 
-        $this->assertFalse($this->request->matches($request, array(array('VCR\RequestMatcher', 'matchMethod'))));
+        $this->assertFalse($this->request->matches($request, array(new MethodMatcher())));
     }
 
     public function testMatchesThrowsExceptionIfMatcherNotFound()
     {
         $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-        $this->expectException(
-            '\BadFunctionCallException',
-            "Matcher could not be executed. Array\n(\n    [0] => some\n    [1] => method\n)\n"
-        );
+        $this->expectException('\BadFunctionCallException');
+        $this->expectExceptionMessage("Matcher could not be executed. Array\n(\n    [0] => some\n    [1] => method\n)\n");
         $this->request->matches($request, array(array('some', 'method')));
     }
 
@@ -217,7 +217,7 @@ class RequestTest extends TestCase
         $this->assertTrue(
             $this->request->matches(
                 Request::fromArray($request->toArray()),
-                array(array('VCR\RequestMatcher', 'matchBody'))
+                array(new BodyMatcher())
             )
         );
     }
@@ -231,7 +231,7 @@ class RequestTest extends TestCase
         $this->assertFalse(
             $this->request->matches(
                 Request::fromArray($request->toArray()),
-                array(array('VCR\RequestMatcher', 'matchBody'))
+                array(new BodyMatcher())
             )
         );
     }

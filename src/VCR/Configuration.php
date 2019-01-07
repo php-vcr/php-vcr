@@ -2,6 +2,15 @@
 
 namespace VCR;
 
+use VCR\RequestMatchers\BodyMatcher;
+use VCR\RequestMatchers\HeadersMatcher;
+use VCR\RequestMatchers\HostMatcher;
+use VCR\RequestMatchers\MethodMatcher;
+use VCR\RequestMatchers\PostFieldsMatcher;
+use VCR\RequestMatchers\QueryStringMatcher;
+use VCR\RequestMatchers\RequestMatcherInterface;
+use VCR\RequestMatchers\SoapOperationMatcher;
+use VCR\RequestMatchers\UrlMatcher;
 use VCR\Util\Assertion;
 
 /**
@@ -86,18 +95,9 @@ class Configuration
      * The RequestMatcher callback takes two Request objects and
      * returns true if they match or false otherwise.
      *
-     * @var array<string,callable(Request $first, Request $second):bool> List of RequestMatcher names and callbacks.
+     * @var array<string,RequestMatcherInterface> List of RequestMatcher names and callbacks.
      */
-    private $availableRequestMatchers = array(
-        'method'         => array(RequestMatcher::class, 'matchMethod'),
-        'url'            => array(RequestMatcher::class, 'matchUrl'),
-        'host'           => array(RequestMatcher::class, 'matchHost'),
-        'headers'        => array(RequestMatcher::class, 'matchHeaders'),
-        'body'           => array(RequestMatcher::class, 'matchBody'),
-        'post_fields'    => array(RequestMatcher::class, 'matchPostFields'),
-        'query_string'   => array(RequestMatcher::class, 'matchQueryString'),
-        'soap_operation' => array(RequestMatcher::class, 'matchSoapOperation'),
-    );
+    private $availableRequestMatchers;
 
     /**
      * A whitelist is a list of paths.
@@ -143,6 +143,20 @@ class Configuration
         VCR::MODE_ONCE,
         VCR::MODE_NONE,
     );
+
+    public function __construct()
+    {
+        $this->availableRequestMatchers = [
+            'method'         => new MethodMatcher(),
+            'url'            => new UrlMatcher(),
+            'host'           => new HostMatcher(),
+            'headers'        => new HeadersMatcher(),
+            'body'           => new BodyMatcher(),
+            'post_fields'    => new PostFieldsMatcher(),
+            'query_string'   => new QueryStringMatcher(),
+            'soap_operation' => new SoapOperationMatcher(),
+        ];
+    }
 
     /**
      * Returns the current blacklist.
@@ -252,7 +266,7 @@ class Configuration
     /**
      * Returns a list of enabled RequestMatcher callbacks.
      *
-     * @return callable[] List of enabled RequestMatcher callbacks.
+     * @return RequestMatcherInterface[] List of enabled RequestMatcher callbacks.
      */
     public function getRequestMatchers(): array
     {
@@ -270,15 +284,15 @@ class Configuration
      * Adds a new RequestMatcher callback.
      *
      * @param string $name Name of the RequestMatcher.
-     * @param callable $callback A callback taking two Request objects as parameters and returns true if those match.
+     * @param RequestMatcherInterface $requestMatcher A request matcher can compare  two Request objects and returns true if those match.
      *
      * @return Configuration
      * @throws VCRException If specified parameters are invalid.
      */
-    public function addRequestMatcher(string $name, callable $callback): self
+    public function addRequestMatcher(string $name, RequestMatcherInterface $requestMatcher): self
     {
         Assertion::minLength($name, 1, "A request matchers name must be at least one character long. Found ''");
-        $this->availableRequestMatchers[$name] = $callback;
+        $this->availableRequestMatchers[$name] = $requestMatcher;
 
         return $this;
     }

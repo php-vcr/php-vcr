@@ -5,6 +5,7 @@ namespace VCR;
 use Assert\Assertion;
 use function sprintf;
 use VCR\Exceptions\InvalidHostException;
+use VCR\RequestMatchers\RequestMatcherInterface;
 
 /**
  * Encapsulates a HTTP request.
@@ -57,7 +58,7 @@ class Request
      * with specified request matcher callbacks.
      *
      * @param  Request $request Request to check if it matches the current one.
-     * @param  callable[] $requestMatchers Request matcher callbacks.
+     * @param  RequestMatcherInterface[] $requestMatchers Request matcher callbacks.
      *
      * @throws \BadFunctionCallException If one of the specified request matchers is not callable.
      * @return boolean True if specified request matches the current one.
@@ -65,13 +66,13 @@ class Request
     public function matches(Request $request, array $requestMatchers): bool
     {
         foreach ($requestMatchers as $matcher) {
-            if (!is_callable($matcher)) {
+            if (!$matcher instanceof RequestMatcherInterface) {
                 throw new \BadFunctionCallException(
                     'Matcher could not be executed. ' . print_r($matcher, true)
                 );
             }
 
-            if (call_user_func_array($matcher, array($this, $request)) === false) {
+            if ($matcher->match($this, $request) === false) {
                 return false;
             }
         }
