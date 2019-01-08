@@ -79,11 +79,8 @@ class ConfigurationTest extends TestCase
     {
         $this->config->enableRequestMatchers(array('body', 'headers'));
         $this->assertEquals(
-            new CompositeRequestMatcher(array(
-                new BodyMatcher(),
-                new HeadersMatcher(),
-            )),
-            $this->config->getRequestMatcher()
+            array('body', 'headers'),
+            $this->config->getEnabledRequestMatcherNames()
         );
     }
 
@@ -108,21 +105,7 @@ class ConfigurationTest extends TestCase
             }
         };
         $this->config->addRequestMatcher('new_matcher', $expected);
-        $this->config->enableRequestMatchers(['new_matcher']);
-        $request = new Request('GET', 'http://example.com', array());
-        $this->assertFalse($this->config->getRequestMatcher()->match($request, $request));
-    }
-
-    public function testSetRequestMatcher()
-    {
-        $expected = new class implements RequestMatcherInterface {
-            public function match(Request $storedRequest, Request $request): bool
-            {
-                return false;
-            }
-        };
-        $this->config->setRequestMatcher($expected);
-        $this->assertSame($expected, $this->config->getRequestMatcher());
+        $this->assertSame($expected, $this->config->getRequestMatcher('new_matcher'));
     }
 
     /**

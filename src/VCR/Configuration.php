@@ -2,6 +2,7 @@
 
 namespace VCR;
 
+use function array_keys;
 use function array_map;
 use VCR\RequestMatchers\BodyMatcher;
 use VCR\RequestMatchers\CompositeRequestMatcher;
@@ -84,9 +85,16 @@ class Configuration
     /**
      * The request matcher to use.
      *
-     * @var RequestMatcherInterface
+     * @var CompositeRequestMatcher
      */
     private $enabledRequestMatcher;
+
+    /**
+     * The name of all enabled request matchers.
+     *
+     * @var string[]
+     */
+    private $enabledRequestMatcherNames;
 
     /**
      * Format:
@@ -266,17 +274,17 @@ class Configuration
     }
 
     /**
-     * Returns the enabled RequestMatcher.
+     * Returns a RequestMatcher by name.
      *
      * @return RequestMatcherInterface
      */
-    public function getRequestMatcher(): RequestMatcherInterface
+    public function getRequestMatcher(string $name): RequestMatcherInterface
     {
-        if ($this->enabledRequestMatcher === null) {
-            return new CompositeRequestMatcher(array_values($this->availableRequestMatchers));
+        if (!isset($this->availableRequestMatchers[$name])) {
+            throw new \InvalidArgumentException("Request matcher '$name' does not exist. You can add a Request Matcher using \VCR\VCR::configure()->addRequestMatcher()");
         }
 
-        return $this->enabledRequestMatcher;
+        return $this->availableRequestMatchers[$name];
     }
 
     /**
@@ -311,25 +319,22 @@ class Configuration
         if ($invalidMatchers) {
             throw new \InvalidArgumentException("Request matchers don't exist: " . implode(', ', $invalidMatchers));
         }
-        $matcherObjects = array_map(function (string $matcherName) {return $this->availableRequestMatchers[$matcherName];}, $matchers);
-        $this->enabledRequestMatcher = new CompositeRequestMatcher($matcherObjects);
-        
+        $this->enabledRequestMatcherNames = $matchers;
+
         return $this;
     }
 
     /**
-     * Sets the enabled request matcher directly.
-     * Note: you can configure a request matcher more easily using the "enableRequestMatchers" method. Use this method
-     * for advanced needs.
+     * Returns the name of all enabled request matchers.
      *
-     * @param RequestMatcherInterface $matcher
-     * @return Configuration
+     * @return string[]
      */
-    public function setRequestMatcher(RequestMatcherInterface $matcher): self
+    public function getEnabledRequestMatcherNames(): array
     {
-        $this->enabledRequestMatcher = $matcher;
-
-        return $this;
+        if ($this->enabledRequestMatcherNames === null) {
+            return array_keys($this->availableRequestMatchers);
+        }
+        return $this->enabledRequestMatcherNames;
     }
 
     /**
