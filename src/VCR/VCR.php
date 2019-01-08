@@ -28,7 +28,12 @@ class VCR
      */
     const MODE_NONE = 'none';
 
-    public static function __callStatic($method, $parameters)
+    /**
+     * @param string $method
+     * @param mixed[] $parameters
+     * @return mixed
+     */
+    public static function __callStatic(string $method, array $parameters)
     {
         $instance = VCRFactory::get('VCR\Videorecorder');
 

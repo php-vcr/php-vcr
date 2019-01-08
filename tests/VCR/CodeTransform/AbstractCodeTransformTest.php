@@ -2,7 +2,9 @@
 
 namespace VCR\CodeTransform;
 
-class AbstractCodeTransformTest extends \PHPUnit_framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class AbstractCodeTransformTest extends TestCase
 {
     protected function getFilter(array $methods = array())
     {
@@ -31,10 +33,10 @@ class AbstractCodeTransformTest extends \PHPUnit_framework_TestCase
         $filter = $this->getFilter();
         $filter->register();
 
-        $this->assertAttributeSame(true, 'isRegistered', $filter, 'First attempt to register failed.');
+        $this->assertContains(AbstractCodeTransform::NAME, stream_get_filters(), 'First attempt to register failed.');
 
         $filter->register();
 
-        $this->assertAttributeSame(true, 'isRegistered', $filter, 'Second attempt to register failed.');
+        $this->assertContains(AbstractCodeTransform::NAME, stream_get_filters(), 'Second attempt to register failed.');
     }
 }

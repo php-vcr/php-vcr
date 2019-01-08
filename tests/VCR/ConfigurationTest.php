@@ -2,10 +2,17 @@
 
 namespace VCR;
 
+use PHPUnit\Framework\TestCase;
+use VCR\RequestMatchers\BodyMatcher;
+use VCR\RequestMatchers\CompositeRequestMatcher;
+use VCR\RequestMatchers\HeadersMatcher;
+use VCR\RequestMatchers\MethodMatcher;
+use VCR\RequestMatchers\RequestMatcherInterface;
+
 /**
  *
  */
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends TestCase
 {
     /**
      * @var Configuration
@@ -19,8 +26,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCassettePathThrowsErrorOnInvalidPath()
     {
-        $this->setExpectedException(
-            'VCR\VCRException',
+        $this->expectException(
+            VCRException::class,
             "Cassette path 'invalid_path' is not a directory. Please either "
             . 'create it or set a different cassette path using '
             . "\\VCR\\VCR::configure()->setCassettePath('directory')."
@@ -64,7 +71,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testEnableLibraryHooksFailsWithWrongHookName()
     {
-        $this->setExpectedException('InvalidArgumentException', "Library hooks don't exist: non_existing");
+        $this->expectException('InvalidArgumentException', "Library hooks don't exist: non_existing");
         $this->config->enableLibraryHooks(array('non_existing'));
     }
 
@@ -72,42 +79,33 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->enableRequestMatchers(array('body', 'headers'));
         $this->assertEquals(
-            array(
-                array('VCR\RequestMatcher', 'matchHeaders'),
-                array('VCR\RequestMatcher', 'matchBody'),
-            ),
-            $this->config->getRequestMatchers()
+            array('body', 'headers'),
+            $this->config->getEnabledRequestMatcherNames()
         );
     }
 
     public function testEnableRequestMatchersFailsWithNoExistingName()
     {
-        $this->setExpectedException('InvalidArgumentException', "Request matchers don't exist: wrong, name");
+        $this->expectException('InvalidArgumentException', "Request matchers don't exist: wrong, name");
         $this->config->enableRequestMatchers(array('wrong', 'name'));
     }
 
     public function testAddRequestMatcherFailsWithNoName()
     {
-        $this->setExpectedException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
-        $expected = function ($first, $second) {
-            return true;
-        };
-        $this->config->addRequestMatcher('', $expected);
-    }
-
-    public function testAddRequestMatcherFailsWithWrongCallback()
-    {
-        $this->setExpectedException('VCR\VCRException', "Request matcher 'example' is not callable.");
-        $this->config->addRequestMatcher('example', array());
+        $this->expectException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
+        $this->config->addRequestMatcher('', new MethodMatcher());
     }
 
     public function testAddRequestMatchers()
     {
-        $expected = function () {
-            return true;
+        $expected = new class implements RequestMatcherInterface {
+            public function match(Request $storedRequest, Request $request): bool
+            {
+                return false;
+            }
         };
         $this->config->addRequestMatcher('new_matcher', $expected);
-        $this->assertContains($expected, $this->config->getRequestMatchers());
+        $this->assertSame($expected, $this->config->getRequestMatcher('new_matcher'));
     }
 
     /**
@@ -129,7 +127,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetStorageInvalidName()
     {
-        $this->setExpectedException('VCR\VCRException', "Storage 'Does not exist' not available.");
+        $this->expectException('VCR\VCRException', "Storage 'Does not exist' not available.");
         $this->config->setStorage('Does not exist');
     }
 
@@ -161,7 +159,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetModeInvalidName()
     {
-        $this->setExpectedException('VCR\VCRException', "Mode 'invalid' does not exist.");
+        $this->expectException('VCR\VCRException', "Mode 'invalid' does not exist.");
         $this->config->setMode('invalid');
     }
 }

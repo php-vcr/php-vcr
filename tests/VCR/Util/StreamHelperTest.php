@@ -2,9 +2,10 @@
 
 namespace VCR\Util;
 
+use PHPUnit\Framework\TestCase;
 use VCR\Request;
 
-class StreamHelperTest extends \PHPUnit_Framework_TestCase
+class StreamHelperTest extends TestCase
 {
     public function streamContexts()
     {

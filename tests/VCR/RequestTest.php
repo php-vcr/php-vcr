@@ -2,10 +2,15 @@
 
 namespace VCR;
 
+use const CURLOPT_CUSTOMREQUEST;
+use PHPUnit\Framework\TestCase;
+use VCR\RequestMatchers\BodyMatcher;
+use VCR\RequestMatchers\MethodMatcher;
+
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class RequestTest extends \PHPUnit_Framework_TestCase
+class RequestTest extends TestCase
 {
     /**
      * @var \VCR\Request
@@ -40,30 +45,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->request->setAuthorization('login', 'password');
 
         $this->assertEquals('Basic bG9naW46cGFzc3dvcmQ=', $this->request->getHeader('Authorization'));
-    }
-
-    public function testMatches()
-    {
-        $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-
-        $this->assertTrue($this->request->matches($request, array(array('VCR\RequestMatcher', 'matchMethod'))));
-    }
-
-    public function testDoesntMatch()
-    {
-        $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-
-        $this->assertFalse($this->request->matches($request, array(array('VCR\RequestMatcher', 'matchMethod'))));
-    }
-
-    public function testMatchesThrowsExceptionIfMatcherNotFound()
-    {
-        $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-        $this->setExpectedException(
-            '\BadFunctionCallException',
-            "Matcher could not be executed. Array\n(\n    [0] => some\n    [1] => method\n)\n"
-        );
-        $this->request->matches($request, array(array('some', 'method')));
     }
 
     public function testRestoreRequest()
@@ -140,6 +121,29 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSetPostFiles()
+    {
+        $file = array(
+            'fieldName'   => 'field_name',
+            'contentType' => 'application/octet-stream',
+            'filename'    => 'tests/fixtures/unittest_curl_test',
+            'postname'    => 'unittest_curl_test',
+        );
+        $this->request->setPostFiles([$file]);
+        $this->assertEquals(
+            array(
+                'method'      => 'GET',
+                'url'         => 'http://example.com',
+                'headers'     => array(
+                    'User-Agent'   => 'Unit-Test',
+                    'Host'         => 'example.com',
+                ),
+                'post_files' => array($file),
+            ),
+            $this->request->toArray()
+        );
+    }
+
     public function testRestorePostFiles()
     {
         $file = array(
@@ -189,10 +193,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $request->setBody('sometest');
 
         $this->assertTrue(
-            $this->request->matches(
-                Request::fromArray($request->toArray()),
-                array(array('VCR\RequestMatcher', 'matchBody'))
-            )
+            (new BodyMatcher())->match($this->request, Request::fromArray($request->toArray()))
         );
     }
 
@@ -203,10 +204,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $request->setBody('not match');
 
         $this->assertFalse(
-            $this->request->matches(
-                Request::fromArray($request->toArray()),
-                array(array('VCR\RequestMatcher', 'matchBody'))
-            )
+            (new BodyMatcher())->match($this->request, Request::fromArray($request->toArray()))
         );
     }
 
@@ -246,5 +244,14 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('PUT', $postRequest->getMethod());
         $this->assertEquals('POST', $getRequest->getMethod());
+    }
+
+    public function testSetCurlOptions()
+    {
+        $getRequest = new Request('GET', 'http://example.com');
+        $getRequest->setCurlOptions([
+            CURLOPT_CUSTOMREQUEST => 'PUT'
+        ]);
+        $this->assertEquals('PUT', $getRequest->getCurlOption(CURLOPT_CUSTOMREQUEST));
     }
 }

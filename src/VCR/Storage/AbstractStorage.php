@@ -24,7 +24,7 @@ abstract class AbstractStorage implements Storage
     protected $filePath;
 
     /**
-     * @var array Current parsed record.
+     * @var array|null Current parsed record.
      */
     protected $current;
 
@@ -58,7 +58,7 @@ abstract class AbstractStorage implements Storage
      * @param string  $cassetteName   Path to the cassette file, relative to the path.
      * @param string  $defaultContent Default data for this cassette if its not existing
      */
-    public function __construct($cassettePath, $cassetteName, $defaultContent = '[]')
+    public function __construct(string $cassettePath, string $cassetteName, string $defaultContent = '[]')
     {
         Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' is not existing or not a directory");
 
@@ -76,13 +76,17 @@ abstract class AbstractStorage implements Storage
         Assertion::file($this->filePath, "Specified path '{$this->filePath}' is not a file.");
         Assertion::readable($this->filePath, "Specified file '{$this->filePath}' must be readable.");
 
-        $this->handle = fopen($this->filePath, 'r+');
+        $handle = fopen($this->filePath, 'r+');
+
+        Assertion::isResource($handle);
+
+        $this->handle = $handle;
     }
 
     /**
      * Returns the current record.
      *
-     * @return array Parsed current record.
+     * @return array|null Parsed current record.
      */
     public function current()
     {
@@ -104,7 +108,7 @@ abstract class AbstractStorage implements Storage
      *
      * @return boolean TRUE if created, FALSE if not
      */
-    public function isNew()
+    public function isNew(): bool
     {
         return $this->isNew;
     }

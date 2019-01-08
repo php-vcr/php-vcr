@@ -17,7 +17,6 @@ class CurlHelper
         //"certinfo"?
         CURLINFO_HTTP_CODE => 'http_code',
         CURLINFO_EFFECTIVE_URL => 'url',
-        CURLINFO_FILETIME => 'filetime',
         CURLINFO_TOTAL_TIME => 'total_time',
         CURLINFO_NAMELOOKUP_TIME => 'namelookup_time',
         CURLINFO_CONNECT_TIME => 'connect_time',
@@ -47,13 +46,13 @@ class CurlHelper
      *
      * The response header might be passed to a custom function.
      *
-     * @param  Response $response    Response which contains the response body.
-     * @param  array    $curlOptions cURL options which are not stored within the Response.
-     * @param  resource $ch          cURL handle to add headers if needed.
+     * @param  Response          $response    Response which contains the response body.
+     * @param  array<int, mixed> $curlOptions cURL options which are not stored within the Response.
+     * @param  resource          $ch          cURL handle to add headers if needed.
      *
      * @return null|string
      */
-    public static function handleOutput(Response $response, array $curlOptions, $ch)
+    public static function handleOutput(Response $response, array $curlOptions, $ch): ?string
     {
         // If there is a header function set, feed the http status and headers to it.
         if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
@@ -82,6 +81,7 @@ class CurlHelper
         } else {
             echo $body;
         }
+        return null;
     }
 
     /**
@@ -93,7 +93,7 @@ class CurlHelper
      * @throws \BadMethodCallException
      * @return mixed Value of the cURL option.
      */
-    public static function getCurlOptionFromResponse(Response $response, $option = 0)
+    public static function getCurlOptionFromResponse(Response $response, int $option = 0)
     {
         switch ($option) {
             case 0: // 0 == array of all curl options
@@ -112,7 +112,7 @@ class CurlHelper
                 $info =  mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
                 break;
             default:
-                $info = $response->getCurlInfo($option);
+                $info = $response->getCurlInfo(self::$curlInfoList[$option]);
                 break;
         }
 
@@ -133,7 +133,7 @@ class CurlHelper
      * @param mixed    $value   Value of the cURL option.
      * @param resource $curlHandle cURL handle where this option is set on (optional).
      */
-    public static function setCurlOptionOnRequest(Request $request, $option, $value, $curlHandle = null)
+    public static function setCurlOptionOnRequest(Request $request, int $option, $value, $curlHandle = null): void
     {
         switch ($option) {
             case CURLOPT_URL:
@@ -169,7 +169,7 @@ class CurlHelper
                     $headerParts = explode(': ', $header, 2);
                     if (!isset($headerParts[1])) {
                         $headerParts[0] = rtrim($headerParts[0], ':');
-                        $headerParts[1] = null;
+                        $headerParts[1] = '';
                     }
                     $request->setHeader($headerParts[0], $headerParts[1]);
                 }
@@ -195,7 +195,7 @@ class CurlHelper
      * @param Request  $request Request to set cURL option to.
      * @param resource $curlHandle cURL handle associated with the request.
      */
-    public static function validateCurlPOSTBody(Request $request, $curlHandle = null)
+    public static function validateCurlPOSTBody(Request $request, $curlHandle = null): void
     {
         $readFunction = $request->getCurlOption(CURLOPT_READFUNCTION);
         if (is_null($readFunction)) {
