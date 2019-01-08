@@ -47,28 +47,6 @@ class RequestTest extends TestCase
         $this->assertEquals('Basic bG9naW46cGFzc3dvcmQ=', $this->request->getHeader('Authorization'));
     }
 
-    public function testMatches()
-    {
-        $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-
-        $this->assertTrue($this->request->matches($request, array(new MethodMatcher())));
-    }
-
-    public function testDoesntMatch()
-    {
-        $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-
-        $this->assertFalse($this->request->matches($request, array(new MethodMatcher())));
-    }
-
-    public function testMatchesThrowsExceptionIfMatcherNotFound()
-    {
-        $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-        $this->expectException('\BadFunctionCallException');
-        $this->expectExceptionMessage("Matcher could not be executed. Array\n(\n    [0] => some\n    [1] => method\n)\n");
-        $this->request->matches($request, array(array('some', 'method')));
-    }
-
     public function testRestoreRequest()
     {
         $restoredRequest = Request::fromArray($this->request->toArray());
@@ -215,10 +193,7 @@ class RequestTest extends TestCase
         $request->setBody('sometest');
 
         $this->assertTrue(
-            $this->request->matches(
-                Request::fromArray($request->toArray()),
-                array(new BodyMatcher())
-            )
+            (new BodyMatcher())->match($this->request, Request::fromArray($request->toArray()))
         );
     }
 
@@ -229,10 +204,7 @@ class RequestTest extends TestCase
         $request->setBody('not match');
 
         $this->assertFalse(
-            $this->request->matches(
-                Request::fromArray($request->toArray()),
-                array(new BodyMatcher())
-            )
+            (new BodyMatcher())->match($this->request, Request::fromArray($request->toArray()))
         );
     }
 

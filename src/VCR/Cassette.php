@@ -69,7 +69,8 @@ class Cassette
     {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
-            if ($storedRequest->matches($request, $this->getRequestMatchers())) {
+
+            if ($this->getRequestMatcher()->match($storedRequest, $request)) {
                 return Response::fromArray($recording['response']);
             }
         }
@@ -120,12 +121,12 @@ class Cassette
     }
 
     /**
-     * Returns a list of callbacks to configured request matchers.
+     * Returns the configured request matcher.
      *
-     * @return RequestMatcherInterface[] List of callbacks to configured request matchers.
+     * @return RequestMatcherInterface
      */
-    protected function getRequestMatchers(): array
+    protected function getRequestMatcher(): RequestMatcherInterface
     {
-        return $this->config->getRequestMatchers();
+        return $this->config->getRequestMatcher();
     }
 }

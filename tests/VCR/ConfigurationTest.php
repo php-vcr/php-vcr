@@ -4,6 +4,7 @@ namespace VCR;
 
 use PHPUnit\Framework\TestCase;
 use VCR\RequestMatchers\BodyMatcher;
+use VCR\RequestMatchers\CompositeRequestMatcher;
 use VCR\RequestMatchers\HeadersMatcher;
 use VCR\RequestMatchers\MethodMatcher;
 use VCR\RequestMatchers\RequestMatcherInterface;
@@ -78,11 +79,11 @@ class ConfigurationTest extends TestCase
     {
         $this->config->enableRequestMatchers(array('body', 'headers'));
         $this->assertEquals(
-            array(
-                new HeadersMatcher(),
+            new CompositeRequestMatcher(array(
                 new BodyMatcher(),
-            ),
-            $this->config->getRequestMatchers()
+                new HeadersMatcher(),
+            )),
+            $this->config->getRequestMatcher()
         );
     }
 
@@ -103,11 +104,25 @@ class ConfigurationTest extends TestCase
         $expected = new class implements RequestMatcherInterface {
             public function match(Request $storedRequest, Request $request): bool
             {
-                return true;
+                return false;
             }
         };
         $this->config->addRequestMatcher('new_matcher', $expected);
-        $this->assertContains($expected, $this->config->getRequestMatchers());
+        $this->config->enableRequestMatchers(['new_matcher']);
+        $request = new Request('GET', 'http://example.com', array());
+        $this->assertFalse($this->config->getRequestMatcher()->match($request, $request));
+    }
+
+    public function testSetRequestMatcher()
+    {
+        $expected = new class implements RequestMatcherInterface {
+            public function match(Request $storedRequest, Request $request): bool
+            {
+                return false;
+            }
+        };
+        $this->config->setRequestMatcher($expected);
+        $this->assertSame($expected, $this->config->getRequestMatcher());
     }
 
     /**
