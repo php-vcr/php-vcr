@@ -8,7 +8,6 @@ use VCR\Request;
 
 class CompositeRequestMatcherTest extends TestCase
 {
-
     public function testMatch(): void
     {
         $yesMatcher = new class implements RequestMatcherInterface {

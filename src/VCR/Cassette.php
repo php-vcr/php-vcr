@@ -131,7 +131,9 @@ class Cassette
      */
     protected function getRequestMatcher(array $matchers): CompositeRequestMatcher
     {
-        $matcherObjects = array_map(function (string $matcherName) {return $this->config->getRequestMatcher($matcherName);}, $matchers);
+        $matcherObjects = array_map(function (string $matcherName) {
+            return $this->config->getRequestMatcher($matcherName);
+        }, $matchers);
         return new CompositeRequestMatcher($matcherObjects);
     }
 }

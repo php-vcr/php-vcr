@@ -1,6 +1,5 @@
 <?php
 
-
 namespace VCR\RequestMatchers;
 
 use VCR\Request;

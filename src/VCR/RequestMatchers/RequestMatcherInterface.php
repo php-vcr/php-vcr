@@ -2,7 +2,6 @@
 
 namespace VCR\RequestMatchers;
 
-
 use VCR\Request;
 
 interface RequestMatcherInterface
