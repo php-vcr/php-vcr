@@ -335,5 +335,6 @@ class CurlHook implements LibraryHook
                 static::curlSetopt($curlHandle, $option, $value);
             }
         }
+        return true;
     }
 }
