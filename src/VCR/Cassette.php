@@ -85,7 +85,7 @@ class Cassette
      * @param Request  $request  request to record
      * @param Response $response response to record
      */
-    public function record(Request $request, Response $response, int $index): void
+    public function record(Request $request, Response $response, int $index = 0): void
     {
         if ($this->hasResponse($request, $index)) {
             return;
