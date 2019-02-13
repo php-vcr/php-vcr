@@ -160,7 +160,9 @@ class Videorecorder
     public function eject()
     {
         Assertion::true($this->isOn, 'Please turn on VCR before ejecting a cassette, use: VCR::turnOn().');
+
         $this->cassette = null;
+        $this->resetIndex();
     }
 
     /**
@@ -185,6 +187,7 @@ class Videorecorder
 
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
         $this->enableLibraryHooks();
+        $this->resetIndex();
     }
 
     /**
@@ -330,4 +333,11 @@ class Videorecorder
       return ++$this->indexTable[$hash];
     }
 
+  /**
+   * Clear the indexTable property.
+   */
+    public function resetIndex()
+    {
+        $this->indexTable = array();
+    }
 }
