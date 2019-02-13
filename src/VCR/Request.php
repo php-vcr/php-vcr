@@ -350,4 +350,15 @@ class Request
     {
         $this->postFiles[] = $file;
     }
+
+    /**
+     * Generate a string representation of the request.
+     *
+     * @return string
+     */
+    public function getHash()
+    {
+        return md5(serialize($this->toArray()));
+    }
+
 }

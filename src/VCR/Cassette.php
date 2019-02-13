@@ -51,27 +51,31 @@ class Cassette
      * Returns true if a response was recorded for specified request.
      *
      * @param Request $request Request to check if it was recorded.
+     * @param int $index Index to differentiate identical requests.
      *
      * @return boolean True if a response was recorded for specified request.
      */
-    public function hasResponse(Request $request)
+    public function hasResponse(Request $request, $index = 0)
     {
-        return $this->playback($request) !== null;
+        return $this->playback($request, $index) !== null;
     }
 
     /**
      * Returns a response for given request or null if not found.
      *
      * @param Request $request Request.
+     * @param int $index Index to differentiate identical requests.
      *
      * @return Response|null Response for specified request.
      */
-    public function playback(Request $request)
+    public function playback(Request $request, $index = 0)
     {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
-            if ($storedRequest->matches($request, $this->getRequestMatchers())) {
-                return Response::fromArray($recording['response']);
+            if ($index === $recording['index']) {
+                if ($storedRequest->matches($request, $this->getRequestMatchers())) {
+                  return Response::fromArray($recording['response']);
+                }
             }
         }
 
@@ -83,18 +87,20 @@ class Cassette
      *
      * @param Request  $request  Request to record.
      * @param Response $response Response to record.
+     * @param int $index Index to differentiate identical requests.
      *
      * @return void
      */
-    public function record(Request $request, Response $response)
+    public function record(Request $request, Response $response, $index)
     {
-        if ($this->hasResponse($request)) {
+        if ($this->hasResponse($request, $index)) {
             return;
         }
 
         $recording = array(
             'request'  => $request->toArray(),
-            'response' => $response->toArray()
+            'response' => $response->toArray(),
+            'index' => $index
         );
 
         $this->storage->storeRecording($recording);
@@ -129,4 +135,5 @@ class Cassette
     {
         return $this->config->getRequestMatchers();
     }
+
 }
