@@ -91,7 +91,7 @@ class Cassette
      *
      * @return void
      */
-    public function record(Request $request, Response $response, $index)
+    public function record(Request $request, Response $response, $index = 0)
     {
         if ($this->hasResponse($request, $index)) {
             return;
