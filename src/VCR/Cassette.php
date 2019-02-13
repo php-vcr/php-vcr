@@ -40,7 +40,7 @@ class Cassette
         return null;
     }
 
-    public function record(Request $request, Response $response, int $index): void
+    public function record(Request $request, Response $response, int $index = 0): void
     {
         if ($this->hasResponse($request, $index)) {
             return;
