@@ -53,9 +53,9 @@ class Cassette
      *
      * @return bool true if a response was recorded for specified request
      */
-    public function hasResponse(Request $request): bool
+    public function hasResponse(Request $request, int $index = 0): bool
     {
-        return null !== $this->playback($request);
+        return null !== $this->playback($request, $index);
     }
 
     /**
@@ -65,12 +65,14 @@ class Cassette
      *
      * @return Response|null response for specified request
      */
-    public function playback(Request $request): ?Response
+    public function playback(Request $request, int $index = 0): ?Response
     {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
-            if ($storedRequest->matches($request, $this->getRequestMatchers())) {
-                return Response::fromArray($recording['response']);
+            if ($index === $recording['index']) {
+                if ($storedRequest->matches($request, $this->getRequestMatchers())) {
+                    return Response::fromArray($recording['response']);
+                }
             }
         }
 
@@ -83,15 +85,16 @@ class Cassette
      * @param Request  $request  request to record
      * @param Response $response response to record
      */
-    public function record(Request $request, Response $response): void
+    public function record(Request $request, Response $response, int $index): void
     {
-        if ($this->hasResponse($request)) {
+        if ($this->hasResponse($request, $index)) {
             return;
         }
 
         $recording = [
             'request' => $request->toArray(),
             'response' => $response->toArray(),
+            'index' => $index,
         ];
 
         $this->storage->storeRecording($recording);
