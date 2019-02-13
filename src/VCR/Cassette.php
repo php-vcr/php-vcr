@@ -21,32 +21,35 @@ class Cassette
     ) {
     }
 
-    public function hasResponse(Request $request): bool
+    public function hasResponse(Request $request, int $index = 0): bool
     {
-        return null !== $this->playback($request);
+        return null !== $this->playback($request, $index);
     }
 
-    public function playback(Request $request): ?Response
+    public function playback(Request $request, int $index = 0): ?Response
     {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
-            if ($storedRequest->matches($request, $this->getRequestMatchers())) {
-                return Response::fromArray($recording['response']);
+            if ($index === $recording['index']) {
+                if ($storedRequest->matches($request, $this->getRequestMatchers())) {
+                    return Response::fromArray($recording['response']);
+                }
             }
         }
 
         return null;
     }
 
-    public function record(Request $request, Response $response): void
+    public function record(Request $request, Response $response, int $index): void
     {
-        if ($this->hasResponse($request)) {
+        if ($this->hasResponse($request, $index)) {
             return;
         }
 
         $this->storage->storeRecording([
             'request' => $request->toArray(),
             'response' => $response->toArray(),
+            'index' => $index,
         ]);
     }
 

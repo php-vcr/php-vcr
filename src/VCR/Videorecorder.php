@@ -37,6 +37,11 @@ class Videorecorder
 
     protected EventDispatcherInterface $eventDispatcher;
 
+    /**
+     * @var array<string, int>
+     */
+    protected array $indexTable = [];
+
     public function __construct(
         protected Configuration $config,
         protected HttpClient $client,
@@ -146,7 +151,9 @@ class Videorecorder
 
         $this->dispatch(new BeforePlaybackEvent($request, $this->cassette), VCREvents::VCR_BEFORE_PLAYBACK);
 
-        $response = $this->cassette->playback($request);
+        // Add an index to the request to allow recording identical requests and play them back in the same sequence.
+        $index = $this->iterateIndex($request);
+        $response = $this->cassette->playback($request, $index);
 
         // Playback succeeded and the recorded response can be returned.
         if (!empty($response)) {
@@ -170,7 +177,7 @@ class Videorecorder
             $this->dispatch(new AfterHttpRequestEvent($request, $response), VCREvents::VCR_AFTER_HTTP_REQUEST);
 
             $this->dispatch(new BeforeRecordEvent($request, $response, $this->cassette), VCREvents::VCR_BEFORE_RECORD);
-            $this->cassette->record($request, $response);
+            $this->cassette->record($request, $response, $index);
         } finally {
             $this->enableLibraryHooks();
         }
@@ -213,5 +220,15 @@ class Videorecorder
         if ($this->isOn) {
             $this->turnOff();
         }
+    }
+
+    protected function iterateIndex(Request $request): int
+    {
+        $hash = $request->getHash();
+        if (!isset($this->indexTable[$hash])) {
+            $this->indexTable[$hash] = -1;
+        }
+
+        return ++$this->indexTable[$hash];
     }
 }
