@@ -66,4 +66,26 @@ class CassetteTest extends TestCase
 
         $this->assertTrue($this->cassette->hasResponse($request), 'Expected true if request was found.');
     }
+
+    /**
+     * Test playback of a legacy cassette which does not have an index key.
+     */
+    public function testPlaybackLegacyCassette(): void
+    {
+        $request = new Request('GET', 'https://example.com');
+        $response = new Response(200, [], 'sometest');
+
+        // Create recording array with no index key.
+        $recording = [
+            'request' => $request->toArray(),
+            'response' => $response->toArray(),
+        ];
+
+        $storage = new Storage\Yaml(vfsStream::url('test/'), 'json_test');
+        $storage->storeRecording($recording);
+        $configuration = new Configuration();
+        $cassette = new Cassette('cassette_name', $configuration, $storage);
+
+        $this->assertEquals($response->toArray(), $cassette->playback($request)->toArray());
+    }
 }
