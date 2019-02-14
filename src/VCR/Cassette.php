@@ -70,7 +70,7 @@ class Cassette
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
 
-            // Support legacy cassettes which do not have the 'index' key
+            // Support legacy cassettes which do not have the 'index' key.
             if (!\array_key_exists('index', $recording)) {
                 $recording['index'] = 0;
             }
