@@ -69,7 +69,7 @@ class Cassette
     {
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
-            if ($index === $recording['index']) {
+            if ($index == $recording['index']) {
                 if ($storedRequest->matches($request, $this->getRequestMatchers())) {
                     return Response::fromArray($recording['response']);
                 }
