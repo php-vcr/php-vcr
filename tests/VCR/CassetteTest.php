@@ -4,6 +4,7 @@ namespace VCR;
 
 use org\bovigo\vfs\vfsStream;
 
+
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
@@ -66,5 +67,27 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
         $this->cassette->record($request, $response);
 
         $this->assertTrue($this->cassette->hasResponse($request), 'Expected true if request was found.');
+    }
+
+    /**
+     * Test playback of a legacy cassette which does not have an index key.
+     */
+    public function testPlaybackLegacyCassette()
+    {
+        $request = new Request('GET', 'https://example.com');
+        $response = new Response(200, array(), 'sometest');
+
+        // Create recording array with no index key.
+        $recording = array(
+            'request'  => $request->toArray(),
+            'response' => $response->toArray(),
+        );
+
+        $storage = new Storage\Yaml(vfsStream::url('test/'), 'json_test');
+        $storage->storeRecording($recording);
+        $configuration = new Configuration();
+        $cassette = new Cassette('cassette_name', $configuration, $storage);
+
+        $this->assertEquals($response->toArray(), $cassette->playback($request)->toArray());
     }
 }
