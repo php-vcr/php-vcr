@@ -83,11 +83,85 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
             'response' => $response->toArray(),
         );
 
-        $storage = new Storage\Yaml(vfsStream::url('test/'), 'json_test');
-        $storage->storeRecording($recording);
-        $configuration = new Configuration();
-        $cassette = new Cassette('cassette_name', $configuration, $storage);
+        $cassette = $this->createCassetteWithRecordings(array($recording));
 
         $this->assertEquals($response->toArray(), $cassette->playback($request)->toArray());
     }
+
+    /**
+     * Ensure that if a second identical request is played back from a legacy
+     * cassette, the first response will be returned.
+     */
+    public function testPlaybackOfIdenticalRequestsFromLegacyCassette() {
+
+        $request1 = new Request('GET', 'https://example.com');
+        $response1 = new Response(200, array(), 'response1');
+
+        $request2 = new Request('GET', 'https://example.com');
+        $response2 = new Response(200, array(), 'response2');
+
+        // These are legacy recordings with no index keys.
+        $recordings = array(
+            array(
+                'request' => $request1->toArray(),
+                'response' => $response1->toArray()
+            ),
+            array(
+                'request' => $request2->toArray(),
+                'response' => $response2->toArray()
+            ),
+        );
+
+        $cassette = $this->createCassetteWithRecordings($recordings);
+
+        $this->assertEquals($response1->toArray(), $cassette->playback($request1)->toArray());
+        $this->assertEquals($response1->toArray(), $cassette->playback($request2)->toArray());
+    }
+
+    /**
+     * Ensure that if a second identical request is played back from an cassette
+     * with indexed recordings, the response corresponding to the recording
+     * index will be returned.
+     */
+    public function testPlaybackOfIdenticalRequests() {
+        $request1 = new Request('GET', 'https://example.com');
+        $response1 = new Response(200, array(), 'response1');
+
+        $request2 = new Request('GET', 'https://example.com');
+        $response2 = new Response(200, array(), 'response2');
+
+        // These are recordings with index keys which support playback of
+        // multiple identical requests.
+        $recordings = array(
+            array(
+                'request' => $request1->toArray(),
+                'response' => $response1->toArray(),
+                'index' => 0
+            ),
+            array(
+                'request' => $request2->toArray(),
+                'response' => $response2->toArray(),
+                'index' => 1
+            ),
+        );
+
+        $cassette = $this->createCassetteWithRecordings($recordings);
+
+        $this->assertEquals($response1->toArray(), $cassette->playback($request1, 0)->toArray());
+        $this->assertNotEquals($response1->toArray(), $cassette->playback($request2, 1)->toArray());
+        $this->assertEquals($response2->toArray(), $cassette->playback($request2, 1)->toArray());
+
+    }
+
+    protected function createCassetteWithRecordings(array $recordings)
+    {
+        $storage = new Storage\Yaml(vfsStream::url('test/'), 'json_test');
+
+        foreach ($recordings as $recording) {
+            $storage->storeRecording($recording);
+        }
+        $configuration = new Configuration();
+        return new Cassette('cassette_name', $configuration, $storage);
+    }
+
 }
