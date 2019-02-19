@@ -70,25 +70,6 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test playback of a legacy cassette which does not have an index key.
-     */
-    public function testPlaybackLegacyCassette()
-    {
-        $request = new Request('GET', 'https://example.com');
-        $response = new Response(200, array(), 'sometest');
-
-        // Create recording array with no index key.
-        $recording = array(
-            'request'  => $request->toArray(),
-            'response' => $response->toArray(),
-        );
-
-        $cassette = $this->createCassetteWithRecordings(array($recording));
-
-        $this->assertEquals($response->toArray(), $cassette->playback($request)->toArray());
-    }
-
-    /**
      * Ensure that if a second identical request is played back from a legacy
      * cassette, the first response will be returned.
      */
