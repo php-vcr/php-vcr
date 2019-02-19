@@ -318,24 +318,24 @@ class Videorecorder
         }
     }
 
-  /**
-   * Increment the index for a given request.
-   *
-   * @param \VCR\Request $request
-   * @return mixed
-   */
+    /**
+     * Increment the index for a given request.
+     *
+     * @param \VCR\Request $request
+     * @return mixed
+     */
     protected function iterateIndex(Request $request)
     {
-      $hash = $request->getHash();
-      if (!isset($this->indexTable[$hash])) {
-        $this->indexTable[$hash] = -1;
-      }
-      return ++$this->indexTable[$hash];
+        $hash = $request->getHash();
+        if (!isset($this->indexTable[$hash])) {
+            $this->indexTable[$hash] = -1;
+        }
+        return ++$this->indexTable[$hash];
     }
 
-  /**
-   * Clear the indexTable property.
-   */
+    /**
+     * Clear the indexTable property.
+     */
     public function resetIndex()
     {
         $this->indexTable = array();
