@@ -68,25 +68,6 @@ class CassetteTest extends TestCase
     }
 
     /**
-     * Test playback of a legacy cassette which does not have an index key.
-     */
-    public function testPlaybackLegacyCassette(): void
-    {
-        $request = new Request('GET', 'https://example.com');
-        $response = new Response(200, [], 'sometest');
-
-        // Create recording array with no index key.
-        $recording = [
-            'request' => $request->toArray(),
-            'response' => $response->toArray(),
-        ];
-
-        $cassette = $this->createCassetteWithRecordings([$recording]);
-
-        $this->assertEquals($response->toArray(), $cassette->playback($request)->toArray());
-    }
-
-    /**
      * Ensure that if a second identical request is played back from a legacy
      * cassette, the first response will be returned.
      */
@@ -151,9 +132,9 @@ class CassetteTest extends TestCase
         $this->assertEquals($response2->toArray(), $cassette->playback($request2, 1)->toArray());
     }
 
-    protected function createCassetteWithRecordings(array $recordings)
+    protected function createCassetteWithRecordings(array $recordings): Cassette
     {
-        $storage = new Storage\Yaml(vfsStream::url('test/'), 'json_test');
+        $storage = new Yaml(vfsStream::url('test/'), 'json_test');
 
         foreach ($recordings as $recording) {
             $storage->storeRecording($recording);
