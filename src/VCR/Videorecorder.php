@@ -225,18 +225,18 @@ class Videorecorder
         }
     }
 
-    protected function iterateIndex(Request $request): int
-    {
-        $hash = $request->getHash();
-        if (!isset($this->indexTable[$hash])) {
-            $this->indexTable[$hash] = -1;
-        }
+      protected function iterateIndex(Request $request): int
+      {
+          $hash = $request->getHash();
+          if (!isset($this->indexTable[$hash])) {
+              $this->indexTable[$hash] = -1;
+          }
 
-        return ++$this->indexTable[$hash];
-    }
+          return ++$this->indexTable[$hash];
+      }
 
-    public function resetIndex(): void
-    {
-        $this->indexTable = [];
-    }
+      public function resetIndex(): void
+      {
+          $this->indexTable = [];
+      }
 }
