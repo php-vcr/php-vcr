@@ -65,7 +65,8 @@ class Response
             array(
                 'status'    => $this->status,
                 'headers'   => $this->getHeaders(),
-                'body'      => $body
+                'body'      => $body,
+                'curl_info' => $this->curlInfo,
             )
         );
     }
@@ -94,7 +95,8 @@ class Response
         return new static(
             isset($response['status']) ? $response['status'] : 200,
             isset($response['headers']) ? $response['headers'] : array(),
-            $body
+            $body,
+            isset($response['curl_info']) ? $response['curl_info'] : array()
         );
     }
 
