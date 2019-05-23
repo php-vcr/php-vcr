@@ -184,6 +184,10 @@ class Videorecorder
 
         $storage = $this->factory->get('Storage', array($cassetteName));
 
+        if ($this->config->getMode() === VCR::MODE_STRICT) {
+            $storage->rewind();
+        }
+
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
         $this->enableLibraryHooks();
     }
