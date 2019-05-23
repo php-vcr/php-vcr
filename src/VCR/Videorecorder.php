@@ -154,12 +154,12 @@ class Videorecorder
     {
         Assertion::true($this->isOn, 'Please turn on VCR before ejecting a cassette, use: VCR::turnOn().');
 
-	$cassette = $this->cassette;
-	$this->cassette = null;
+        $cassette = $this->cassette;
+        $this->cassette = null;
 
         if ($cassette && $this->config->getMode() === VCR::MODE_STRICT && !$cassette->isFinished()) {
             throw new \LogicException(
-               "Strict playback was requested but the cassette did not play in its entirety."
+                'Strict playback was requested but the cassette did not play in its entirety.'
             );
         }
     }
