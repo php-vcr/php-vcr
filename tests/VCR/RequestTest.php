@@ -245,9 +245,9 @@ class RequestTest extends TestCase
     public function testDoNotOverwriteHostHeader()
     {
         $this->request = new Request(
-          'GET',
-          'http://example.com',
-          array('User-Agent' => 'Unit-Test', 'Host' => 'www.example.com')
+            'GET',
+            'http://example.com',
+            array('User-Agent' => 'Unit-Test', 'Host' => 'www.example.com')
         );
 
         $this->assertEquals(
