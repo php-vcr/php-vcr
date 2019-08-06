@@ -99,9 +99,10 @@ class Videorecorder
      * @param Event $event The event to pass to the event handlers/listeners.
      * @return Event
      */
-    private function dispatch(string $eventName, Event $event = null): Event
+    private function dispatch(string $eventName, Event $event): Event
     {
-        return $this->getEventDispatcher()->dispatch($eventName, $event);
+        $this->getEventDispatcher()->dispatch($event, $eventName);
+        return $event;
     }
 
     /**
