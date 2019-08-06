@@ -294,7 +294,8 @@ class CurlHookTest extends TestCase
         curl_multi_add_handle($curlMultiHandle, $curlHandle1);
         curl_multi_add_handle($curlMultiHandle, $curlHandle2);
 
-        $mh = curl_multi_exec($curlMultiHandle);
+        $stillRunning = null;
+        $mh = curl_multi_exec($curlMultiHandle, $stillRunning);
 
         $lastInfo       = curl_multi_info_read($mh);
         $secondLastInfo = curl_multi_info_read($mh);
@@ -337,9 +338,10 @@ class CurlHookTest extends TestCase
 
         $curlHandle = curl_init('http://example.com');
 
+        $stillRunning = null;
         $curlMultiHandle = curl_multi_init();
         curl_multi_add_handle($curlMultiHandle, $curlHandle);
-        curl_multi_exec($curlMultiHandle);
+        curl_multi_exec($curlMultiHandle, $stillRunning);
         curl_multi_remove_handle($curlMultiHandle, $curlHandle);
         curl_multi_close($curlMultiHandle);
     }
