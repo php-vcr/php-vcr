@@ -10,6 +10,8 @@ matrix:
       php: 7.2
     - env: TEST_DIR=.
       php: 7.3
+    - env: TEST_DIR=.
+      php: 7.4snapshot
     - env: TEST_DIR=tests/integration/apache
       php: 7.2
       dist: trusty
@@ -28,6 +30,8 @@ matrix:
       php: 7.2
     - env: TEST_DIR=tests/integration/soap
       php: 7.2
+  allow_failures:
+    - php: 7.4snapshot
 
 before_install:
   - composer self-update
