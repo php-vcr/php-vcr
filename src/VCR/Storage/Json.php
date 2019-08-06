@@ -2,8 +2,6 @@
 
 namespace VCR\Storage;
 
-use VCR\Util\Assertion;
-
 /**
  * Json based storage for records.
  *

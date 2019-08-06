@@ -2,12 +2,13 @@
 
 namespace VCR\LibraryHooks;
 
-use PHPUnit\Framework\TestCase;
+use Closure;
 use VCR\Request;
 use VCR\Response;
 use VCR\Configuration;
-use VCR\CodeTransform\SoapCodeTransform;
 use VCR\Util\StreamProcessor;
+use PHPUnit\Framework\TestCase;
+use VCR\CodeTransform\SoapCodeTransform;
 
 /**
  * Test if intercepting http/https using soap works.
@@ -91,28 +92,28 @@ class SoapHookTest extends TestCase
     }
 
     /**
-     * @return \callable
+     * @return Closure
      */
-    protected function getContentCheckCallback()
+    protected function getContentCheckCallback(): Closure
     {
         $testClass = $this;
-        return function () use ($testClass) {
+        return Closure::fromCallable(function () use ($testClass) {
             return new Response(200, array(), $testClass->expected);
-        };
+        });
     }
 
     /**
      * @param array $expectedHeaders
-     * @return \callable
+     * @return Closure
      */
-    protected function getHeadersCheckCallback(array $expectedHeaders)
+    protected function getHeadersCheckCallback(array $expectedHeaders): Closure
     {
         $test = $this;
-        return function (Request $request) use ($test, $expectedHeaders) {
+        return Closure::fromCallable(function (Request $request) use ($test, $expectedHeaders) {
             foreach ($expectedHeaders as $expectedHeaderName => $expectedHeader) {
                 $test->assertEquals($expectedHeader, $request->getHeader($expectedHeaderName));
             }
             return new Response(200, array(), '');
-        };
+        });
     }
 }

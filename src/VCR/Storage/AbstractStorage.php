@@ -3,7 +3,6 @@
 namespace VCR\Storage;
 
 use VCR\Util\Assertion;
-use VCR\VCRException;
 
 /**
  * Abstract base for reading and storing records.

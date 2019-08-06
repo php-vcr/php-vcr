@@ -2,12 +2,13 @@
 
 namespace VCR\LibraryHooks;
 
-use PHPUnit\Framework\TestCase;
+use Closure;
 use VCR\Request;
 use VCR\Response;
 use VCR\Configuration;
-use VCR\CodeTransform\CurlCodeTransform;
 use VCR\Util\StreamProcessor;
+use PHPUnit\Framework\TestCase;
+use VCR\CodeTransform\CurlCodeTransform;
 
 /**
  * Test if intercepting http/https using curl works.
@@ -294,7 +295,8 @@ class CurlHookTest extends TestCase
         curl_multi_add_handle($curlMultiHandle, $curlHandle1);
         curl_multi_add_handle($curlMultiHandle, $curlHandle2);
 
-        $mh = curl_multi_exec($curlMultiHandle);
+        $stillRunning = null;
+        $mh = curl_multi_exec($curlMultiHandle, $stillRunning);
 
         $lastInfo       = curl_multi_info_read($mh);
         $secondLastInfo = curl_multi_info_read($mh);
@@ -337,9 +339,10 @@ class CurlHookTest extends TestCase
 
         $curlHandle = curl_init('http://example.com');
 
+        $stillRunning = null;
         $curlMultiHandle = curl_multi_init();
         curl_multi_add_handle($curlMultiHandle, $curlHandle);
-        curl_multi_exec($curlMultiHandle);
+        curl_multi_exec($curlMultiHandle, $stillRunning);
         curl_multi_remove_handle($curlMultiHandle, $curlHandle);
         curl_multi_close($curlMultiHandle);
     }
@@ -370,13 +373,13 @@ class CurlHookTest extends TestCase
     }
 
     /**
-     * @return \callable
+     * @return Closure
      */
-    protected function getTestCallback($statusCode = 200)
+    protected function getTestCallback($statusCode = 200): Closure
     {
         $testClass = $this;
-        return function () use ($statusCode, $testClass) {
+        return Closure::fromCallable(function () use ($statusCode, $testClass) {
             return new Response($statusCode, array(), $testClass->expected);
-        };
+        });
     }
 }
