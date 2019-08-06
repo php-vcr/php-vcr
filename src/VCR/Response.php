@@ -2,7 +2,6 @@
 
 namespace VCR;
 
-use function var_dump;
 use VCR\Util\Assertion;
 
 /**
