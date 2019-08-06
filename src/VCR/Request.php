@@ -3,7 +3,6 @@
 namespace VCR;
 
 use Assert\Assertion;
-use function sprintf;
 use VCR\Exceptions\InvalidHostException;
 
 /**
