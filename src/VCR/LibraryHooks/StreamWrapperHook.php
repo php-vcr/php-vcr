@@ -2,11 +2,9 @@
 
 namespace VCR\LibraryHooks;
 
-use VCR\Request;
 use VCR\Response;
 use VCR\Util\Assertion;
 use VCR\Util\CurlException;
-use VCR\Util\HttpUtil;
 use VCR\Util\StreamHelper;
 
 /**
