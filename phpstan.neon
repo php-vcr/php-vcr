@@ -17,6 +17,9 @@ parameters:
         - '#Parameter .* $url of function curl_init expects string, string\\|null given.#'
         # The EventDispatcherInterface::dispatch method does actually expect 2 parameters (see PHPDoc)
         - '#Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required.#'
+        # The EventDispatcherInterface::dispatch signature is different (!) between Symfony <4.3 and >=4.3
+        - '/Parameter #1 \$event of method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) expects object, string given./'
+        - '/Cannot call method isBuiltin\(\) on ReflectionType|null./'
 includes:
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
     - vendor/phpstan/phpstan-beberlei-assert/extension.neon

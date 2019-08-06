@@ -101,7 +101,16 @@ class Videorecorder
      */
     private function dispatch(string $eventName, Event $event): Event
     {
-        $this->getEventDispatcher()->dispatch($event, $eventName);
+        // Symfony 4.3 introduces a breaking change (in a minor release!) in the parameter order of the dispatch method.
+        // We need to check which version of the dispatcher we are using!
+        $r = new \ReflectionMethod($this->getEventDispatcher(), 'dispatch');
+        $param2 = $r->getParameters()[1] ?? null;
+
+        if (!$param2 || !$param2->hasType() || $param2->getType()->isBuiltin()) {
+            $this->getEventDispatcher()->dispatch($event, $eventName);
+        } else {
+            $this->getEventDispatcher()->dispatch($eventName, $event);
+        }
         return $event;
     }
 
