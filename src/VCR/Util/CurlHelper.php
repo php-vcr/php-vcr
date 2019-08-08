@@ -111,6 +111,9 @@ class CurlHelper
             case CURLINFO_HEADER_SIZE:
                 $info =  mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
                 break;
+            case CURLINFO_PRIVATE:
+                $info = $response->getCurlInfo($option) ?? '';
+                break;
             default:
                 $info = $response->getCurlInfo($option);
                 break;
@@ -187,7 +190,7 @@ class CurlHelper
                 break;
         }
     }
-    
+
     /**
      * Makes sure we've properly handled the POST body, such as ensuring that
      * CURLOPT_INFILESIZE is set if CURLOPT_READFUNCTION is set.
@@ -201,13 +204,13 @@ class CurlHelper
         if (is_null($readFunction)) {
             return;
         }
-        
+
         // Guzzle 4 sometimes sets the post body in CURLOPT_POSTFIELDS even if
         // they have already set CURLOPT_READFUNCTION.
         if ($request->getBody()) {
             return;
         }
-        
+
         $bodySize = $request->getCurlOption(CURLOPT_INFILESIZE);
         Assertion::notEmpty($bodySize, 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $body = call_user_func_array($readFunction, array($curlHandle, fopen('php://memory', 'r'), $bodySize));
