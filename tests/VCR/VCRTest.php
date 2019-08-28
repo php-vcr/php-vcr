@@ -2,7 +2,7 @@
 
 namespace VCR;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use org\bovigo\vfs\vfsStream;
 
 /**
@@ -10,6 +10,8 @@ use org\bovigo\vfs\vfsStream;
  */
 class VCRTest extends \PHPUnit_Framework_TestCase
 {
+    private $events = [];
+
     public static function setupBeforeClass()
     {
         VCR::configure()->setCassettePath('tests/fixtures') ;
