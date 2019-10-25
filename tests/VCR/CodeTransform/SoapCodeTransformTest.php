@@ -26,6 +26,8 @@ class SoapCodeTransformTest extends \PHPUnit_Framework_TestCase
           array('new \VCR\Util\SoapClient(', 'new SoapClient('),
           array('extends \VCR\Util\SoapClient', 'extends \SoapClient'),
           array("extends \\VCR\\Util\\SoapClient\n", "extends \\SoapClient\n"),
+          array("extends MySoapClientBuilder\n", "extends MySoapClientBuilder\n"),
+          array("extends SoapClientFactory\n", "extends SoapClientFactory\n"),
           array('new SoapClientExtended(', 'new SoapClientExtended('),
           array('new \SoapClientExtended(', 'new \SoapClientExtended('),
         );
