@@ -13,7 +13,7 @@ class SoapCodeTransform extends AbstractCodeTransform
 
     private static $patterns = array(
         '@new\s+\\\?SoapClient\W*\(@i',
-        '@extends\s+\\\?SoapClient@i',
+        '@extends\s+\\\?SoapClient\b@i',
     );
 
     /**
