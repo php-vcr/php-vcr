@@ -36,6 +36,7 @@ class CurlHelper
         CURLINFO_CONTENT_LENGTH_DOWNLOAD => 'download_content_length',
         CURLINFO_CONTENT_LENGTH_UPLOAD => 'upload_content_length',
         CURLINFO_CONTENT_TYPE => 'content_type',
+        CURLINFO_PRIVATE => 'private',
     ];
 
     /**
@@ -98,7 +99,7 @@ class CurlHelper
         switch ($option) {
             case 0: // 0 == array of all curl options
                 $info = [];
-                foreach (self::$curlInfoList as $option => $key) {
+                foreach (self::$curlInfoList as $curlOption => $key) {
                     $info[$key] = $response->getCurlInfo($key);
                 }
                 break;
@@ -113,6 +114,8 @@ class CurlHelper
                 break;
             case CURLPROXY_HTTPS:
                 $info = '';
+            case CURLINFO_PRIVATE:
+                $info = $response->getCurlInfo(self::$curlInfoList[$option], false);
                 break;
             default:
                 $info = $response->getCurlInfo(self::$curlInfoList[$option]);

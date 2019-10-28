@@ -217,7 +217,23 @@ class CurlHookTest extends TestCase
         curl_close($curlHandle);
 
         $this->assertInternalType('array', $info, 'curl_getinfo() should return an array.');
-        $this->assertCount(21, $info, 'curl_getinfo() should return 21 values.');
+        $this->assertCount(22, $info, 'curl_getinfo() should return 22 values.');
+        $this->curlHook->disable();
+    }
+
+    public function testShouldHandleCurlOptPrivate()
+    {
+        $this->curlHook->enable($this->getTestCallback(200, ['private' => 'private_data']));
+
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_PRIVATE, 'private_data');
+
+        $this->assertEquals('private_data', curl_getinfo($curlHandle, CURLINFO_PRIVATE));
+
+        curl_exec($curlHandle);
+        curl_close($curlHandle);
+
+        $this->assertEquals('private_data', curl_getinfo($curlHandle, CURLINFO_PRIVATE));
         $this->curlHook->disable();
     }
 
@@ -376,12 +392,15 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    protected function getTestCallback($statusCode = 200): Closure
+    /**
+     * @param array<string, mixed> $curlInfos
+     */
+    protected function getTestCallback($statusCode = 200, array $curlInfos = []): Closure
     {
         $testClass = $this;
 
-        return Closure::fromCallable(function () use ($statusCode, $testClass) {
-            return new Response($statusCode, [], $testClass->expected);
+        return Closure::fromCallable(function () use ($statusCode, $testClass, $curlInfos) {
+            return new Response($statusCode, [], $testClass->expected, $curlInfos);
         });
     }
 }

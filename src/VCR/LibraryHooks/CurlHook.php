@@ -318,6 +318,14 @@ class CurlHook implements LibraryHook
      */
     public static function curlGetinfo($curlHandle, int $option = 0)
     {
+        // Workaround for CURLINFO_PRIVATE.
+        // It can be set AND read before the response is available, e.g by symfony/http-client.
+        //   - If the response is available, we read from it.
+        //   - If not, we return what was first set.
+        if (CURLINFO_PRIVATE === $option && !\array_key_exists((int) $curlHandle, self::$responses)) {
+            return self::getCurlOption($curlHandle, CURLOPT_PRIVATE);
+        }
+
         if (isset(self::$responses[(int) $curlHandle])) {
             return CurlHelper::getCurlOptionFromResponse(
                 self::$responses[(int) $curlHandle],
@@ -328,6 +336,20 @@ class CurlHook implements LibraryHook
         } else {
             throw new \RuntimeException('Unexpected error, could not find curl_getinfo in response or errors');
         }
+    }
+
+    /**
+     * Get a registered option for a cURL transfer.
+     *
+     * @param resource $curlHandle a cURL handle returned by curl_init()
+     * @param int      $curlOption the CURLOPT_XXX option to set
+     * @param mixed    $default
+     *
+     * @return false|mixed
+     */
+    private static function getCurlOption($curlHandle, int $curlOption, $default = false)
+    {
+        return static::$curlOptions[(int) $curlHandle][$curlOption] ?? $default;
     }
 
     /**
