@@ -294,6 +294,24 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedBody, file_get_contents($testFile));
     }
 
+    public function testGetCurlOptionFromResponseHandleCertinfo()
+    {
+        $status = array(
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1',
+        );
+        $headers = array(
+            'Content-Length' => 0,
+        );
+        $response = new Response($status, $headers, 'example response');
+
+        $this->assertEquals(
+            [],
+            CurlHelper::getCurlOptionFromResponse($response, CURLINFO_CERTINFO)
+        );
+    }
+
     /**
      * @dataProvider getCurlOptionProvider()
      *
