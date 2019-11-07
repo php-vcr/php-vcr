@@ -307,7 +307,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         $response = new Response($status, $headers, 'example response');
 
         $this->assertEquals(
-            [],
+            array(),
             CurlHelper::getCurlOptionFromResponse($response, CURLINFO_CERTINFO)
         );
     }
