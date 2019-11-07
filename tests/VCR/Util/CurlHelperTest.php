@@ -390,6 +390,24 @@ class CurlHelperTest extends TestCase
         $this->assertEquals($expectedBody, file_get_contents($testFile));
     }
 
+    public function testGetCurlOptionFromResponseHandleCertinfo()
+    {
+        $status = [
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1',
+        ];
+        $headers = [
+            'Content-Length' => 0,
+        ];
+        $response = new Response($status, $headers, 'example response');
+
+        $this->assertEquals(
+            [],
+            CurlHelper::getCurlOptionFromResponse($response, CURLINFO_CERTINFO)
+        );
+    }
+
     /**
      * @dataProvider getCurlOptionProvider()
      *

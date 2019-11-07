@@ -37,6 +37,7 @@ class CurlHelper
         CURLINFO_CONTENT_LENGTH_UPLOAD => 'upload_content_length',
         CURLINFO_CONTENT_TYPE => 'content_type',
         CURLINFO_PRIVATE => 'private',
+        CURLINFO_CERTINFO => 'certinfo',
     ];
 
     /**
@@ -116,6 +117,9 @@ class CurlHelper
                 $info = '';
             case CURLINFO_PRIVATE:
                 $info = $response->getCurlInfo(self::$curlInfoList[$option], false);
+                break;
+            case CURLINFO_CERTINFO:
+                $info = $response->getCurlInfo(self::$curlInfoList[$option], []);
                 break;
             default:
                 $info = $response->getCurlInfo(self::$curlInfoList[$option]);
