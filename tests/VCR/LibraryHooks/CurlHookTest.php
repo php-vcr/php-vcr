@@ -216,6 +216,22 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         $this->curlHook->disable();
     }
 
+    public function testShouldHandleCurlOptPrivate()
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com');
+        curl_setopt($curlHandle, CURLOPT_PRIVATE, 'private');
+
+        $this->assertEquals('private', curl_getinfo($curlHandle, CURLINFO_PRIVATE));
+
+        curl_exec($curlHandle);
+        curl_close($curlHandle);
+
+        $this->assertEquals('private', curl_getinfo($curlHandle, CURLINFO_PRIVATE));
+        $this->curlHook->disable();
+    }
+
     public function testShouldReturnCurlInfoAllKeys()
     {
         $this->curlHook->enable($this->getTestCallback());

@@ -111,10 +111,6 @@ class CurlHelper
             case CURLINFO_HEADER_SIZE:
                 $info =  mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
                 break;
-            case CURLINFO_PRIVATE:
-                $curlInfoPrivate = $response->getCurlInfo($option);
-                $info = $curlInfoPrivate !== null ? $curlInfoPrivate : '';
-                break;
             default:
                 $info = $response->getCurlInfo($option);
                 break;
