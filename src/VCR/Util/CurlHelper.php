@@ -110,6 +110,10 @@ class CurlHelper
             case \CURLINFO_APPCONNECT_TIME:
                 $info = '';
                 break;
+            case CURLINFO_CERTINFO:
+                $curlInfo = $response->getCurlInfo($option);
+                $info = (!is_null($curlInfo)) ? $curlInfo : [];
+                break;
             default:
                 $info = $response->getCurlInfo(self::$curlInfoList[$option]);
                 break;
