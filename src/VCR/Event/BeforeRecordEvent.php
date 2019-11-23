@@ -5,7 +5,6 @@ namespace VCR\Event;
 use VCR\Cassette;
 use VCR\Request;
 use VCR\Response;
-use Symfony\Component\EventDispatcher\Event;
 
 class BeforeRecordEvent extends Event
 {

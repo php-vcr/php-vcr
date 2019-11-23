@@ -4,7 +4,6 @@ namespace VCR\Event;
 
 use VCR\Request;
 use VCR\Response;
-use Symfony\Component\EventDispatcher\Event;
 
 class AfterHttpRequestEvent extends Event
 {
