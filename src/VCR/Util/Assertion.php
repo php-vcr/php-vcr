@@ -19,7 +19,7 @@ class Assertion extends BaseAssertion
      * @param  null   $propertyPath
      * @throws \VCR\VCRException If specified value is not a callable.
      *
-     * @return void
+     * @return bool
      */
     public static function isCallable($value, $message = null, string $propertyPath = null): bool
     {
