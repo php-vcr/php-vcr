@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace VCR\Event;
 
 // inferior to Symfony/Contracts PHP minimal version
