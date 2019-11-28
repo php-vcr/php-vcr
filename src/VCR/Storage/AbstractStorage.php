@@ -118,4 +118,26 @@ abstract class AbstractStorage implements Storage
             fclose($this->handle);
         }
     }
+
+    protected function storeBody(&$recording)
+    {
+        if (!isset($recording['response']['body'])) {
+            return;
+        }
+        $body = dirname($this->filePath).uniqid('/body_', true);
+        file_put_contents($body, $recording['response']['body']);
+        $recording['response']['body'] = $body;
+    }
+
+    protected function loadBody(&$recording)
+    {
+        if (!isset($recording['response']['body'])) {
+            return;
+        }
+        if (!is_file($recording['response']['body'])) {
+            return;
+        }
+
+        $recording['response']['body'] = file_get_contents($recording['response']['body']);
+    }
 }
