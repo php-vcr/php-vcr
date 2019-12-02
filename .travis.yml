@@ -1,5 +1,4 @@
 language: php
-dist: precise
 
 matrix:
   fast_finish: true
