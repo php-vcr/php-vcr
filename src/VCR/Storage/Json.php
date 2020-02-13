@@ -12,6 +12,9 @@ use VCR\Util\Assertion;
  */
 class Json extends AbstractStorage
 {
+    /** @var string */
+    private $buffer = '';
+
     /**
      * @inheritDoc
      */
@@ -42,6 +45,27 @@ class Json extends AbstractStorage
     }
 
     /**
+     * Finds the next JSON-syntax token in the buffer
+     *
+     * @param string $pattern         Regular expression pattern for expected token
+     * @param int    $minBufferLength Minimal required buffer length to satisfy the pattern
+     *
+     * @return array<int,string> The token and the length of the content prior to it
+     */
+    private function findNextTokenMatch($pattern, $minBufferLength)
+    {
+        while (strlen($this->buffer) < $minBufferLength && !feof($this->handle)) {
+            $this->buffer .= fread($this->handle, 8192);
+        }
+
+        if (preg_match($pattern, $this->buffer, $match, PREG_OFFSET_CAPTURE)) {
+            return $match[0];
+        }
+
+        return array('', strlen($this->buffer));
+    }
+
+    /**
      * Returns the next record in raw format.
      *
      * @return string Next record in raw format.
@@ -50,31 +74,47 @@ class Json extends AbstractStorage
     {
         $depth = 0;
         $isInRecord = false;
+        $isInLiteral = false;
         $record = '';
 
-        while (false !== ($char = fgetc($this->handle))) {
-            if ($char === '{') {
-                ++$depth;
-            }
-            if ($char === '}') {
-                --$depth;
-            }
-
-            if (!$isInRecord && $char === '{') {
-                $isInRecord = true;
+        while (true) {
+            if (!$isInLiteral) {
+                list($token, $offset) = $this->findNextTokenMatch('/[\{\}"]/', 1);
+            } else {
+                list($token, $offset) = $this->findNextTokenMatch('/(\\\\.|")/', 2);
             }
 
-            if ($isInRecord) {
-                $record .= $char;
+            switch ($token) {
+                case '{':
+                    ++$depth;
+                    break;
+                case '}':
+                    --$depth;
+                    break;
+                case '"':
+                    $isInLiteral = !$isInLiteral;
+                    break;
             }
 
-            if ($isInRecord && $char === '}' && $depth == 0) {
+            if (!$isInRecord) {
+                if ($token === '{') {
+                    $isInRecord = true;
+                    $record .= $token;
+                }
+            } else {
+                $record .= substr($this->buffer, 0, $offset) . $token;
+            }
+
+            $this->buffer = substr($this->buffer, $offset + strlen($token));
+
+            if ($isInRecord && $token === '}' && $depth == 0) {
                 break;
             }
-        }
 
-        if ($char == false) {
-            $this->isEOF = true;
+            if (strlen($this->buffer) < 1 && feof($this->handle)) {
+                $this->isEOF = true;
+                break;
+            }
         }
 
         return $record;
@@ -88,6 +128,8 @@ class Json extends AbstractStorage
     public function rewind()
     {
         rewind($this->handle);
+
+        $this->buffer = '';
         $this->isEOF = false;
         $this->position = 0;
     }

@@ -76,6 +76,27 @@ class JsonTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testIterateStringWithCurlyBraces()
+    {
+        $this->iterateAndTest(
+            '[{"para": "}:->"}]',
+            array(
+                array('para' => '}:->'),
+            )
+        );
+    }
+
+    public function testIterateStringWithEscapedCharacters()
+    {
+        $this->iterateAndTest(
+            '[{"para1": "\""}, {"para2": "\\\\"}]',
+            array(
+                array('para1' => '"'),
+                array('para2' => '\\'),
+            )
+        );
+    }
+
     public function testStoreRecording()
     {
         $expected = array(
@@ -120,7 +141,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
         $this->assertJson(file_get_contents($filePath));
     }
 
-    private function iterateAndTest($json, $expected, $message)
+    private function iterateAndTest($json, $expected, $message = '')
     {
         file_put_contents($this->filePath, $json);
 
