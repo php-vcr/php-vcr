@@ -264,11 +264,15 @@ class StreamProcessor
      *
      * @link http://www.php.net/manual/en/streamwrapper.stream-stat.php
      *
+     * Do not return the stat since we don't know the resulting the size that the file will have
+     * after having all transformations applied. When including files, PHP 7.4 and newer are sensitive
+     * to file size reported by stat.
+     *
      * @return array See stat().
      */
     public function stream_stat()
     {
-        return fstat($this->resource);
+        return [];
     }
 
     /**
