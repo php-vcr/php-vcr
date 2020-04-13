@@ -272,7 +272,7 @@ class StreamProcessor
      */
     public function stream_stat()
     {
-        return [];
+        return version_compare(PHP_VERSION, '7.4.0', '>=') ? [] : fstat($this->resource);
     }
 
     /**
