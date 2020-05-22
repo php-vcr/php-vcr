@@ -36,7 +36,7 @@ matrix:
     - env: TEST_DIR=.
       php: 7.3
     - env: TEST_DIR=.
-      php: 7.4snapshot
+      php: 7.4
     - env: TEST_DIR=tests/integration/guzzle/3
       php: 5.6
     - env: TEST_DIR=tests/integration/guzzle/4
