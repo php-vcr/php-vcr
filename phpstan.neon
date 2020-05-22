@@ -1,5 +1,4 @@
 parameters:
-    ignoreErrors:
-        - "#Call to an undefined static method SoapClient::__construct\\(\\)#"
-#includes:
-#    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
+    level: 0
+    paths:
+        - src
