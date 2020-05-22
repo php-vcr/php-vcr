@@ -262,13 +262,17 @@ class StreamProcessor
     /**
      * Retrieve information about a file resource.
      *
+     * Do not return the stat since we don't know the resulting size that the file will have
+     * after having all transformations applied. When including files, PHP 7.4 and newer are sensitive
+     * to file size reported by stat.
+     *
      * @link http://www.php.net/manual/en/streamwrapper.stream-stat.php
      *
-     * @return array See stat().
+     * @return array|false See stat().
      */
     public function stream_stat()
     {
-        return fstat($this->resource);
+        return false;
     }
 
     /**
