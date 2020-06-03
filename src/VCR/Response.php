@@ -38,7 +38,7 @@ class Response
      * @param string|null $body
      * @param array<string,mixed> $curlInfo
      */
-    public function __construct($status, array $headers = array(), ?string $body = null, array $curlInfo = array())
+    final public function __construct($status, array $headers = array(), ?string $body = null, array $curlInfo = array())
     {
         $this->setStatus($status);
         $this->headers = $headers;

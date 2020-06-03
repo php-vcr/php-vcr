@@ -1,4 +1,7 @@
 parameters:
+    level: 7
+    paths:
+        - src
     ignoreErrors:
         - "#Call to an undefined static method SoapClient::__construct\\(\\)#"
         - "#Access to an undefined property object::\\$data\\.#"
