@@ -252,9 +252,9 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
         $expected = array(
-            'HTTP/1.1 200 OK',
-            'Content-Length: 0',
-            ''
+            "HTTP/1.1 200 OK\r\n",
+            "Content-Length: 0\r\n",
+            "\r\n"
         );
         $this->assertEquals($expected, $actualHeaders);
     }

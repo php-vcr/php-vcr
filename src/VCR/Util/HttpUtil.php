@@ -91,14 +91,14 @@ class HttpUtil
      * Returns a list of headers from a key/value paired array.
      *
      * @param array $headers Headers as key/value pairs.
-     * @return array List of headers ['Content-Type: text/html', '...'].
+     * @return array List of headers ["Content-Type: text/html\r\n", '...'].
      */
     public static function formatHeadersForCurl(array $headers)
     {
         $curlHeaders = array();
 
         foreach ($headers as $key => $value) {
-            $curlHeaders[] = $key . ': ' . $value;
+            $curlHeaders[] = $key . ': ' . $value . "\r\n";
         }
 
         return $curlHeaders;
@@ -108,25 +108,30 @@ class HttpUtil
      * Returns a HTTP status line from specified response.
      *
      * @param Response $response
+     *
      * @return string HTTP status line.
      */
     public static function formatAsStatusString(Response $response)
     {
         return 'HTTP/' . $response->getHttpVersion()
-             . ' ' . $response->getStatusCode()
-             . ' ' . $response->getStatusMessage();
+            . ' ' . $response->getStatusCode()
+            . ' ' . $response->getStatusMessage()
+            . "\r\n";
     }
 
     /**
      * Returns a HTTP status line with headers from specified response.
      *
      * @param Response $response
+     *
      * @return string HTTP status line.
      */
     public static function formatAsStatusWithHeadersString(Response $response)
     {
         $headers = self::formatHeadersForCurl($response->getHeaders());
         array_unshift($headers, self::formatAsStatusString($response));
-        return join("\r\n", $headers) . "\r\n\r\n";
+
+        // Only one \r\n, as self::formatHeadersForCurl() returns an empty line as the last header already;
+        return join('', $headers) . "\r\n";
     }
 }
