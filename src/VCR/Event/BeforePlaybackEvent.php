@@ -16,17 +16,17 @@ class BeforePlaybackEvent extends Event
      * @var Cassette
      */
     protected $cassette;
-    
+
     /**
-     * @param  Request  $request
-     * @param  Cassette  $cassette
+     * @param Request $request
+     * @param Cassette $cassette
      */
     public function __construct(Request $request, Cassette $cassette)
     {
-        $this->request  = $request;
+        $this->request = $request;
         $this->cassette = $cassette;
     }
-    
+
     /**
      * @return Request
      */
@@ -34,7 +34,7 @@ class BeforePlaybackEvent extends Event
     {
         return $this->request;
     }
-    
+
     /**
      * @return Cassette
      */
