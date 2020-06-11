@@ -3,7 +3,7 @@
 namespace VCR\Event;
 
 use VCR\Request;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class BeforeHttpRequestEvent extends Event
 {

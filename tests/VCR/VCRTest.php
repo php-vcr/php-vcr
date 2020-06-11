@@ -2,7 +2,7 @@
 
 namespace VCR;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use org\bovigo\vfs\vfsStream;
 
 /**
