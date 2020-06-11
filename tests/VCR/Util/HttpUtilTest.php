@@ -2,7 +2,9 @@
 
 namespace VCR\Util;
 
-class HttpUtilTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class HttpUtilTest extends TestCase
 {
     public function testParseResponseBasic()
     {

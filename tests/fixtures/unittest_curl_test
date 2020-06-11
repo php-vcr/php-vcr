@@ -11,11 +11,33 @@
         headers:
             Location: 'http://www.google.com/'
             Content-Type: 'text/html; charset=UTF-8'
-            Date: 'Mon, 13 May 2013 08:15:58 GMT'
-            Expires: 'Wed, 12 Jun 2013 08:15:58 GMT'
+            Date: 'Wed, 18 Oct 2017 18:59:08 GMT'
+            Expires: 'Wed, 17 Nov 2017 18:59:08 GMT'
             Cache-Control: 'public, max-age=2592000'
             Server: gws
             Content-Length: '219'
             X-XSS-Protection: '1; mode=block'
             X-Frame-Options: SAMEORIGIN
         body: "This is a curl test dummy."
+        curl_info:
+            url: 'http://google.com/'
+            content_type: 'text/html; charset=UTF-8'
+            http_code: 301
+            header_size: 249
+            request_size: 49
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.194497
+            namelookup_time: 0.132455
+            connect_time: 0.164555
+            pretransfer_time: 0.164586
+            size_upload: !!float 0
+            size_download: !!float 268
+            speed_download: !!float 1377
+            speed_upload: !!float 0
+            download_content_length: !!float 268
+            upload_content_length: !!float -1
+            starttransfer_time: 0.194476
+            certinfo: {  }
+            primary_port: 80

@@ -45,7 +45,7 @@ class Videorecorder
     protected $factory;
 
     /**
-     * @var Cassette Cassette on which to store requests and responses.
+     * @var Cassette|null Cassette on which to store requests and responses.
      */
     protected $cassette;
 
@@ -55,7 +55,7 @@ class Videorecorder
     protected $isOn = false;
 
     /**
-     * @var EventDispatcherInterface
+     * @var EventDispatcherInterface|null
      */
     protected $eventDispatcher;
 
@@ -76,7 +76,7 @@ class Videorecorder
     /**
      * @param EventDispatcherInterface $dispatcher
      */
-    public function setEventDispatcher(EventDispatcherInterface $dispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
     {
         $this->eventDispatcher = $dispatcher;
     }
@@ -84,7 +84,7 @@ class Videorecorder
     /**
      * @return EventDispatcherInterface
      */
-    public function getEventDispatcher()
+    public function getEventDispatcher(): EventDispatcherInterface
     {
         if (!$this->eventDispatcher) {
             $this->eventDispatcher = new EventDispatcher();
@@ -99,9 +99,19 @@ class Videorecorder
      * @param Event $event The event to pass to the event handlers/listeners.
      * @return Event
      */
-    private function dispatch($eventName, Event $event = null)
+    private function dispatch(string $eventName, Event $event): Event
     {
-        return $this->getEventDispatcher()->dispatch($eventName, $event);
+        // Symfony 4.3 introduces a breaking change (in a minor release!) in the parameter order of the dispatch method.
+        // We need to check which version of the dispatcher we are using!
+        $r = new \ReflectionMethod($this->getEventDispatcher(), 'dispatch');
+        $param2 = $r->getParameters()[1] ?? null;
+
+        if (!$param2 || !$param2->hasType() || $param2->getType()->isBuiltin()) {
+            $this->getEventDispatcher()->dispatch($event, $eventName);
+        } else {
+            $this->getEventDispatcher()->dispatch($eventName, $event);
+        }
+        return $event;
     }
 
     /**
@@ -113,7 +123,7 @@ class Videorecorder
      *
      * @return void
      */
-    public function turnOn()
+    public function turnOn(): void
     {
         if ($this->isOn) {
             $this->turnOff();
@@ -132,7 +142,7 @@ class Videorecorder
      *
      * @return void
      */
-    public function turnOff()
+    public function turnOff(): void
     {
         if ($this->isOn) {
             $this->disableLibraryHooks();
@@ -150,7 +160,7 @@ class Videorecorder
      *
      * @return void
      */
-    public function eject()
+    public function eject(): void
     {
         Assertion::true($this->isOn, 'Please turn on VCR before ejecting a cassette, use: VCR::turnOn().');
         $this->cassette = null;
@@ -166,7 +176,7 @@ class Videorecorder
      * @return void
      * @throws VCRException If videorecorder is turned off when inserting a cassette.
      */
-    public function insertCassette($cassetteName)
+    public function insertCassette(string $cassetteName): void
     {
         Assertion::true($this->isOn, 'Please turn on VCR before inserting a cassette, use: VCR::turnOn().');
 
@@ -187,7 +197,7 @@ class Videorecorder
      *
      * @return Configuration Configuration for this videorecorder.
      */
-    public function configure()
+    public function configure(): Configuration
     {
         return $this->config;
     }
@@ -207,7 +217,7 @@ class Videorecorder
      * @throws \LogicException         If the mode is set to none or once and
      *                                 the cassette did not have a matching response.
      */
-    public function handleRequest(Request $request)
+    public function handleRequest(Request $request): Response
     {
         if ($this->cassette === null) {
             throw new \BadMethodCallException(
@@ -248,13 +258,16 @@ class Videorecorder
 
         $this->disableLibraryHooks();
 
-        $this->dispatch(VCREvents::VCR_BEFORE_HTTP_REQUEST, new BeforeHttpRequestEvent($request));
-        $response = $this->client->send($request);
-        $this->dispatch(VCREvents::VCR_AFTER_HTTP_REQUEST, new AfterHttpRequestEvent($request, $response));
+        try {
+            $this->dispatch(VCREvents::VCR_BEFORE_HTTP_REQUEST, new BeforeHttpRequestEvent($request));
+            $response = $this->client->send($request);
+            $this->dispatch(VCREvents::VCR_AFTER_HTTP_REQUEST, new AfterHttpRequestEvent($request, $response));
 
-        $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
-        $this->cassette->record($request, $response);
-        $this->enableLibraryHooks();
+            $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
+            $this->cassette->record($request, $response);
+        } finally {
+            $this->enableLibraryHooks();
+        }
 
         return $response;
     }
@@ -266,7 +279,7 @@ class Videorecorder
      *
      * @return void
      */
-    protected function disableLibraryHooks()
+    protected function disableLibraryHooks(): void
     {
         foreach ($this->config->getLibraryHooks() as $hookClass) {
             $hook = $this->factory->get($hookClass);
@@ -281,7 +294,7 @@ class Videorecorder
      *
      * @return void
      */
-    protected function enableLibraryHooks()
+    protected function enableLibraryHooks(): void
     {
         $self = $this;
         foreach ($this->config->getLibraryHooks() as $hookClass) {

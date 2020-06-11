@@ -18,17 +18,20 @@
     ],
 
     "require": {
+        "php": ">=7.2",
         "ext-curl": "*",
-        "beberlei/assert": "^2.0",
+        "beberlei/assert": "^3.2.5",
         "symfony/yaml": "~2.1|^3.0|^4.0",
         "symfony/event-dispatcher": "^2.4|^3.0|^4.0"
     },
 
     "require-dev": {
-        "phpunit/phpunit": "^4.8|^5.0",
-        "sebastian/version": "^1.0.3|^2.0",
+        "phpunit/phpunit": "^7.4.3",
         "mikey179/vfsstream": "^1.2",
-        "lapistano/proxy-object": "dev-master#d7184a479f502d5a0f96d0bae73566dbb498da8f"
+        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan-beberlei-assert": "^0.12.0",
+        "thecodingmachine/phpstan-strict-rules": "^0.12",
+        "sebastian/version": "^1.0.3|^2.0"
     },
 
     "autoload": {

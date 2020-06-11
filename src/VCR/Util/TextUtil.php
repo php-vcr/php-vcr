@@ -16,7 +16,7 @@ class TextUtil
      *
      * @return string Lowercase camelcased version of specified text.
      */
-    public static function underscoreToLowerCamelcase($underscore)
+    public static function underscoreToLowerCamelcase(string $underscore): string
     {
         return lcfirst(
             str_replace(
