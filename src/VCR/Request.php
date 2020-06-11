@@ -31,7 +31,7 @@ class Request
      */
     protected $postFiles = array();
     /**
-     * @var array<string,mixed> $post_fields
+     * @var array<string,mixed>
      */
     protected $postFields = array();
     /**
@@ -221,7 +221,7 @@ class Request
 
         $host = parse_url($url, PHP_URL_HOST);
 
-        if ($host === null) {
+        if ($host === null || $host === false) {
             throw InvalidHostException::create($this->getUrl());
         }
 
@@ -239,7 +239,9 @@ class Request
     {
         $url = $this->getUrl();
         Assertion::string($url);
-        return parse_url($url, PHP_URL_PATH);
+        $path = parse_url($url, PHP_URL_PATH);
+        Assertion::notSame($path, false);
+        return $path;
     }
 
     /**
@@ -249,7 +251,9 @@ class Request
     {
         $url = $this->getUrl();
         Assertion::string($url);
-        return parse_url($url, PHP_URL_QUERY);
+        $query = parse_url($url, PHP_URL_QUERY);
+        Assertion::notSame($query, false);
+        return $query;
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace VCR;
 
+use Assert\Assertion;
+
 /**
  * Singleton interface to a Videorecorder.
  *
@@ -35,8 +37,10 @@ class VCR
      */
     public static function __callStatic(string $method, array $parameters)
     {
-        $instance = VCRFactory::get('VCR\Videorecorder');
+        $callable = [VCRFactory::get('VCR\Videorecorder'), $method];
 
-        return call_user_func_array(array($instance, $method), $parameters);
+        Assertion::isCallable($callable);
+
+        return call_user_func_array($callable, $parameters);
     }
 }

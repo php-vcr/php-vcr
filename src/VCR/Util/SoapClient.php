@@ -74,7 +74,7 @@ class SoapClient extends \SoapClient
     /**
      * @inheritdoc
      */
-    public function __getLastRequest()
+    public function __getLastRequest(): ?string
     {
         return $this->request;
     }
@@ -82,7 +82,7 @@ class SoapClient extends \SoapClient
     /**
      * @inheritdoc
      */
-    public function __getLastResponse()
+    public function __getLastResponse(): ?string
     {
         return $this->response;
     }

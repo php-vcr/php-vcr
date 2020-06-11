@@ -22,25 +22,26 @@ class Blackhole implements Storage
         return true;
     }
 
-    public function current()
+    /** @return array<string, mixed> */
+    public function current(): ?array
     {
         throw new \BadMethodCallException('Not implemented');
     }
 
-    public function key()
+    public function key(): int
     {
         throw new \BadMethodCallException('Not implemented');
     }
 
-    public function next()
+    public function next(): void
     {
     }
 
-    public function rewind()
+    public function rewind(): void
     {
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return false;
     }

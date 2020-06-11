@@ -7,6 +7,7 @@ namespace VCR\Storage;
  *
  * A Storage can be iterated using standard loops.
  * New recordings can be stored.
+ * @phpstan-extends \Iterator<int, array>
  */
 interface Storage extends \Iterator
 {

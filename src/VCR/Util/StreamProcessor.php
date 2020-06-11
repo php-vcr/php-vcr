@@ -2,6 +2,7 @@
 
 namespace VCR\Util;
 
+use Assert\Assertion;
 use VCR\Configuration;
 use VCR\CodeTransform\AbstractCodeTransform;
 
@@ -72,7 +73,7 @@ class StreamProcessor
     public function intercept(): void
     {
         if (!$this->isIntercepting) {
-            ini_set('opcache.enable', 0);
+            ini_set('opcache.enable', '0');
             stream_wrapper_unregister(self::PROTOCOL);
             $this->isIntercepting = stream_wrapper_register(self::PROTOCOL, __CLASS__);
         }
@@ -185,7 +186,7 @@ class StreamProcessor
             $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH));
         }
 
-        if ($options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
+        if ($this->resource !== false && $options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
             $this->appendFiltersToStream($this->resource);
         }
 
@@ -203,6 +204,10 @@ class StreamProcessor
      */
     public function stream_close(): bool
     {
+        if ($this->resource === false) {
+            return true;
+        }
+
         return fclose($this->resource);
     }
 
@@ -216,6 +221,10 @@ class StreamProcessor
      */
     public function stream_eof(): bool
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         return feof($this->resource);
     }
 
@@ -228,6 +237,10 @@ class StreamProcessor
      */
     public function stream_flush(): bool
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         return fflush($this->resource);
     }
 
@@ -242,6 +255,10 @@ class StreamProcessor
      */
     public function stream_read(int $count)
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         return fread($this->resource, $count);
     }
 
@@ -257,6 +274,10 @@ class StreamProcessor
      */
     public function stream_seek(int $offset, int $whence = SEEK_SET): bool
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         return fseek($this->resource, $offset, $whence) === 0;
     }
 
@@ -287,6 +308,10 @@ class StreamProcessor
      */
     public function stream_tell()
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         return ftell($this->resource);
     }
 
@@ -327,6 +352,10 @@ class StreamProcessor
      */
     public function dir_closedir(): bool
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         closedir($this->resource);
 
         return true;
@@ -363,6 +392,10 @@ class StreamProcessor
      */
     public function dir_readdir()
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         return readdir($this->resource);
     }
 
@@ -375,6 +408,10 @@ class StreamProcessor
      */
     public function dir_rewinddir(): bool
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         rewinddir($this->resource);
 
         return true;
@@ -474,6 +511,10 @@ class StreamProcessor
      */
     public function stream_lock(int $operation): bool
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         $operation = ($operation === 0 ? LOCK_EX : $operation);
         return flock($this->resource, $operation);
     }
@@ -492,6 +533,10 @@ class StreamProcessor
      */
     public function stream_set_option(int $option, int $arg1, int $arg2): bool
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         switch ($option) {
             case STREAM_OPTION_BLOCKING:
                 return stream_set_blocking($this->resource, (bool) $arg1);
@@ -522,6 +567,10 @@ class StreamProcessor
      */
     public function stream_write(string $data)
     {
+        if ($this->resource === false) {
+            return false;
+        }
+
         return fwrite($this->resource, $data);
     }
 
@@ -598,6 +647,10 @@ class StreamProcessor
      */
     public function stream_truncate(int $new_size): bool
     {
+        if ($this->resource === false) {
+            return false;
+        }
+        
         return ftruncate($this->resource, $new_size);
     }
 

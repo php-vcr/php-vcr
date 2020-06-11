@@ -8,6 +8,9 @@ class CurlCodeTransform extends AbstractCodeTransform
 {
     const NAME = 'vcr_curl';
 
+    /**
+     * @var array<string, string>
+     */
     private static $patterns = array(
         '/(?<!::|->|\w_)\\\?curl_init\s*\(/i'                => '\VCR\LibraryHooks\CurlHook::curl_init(',
         '/(?<!::|->|\w_)\\\?curl_exec\s*\(/i'                => '\VCR\LibraryHooks\CurlHook::curl_exec(',

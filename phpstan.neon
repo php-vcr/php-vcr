@@ -3,26 +3,18 @@ parameters:
     paths:
         - src
     ignoreErrors:
-        - "#Call to an undefined static method SoapClient::__construct\\(\\)#"
+        # This part of PHP is not very well documented, resulting PHPStan's definitions not being accurate
         - "#Access to an undefined property object::\\$data\\.#"
         - "#Access to an undefined property object::\\$datalen\\.#"
-        # Cast to string is necessary to work around a PHP bug. See SoapClient::__doRequest
-        - "#Casting to string something that's already string\\.#"
-        - "#Parameter \\#1 \\$function of function call_user_func_array expects callable, array.* given#"
-        # Working around a PHPStan bug that does not detect a non falsy value in Yaml::readNextRecord
-        - "#Parameter \\#1 \\$haystack of function strpos expects string, string\\|false given#"
-        - "#Parameter \\#1 \\$string of function strlen expects string, string\\|false given#"
-        # PHPStan cannot detect that curl_exec will return a string and not true (because of the CURLOPT_RETURNTRANSFER option. In HttpClient::send
-        - '#Parameter .* \\$response of static method VCR\\\\Util\\\\HttpUtil::parseResponse\\(\\) expects string, string\\|true given.#'
+        -
+            message: '#Unreachable statement - code above always terminates.#'
+            path: src/VCR/CodeTransform/AbstractCodeTransform.php
         # PHPStan cannot detect that strrpos will succeed (because of Assertion above) in HttpUtil::parseStatus
-        - '#Parameter .* \\$str of function substr expects string, string\\|false given.#'
-        # It turns out that curl_init DOES accept null as first parameter, even if it is not documented.
-        - '#Parameter .* $url of function curl_init expects string, string\\|null given.#'
+        - '#Parameter .* \$str of function substr expects string, string\|false given.#'
         # The EventDispatcherInterface::dispatch method does actually expect 2 parameters (see PHPDoc)
         - '#Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required.#'
         # The EventDispatcherInterface::dispatch signature is different (!) between Symfony <4.3 and >=4.3
         - '/Parameter #1 \$event of method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) expects object, string given./'
-        - '/Cannot call method isBuiltin\(\) on ReflectionType|null./'
 includes:
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
     - vendor/phpstan/phpstan-beberlei-assert/extension.neon

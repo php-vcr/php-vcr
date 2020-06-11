@@ -37,17 +37,17 @@ class CurlHook implements LibraryHook
     protected static $responses = array();
 
     /**
-     * @var array Additinal curl options, which are not stored within a request.
+     * @var array<int,mixed> Additinal curl options, which are not stored within a request.
      */
     protected static $curlOptions = array();
 
     /**
-     * @var array All curl handles which belong to curl_multi handles.
+     * @var array<int, array> All curl handles which belong to curl_multi handles.
      */
     protected static $multiHandles = array();
 
     /**
-     * @var array Last active curl_multi_exec() handles.
+     * @var array<int, array> Last active curl_multi_exec() handles.
      */
     protected static $multiExecLastChs = array();
 
@@ -157,7 +157,12 @@ class CurlHook implements LibraryHook
         }
 
         $localMethod = TextUtil::underscoreToLowerCamelcase($method);
-        return \call_user_func_array(array(__CLASS__, $localMethod), $args);
+
+        $callable = array(__CLASS__, $localMethod);
+
+        Assertion::isCallable($callable);
+        
+        return \call_user_func_array($callable, $args);
     }
 
     /**
@@ -282,7 +287,7 @@ class CurlHook implements LibraryHook
      *
      * @link http://www.php.net/manual/en/function.curl-multi-info-read.php
      *
-     * @return array|bool On success, returns an associative array for the message, FALSE on failure.
+     * @return array<string,mixed>|bool On success, returns an associative array for the message, FALSE on failure.
      */
     public static function curlMultiInfoRead()
     {

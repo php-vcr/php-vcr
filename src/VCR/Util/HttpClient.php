@@ -37,6 +37,7 @@ class HttpClient
         curl_setopt($ch, CURLOPT_FAILONERROR, false);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
+        /** @var string|false $result */
         $result = curl_exec($ch);
         if ($result === false) {
             throw CurlException::create($ch);
