@@ -14,24 +14,17 @@ class HttpUtil
      */
     public static function parseHeaders(array $headers)
     {
-        $headerGroups = array();
-        $headerList = array();
-
         // Collect matching headers into groups
-        foreach ($headers as $line) {
+        foreach ($headers as $i => $line) {
             list($key, $value) = explode(': ', $line, 2);
-            if (!isset($headerGroups[$key])) {
-                $headerGroups[$key] = array();
+            if (!isset($headers[$key])) {
+                $headers[$key] = array();
             }
-            $headerGroups[$key][] = $value;
+            $headers[$key][] = $value;
+            unset($headers[$i]);
         }
         
-        // Collapse groups
-        foreach ($headerGroups as $key => $values) {
-            $headerList[$key] = implode(', ', $values);
-        }
-
-        return $headerList;
+        return $headers;
     }
 
     /**
@@ -66,7 +59,7 @@ class HttpUtil
     public static function parseResponse($response)
     {
         $response = str_replace("HTTP/1.1 100 Continue\r\n\r\n", '', $response);
-            
+        
         list($rawHeader, $rawBody) = explode("\r\n\r\n", $response, 2);
 
         // Parse headers and status.
