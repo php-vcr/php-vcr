@@ -171,6 +171,10 @@ class Request
      */
     public function getHeader($key)
     {
+        if (!isset($this->headers[$key])) {
+            return null;
+        }
+        
         return $this->headers[$key];
     }
 
