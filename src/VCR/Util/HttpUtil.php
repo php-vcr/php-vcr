@@ -17,10 +17,15 @@ class HttpUtil
         // Collect matching headers into groups
         foreach ($headers as $i => $line) {
             list($key, $value) = explode(': ', $line, 2);
-            if (!isset($headers[$key])) {
-                $headers[$key] = array();
+            if (isset($headers[$key])) {
+                if (!is_array($headers[$key])) {
+                    $headers[$key] = array($headers[$key], $value);
+                } else {
+                    $headers[$key][] = $value;
+                }
+            } else {
+                $headers[$key] = $value;
             }
-            $headers[$key][] = $value;
             unset($headers[$i]);
         }
         

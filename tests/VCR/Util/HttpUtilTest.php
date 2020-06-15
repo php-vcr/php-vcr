@@ -101,10 +101,10 @@ class HttpUtilTest extends \PHPUnit_Framework_TestCase
             'Content-Length: 0'
         );
         $excpetedHeaders = array(
-            'Content-Type' => array('text/html'),
-            'Date' => array('Fri, 19 Jun 2015 16:05:18 GMT'),
-            'Vary' => array('Accept-Encoding'),
-            'Content-Length' => array('0')
+            'Content-Type' => 'text/html',
+            'Date' => 'Fri, 19 Jun 2015 16:05:18 GMT',
+            'Vary' => 'Accept-Encoding',
+            'Content-Length' => '0'
         );
         $outputArray = HttpUtil::parseHeaders($inputArray);
         $this->assertEquals($excpetedHeaders, $outputArray);
@@ -120,10 +120,10 @@ class HttpUtilTest extends \PHPUnit_Framework_TestCase
             'Content-Length: 0'
         );
         $excpetedHeaders = array(
-            'Content-Type' => array('text/html'),
-            'Date' => array('Fri, 19 Jun 2015 16:05:18 GMT'),
+            'Content-Type' => 'text/html',
+            'Date' => 'Fri, 19 Jun 2015 16:05:18 GMT',
             'Vary' => array('Accept, Accept-Language, Expect', 'Accept-Encoding'),
-            'Content-Length' => array('0')
+            'Content-Length' => '0'
         );
         $outputArray = HttpUtil::parseHeaders($inputArray);
         $this->assertEquals($excpetedHeaders, $outputArray);
@@ -135,7 +135,7 @@ class HttpUtilTest extends \PHPUnit_Framework_TestCase
             'dropbox-api-result: {"name": "a_file.txt"}'
         );
         $excpetedHeaders = array(
-            'dropbox-api-result' => array('{"name": "a_file.txt"}')
+            'dropbox-api-result' => '{"name": "a_file.txt"}'
         );
         $outputArray = HttpUtil::parseHeaders($inputArray);
         $this->assertEquals($excpetedHeaders, $outputArray);
