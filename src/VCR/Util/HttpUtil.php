@@ -100,8 +100,9 @@ class HttpUtil
                 foreach ($values as $value) {
                     $curlHeaders[] = $key . ': ' . $value;
                 }
+            } else {
+                $curlHeaders[] = $key.': '.$values;
             }
-            $curlHeaders[] = $key . ': ' . $values;
         }
 
         return $curlHeaders;
