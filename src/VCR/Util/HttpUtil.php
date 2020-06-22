@@ -101,7 +101,7 @@ class HttpUtil
                     $curlHeaders[] = $key . ': ' . $value;
                 }
             } else {
-                $curlHeaders[] = $key.': '.$values;
+                $curlHeaders[] = $key . ': ' . $values;
             }
         }
 
