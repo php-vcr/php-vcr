@@ -14,24 +14,22 @@ class HttpUtil
      */
     public static function parseHeaders(array $headers)
     {
-        $headerGroups = array();
-        $headerList = array();
-
         // Collect matching headers into groups
-        foreach ($headers as $line) {
+        foreach ($headers as $i => $line) {
             list($key, $value) = explode(': ', $line, 2);
-            if (!isset($headerGroups[$key])) {
-                $headerGroups[$key] = array();
+            if (isset($headers[$key])) {
+                if (is_array($headers[$key])) {
+                    $headers[$key][] = $value;
+                } else {
+                    $headers[$key] = array($headers[$key], $value);
+                }
+            } else {
+                $headers[$key] = $value;
             }
-            $headerGroups[$key][] = $value;
+            unset($headers[$i]);
         }
         
-        // Collapse groups
-        foreach ($headerGroups as $key => $values) {
-            $headerList[$key] = implode(', ', $values);
-        }
-
-        return $headerList;
+        return $headers;
     }
 
     /**
@@ -66,7 +64,7 @@ class HttpUtil
     public static function parseResponse($response)
     {
         $response = str_replace("HTTP/1.1 100 Continue\r\n\r\n", '', $response);
-            
+        
         list($rawHeader, $rawBody) = explode("\r\n\r\n", $response, 2);
 
         // Parse headers and status.
@@ -97,8 +95,14 @@ class HttpUtil
     {
         $curlHeaders = array();
 
-        foreach ($headers as $key => $value) {
-            $curlHeaders[] = $key . ': ' . $value;
+        foreach ($headers as $key => $values) {
+            if (is_array($values)) {
+                foreach ($values as $value) {
+                    $curlHeaders[] = $key . ': ' . $value;
+                }
+            } else {
+                $curlHeaders[] = $key . ': ' . $values;
+            }
         }
 
         return $curlHeaders;
