@@ -4,7 +4,6 @@ namespace VCR\Event;
 
 use VCR\Cassette;
 use VCR\Request;
-use Symfony\Contracts\EventDispatcher\Event;
 
 class BeforePlaybackEvent extends Event
 {
