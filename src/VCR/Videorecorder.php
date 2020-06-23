@@ -60,6 +60,13 @@ class Videorecorder
     protected $eventDispatcher;
 
     /**
+     * Tracks the number of occurrence of a given request
+     *
+     * @var array
+     */
+    protected $indexTable = array();
+
+    /**
      * Creates a videorecorder instance.
      *
      * @param Configuration $config  Config options like which library hooks to use.
@@ -153,7 +160,9 @@ class Videorecorder
     public function eject()
     {
         Assertion::true($this->isOn, 'Please turn on VCR before ejecting a cassette, use: VCR::turnOn().');
+
         $this->cassette = null;
+        $this->resetIndex();
     }
 
     /**
@@ -178,6 +187,7 @@ class Videorecorder
 
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
         $this->enableLibraryHooks();
+        $this->resetIndex();
     }
 
     /**
@@ -220,7 +230,9 @@ class Videorecorder
         $event = new BeforePlaybackEvent($request, $this->cassette);
         $this->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, $event);
 
-        $response = $this->cassette->playback($request);
+        // Add an index to the request to allow recording identical requests and play them back in the same sequence.
+        $index = $this->iterateIndex($request);
+        $response = $this->cassette->playback($request, $index);
 
         // Playback succeeded and the recorded response can be returned.
         if (!empty($response)) {
@@ -253,7 +265,7 @@ class Videorecorder
         $this->dispatch(VCREvents::VCR_AFTER_HTTP_REQUEST, new AfterHttpRequestEvent($request, $response));
 
         $this->dispatch(VCREvents::VCR_BEFORE_RECORD, new BeforeRecordEvent($request, $response, $this->cassette));
-        $this->cassette->record($request, $response);
+        $this->cassette->record($request, $response, $index);
         $this->enableLibraryHooks();
 
         return $response;
@@ -304,5 +316,28 @@ class Videorecorder
         if ($this->isOn) {
             $this->turnOff();
         }
+    }
+
+    /**
+     * Increment the index for a given request.
+     *
+     * @param \VCR\Request $request
+     * @return mixed
+     */
+    protected function iterateIndex(Request $request)
+    {
+        $hash = $request->getHash();
+        if (!isset($this->indexTable[$hash])) {
+            $this->indexTable[$hash] = -1;
+        }
+        return ++$this->indexTable[$hash];
+    }
+
+    /**
+     * Clear the indexTable property.
+     */
+    public function resetIndex()
+    {
+        $this->indexTable = array();
     }
 }

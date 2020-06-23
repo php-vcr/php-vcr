@@ -27,10 +27,11 @@ class VideorecorderTest extends \PHPUnit_Framework_TestCase
         $configuration->enableLibraryHooks(array());
         $videorecorder = $this->getMockBuilder('\VCR\Videorecorder')
             ->setConstructorArgs(array($configuration, new Util\HttpClient(), VCRFactory::getInstance()))
-            ->setMethods(array('eject'))
+            ->setMethods(array('eject', 'resetIndex'))
             ->getMock();
 
         $videorecorder->expects($this->exactly(2))->method('eject');
+        $videorecorder->expects($this->exactly(2))->method('resetIndex');
 
         $videorecorder->turnOn();
         $videorecorder->insertCassette('cassette1');
