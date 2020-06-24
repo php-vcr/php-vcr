@@ -156,7 +156,6 @@ class VideorecorderTest extends TestCase
         $cassette
             ->expects($this->once())
             ->method('playback')
-            ->with($request)
             ->will($this->returnValue(null));
         $cassette
             ->method('getName')
@@ -166,7 +165,7 @@ class VideorecorderTest extends TestCase
             $cassette
                 ->expects($this->once())
                 ->method('record')
-                ->with($request, $response);
+                ->with($response);
         }
 
         if ($mode == 'once') {
