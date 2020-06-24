@@ -52,33 +52,6 @@ class Request
     }
 
     /**
-     * Returns true if specified request matches the current one
-     * with specified request matcher callbacks.
-     *
-     * @param  Request $request Request to check if it matches the current one.
-     * @param  callable[] $requestMatchers Request matcher callbacks.
-     *
-     * @throws \BadFunctionCallException If one of the specified request matchers is not callable.
-     * @return boolean True if specified request matches the current one.
-     */
-    public function matches(Request $request, array $requestMatchers): bool
-    {
-        foreach ($requestMatchers as $matcher) {
-            if (!is_callable($matcher)) {
-                throw new \BadFunctionCallException(
-                    'Matcher could not be executed. ' . print_r($matcher, true)
-                );
-            }
-
-            if (call_user_func_array($matcher, array($this, $request)) === false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Returns an array representation of this request.
      *
      * @return array<string,mixed> Array representation of this request.
