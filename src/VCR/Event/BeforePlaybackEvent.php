@@ -29,7 +29,7 @@ class BeforePlaybackEvent extends Event
     /**
      * @return Request
      */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }
@@ -37,7 +37,7 @@ class BeforePlaybackEvent extends Event
     /**
      * @return Cassette
      */
-    public function getCassette()
+    public function getCassette(): Cassette
     {
         return $this->cassette;
     }

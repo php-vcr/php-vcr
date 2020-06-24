@@ -4,7 +4,6 @@ namespace VCR\Storage;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
-use VCR\Util\Assertion;
 
 /**
  * Yaml based storage for records.
@@ -43,7 +42,7 @@ class Yaml extends AbstractStorage
     /**
      * @inheritDoc
      */
-    public function storeRecording(array $recording)
+    public function storeRecording(array $recording): void
     {
         fseek($this->handle, -1, SEEK_END);
         fwrite($this->handle, "\n" . $this->yamlDumper->dump(array($recording), 4));
@@ -58,7 +57,7 @@ class Yaml extends AbstractStorage
     public function next()
     {
         $recording = $this->yamlParser->parse($this->readNextRecord());
-        $this->current = isset($recording[0]) ? $recording[0] : null;
+        $this->current = $recording[0] ?? null;
         ++$this->position;
     }
 
@@ -67,7 +66,7 @@ class Yaml extends AbstractStorage
      *
      * @return string Next record in raw format.
      */
-    private function readNextRecord()
+    private function readNextRecord(): string
     {
         if ($this->isEOF) {
             $this->isValidPosition = false;

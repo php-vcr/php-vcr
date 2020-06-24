@@ -38,7 +38,7 @@ class AfterPlaybackEvent extends Event
     /**
      * @return Request
      */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }
@@ -46,7 +46,7 @@ class AfterPlaybackEvent extends Event
     /**
      * @return Response
      */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->response;
     }
@@ -54,7 +54,7 @@ class AfterPlaybackEvent extends Event
     /**
      * @return Cassette
      */
-    public function getCassette()
+    public function getCassette(): Cassette
     {
         return $this->cassette;
     }

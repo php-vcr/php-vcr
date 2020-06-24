@@ -15,6 +15,9 @@ class SoapClient extends \SoapClient
      */
     protected $soapHook;
 
+    /**
+     * @var array<string,mixed>
+     */
     protected $options = array();
 
     /**
@@ -27,7 +30,11 @@ class SoapClient extends \SoapClient
      */
     protected $request;
 
-    public function __construct($wsdl, $options = array())
+    /**
+     * @param mixed $wsdl
+     * @param array<string,mixed> $options
+     */
+    public function __construct($wsdl, array $options = array())
     {
         $this->options = $options;
         parent::__construct($wsdl, $options);
@@ -44,7 +51,7 @@ class SoapClient extends \SoapClient
      * @param  integer $version  The SOAP version.
      * @param  integer $one_way  If one_way is set to 1, this method returns nothing.
      *                           Use this where a response is not expected.
-     * @return string  The XML SOAP response.
+     * @return string|null  The XML SOAP response (or null if $one_way is set).
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
@@ -67,7 +74,7 @@ class SoapClient extends \SoapClient
     /**
      * @inheritdoc
      */
-    public function __getLastRequest()
+    public function __getLastRequest(): ?string
     {
         return $this->request;
     }
@@ -75,7 +82,7 @@ class SoapClient extends \SoapClient
     /**
      * @inheritdoc
      */
-    public function __getLastResponse()
+    public function __getLastResponse(): ?string
     {
         return $this->response;
     }
@@ -85,7 +92,7 @@ class SoapClient extends \SoapClient
      *
      * @param SoapHook $hook SOAP library hook to use when intercepting SOAP requests.
      */
-    public function setLibraryHook(SoapHook $hook)
+    public function setLibraryHook(SoapHook $hook): void
     {
         $this->soapHook = $hook;
     }
@@ -102,7 +109,7 @@ class SoapClient extends \SoapClient
      *                           Use this where a response is not expected.
      * @return string  The XML SOAP response.
      */
-    protected function realDoRequest($request, $location, $action, $version, $one_way = 0)
+    protected function realDoRequest(string $request, string $location, string $action, int $version, int $one_way = 0): string
     {
         return parent::__doRequest($request, $location, $action, $version, $one_way);
     }
@@ -114,7 +121,7 @@ class SoapClient extends \SoapClient
      *
      * @return SoapHook SOAP library hook.
      */
-    protected function getLibraryHook()
+    protected function getLibraryHook(): SoapHook
     {
         if (empty($this->soapHook)) {
             $this->soapHook = VCRFactory::get('VCR\LibraryHooks\SoapHook');

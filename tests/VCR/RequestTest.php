@@ -2,10 +2,13 @@
 
 namespace VCR;
 
+use const CURLOPT_CUSTOMREQUEST;
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class RequestTest extends \PHPUnit_Framework_TestCase
+class RequestTest extends TestCase
 {
     /**
      * @var \VCR\Request
@@ -59,7 +62,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function testMatchesThrowsExceptionIfMatcherNotFound()
     {
         $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-        $this->setExpectedException(
+        $this->expectException(
             '\BadFunctionCallException',
             "Matcher could not be executed. Array\n(\n    [0] => some\n    [1] => method\n)\n"
         );
@@ -126,6 +129,29 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             'postname'    => 'unittest_curl_test',
         );
         $this->request->addPostFile($file);
+        $this->assertEquals(
+            array(
+                'method'      => 'GET',
+                'url'         => 'http://example.com',
+                'headers'     => array(
+                    'User-Agent'   => 'Unit-Test',
+                    'Host'         => 'example.com',
+                ),
+                'post_files' => array($file),
+            ),
+            $this->request->toArray()
+        );
+    }
+
+    public function testSetPostFiles()
+    {
+        $file = array(
+            'fieldName'   => 'field_name',
+            'contentType' => 'application/octet-stream',
+            'filename'    => 'tests/fixtures/unittest_curl_test',
+            'postname'    => 'unittest_curl_test',
+        );
+        $this->request->setPostFiles([$file]);
         $this->assertEquals(
             array(
                 'method'      => 'GET',
@@ -246,5 +272,14 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('PUT', $postRequest->getMethod());
         $this->assertEquals('POST', $getRequest->getMethod());
+    }
+
+    public function testSetCurlOptions()
+    {
+        $getRequest = new Request('GET', 'http://example.com');
+        $getRequest->setCurlOptions([
+            CURLOPT_CUSTOMREQUEST => 'PUT'
+        ]);
+        $this->assertEquals('PUT', $getRequest->getCurlOption(CURLOPT_CUSTOMREQUEST));
     }
 }

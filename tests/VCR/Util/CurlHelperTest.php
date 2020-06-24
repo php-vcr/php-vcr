@@ -3,17 +3,19 @@
 namespace VCR\Util;
 
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
+use VCR\Exceptions\InvalidHostException;
 use VCR\Request;
 use VCR\Response;
 
-class CurlHelperTest extends \PHPUnit_Framework_TestCase
+class CurlHelperTest extends TestCase
 {
     /**
      * @dataProvider getHttpMethodsProvider()
      */
     public function testSetCurlOptionMethods($method)
     {
-        $request = new Request($method, 'example.com');
+        $request = new Request($method, 'http://example.com');
         $headers = array('Host: example.com');
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
@@ -42,7 +44,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionOnRequestPostFieldsQueryString()
     {
-        $request = new Request('POST', 'example.com');
+        $request = new Request('POST', 'http://example.com');
         $payload = 'para1=val1&para2=val2';
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
@@ -52,7 +54,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionOnRequestPostFieldsArray()
     {
-        $request = new Request('POST', 'example.com');
+        $request = new Request('POST', 'http://example.com');
         $payload = array('some' => 'test');
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
@@ -63,7 +65,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionOnRequestPostFieldsString()
     {
-        $request = new Request('POST', 'example.com');
+        $request = new Request('POST', 'http://example.com');
         $payload = json_encode(array('some' => 'test'));
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
@@ -73,7 +75,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionOnRequestPostFieldsEmptyString()
     {
-        $request = new Request('POST', 'example.com');
+        $request = new Request('POST', 'http://example.com');
         $payload = '';
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
@@ -85,7 +87,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionOnRequestSetSingleHeader()
     {
-        $request = new Request('GET', 'example.com');
+        $request = new Request('GET', 'http://example.com');
         $headers = array('Host: example.com');
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
@@ -95,7 +97,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionOnRequestSetSingleHeaderTwice()
     {
-        $request = new Request('GET', 'example.com');
+        $request = new Request('GET', 'http://example.com');
         $headers = array('Host: example.com');
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
@@ -106,7 +108,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionOnRequestSetMultipleHeadersTwice()
     {
-        $request = new Request('GET', 'example.com');
+        $request = new Request('GET', 'http://example.com');
         $headers = array(
             'Host: example.com',
             'Content-Type: application/json',
@@ -124,7 +126,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionOnRequestEmptyPostFieldsRemovesContentType()
     {
-        $request = new Request('GET', 'example.com');
+        $request = new Request('GET', 'http://example.com');
         $headers = array(
             'Host: example.com',
             'Content-Type: application/json',
@@ -141,7 +143,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionOnRequestPostFieldsSetsPostMethod()
     {
-        $request = new Request('GET', 'example.com');
+        $request = new Request('GET', 'http://example.com');
         $payload = json_encode(array('some' => 'test'));
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
@@ -151,17 +153,23 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurlOptionReadFunctionToNull()
     {
-        $request = new Request('POST', 'example.com');
+        $request = new Request('POST', 'http://example.com');
 
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, null, curl_init());
 
         $this->assertNull($request->getCurlOption(CURLOPT_READFUNCTION));
     }
 
+    public function testInvalidHostException()
+    {
+        $this->expectException(InvalidHostException::class, 'URL must be valid.');
+        new Request('POST', 'example.com');
+    }
+
     public function testSetCurlOptionReadFunctionMissingSize()
     {
-        $this->setExpectedException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
-        $request = new Request('POST', 'example.com');
+        $this->expectException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
+        $request = new Request('POST', 'http://example.com');
 
         $callback = function ($curlHandle, $fileHandle, $size) {
         };
@@ -173,7 +181,7 @@ class CurlHelperTest extends \PHPUnit_Framework_TestCase
     public function testSetCurlOptionReadFunction()
     {
         $expected = 'test body';
-        $request = new Request('POST', 'example.com');
+        $request = new Request('POST', 'http://example.com');
 
         $test = $this;
         $callback = function ($curlHandle, $fileHandle, $size) use ($test, $expected) {

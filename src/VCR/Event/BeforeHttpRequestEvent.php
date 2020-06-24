@@ -22,7 +22,7 @@ class BeforeHttpRequestEvent extends Event
     /**
      * @return Request
      */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }

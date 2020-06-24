@@ -30,7 +30,7 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 Using static method calls:
 
 ``` php
-class VCRTest extends \PHPUnit_Framework_TestCase
+class VCRTest extends TestCase
 {
     public function testShouldInterceptStreamWrapper()
     {
@@ -68,7 +68,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 You can use annotations in PHPUnit by using [phpunit-testlistener-vcr](https://github.com/php-vcr/phpunit-testlistener-vcr):
 
 ``` php
-class VCRTest extends \PHPUnit_Framework_TestCase
+class VCRTest extends TestCase
 {
     /**
      * @vcr unittest_annotation_test

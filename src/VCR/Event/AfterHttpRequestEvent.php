@@ -30,7 +30,7 @@ class AfterHttpRequestEvent extends Event
     /**
      * @return Request
      */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }
@@ -38,7 +38,7 @@ class AfterHttpRequestEvent extends Event
     /**
      * @return Response
      */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->response;
     }

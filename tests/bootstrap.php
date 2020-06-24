@@ -1,7 +1,5 @@
 <?php
 
-error_reporting(E_ALL & ~E_DEPRECATED); // Ignore deprecation messages for PHP 7.4
-
 if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
     die(
         "\n[ERROR] You need to run composer before running the test suite.\n" .
