@@ -124,7 +124,7 @@ class HttpUtilTest extends TestCase
         $excpetedHeaders = array(
             'Content-Type' => 'text/html',
             'Date' => 'Fri, 19 Jun 2015 16:05:18 GMT',
-            'Vary' => 'Accept, Accept-Language, Expect, Accept-Encoding',
+            'Vary' => array('Accept, Accept-Language, Expect', 'Accept-Encoding'),
             'Content-Length' => '0'
         );
         $outputArray = HttpUtil::parseHeaders($inputArray);

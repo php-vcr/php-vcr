@@ -14,24 +14,22 @@ class HttpUtil
      */
     public static function parseHeaders(array $headers): array
     {
-        $headerGroups = array();
-        $headerList = array();
-
         // Collect matching headers into groups
-        foreach ($headers as $line) {
+        foreach ($headers as $i => $line) {
             list($key, $value) = explode(': ', $line, 2);
-            if (!isset($headerGroups[$key])) {
-                $headerGroups[$key] = array();
+            if (isset($headers[$key])) {
+                if (is_array($headers[$key])) {
+                    $headers[$key][] = $value;
+                } else {
+                    $headers[$key] = array($headers[$key], $value);
+                }
+            } else {
+                $headers[$key] = $value;
             }
-            $headerGroups[$key][] = $value;
-        }
-        
-        // Collapse groups
-        foreach ($headerGroups as $key => $values) {
-            $headerList[$key] = implode(', ', $values);
+            unset($headers[$i]);
         }
 
-        return $headerList;
+        return $headers;
     }
 
     /**
@@ -66,7 +64,7 @@ class HttpUtil
     public static function parseResponse(string $response): array
     {
         $response = str_replace("HTTP/1.1 100 Continue\r\n\r\n", '', $response);
-            
+
         list($rawHeader, $rawBody) = explode("\r\n\r\n", $response, 2);
 
         // Parse headers and status.
@@ -90,15 +88,21 @@ class HttpUtil
     /**
      * Returns a list of headers from a key/value paired array.
      *
-     * @param array<string,string> $headers Headers as key/value pairs.
+     * @param array<string,string|array<string,string>> $headers Headers as key/value pairs.
      * @return string[] List of headers ['Content-Type: text/html', '...'].
      */
     public static function formatHeadersForCurl(array $headers): array
     {
         $curlHeaders = array();
 
-        foreach ($headers as $key => $value) {
-            $curlHeaders[] = $key . ': ' . $value;
+        foreach ($headers as $key => $values) {
+            if (is_array($values)) {
+                foreach ($values as $value) {
+                    $curlHeaders[] = $key . ': ' . $value;
+                }
+            } else {
+                $curlHeaders[] = $key . ': ' . $values;
+            }
         }
 
         return $curlHeaders;

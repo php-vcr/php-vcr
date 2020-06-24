@@ -171,10 +171,14 @@ class Request
 
     /**
      * @param string $key
-     * @return string
+     * @return string|null
      */
-    public function getHeader(string $key): string
+    public function getHeader(string $key): ?string
     {
+        if (!isset($this->headers[$key])) {
+            return null;
+        }
+
         return $this->headers[$key];
     }
 
