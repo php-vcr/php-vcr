@@ -45,30 +45,6 @@ class RequestTest extends TestCase
         $this->assertEquals('Basic bG9naW46cGFzc3dvcmQ=', $this->request->getHeader('Authorization'));
     }
 
-    public function testMatches()
-    {
-        $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-
-        $this->assertTrue($this->request->matches($request, array(array('VCR\RequestMatcher', 'matchMethod'))));
-    }
-
-    public function testDoesntMatch()
-    {
-        $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-
-        $this->assertFalse($this->request->matches($request, array(array('VCR\RequestMatcher', 'matchMethod'))));
-    }
-
-    public function testMatchesThrowsExceptionIfMatcherNotFound()
-    {
-        $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
-        $this->expectException(
-            '\BadFunctionCallException',
-            "Matcher could not be executed. Array\n(\n    [0] => some\n    [1] => method\n)\n"
-        );
-        $this->request->matches($request, array(array('some', 'method')));
-    }
-
     public function testRestoreRequest()
     {
         $restoredRequest = Request::fromArray($this->request->toArray());
@@ -205,34 +181,6 @@ class RequestTest extends TestCase
                 'body' => 'sometest',
             ),
             $restoredRequest->toArray()
-        );
-    }
-
-    public function testMatchesBody()
-    {
-        $this->request->setBody('sometest');
-        $request = new Request('POST', 'http://example.com');
-        $request->setBody('sometest');
-
-        $this->assertTrue(
-            $this->request->matches(
-                Request::fromArray($request->toArray()),
-                array(array('VCR\RequestMatcher', 'matchBody'))
-            )
-        );
-    }
-
-    public function testDoesntMatchBody()
-    {
-        $this->request->setBody('sometest');
-        $request = new Request('POST', 'http://example.com');
-        $request->setBody('not match');
-
-        $this->assertFalse(
-            $this->request->matches(
-                Request::fromArray($request->toArray()),
-                array(array('VCR\RequestMatcher', 'matchBody'))
-            )
         );
     }
 
