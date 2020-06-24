@@ -224,10 +224,10 @@ class Videorecorder
         $event = new BeforePlaybackEvent($request, $this->cassette);
         $this->dispatch($event, VCREvents::VCR_BEFORE_PLAYBACK);
 
-        $response = $this->cassette->playback($request);
+        $response = $this->cassette->playback();
 
         // Playback succeeded and the recorded response can be returned.
-        if (!empty($response)) {
+        if ($response) {
             $event = new AfterPlaybackEvent($request, $response, $this->cassette);
             $this->dispatch($event, VCREvents::VCR_AFTER_PLAYBACK);
             return $response;
@@ -258,7 +258,7 @@ class Videorecorder
             $this->dispatch(new AfterHttpRequestEvent($request, $response), VCREvents::VCR_AFTER_HTTP_REQUEST);
 
             $this->dispatch(new BeforeRecordEvent($request, $response, $this->cassette), VCREvents::VCR_BEFORE_RECORD);
-            $this->cassette->record($request, $response);
+            $this->cassette->record($response);
         } finally {
             $this->enableLibraryHooks();
         }
