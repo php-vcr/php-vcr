@@ -111,6 +111,24 @@ class HttpUtilTest extends TestCase
         $outputArray = HttpUtil::parseHeaders($inputArray);
         $this->assertEquals($excpetedHeaders, $outputArray);
     }
+    
+    public function testParseHeadersWithWhitespace()
+    {
+        $inputArray = array(
+            'Content-Type:   text/html',
+            'Date: Fri, 19 Jun 2015 16:05:18 GMT  ',
+            'Vary:   Accept-Encoding  ',
+            'Content-Length: 0'
+        );
+        $excpetedHeaders = array(
+            'Content-Type' => 'text/html',
+            'Date' => 'Fri, 19 Jun 2015 16:05:18 GMT',
+            'Vary' => 'Accept-Encoding',
+            'Content-Length' => '0'
+        );
+        $outputArray = HttpUtil::parseHeaders($inputArray);
+        $this->assertEquals($excpetedHeaders, $outputArray);
+    }
 
     public function testParseHeadersMultiple()
     {
