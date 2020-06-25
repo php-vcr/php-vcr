@@ -2,14 +2,19 @@
 
 namespace VCR\Event;
 
-if (class_exists(\Symfony\Component\EventDispatcher\Event::class)) {
-    class Event extends \Symfony\Component\EventDispatcher\Event
+use Symfony\Component\EventDispatcher\Event as LegacyEvent;
+use Symfony\Contracts\EventDispatcher\Event as ContractsEvent;
+
+if (class_exists(ContractsEvent::class) && !class_exists(LegacyEvent::class)) {
+    abstract class SymphonyEvent extends ContractsEvent
     {
-        //
     }
-} else {
-    class Event extends \Symfony\Contracts\EventDispatcher\Event
+} elseif (class_exists(LegacyEvent::class)) {
+    abstract class SymphonyEvent extends LegacyEvent
     {
-        //
     }
+}
+
+abstract class Event extends SymphonyEvent
+{
 }

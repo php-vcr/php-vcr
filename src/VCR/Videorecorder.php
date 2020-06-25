@@ -102,10 +102,18 @@ class Videorecorder
     private function dispatch(Event $event, $eventName = null): Event
     {
         if (class_exists(\Symfony\Component\EventDispatcher\Event::class)) {
-            return $this->getEventDispatcher()->dispatch($eventName, $event);
+            $res = $this->getEventDispatcher()->dispatch($eventName, $event);
+
+            Assertion::isInstanceOf($res, Event::class);
+
+            return $res;
         }
-        
-        return $this->getEventDispatcher()->dispatch($event, $eventName);
+
+        $res = $this->getEventDispatcher()->dispatch($event, $eventName);
+
+        Assertion::isInstanceOf($res, Event::class);
+
+        return $res;
     }
 
     /**
@@ -251,7 +259,7 @@ class Videorecorder
         }
 
         $this->disableLibraryHooks();
-      
+
         try {
             $this->dispatch(new BeforeHttpRequestEvent($request), VCREvents::VCR_BEFORE_HTTP_REQUEST);
             $response = $this->client->send($request);
