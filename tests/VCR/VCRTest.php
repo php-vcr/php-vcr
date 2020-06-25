@@ -2,8 +2,8 @@
 
 namespace VCR;
 
+use VCR\Event\Event;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\EventDispatcher\Event;
 use org\bovigo\vfs\vfsStream;
 
 /**
