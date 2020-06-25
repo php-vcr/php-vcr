@@ -34,7 +34,7 @@ class ErrorTest extends TestCase
         $this->assertNotNull($nonInstrumentedException);
         $catched = false;
         \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('test-cassette.yml');
+        \VCR\VCR::insertCassette('test-connect.yml');
         try {
             $client = new Client();
             $client->get(self::TEST_GET_URL);
