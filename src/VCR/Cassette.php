@@ -69,7 +69,7 @@ class Cassette
      */
     public function playback(): ?Response
     {
-        if ( ! $this->startedPlayback) {
+        if (! $this->startedPlayback) {
             $this->storage->rewind();
             $this->startedPlayback = true;
         }
