@@ -48,7 +48,7 @@ class StreamProcessorTest extends TestCase
             $mock->expects($this->never())->method('appendFiltersToStream');
         }
 
-        $mock->stream_open('tests/fixtures/streamprocessor_data', 'r', $option, $fullPath);
+        $mock->stream_open('tests/fixtures/streamprocessor_data.yml', 'r', $option, $fullPath);
         $mock->stream_close();
     }
 
@@ -99,7 +99,7 @@ class StreamProcessorTest extends TestCase
         });
 
         $processor = new StreamProcessor();
-        $processor->url_stat('tests/fixtures/streamprocessor_data', 0);
+        $processor->url_stat('tests/fixtures/streamprocessor_data.yml', 0);
 
         restore_error_handler();
     }

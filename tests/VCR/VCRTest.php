@@ -30,7 +30,7 @@ class VCRTest extends TestCase
     {
         VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
         VCR::turnOn();
-        VCR::insertCassette('unittest_streamwrapper_test');
+        VCR::insertCassette('unittest_streamwrapper_test.yml');
         $result = file_get_contents('http://example.com');
         $this->assertEquals('This is a stream wrapper test dummy.', $result, 'Stream wrapper call was not intercepted.');
         VCR::eject();
@@ -41,7 +41,7 @@ class VCRTest extends TestCase
     {
         VCR::configure()->enableLibraryHooks(array('curl'));
         VCR::turnOn();
-        VCR::insertCassette('unittest_curl_test');
+        VCR::insertCassette('unittest_curl_test.yml');
 
         $output = $this->doCurlGetRequest('http://google.com/');
 
@@ -66,7 +66,7 @@ class VCRTest extends TestCase
     {
         VCR::configure()->enableLibraryHooks(array('soap'));
         VCR::turnOn();
-        VCR::insertCassette('unittest_soap_test');
+        VCR::insertCassette('unittest_soap_test.yml');
 
         $client = new \SoapClient('https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl', array('soap_version' => SOAP_1_2));
         $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
@@ -88,7 +88,7 @@ class VCRTest extends TestCase
 
         VCR::configure()->enableLibraryHooks(array('stream_wrapper'));
         VCR::turnOn();
-        VCR::insertCassette('unittest_urandom_test');
+        VCR::insertCassette('unittest_urandom_test.yml');
 
         // Just trying to open this will cause an exception if you're using is_file to filter
         // which paths to intercept.
@@ -154,7 +154,7 @@ class VCRTest extends TestCase
             ->enableLibraryHooks(array('curl'));
         $this->recordAllEvents();
         VCR::turnOn();
-        VCR::insertCassette('unittest_curl_test');
+        VCR::insertCassette('unittest_curl_test.yml');
 
         $this->doCurlGetRequest('http://google.com/');
 

@@ -70,42 +70,6 @@ class ConfigurationTest extends TestCase
         $this->config->enableLibraryHooks(array('non_existing'));
     }
 
-    public function testEnableRequestMatchers()
-    {
-        $this->config->enableRequestMatchers(array('body', 'headers'));
-        $this->assertEquals(
-            array(
-                array('VCR\RequestMatcher', 'matchHeaders'),
-                array('VCR\RequestMatcher', 'matchBody'),
-            ),
-            $this->config->getRequestMatchers()
-        );
-    }
-
-    public function testEnableRequestMatchersFailsWithNoExistingName()
-    {
-        $this->expectException('InvalidArgumentException', "Request matchers don't exist: wrong, name");
-        $this->config->enableRequestMatchers(array('wrong', 'name'));
-    }
-
-    public function testAddRequestMatcherFailsWithNoName()
-    {
-        $this->expectException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
-        $expected = function ($first, $second) {
-            return true;
-        };
-        $this->config->addRequestMatcher('', $expected);
-    }
-
-    public function testAddRequestMatchers()
-    {
-        $expected = function () {
-            return true;
-        };
-        $this->config->addRequestMatcher('new_matcher', $expected);
-        $this->assertContains($expected, $this->config->getRequestMatchers());
-    }
-
     /**
      * @dataProvider availableStorageProvider
      */
