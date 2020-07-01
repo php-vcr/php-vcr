@@ -53,7 +53,7 @@ class TestStorage extends AbstractStorage
 
     public function valid()
     {
-        return (boolean) $this->position;
+        return (bool) $this->position;
     }
 
     public function rewind()

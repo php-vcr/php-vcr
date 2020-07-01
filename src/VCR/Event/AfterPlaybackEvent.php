@@ -23,11 +23,6 @@ class AfterPlaybackEvent extends Event
      */
     protected $cassette;
 
-    /**
-     * @param Request $request
-     * @param Response $response
-     * @param Cassette $cassette
-     */
     public function __construct(Request $request, Response $response, Cassette $cassette)
     {
         $this->request = $request;
@@ -35,25 +30,16 @@ class AfterPlaybackEvent extends Event
         $this->cassette = $cassette;
     }
 
-    /**
-     * @return Request
-     */
     public function getRequest(): Request
     {
         return $this->request;
     }
 
-    /**
-     * @return Response
-     */
     public function getResponse(): Response
     {
         return $this->response;
     }
 
-    /**
-     * @return Cassette
-     */
     public function getCassette(): Cassette
     {
         return $this->cassette;

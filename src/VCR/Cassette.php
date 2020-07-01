@@ -10,7 +10,8 @@ use VCR\Storage\Storage;
 class Cassette
 {
     /**
-     * Casette name
+     * Casette name.
+     *
      * @var string
      */
     protected $name;
@@ -32,10 +33,11 @@ class Cassette
     /**
      * Creates a new cassette.
      *
-     * @param  string           $name    Name of the cassette.
-     * @param  Configuration    $config  Configuration to use for this cassette.
-     * @param  Storage<array>   $storage Storage to use for requests and responses.
-     * @throws \VCR\VCRException If cassette name is in an invalid format.
+     * @param string         $name    name of the cassette
+     * @param Configuration  $config  configuration to use for this cassette
+     * @param Storage<array> $storage storage to use for requests and responses
+     *
+     * @throws \VCR\VCRException if cassette name is in an invalid format
      */
     public function __construct(string $name, Configuration $config, Storage $storage)
     {
@@ -47,21 +49,21 @@ class Cassette
     /**
      * Returns true if a response was recorded for specified request.
      *
-     * @param Request $request Request to check if it was recorded.
+     * @param Request $request request to check if it was recorded
      *
-     * @return boolean True if a response was recorded for specified request.
+     * @return bool true if a response was recorded for specified request
      */
     public function hasResponse(Request $request): bool
     {
-        return $this->playback($request) !== null;
+        return null !== $this->playback($request);
     }
 
     /**
      * Returns a response for given request or null if not found.
      *
-     * @param Request $request Request.
+     * @param Request $request request
      *
-     * @return Response|null Response for specified request.
+     * @return Response|null response for specified request
      */
     public function playback(Request $request): ?Response
     {
@@ -78,10 +80,8 @@ class Cassette
     /**
      * Records a request and response pair.
      *
-     * @param Request  $request  Request to record.
-     * @param Response $response Response to record.
-     *
-     * @return void
+     * @param Request  $request  request to record
+     * @param Response $response response to record
      */
     public function record(Request $request, Response $response): void
     {
@@ -89,10 +89,10 @@ class Cassette
             return;
         }
 
-        $recording = array(
-            'request'  => $request->toArray(),
-            'response' => $response->toArray()
-        );
+        $recording = [
+            'request' => $request->toArray(),
+            'response' => $response->toArray(),
+        ];
 
         $this->storage->storeRecording($recording);
     }
@@ -100,7 +100,7 @@ class Cassette
     /**
      * Returns the name of the current cassette.
      *
-     * @return string Current cassette name.
+     * @return string current cassette name
      */
     public function getName(): string
     {
@@ -109,8 +109,6 @@ class Cassette
 
     /**
      * Returns true if the cassette was created recently.
-     *
-     * @return boolean
      */
     public function isNew(): bool
     {
@@ -120,7 +118,7 @@ class Cassette
     /**
      * Returns a list of callbacks to configured request matchers.
      *
-     * @return callable[] List of callbacks to configured request matchers.
+     * @return callable[] list of callbacks to configured request matchers
      */
     protected function getRequestMatchers(): array
     {

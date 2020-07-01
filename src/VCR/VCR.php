@@ -31,8 +31,8 @@ class VCR
     const MODE_NONE = 'none';
 
     /**
-     * @param string $method
      * @param mixed[] $parameters
+     *
      * @return mixed
      */
     public static function __callStatic(string $method, array $parameters)
@@ -41,6 +41,6 @@ class VCR
 
         Assertion::isCallable($callable);
 
-        return call_user_func_array($callable, $parameters);
+        return \call_user_func_array($callable, $parameters);
     }
 }

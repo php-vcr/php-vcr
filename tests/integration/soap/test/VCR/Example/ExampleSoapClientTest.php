@@ -7,9 +7,9 @@ use PHPUnit\Framework\TestCase;
 use SoapFault;
 
 /**
- * Converts temperature units from webservicex
+ * Converts temperature units from webservicex.
  *
- * @link http://www.webservicex.net/New/Home/ServiceDetail/31
+ * @see http://www.webservicex.net/New/Home/ServiceDetail/31
  */
 class ExampleSoapClientTest extends TestCase
 {
@@ -74,6 +74,7 @@ class ExampleSoapClientTest extends TestCase
     protected function callSoap()
     {
         $soapClient = new ExampleSoapClient();
+
         return $soapClient->call(12);
     }
 

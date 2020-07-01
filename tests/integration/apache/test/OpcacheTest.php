@@ -5,7 +5,6 @@ namespace VCR\Example;
 use function exec;
 use function file_exists;
 use function file_get_contents;
-use function get_called_class;
 use function passthru;
 use PHPUnit\Framework\TestCase;
 use function strpos;
@@ -15,8 +14,8 @@ class OpcacheTest extends TestCase
     public function testOpcache()
     {
         // Step 0: cleanup
-        if (file_exists(__DIR__ . '/../www/vcr.yaml')) {
-            unlink(__DIR__ . '/../www/vcr.yaml');
+        if (file_exists(__DIR__.'/../www/vcr.yaml')) {
+            unlink(__DIR__.'/../www/vcr.yaml');
         }
 
         // Step 1: start Docker.
@@ -24,10 +23,10 @@ class OpcacheTest extends TestCase
 
         // Step 2: wait for the Docker container to be up.
         $started = false;
-        for ($i = 0; $i < 600; $i++) {
+        for ($i = 0; $i < 600; ++$i) {
             try {
                 $content = file_get_contents('http://localhost:8080/tests/integration/apache/www/target.html');
-                if (strpos($content, 'foobar') !== false) {
+                if (false !== strpos($content, 'foobar')) {
                     $started = true;
                     break;
                 }
@@ -37,7 +36,7 @@ class OpcacheTest extends TestCase
             sleep(1);
         }
 
-        if ($started === false) {
+        if (false === $started) {
             $this->fail('Failed to start Apache server');
         }
 

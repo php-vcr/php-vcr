@@ -2,7 +2,6 @@
 
 namespace VCR\CodeTransform;
 
-use lapistano\ProxyObject\ProxyBuilder;
 use PHPUnit\Framework\TestCase;
 
 class SoapCodeTransformTest extends TestCase
@@ -12,7 +11,7 @@ class SoapCodeTransformTest extends TestCase
      */
     public function testTransformCode($expected, $code)
     {
-        $codeTransform = new class extends SoapCodeTransform {
+        $codeTransform = new class() extends SoapCodeTransform {
             // A proxy to access the protected transformCode method.
             public function publicTransformCode(string $code): string
             {
@@ -25,13 +24,13 @@ class SoapCodeTransformTest extends TestCase
 
     public function codeSnippetProvider()
     {
-        return array(
-          array('new \VCR\Util\SoapClient(', 'new \SoapClient('),
-          array('new \VCR\Util\SoapClient(', 'new SoapClient('),
-          array('extends \VCR\Util\SoapClient', 'extends \SoapClient'),
-          array("extends \\VCR\\Util\\SoapClient\n", "extends \\SoapClient\n"),
-          array('new SoapClientExtended(', 'new SoapClientExtended('),
-          array('new \SoapClientExtended(', 'new \SoapClientExtended('),
-        );
+        return [
+          ['new \VCR\Util\SoapClient(', 'new \SoapClient('],
+          ['new \VCR\Util\SoapClient(', 'new SoapClient('],
+          ['extends \VCR\Util\SoapClient', 'extends \SoapClient'],
+          ["extends \\VCR\\Util\\SoapClient\n", "extends \\SoapClient\n"],
+          ['new SoapClientExtended(', 'new SoapClientExtended('],
+          ['new \SoapClientExtended(', 'new \SoapClientExtended('],
+        ];
     }
 }

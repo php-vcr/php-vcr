@@ -17,18 +17,18 @@ class ExampleHttpClient
 
             return json_decode($response->getBody(), true);
         } catch (ClientErrorResponseException $e) {
-            if ($e->getResponse()->getStatusCode() !== 404) {
+            if (404 !== $e->getResponse()->getStatusCode()) {
                 throw $e;
             }
         }
 
         return null;
     }
-    
+
     public function post($url, $body)
     {
         $client = new Client();
-        
+
         try {
             $request = $client->post($url);
             $request->setBody($body, 'application/json');
@@ -36,7 +36,7 @@ class ExampleHttpClient
 
             return json_decode($response->getBody(), true);
         } catch (ClientErrorResponseException $e) {
-            if ($e->getResponse()->getStatusCode() !== 404) {
+            if (404 !== $e->getResponse()->getStatusCode()) {
                 throw $e;
             }
         }

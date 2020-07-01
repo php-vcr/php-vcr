@@ -3,7 +3,6 @@
 namespace VCR\Util;
 
 use PHPUnit\Framework\TestCase;
-use VCR\Response;
 use VCR\Request;
 
 class HttpClientTest extends TestCase

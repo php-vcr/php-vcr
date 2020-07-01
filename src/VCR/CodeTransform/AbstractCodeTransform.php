@@ -2,14 +2,11 @@
 
 namespace VCR\CodeTransform;
 
-use function in_array;
 use function stream_get_filters;
 use VCR\Util\Assertion;
 
 /**
  * A stream wrapper filter to transform code.
- *
- * @package VCR\CodeTransform
  */
 abstract class AbstractCodeTransform extends \php_user_filter
 {
@@ -20,9 +17,9 @@ abstract class AbstractCodeTransform extends \php_user_filter
      */
     public function register(): void
     {
-        if (!in_array(static::NAME, stream_get_filters(), true)) {
-            $isRegistered = stream_filter_register(static::NAME, get_called_class());
-            Assertion::true($isRegistered, sprintf('Failed registering stream filter "%s" on stream "%s"', get_called_class(), static::NAME));
+        if (!\in_array(static::NAME, stream_get_filters(), true)) {
+            $isRegistered = stream_filter_register(static::NAME, static::class);
+            Assertion::true($isRegistered, sprintf('Failed registering stream filter "%s" on stream "%s"', static::class, static::NAME));
         }
     }
 
@@ -36,7 +33,7 @@ abstract class AbstractCodeTransform extends \php_user_filter
      *
      * @return int PSFS_PASS_ON
      *
-     * @link http://www.php.net/manual/en/php-user-filter.filter.php
+     * @see http://www.php.net/manual/en/php-user-filter.filter.php
      */
     public function filter($in, $out, &$consumed, $closing)
     {
@@ -51,10 +48,6 @@ abstract class AbstractCodeTransform extends \php_user_filter
 
     /**
      * Transcodes the provided data to whatever.
-     *
-     * @param string $code
-     *
-     * @return string
      */
     abstract protected function transformCode(string $code): string;
 }

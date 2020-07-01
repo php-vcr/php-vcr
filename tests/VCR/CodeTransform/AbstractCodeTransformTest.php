@@ -6,10 +6,10 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractCodeTransformTest extends TestCase
 {
-    protected function getFilter(array $methods = array())
+    protected function getFilter(array $methods = [])
     {
         $defaults = array_merge(
-            array('transformCode'),
+            ['transformCode'],
             $methods
         );
 
@@ -17,12 +17,12 @@ class AbstractCodeTransformTest extends TestCase
             ->setMethods($defaults)
             ->getMockForAbstractClass();
 
-        if (in_array('transformCode', $methods)) {
+        if (\in_array('transformCode', $methods)) {
             $filter
                 ->expects($this->once())
                 ->method('transformCode')
                 ->with($this->isType('string'))
-                ->will($this->returnArgument(0));
+                ->willReturnArgument(0);
         }
 
         return $filter;

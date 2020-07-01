@@ -13,9 +13,9 @@ class HttpClient
     /**
      * Returns a response for specified HTTP request.
      *
-     * @param Request $request HTTP Request to send.
+     * @param request $request HTTP Request to send
      *
-     * @return Response Response for specified request.
+     * @return Response response for specified request
      *
      * @throws CurlException In case of cURL error
      */
@@ -27,7 +27,7 @@ class HttpClient
 
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
         curl_setopt($ch, CURLOPT_HTTPHEADER, HttpUtil::formatHeadersForCurl($request->getHeaders()));
-        if (!is_null($request->getBody())) {
+        if (null !== $request->getBody()) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getBody());
         }
 
@@ -39,7 +39,7 @@ class HttpClient
 
         /** @var string|false $result */
         $result = curl_exec($ch);
-        if ($result === false) {
+        if (false === $result) {
             throw CurlException::create($ch);
         }
         list($status, $headers, $body) = HttpUtil::parseResponse($result);

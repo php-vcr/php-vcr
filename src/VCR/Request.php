@@ -21,7 +21,7 @@ class Request
     /**
      * @var array<string,string>
      */
-    protected $headers = array();
+    protected $headers = [];
     /**
      * @var string|null
      */
@@ -29,22 +29,20 @@ class Request
     /**
      * @var array<int,array<string,string>>
      */
-    protected $postFiles = array();
+    protected $postFiles = [];
     /**
      * @var array<string,mixed>
      */
-    protected $postFields = array();
+    protected $postFields = [];
     /**
      * @var array<int,mixed>
      */
-    protected $curlOptions = array();
+    protected $curlOptions = [];
 
     /**
-     * @param string $method
-     * @param string|null $url
      * @param array<string,string> $headers
      */
-    public function __construct(string $method, ?string $url, array $headers = array())
+    public function __construct(string $method, ?string $url, array $headers = [])
     {
         $this->method = $method;
         $this->headers = $headers;
@@ -55,22 +53,21 @@ class Request
      * Returns true if specified request matches the current one
      * with specified request matcher callbacks.
      *
-     * @param  Request $request Request to check if it matches the current one.
-     * @param  callable[] $requestMatchers Request matcher callbacks.
+     * @param Request    $request         request to check if it matches the current one
+     * @param callable[] $requestMatchers request matcher callbacks
      *
-     * @throws \BadFunctionCallException If one of the specified request matchers is not callable.
-     * @return boolean True if specified request matches the current one.
+     * @throws \BadFunctionCallException if one of the specified request matchers is not callable
+     *
+     * @return bool true if specified request matches the current one
      */
-    public function matches(Request $request, array $requestMatchers): bool
+    public function matches(self $request, array $requestMatchers): bool
     {
         foreach ($requestMatchers as $matcher) {
-            if (!is_callable($matcher)) {
-                throw new \BadFunctionCallException(
-                    'Matcher could not be executed. ' . print_r($matcher, true)
-                );
+            if (!\is_callable($matcher)) {
+                throw new \BadFunctionCallException('Matcher could not be executed. '.print_r($matcher, true));
             }
 
-            if (call_user_func_array($matcher, array($this, $request)) === false) {
+            if (false === \call_user_func_array($matcher, [$this, $request])) {
                 return false;
             }
         }
@@ -81,80 +78,71 @@ class Request
     /**
      * Returns an array representation of this request.
      *
-     * @return array<string,mixed> Array representation of this request.
+     * @return array<string,mixed> array representation of this request
      */
     public function toArray(): array
     {
         return array_filter(
-            array(
+            [
                 'method' => $this->getMethod(),
                 'url' => $this->getUrl(),
                 'headers' => $this->getHeaders(),
                 'body' => $this->getBody(),
                 'post_files' => $this->getPostFiles(),
                 'post_fields' => $this->getPostFields(),
-            )
+            ]
         );
     }
 
     /**
      * Creates a new Request from a specified array.
      *
-     * @param  array<string,mixed> $request Request represented as an array. Allowed keys: "method", "url", "headers",
-     *                                      "post_fields", "post_files", "body"
+     * @param array<string,mixed> $request Request represented as an array. Allowed keys: "method", "url", "headers",
+     *                                     "post_fields", "post_files", "body"
      *
-     * @return Request A new Request from specified array.
+     * @return Request a new Request from specified array
      */
-    public static function fromArray(array $request): Request
+    public static function fromArray(array $request): self
     {
-        $requestObject = new Request(
+        $requestObject = new self(
             $request['method'],
             $request['url'],
-            isset($request['headers']) ? $request['headers'] : array()
+            isset($request['headers']) ? $request['headers'] : []
         );
 
-        if (!empty($request['post_fields']) && is_array($request['post_fields'])) {
+        if (!empty($request['post_fields']) && \is_array($request['post_fields'])) {
             $requestObject->setPostFields($request['post_fields']);
         }
 
-        if (!empty($request['post_files']) && is_array($request['post_files'])) {
+        if (!empty($request['post_files']) && \is_array($request['post_files'])) {
             foreach ($request['post_files'] as $file) {
                 $requestObject->addPostFile($file);
             }
         }
 
         if (!empty($request['body'])) {
-            $requestObject->setBody((string)$request['body']);
+            $requestObject->setBody((string) $request['body']);
         }
 
         return $requestObject;
     }
 
-    /**
-     * @param string|null $url
-     */
     public function setUrl(?string $url): void
     {
         $this->url = $url;
-        if ($url !== null && $this->hasHeader('Host') === false) {
+        if (null !== $url && false === $this->hasHeader('Host')) {
             $this->setHeader('Host', $this->getHost());
         }
     }
 
-    /**
-     * @return string|null
-     */
     public function getBody(): ?string
     {
         return $this->body;
     }
 
-    /**
-     * @return string
-     */
     public function getMethod(): string
     {
-        if ($this->getCurlOption(CURLOPT_CUSTOMREQUEST) !== null) {
+        if (null !== $this->getCurlOption(CURLOPT_CUSTOMREQUEST)) {
             return $this->getCurlOption(CURLOPT_CUSTOMREQUEST);
         }
 
@@ -169,10 +157,6 @@ class Request
         return $this->headers;
     }
 
-    /**
-     * @param string $key
-     * @return string|null
-     */
     public function getHeader(string $key): ?string
     {
         if (!isset($this->headers[$key])) {
@@ -182,13 +166,9 @@ class Request
         return $this->headers[$key];
     }
 
-    /**
-     * @param string $key
-     * @return boolean
-     */
     public function hasHeader(string $key): bool
     {
-        return array_key_exists($key, $this->headers);
+        return \array_key_exists($key, $this->headers);
     }
 
     /**
@@ -207,17 +187,11 @@ class Request
         return $this->postFiles;
     }
 
-    /**
-     * @return string|null
-     */
     public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    /**
-     * @return string
-     */
     public function getHost(): string
     {
         $url = $this->getUrl();
@@ -225,12 +199,12 @@ class Request
 
         $host = parse_url($url, PHP_URL_HOST);
 
-        if ($host === null || $host === false) {
+        if (null === $host || false === $host) {
             throw InvalidHostException::create($this->getUrl());
         }
 
         if ($port = parse_url($url, PHP_URL_PORT)) {
-            $host .= ':' . $port;
+            $host .= ':'.$port;
         }
 
         return $host;
@@ -245,18 +219,17 @@ class Request
         Assertion::string($url);
         $path = parse_url($url, PHP_URL_PATH);
         Assertion::notSame($path, false);
+
         return $path;
     }
 
-    /**
-     * @return string|null
-     */
     public function getQuery(): ?string
     {
         $url = $this->getUrl();
         Assertion::string($url);
         $query = parse_url($url, PHP_URL_QUERY);
         Assertion::notSame($query, false);
+
         return $query;
     }
 
@@ -269,7 +242,6 @@ class Request
     }
 
     /**
-     * @param int $key
      * @return mixed
      */
     public function getCurlOption(int $key)
@@ -307,9 +279,6 @@ class Request
         $this->postFiles = $post_files;
     }
 
-    /**
-     * @param string|null $body
-     */
     public function setBody(?string $body): void
     {
         $this->body = $body;
@@ -318,12 +287,12 @@ class Request
     /**
      * Sets the authorization credentials as header.
      *
-     * @param string $username Username.
-     * @param string $password Password.
+     * @param string $username username
+     * @param string $password password
      */
     public function setAuthorization(string $username, string $password): void
     {
-        $this->setHeader('Authorization', 'Basic ' . base64_encode($username . ':' . $password));
+        $this->setHeader('Authorization', 'Basic '.base64_encode($username.':'.$password));
     }
 
     /**
@@ -334,25 +303,17 @@ class Request
         $this->curlOptions = $curlOptions;
     }
 
-    /**
-     * @param string $key
-     * @param string $value
-     */
     public function setHeader(string $key, string $value): void
     {
         $this->headers[$key] = $value;
     }
 
-    /**
-     * @param string $key
-     */
     public function removeHeader(string $key): void
     {
         unset($this->headers[$key]);
     }
 
     /**
-     * @param string $key
      * @param mixed $value
      */
     public function setPostField(string $key, $value): void
@@ -361,7 +322,6 @@ class Request
     }
 
     /**
-     * @param int $key
      * @param mixed $value
      */
     public function setCurlOption(int $key, $value): void

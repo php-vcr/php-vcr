@@ -3,11 +3,11 @@
 namespace VCR\Event;
 
 use PHPUnit\Framework\TestCase;
-use VCR\Request;
 use VCR\Cassette;
 use VCR\Configuration;
-use VCR\Storage;
+use VCR\Request;
 use VCR\Response;
+use VCR\Storage;
 
 class BeforeRecordEventTest extends TestCase
 {

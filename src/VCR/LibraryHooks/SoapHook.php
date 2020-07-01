@@ -2,11 +2,11 @@
 
 namespace VCR\LibraryHooks;
 
-use VCR\Util\Assertion;
-use VCR\VCRException;
-use VCR\Request;
 use VCR\CodeTransform\AbstractCodeTransform;
+use VCR\Request;
+use VCR\Util\Assertion;
 use VCR\Util\StreamProcessor;
+use VCR\VCRException;
 
 /**
  * Library hook for curl functions.
@@ -36,10 +36,7 @@ class SoapHook implements LibraryHook
     /**
      * Creates a SOAP hook instance.
      *
-     * @param AbstractCodeTransform  $codeTransformer
-     * @param StreamProcessor $processor
-     *
-     * @throws \BadMethodCallException in case the Soap extension is not installed.
+     * @throws \BadMethodCallException in case the Soap extension is not installed
      */
     public function __construct(AbstractCodeTransform $codeTransformer, StreamProcessor $processor)
     {
@@ -56,24 +53,19 @@ class SoapHook implements LibraryHook
     }
 
     /**
-     * @param string $request
-     * @param string $location
-     * @param string $action
-     * @param integer $version
-     * @param int $one_way
      * @param array<string,mixed> $options
      *
-     * @return string SOAP response.
+     * @return string SOAP response
      */
-    public function doRequest(string $request, string $location, string $action, int $version, int $one_way = 0, array $options = array()): string
+    public function doRequest(string $request, string $location, string $action, int $version, int $one_way = 0, array $options = []): string
     {
-        if ($this->status === self::DISABLED) {
+        if (self::DISABLED === $this->status) {
             throw new VCRException('Hook must be enabled.', VCRException::LIBRARY_HOOK_DISABLED);
         }
 
         $vcrRequest = new Request('POST', $location);
 
-        if ($version === SOAP_1_1) {
+        if (SOAP_1_1 === $version) {
             $vcrRequest->setHeader('Content-Type', 'text/xml; charset=utf-8;');
             $vcrRequest->setHeader('SOAPAction', $action);
         } else { // >= SOAP_1_2
@@ -98,14 +90,14 @@ class SoapHook implements LibraryHook
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function enable(\Closure $requestCallback): void
     {
         Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
         self::$requestCallback = $requestCallback;
 
-        if ($this->status == self::ENABLED) {
+        if (self::ENABLED == $this->status) {
             return;
         }
 
@@ -117,7 +109,7 @@ class SoapHook implements LibraryHook
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function disable(): void
     {
@@ -131,17 +123,17 @@ class SoapHook implements LibraryHook
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isEnabled(): bool
     {
-        return $this->status == self::ENABLED;
+        return self::ENABLED == $this->status;
     }
 
     /**
      * Cleanup.
      *
-     * @return  void
+     * @return void
      */
     public function __destruct()
     {

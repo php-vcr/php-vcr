@@ -2,19 +2,19 @@
 
 namespace VCR\Util;
 
-use Assert\Assertion;
-use VCR\Configuration;
 use VCR\CodeTransform\AbstractCodeTransform;
+use VCR\Configuration;
 
 /**
  * Implementation adapted from:
- * https://github.com/antecedent/patchwork/blob/418a9aae80ca3228d6763a2dc6d9a30ade7a4e7e/lib/Preprocessor/Stream.php
+ * https://github.com/antecedent/patchwork/blob/418a9aae80ca3228d6763a2dc6d9a30ade7a4e7e/lib/Preprocessor/Stream.php.
  *
  * @author     Ignas Rudaitis <ignas.rudaitis@gmail.com>
  * @author     Adrian Philipp <mail@adrian-philipp.com>
  * @copyright  2010-2013 Ignas Rudaitis
  * @license    http://www.opensource.org/licenses/mit-license.html
- * @link       http://antecedent.github.com/patchwork
+ *
+ * @see       http://antecedent.github.com/patchwork
  */
 class StreamProcessor
 {
@@ -34,18 +34,19 @@ class StreamProcessor
     protected static $configuration;
 
     /**
-     * @var AbstractCodeTransform[] $codeTransformers Transformers which have been appended to this stream processor.
+     * @var AbstractCodeTransform[] transformers which have been appended to this stream processor
      */
-    protected static $codeTransformers = array();
+    protected static $codeTransformers = [];
 
     /**
-     * @var resource|false Resource for the currently opened file.
+     * @var resource|false resource for the currently opened file
      */
     protected $resource;
 
     /**
-     * @link http://www.php.net/manual/en/class.streamwrapper.php#streamwrapper.props.context
-     * @var resource The current context, or NULL if no context was passed to the caller function.
+     * @see http://www.php.net/manual/en/class.streamwrapper.php#streamwrapper.props.context
+     *
+     * @var resource the current context, or NULL if no context was passed to the caller function
      */
     public $context;
 
@@ -55,7 +56,6 @@ class StreamProcessor
     protected $isIntercepting = false;
 
     /**
-     *
      * @param Configuration $configuration
      */
     public function __construct(Configuration $configuration = null)
@@ -67,8 +67,6 @@ class StreamProcessor
 
     /**
      * Registers current class as the PHP file stream wrapper.
-     *
-     * @return void
      */
     public function intercept(): void
     {
@@ -81,8 +79,6 @@ class StreamProcessor
 
     /**
      * Restores the original file stream wrapper status.
-     *
-     * @return void
      */
     public function restore(): void
     {
@@ -92,9 +88,7 @@ class StreamProcessor
     /**
      * Determines that the provided url is member of a url whitelist.
      *
-     * @param string $uri
-     *
-     * @return bool True if the specified url is whitelisted, false otherwise.
+     * @return bool true if the specified url is whitelisted, false otherwise
      */
     protected function isWhitelisted(string $uri): bool
     {
@@ -107,7 +101,7 @@ class StreamProcessor
         $uri = $this->normalizePath($uri);
 
         foreach ($whiteList as $path) {
-            if (strpos($uri, $path) !== false) {
+            if (false !== strpos($uri, $path)) {
                 return true;
             }
         }
@@ -118,16 +112,14 @@ class StreamProcessor
     /**
      * Determines that the provided url is member of a url blacklist.
      *
-     * @param string $uri
-     *
-     * @return bool True if the provided url is blacklisted, false otherwise.
+     * @return bool true if the provided url is blacklisted, false otherwise
      */
     protected function isBlacklisted(string $uri): bool
     {
         $uri = $this->normalizePath($uri);
 
         foreach (static::$configuration->getBlackList() as $path) {
-            if (strpos($uri, $path) !== false) {
+            if (false !== strpos($uri, $path)) {
                 return true;
             }
         }
@@ -137,22 +129,12 @@ class StreamProcessor
 
     /**
      * Determines that the provided uri leads to a PHP file.
-     *
-     * @param string $uri
-     *
-     * @return bool
      */
     protected function isPhpFile(string $uri): bool
     {
-        return pathinfo($uri, PATHINFO_EXTENSION) === 'php';
+        return 'php' === pathinfo($uri, PATHINFO_EXTENSION);
     }
 
-    /**
-     *
-     * @param string $uri
-     *
-     * @return bool
-     */
     protected function shouldProcess(string $uri): bool
     {
         return $this->isWhitelisted($uri) && !$this->isBlacklisted($uri) && $this->isPhpFile($uri);
@@ -161,15 +143,15 @@ class StreamProcessor
     /**
      * Opens a stream and attaches registered filters.
      *
-     * @param  string  $path       Specifies the URL that was passed to the original function.
-     * @param  string  $mode       The mode used to open the file, as detailed for fopen().
-     * @param  integer $options    Holds additional flags set by the streams API.
-     *                             It can hold one or more of the following values OR'd together.
-     * @param  string  $openedPath If the path is opened successfully, and STREAM_USE_PATH is set in options,
-     *                             opened_path should be set to the full path of the file/resource that was
-     *                             actually opened.
+     * @param string $path       specifies the URL that was passed to the original function
+     * @param string $mode       the mode used to open the file, as detailed for fopen()
+     * @param int    $options    Holds additional flags set by the streams API.
+     *                           It can hold one or more of the following values OR'd together.
+     * @param string $openedPath if the path is opened successfully, and STREAM_USE_PATH is set in options,
+     *                           opened_path should be set to the full path of the file/resource that was
+     *                           actually opened
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
     {
@@ -186,25 +168,23 @@ class StreamProcessor
             $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH));
         }
 
-        if ($this->resource !== false && $options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
+        if (false !== $this->resource && $options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
             $this->appendFiltersToStream($this->resource);
         }
 
         $this->intercept();
 
-        return $this->resource !== false;
+        return false !== $this->resource;
     }
 
     /**
      * Close an resource.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-close.php
-     *
-     * @return boolean
+     * @see http://www.php.net/manual/en/streamwrapper.stream-close.php
      */
     public function stream_close(): bool
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return true;
         }
 
@@ -214,14 +194,14 @@ class StreamProcessor
     /**
      * Tests for end-of-file on a file pointer.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-eof.php
+     * @see http://www.php.net/manual/en/streamwrapper.stream-eof.php
      *
-     * @return boolean Should return TRUE if the read/write position is at the end of the stream
-     *                 and if no more data is available to be read, or FALSE otherwise.
+     * @return bool should return TRUE if the read/write position is at the end of the stream
+     *              and if no more data is available to be read, or FALSE otherwise
      */
     public function stream_eof(): bool
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
@@ -231,13 +211,11 @@ class StreamProcessor
     /**
      * Flushes the output.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-flush.php
-     *
-     * @return boolean
+     * @see http://www.php.net/manual/en/streamwrapper.stream-flush.php
      */
     public function stream_flush(): bool
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
@@ -247,15 +225,16 @@ class StreamProcessor
     /**
      * Read from stream.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-read.php
-     * @param  int $count How many bytes of data from the current position should be returned.
+     * @see http://www.php.net/manual/en/streamwrapper.stream-read.php
+     *
+     * @param int $count how many bytes of data from the current position should be returned
      *
      * @return string|false If there are less than count bytes available, return as many as are available.
      *                      If no more data is available, return either FALSE or an empty string.
      */
     public function stream_read(int $count)
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
@@ -265,20 +244,21 @@ class StreamProcessor
     /**
      * Seeks to specific location in a stream.
      *
-     * @param  integer $offset The stream offset to seek to.
-     * @param  integer $whence Possible values:
-     *                         SEEK_SET - Set position equal to offset bytes.
-     *                         SEEK_CUR - Set position to current location plus offset.
-     *                         SEEK_END - Set position to end-of-file plus offset.
-     * @return boolean Return TRUE if the position was updated, FALSE otherwise.
+     * @param int $offset the stream offset to seek to
+     * @param int $whence Possible values:
+     *                    SEEK_SET - Set position equal to offset bytes.
+     *                    SEEK_CUR - Set position to current location plus offset.
+     *                    SEEK_END - Set position to end-of-file plus offset.
+     *
+     * @return bool return TRUE if the position was updated, FALSE otherwise
      */
     public function stream_seek(int $offset, int $whence = SEEK_SET): bool
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
-        return fseek($this->resource, $offset, $whence) === 0;
+        return 0 === fseek($this->resource, $offset, $whence);
     }
 
     /**
@@ -288,9 +268,9 @@ class StreamProcessor
      * after having all transformations applied. When including files, PHP 7.4 and newer are sensitive
      * to file size reported by stat.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-stat.php
+     * @see http://www.php.net/manual/en/streamwrapper.stream-stat.php
      *
-     * @return array<int|string, int>|false See stat().
+     * @return array<int|string, int>|false see stat()
      */
     public function stream_stat()
     {
@@ -302,13 +282,13 @@ class StreamProcessor
      *
      * This method is called in response to fseek() to determine the current position.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-tell.php
+     * @see http://www.php.net/manual/en/streamwrapper.stream-tell.php
      *
-     * @return integer|false Should return the current position of the stream.
+     * @return int|false should return the current position of the stream
      */
     public function stream_tell()
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
@@ -318,12 +298,12 @@ class StreamProcessor
     /**
      * Retrieve information about a file.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.url-stat.php
+     * @see http://www.php.net/manual/en/streamwrapper.url-stat.php
      *
-     * @param  string  $path  The file path or URL to stat.
-     * @param  integer $flags Holds additional flags set by the streams API.
+     * @param string $path  the file path or URL to stat
+     * @param int    $flags holds additional flags set by the streams API
      *
-     * @return array<int|string, int>|false Should return as many elements as stat() does.
+     * @return array<int|string, int>|false should return as many elements as stat() does
      */
     public function url_stat(string $path, int $flags)
     {
@@ -346,13 +326,13 @@ class StreamProcessor
     /**
      * Close directory handle.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.dir-closedir.php
+     * @see http://www.php.net/manual/en/streamwrapper.dir-closedir.php
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function dir_closedir(): bool
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
@@ -364,11 +344,11 @@ class StreamProcessor
     /**
      * Open directory handle.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.dir-opendir.php
+     * @see http://www.php.net/manual/en/streamwrapper.dir-opendir.php
      *
-     * @param  string $path The file path or URL to stat.
+     * @param string $path the file path or URL to stat
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function dir_opendir(string $path): bool
     {
@@ -380,19 +360,19 @@ class StreamProcessor
         }
         $this->intercept();
 
-        return $this->resource !== false;
+        return false !== $this->resource;
     }
 
     /**
      * Read entry from directory handle.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.dir-readdir.php
+     * @see http://www.php.net/manual/en/streamwrapper.dir-readdir.php
      *
-     * @return mixed Should return string representing the next filename, or FALSE if there is no next file.
+     * @return mixed should return string representing the next filename, or FALSE if there is no next file
      */
     public function dir_readdir()
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
@@ -402,13 +382,13 @@ class StreamProcessor
     /**
      * Rewind directory handle.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.dir-rewinddir.php
+     * @see http://www.php.net/manual/en/streamwrapper.dir-rewinddir.php
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function dir_rewinddir(): bool
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
@@ -420,21 +400,21 @@ class StreamProcessor
     /**
      * Create a directory.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.mkdir.php
+     * @see http://www.php.net/manual/en/streamwrapper.mkdir.php
      *
-     * @param  string  $path       Directory which should be created.
-     * @param  int     $mode       The value passed to mkdir().
-     * @param  integer $options    A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
+     * @param string $path    directory which should be created
+     * @param int    $mode    the value passed to mkdir()
+     * @param int    $options a bitwise mask of values, such as STREAM_MKDIR_RECURSIVE
      *
-     * @return boolean  Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function mkdir(string $path, int $mode, int $options): bool
     {
         $this->restore();
         if (isset($this->context)) {
-            $result = mkdir($path, $mode, (bool) ($options &  STREAM_MKDIR_RECURSIVE), $this->context);
+            $result = mkdir($path, $mode, (bool) ($options & STREAM_MKDIR_RECURSIVE), $this->context);
         } else {
-            $result = mkdir($path, $mode, (bool) ($options &  STREAM_MKDIR_RECURSIVE));
+            $result = mkdir($path, $mode, (bool) ($options & STREAM_MKDIR_RECURSIVE));
         }
         $this->intercept();
 
@@ -444,12 +424,12 @@ class StreamProcessor
     /**
      * Renames a file or directory.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.rename.php
+     * @see http://www.php.net/manual/en/streamwrapper.rename.php
      *
-     * @param  string $path_from The URL to the current file.
-     * @param  string $path_to   The URL which the path_from should be renamed to.
+     * @param string $path_from the URL to the current file
+     * @param string $path_to   the URL which the path_from should be renamed to
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function rename(string $path_from, string $path_to): bool
     {
@@ -465,13 +445,13 @@ class StreamProcessor
     }
 
     /**
-     * Removes a directory
+     * Removes a directory.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.rmdir.php
+     * @see http://www.php.net/manual/en/streamwrapper.rmdir.php
      *
-     * @param  string $path The directory URL which should be removed.
+     * @param string $path the directory URL which should be removed
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function rmdir(string $path): bool
     {
@@ -489,11 +469,12 @@ class StreamProcessor
     /**
      * Retrieve the underlaying resource.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-cast.php
+     * @see http://www.php.net/manual/en/streamwrapper.stream-cast.php
      *
-     * @param  integer $cast_as Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or
-     *                          STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
-     * @return resource|false   Should return the underlying stream resource used by the wrapper, or FALSE.
+     * @param int $cast_as can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or
+     *                     STREAM_CAST_AS_STREAM when stream_cast() is called for other uses
+     *
+     * @return resource|false should return the underlying stream resource used by the wrapper, or FALSE
      */
     public function stream_cast(int $cast_as)
     {
@@ -503,19 +484,20 @@ class StreamProcessor
     /**
      * Advisory file locking.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-lock.php
+     * @see http://www.php.net/manual/en/streamwrapper.stream-lock.php
      *
-     * @param  integer $operation One of the operation constantes.
+     * @param int $operation one of the operation constantes
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function stream_lock(int $operation): bool
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
-        $operation = ($operation === 0 ? LOCK_EX : $operation);
+        $operation = (0 === $operation ? LOCK_EX : $operation);
+
         return flock($this->resource, $operation);
     }
 
@@ -524,16 +506,16 @@ class StreamProcessor
      *
      * @codeCoverageIgnore
      *
-     * @param  int $option One of STREAM_OPTION_BLOCKING, STREAM_OPTION_READ_TIMEOUT, STREAM_OPTION_WRITE_BUFFER.
-     * @param  int $arg1   Depending on option.
-     * @param  int $arg2   Depending on option.
+     * @param int $option one of STREAM_OPTION_BLOCKING, STREAM_OPTION_READ_TIMEOUT, STREAM_OPTION_WRITE_BUFFER
+     * @param int $arg1   depending on option
+     * @param int $arg2   depending on option
      *
-     * @return boolean Returns TRUE on success or FALSE on failure. If option is not implemented,
-     *                 FALSE should be returned.
+     * @return bool Returns TRUE on success or FALSE on failure. If option is not implemented,
+     *              FALSE should be returned.
      */
     public function stream_set_option(int $option, int $arg1, int $arg2): bool
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
@@ -544,30 +526,32 @@ class StreamProcessor
                 return stream_set_timeout($this->resource, $arg1, $arg2);
             case STREAM_OPTION_WRITE_BUFFER:
                 // stream_set_write_buffer returns 0 in case of success
-                return stream_set_write_buffer($this->resource, $arg1) === 0;
+                return 0 === stream_set_write_buffer($this->resource, $arg1);
             case STREAM_OPTION_READ_BUFFER:
                 // stream_set_read_buffer returns 0 in case of success
-                return stream_set_read_buffer($this->resource, $arg1) === 0;
+                return 0 === stream_set_read_buffer($this->resource, $arg1);
             // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
             /*case STREAM_OPTION_CHUNK_SIZE:
                 return stream_set_chunk_size($this->resource, $arg1);*/
         }
+
         return false;
     }
 
     /**
      * Write to stream.
      *
-     * @throws \BadMethodCallException If called, because this method is not applicable for this stream.
-     * @link http://www.php.net/manual/en/streamwrapper.stream-write.php
+     * @throws \BadMethodCallException if called, because this method is not applicable for this stream
      *
-     * @param  string $data Should be stored into the underlying stream.
+     * @see http://www.php.net/manual/en/streamwrapper.stream-write.php
+     *
+     * @param string $data should be stored into the underlying stream
      *
      * @return int|false
      */
     public function stream_write(string $data)
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
 
@@ -577,11 +561,11 @@ class StreamProcessor
     /**
      * Delete a file.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.unlink.php
+     * @see http://www.php.net/manual/en/streamwrapper.unlink.php
      *
-     * @param  string $path The file URL which should be deleted.
+     * @param string $path the file URL which should be deleted
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function unlink(string $path): bool
     {
@@ -599,12 +583,13 @@ class StreamProcessor
     /**
      * Change stream options.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-metadata.php
-     * @param  string  $path   The file path or URL to set metadata.
-     * @param  integer $option One of the stream options.
-     * @param  mixed   $value  Value depending on the option.
+     * @see http://www.php.net/manual/en/streamwrapper.stream-metadata.php
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @param string $path   the file path or URL to set metadata
+     * @param int    $option one of the stream options
+     * @param mixed  $value  value depending on the option
+     *
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function stream_metadata(string $path, int $option, $value): bool
     {
@@ -639,27 +624,23 @@ class StreamProcessor
     /**
      * Truncate stream.
      *
-     * @link http://www.php.net/manual/en/streamwrapper.stream-truncate.php
+     * @see http://www.php.net/manual/en/streamwrapper.stream-truncate.php
      *
-     * @param  integer $new_size The new size.
+     * @param int $new_size the new size
      *
-     * @return boolean Returns TRUE on success or FALSE on failure.
+     * @return bool returns TRUE on success or FALSE on failure
      */
     public function stream_truncate(int $new_size): bool
     {
-        if ($this->resource === false) {
+        if (false === $this->resource) {
             return false;
         }
-        
+
         return ftruncate($this->resource, $new_size);
     }
 
     /**
      * Adds code transformer to the stream processor.
-     *
-     * @param AbstractCodeTransform $codeTransformer
-     *
-     * @return void
      */
     public function appendCodeTransformer(AbstractCodeTransform $codeTransformer): void
     {
@@ -668,10 +649,6 @@ class StreamProcessor
 
     /**
      * Removes a code transformer from the stream processor.
-     *
-     * @param AbstractCodeTransform $codeTransformer
-     *
-     * @return void
      */
     public function detachCodeTransformer(AbstractCodeTransform $codeTransformer): void
     {
@@ -694,15 +671,11 @@ class StreamProcessor
 
     /**
      * Normalizes the path, to always use the slash as directory separator.
-     *
-     * @param string $path
-     *
-     * @return string
      */
     private function normalizePath(string $path): string
     {
-        if (DIRECTORY_SEPARATOR !== '/') {
-            return str_replace(DIRECTORY_SEPARATOR, '/', $path);
+        if (\DIRECTORY_SEPARATOR !== '/') {
+            return str_replace(\DIRECTORY_SEPARATOR, '/', $path);
         }
 
         return $path;

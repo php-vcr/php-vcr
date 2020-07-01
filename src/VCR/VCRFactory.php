@@ -6,7 +6,6 @@ use VCR\LibraryHooks\CurlHook;
 use VCR\LibraryHooks\SoapHook;
 use VCR\Storage\Storage;
 use VCR\Util\StreamProcessor;
-use VCR\Util\Assertion;
 
 class VCRFactory
 {
@@ -18,7 +17,7 @@ class VCRFactory
     /**
      * @var array<string, object>
      */
-    protected $mapping = array();
+    protected $mapping = [];
 
     /**
      * @var self|null
@@ -35,9 +34,6 @@ class VCRFactory
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
     }
 
-    /**
-     * @return Videorecorder
-     */
     protected function createVCRVideorecorder(): Videorecorder
     {
         return new Videorecorder(
@@ -49,8 +45,6 @@ class VCRFactory
 
     /**
      * Provides an instance of the StreamProcessor.
-     *
-     * @return StreamProcessor
      */
     protected function createVCRUtilStreamProcessor(): StreamProcessor
     {
@@ -85,7 +79,7 @@ class VCRFactory
     /**
      * Returns the same VCRFactory instance on ever call (singleton).
      *
-     * @param  Configuration $config (Optional) configuration.
+     * @param Configuration $config (Optional) configuration
      *
      * @return VCRFactory
      */
@@ -101,12 +95,12 @@ class VCRFactory
     /**
      * Returns an instance for specified class name and parameters.
      *
-     * @param string $className Class name to get a instance for.
-     * @param mixed[] $params Constructor arguments for this class.
+     * @param string  $className class name to get a instance for
+     * @param mixed[] $params    constructor arguments for this class
      *
-     * @return mixed An instance for specified class name and parameters.
+     * @return mixed an instance for specified class name and parameters
      */
-    public static function get(string $className, array $params = array())
+    public static function get(string $className, array $params = [])
     {
         return self::getInstance()->getOrCreate($className, $params);
     }
@@ -114,14 +108,14 @@ class VCRFactory
     /**
      * Returns an instance for specified classname and parameters.
      *
-     * @param string $className Class name to get a instance for.
-     * @param mixed[] $params Constructor arguments for this class.
+     * @param string  $className class name to get a instance for
+     * @param mixed[] $params    constructor arguments for this class
      *
      * @return mixed
      */
-    public function getOrCreate(string $className, array $params = array())
+    public function getOrCreate(string $className, array $params = [])
     {
-        $key = $className . join('-', $params);
+        $key = $className.implode('-', $params);
 
         if (isset($this->mapping[$key])) {
             return $this->mapping[$key];
@@ -129,28 +123,23 @@ class VCRFactory
 
         $callable = [$this, $this->getMethodName($className)];
 
-        if (is_callable($callable)) {
-            $instance = call_user_func_array($callable, $params);
+        if (\is_callable($callable)) {
+            $instance = \call_user_func_array($callable, $params);
         } else {
-            $instance = new $className;
+            $instance = new $className();
         }
 
         return $this->mapping[$key] = $instance;
     }
 
     /**
-     *
-     * Example:
+     * Example:.
      *
      *   ClassName: \Tux\Foo\Linus
      *   Returns: createTuxFooLinus
-     *
-     * @param string $className
-     *
-     * @return string
      */
     protected function getMethodName(string $className): string
     {
-        return 'create' . str_replace('\\', '', $className);
+        return 'create'.str_replace('\\', '', $className);
     }
 }
