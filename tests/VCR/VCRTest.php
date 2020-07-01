@@ -191,6 +191,16 @@ class VCRTest extends TestCase
         VCR::turnOff();
     }
 
+    public function testFinfoWorksCorrectly(): void
+    {
+        $fileinfo = new \finfo(FILEINFO_MIME_TYPE);
+
+        $this->assertEquals(
+            'text/plain',
+            $fileinfo->file(__DIR__.'/../../.gitignore')
+        );
+    }
+
     private function recordAllEvents()
     {
         $allEventsToListen = [

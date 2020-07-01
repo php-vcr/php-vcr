@@ -274,6 +274,14 @@ class StreamProcessor
      */
     public function stream_stat()
     {
+        if (false === $this->resource) {
+            return false;
+        }
+
+        if (!$this->shouldProcess(stream_get_meta_data($this->resource)['uri'])) {
+            return fstat($this->resource);
+        }
+
         return false;
     }
 
