@@ -3,12 +3,12 @@
 namespace VCR\LibraryHooks;
 
 use Closure;
-use VCR\Request;
-use VCR\Response;
-use VCR\Configuration;
-use VCR\Util\StreamProcessor;
 use PHPUnit\Framework\TestCase;
 use VCR\CodeTransform\SoapCodeTransform;
+use VCR\Configuration;
+use VCR\Request;
+use VCR\Response;
+use VCR\Util\StreamProcessor;
 
 /**
  * Test if intercepting http/https using soap works.
@@ -21,7 +21,7 @@ class SoapHookTest extends TestCase
 
     protected $config;
 
-    /** @var  SoapHook $soapHook */
+    /** @var SoapHook */
     protected $soapHook;
 
     public function setup()
@@ -34,9 +34,9 @@ class SoapHookTest extends TestCase
     {
         $this->soapHook->enable($this->getContentCheckCallback());
 
-        $client = new \SoapClient(self::WSDL, array('soap_version' => SOAP_1_2));
+        $client = new \SoapClient(self::WSDL, ['soap_version' => SOAP_1_2]);
         $client->setLibraryHook($this->soapHook);
-        $actual = $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+        $actual = $client->GetCityWeatherByZIP(['ZIP' => '10013']);
 
         $this->soapHook->disable();
         $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
@@ -45,34 +45,34 @@ class SoapHookTest extends TestCase
 
     public function testShouldHandleSOAPVersion11()
     {
-        $expectedHeaders = array(
+        $expectedHeaders = [
             'Content-Type' => 'text/xml; charset=utf-8;',
             'SOAPAction' => 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP',
-        );
+        ];
         $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
 
         $client = new \SoapClient(
             self::WSDL,
-            array('soap_version' => SOAP_1_1)
+            ['soap_version' => SOAP_1_1]
         );
         $client->setLibraryHook($this->soapHook);
-        $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+        $client->GetCityWeatherByZIP(['ZIP' => '10013']);
     }
 
     public function testShouldHandleSOAPVersion12()
     {
-        $expectedHeaders = array(
+        $expectedHeaders = [
             'Content-Type' => 'application/soap+xml; charset=utf-8; action="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP"',
-        );
+        ];
 
         $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
 
         $client = new \SoapClient(
             self::WSDL,
-            array('soap_version' => SOAP_1_2)
+            ['soap_version' => SOAP_1_2]
         );
         $client->setLibraryHook($this->soapHook);
-        $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+        $client->GetCityWeatherByZIP(['ZIP' => '10013']);
     }
 
     public function testShouldReturnLastRequestWithTraceOn()
@@ -81,39 +81,35 @@ class SoapHookTest extends TestCase
 
         $client = new \SoapClient(
             self::WSDL,
-            array('soap_version' => SOAP_1_1, 'trace' => 1)
+            ['soap_version' => SOAP_1_1, 'trace' => 1]
         );
         $client->setLibraryHook($this->soapHook);
-        $client->GetCityWeatherByZIP(array('ZIP' => '10013'));
+        $client->GetCityWeatherByZIP(['ZIP' => '10013']);
         $actual = $client->__getLastRequest();
 
         $this->soapHook->disable();
         $this->assertNotNull($actual, '__getLastRequest() returned NULL.');
     }
 
-    /**
-     * @return Closure
-     */
     protected function getContentCheckCallback(): Closure
     {
         $testClass = $this;
+
         return Closure::fromCallable(function () use ($testClass) {
-            return new Response(200, array(), $testClass->expected);
+            return new Response(200, [], $testClass->expected);
         });
     }
 
-    /**
-     * @param array $expectedHeaders
-     * @return Closure
-     */
     protected function getHeadersCheckCallback(array $expectedHeaders): Closure
     {
         $test = $this;
+
         return Closure::fromCallable(function (Request $request) use ($test, $expectedHeaders) {
             foreach ($expectedHeaders as $expectedHeaderName => $expectedHeader) {
                 $test->assertEquals($expectedHeader, $request->getHeader($expectedHeaderName));
             }
-            return new Response(200, array(), '');
+
+            return new Response(200, [], '');
         });
     }
 }

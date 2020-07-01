@@ -14,12 +14,12 @@ class ExampleHttpClientTest extends TestCase
     const TEST_POST_URL = 'https://httpbin.org/post';
     const TEST_POST_BODY = '{"foo":"bar"}';
 
-    protected $ignoreHeaders = array(
+    protected $ignoreHeaders = [
         'Accept',
         'Connect-Time',
         'Total-Route-Time',
         'X-Request-Id',
-    );
+    ];
 
     public function setUp()
     {

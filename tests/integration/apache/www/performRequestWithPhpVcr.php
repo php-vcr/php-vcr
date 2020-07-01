@@ -2,7 +2,7 @@
 
 use VCR\VCR;
 
-require_once __DIR__ . '/../../../../vendor/autoload.php';
+require_once __DIR__.'/../../../../vendor/autoload.php';
 
 VCR::turnOn();
 VCR::configure()->setCassettePath(__DIR__);

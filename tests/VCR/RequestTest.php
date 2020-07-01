@@ -17,16 +17,16 @@ class RequestTest extends TestCase
 
     public function setUp()
     {
-        $this->request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
+        $this->request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
     }
 
     public function testGetHeaders()
     {
         $this->assertEquals(
-            array(
+            [
                 'User-Agent' => 'Unit-Test',
-                'Host'       => 'example.com'
-            ),
+                'Host' => 'example.com',
+            ],
             $this->request->getHeaders()
         );
     }
@@ -47,145 +47,145 @@ class RequestTest extends TestCase
 
     public function testMatches()
     {
-        $request = new Request('GET', 'http://example.com', array('User-Agent' => 'Unit-Test'));
+        $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
 
-        $this->assertTrue($this->request->matches($request, array(array('VCR\RequestMatcher', 'matchMethod'))));
+        $this->assertTrue($this->request->matches($request, [['VCR\RequestMatcher', 'matchMethod']]));
     }
 
     public function testDoesntMatch()
     {
-        $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
+        $request = new Request('POST', 'http://example.com', ['User-Agent' => 'Unit-Test']);
 
-        $this->assertFalse($this->request->matches($request, array(array('VCR\RequestMatcher', 'matchMethod'))));
+        $this->assertFalse($this->request->matches($request, [['VCR\RequestMatcher', 'matchMethod']]));
     }
 
     public function testMatchesThrowsExceptionIfMatcherNotFound()
     {
-        $request = new Request('POST', 'http://example.com', array('User-Agent' => 'Unit-Test'));
+        $request = new Request('POST', 'http://example.com', ['User-Agent' => 'Unit-Test']);
         $this->expectException(
             '\BadFunctionCallException',
             "Matcher could not be executed. Array\n(\n    [0] => some\n    [1] => method\n)\n"
         );
-        $this->request->matches($request, array(array('some', 'method')));
+        $this->request->matches($request, [['some', 'method']]);
     }
 
     public function testRestoreRequest()
     {
         $restoredRequest = Request::fromArray($this->request->toArray());
         $this->assertEquals(
-            array(
-                'method'      => 'GET',
-                'url'         => 'http://example.com',
-                'headers'     => array(
+            [
+                'method' => 'GET',
+                'url' => 'http://example.com',
+                'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                 )
-            ),
+                 ],
+            ],
             $restoredRequest->toArray()
         );
     }
 
     public function testStorePostFields()
     {
-        $this->request->setPostFields(array('para1' => 'val1'));
+        $this->request->setPostFields(['para1' => 'val1']);
         $this->assertEquals(
-            array(
-                'method'      => 'GET',
-                'url'         => 'http://example.com',
-                'headers'     => array(
+            [
+                'method' => 'GET',
+                'url' => 'http://example.com',
+                'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    ),
-                'post_fields' => array('para1' => 'val1'),
-            ),
+                    ],
+                'post_fields' => ['para1' => 'val1'],
+            ],
             $this->request->toArray()
         );
     }
 
     public function testRestorePostFields()
     {
-        $this->request->setPostFields(array('para1' => 'val1'));
+        $this->request->setPostFields(['para1' => 'val1']);
         $restoredRequest = Request::fromArray($this->request->toArray());
         $this->assertEquals(
-            array(
-                'method'      => 'GET',
-                'url'         => 'http://example.com',
-                'headers'     => array(
+            [
+                'method' => 'GET',
+                'url' => 'http://example.com',
+                'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    ),
-                'post_fields' => array('para1' => 'val1'),
-            ),
+                    ],
+                'post_fields' => ['para1' => 'val1'],
+            ],
             $restoredRequest->toArray()
         );
     }
 
     public function testStorePostFile()
     {
-        $file = array(
-            'fieldName'   => 'field_name',
+        $file = [
+            'fieldName' => 'field_name',
             'contentType' => 'application/octet-stream',
-            'filename'    => 'tests/fixtures/unittest_curl_test',
-            'postname'    => 'unittest_curl_test',
-        );
+            'filename' => 'tests/fixtures/unittest_curl_test',
+            'postname' => 'unittest_curl_test',
+        ];
         $this->request->addPostFile($file);
         $this->assertEquals(
-            array(
-                'method'      => 'GET',
-                'url'         => 'http://example.com',
-                'headers'     => array(
-                    'User-Agent'   => 'Unit-Test',
-                    'Host'         => 'example.com',
-                ),
-                'post_files' => array($file),
-            ),
+            [
+                'method' => 'GET',
+                'url' => 'http://example.com',
+                'headers' => [
+                    'User-Agent' => 'Unit-Test',
+                    'Host' => 'example.com',
+                ],
+                'post_files' => [$file],
+            ],
             $this->request->toArray()
         );
     }
 
     public function testSetPostFiles()
     {
-        $file = array(
-            'fieldName'   => 'field_name',
+        $file = [
+            'fieldName' => 'field_name',
             'contentType' => 'application/octet-stream',
-            'filename'    => 'tests/fixtures/unittest_curl_test',
-            'postname'    => 'unittest_curl_test',
-        );
+            'filename' => 'tests/fixtures/unittest_curl_test',
+            'postname' => 'unittest_curl_test',
+        ];
         $this->request->setPostFiles([$file]);
         $this->assertEquals(
-            array(
-                'method'      => 'GET',
-                'url'         => 'http://example.com',
-                'headers'     => array(
-                    'User-Agent'   => 'Unit-Test',
-                    'Host'         => 'example.com',
-                ),
-                'post_files' => array($file),
-            ),
+            [
+                'method' => 'GET',
+                'url' => 'http://example.com',
+                'headers' => [
+                    'User-Agent' => 'Unit-Test',
+                    'Host' => 'example.com',
+                ],
+                'post_files' => [$file],
+            ],
             $this->request->toArray()
         );
     }
 
     public function testRestorePostFiles()
     {
-        $file = array(
-            'fieldName'   => 'field_name',
+        $file = [
+            'fieldName' => 'field_name',
             'contentType' => 'application/octet-stream',
-            'filename'    => 'tests/fixtures/unittest_curl_test',
-            'postname'    => 'unittest_curl_test',
-        );
+            'filename' => 'tests/fixtures/unittest_curl_test',
+            'postname' => 'unittest_curl_test',
+        ];
         $this->request->addPostFile($file);
         $restoredRequest = Request::fromArray($this->request->toArray());
         $this->assertEquals(
-            array(
-                'method'      => 'GET',
-                'url'         => 'http://example.com',
-                'headers'     => array(
-                    'User-Agent'   => 'Unit-Test',
-                    'Host'         => 'example.com',
-                    ),
-                'post_files' => array($file),
-            ),
+            [
+                'method' => 'GET',
+                'url' => 'http://example.com',
+                'headers' => [
+                    'User-Agent' => 'Unit-Test',
+                    'Host' => 'example.com',
+                    ],
+                'post_files' => [$file],
+            ],
             $restoredRequest->toArray()
         );
     }
@@ -195,15 +195,15 @@ class RequestTest extends TestCase
         $this->request->setBody('sometest');
         $restoredRequest = Request::fromArray($this->request->toArray());
         $this->assertEquals(
-            array(
-                'method'      => 'GET',
-                'url'         => 'http://example.com',
-                'headers'     => array(
+            [
+                'method' => 'GET',
+                'url' => 'http://example.com',
+                'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                ),
+                ],
                 'body' => 'sometest',
-            ),
+            ],
             $restoredRequest->toArray()
         );
     }
@@ -217,7 +217,7 @@ class RequestTest extends TestCase
         $this->assertTrue(
             $this->request->matches(
                 Request::fromArray($request->toArray()),
-                array(array('VCR\RequestMatcher', 'matchBody'))
+                [['VCR\RequestMatcher', 'matchBody']]
             )
         );
     }
@@ -231,7 +231,7 @@ class RequestTest extends TestCase
         $this->assertFalse(
             $this->request->matches(
                 Request::fromArray($request->toArray()),
-                array(array('VCR\RequestMatcher', 'matchBody'))
+                [['VCR\RequestMatcher', 'matchBody']]
             )
         );
     }
@@ -247,14 +247,14 @@ class RequestTest extends TestCase
         $this->request = new Request(
             'GET',
             'http://example.com',
-            array('User-Agent' => 'Unit-Test', 'Host' => 'www.example.com')
+            ['User-Agent' => 'Unit-Test', 'Host' => 'www.example.com']
         );
 
         $this->assertEquals(
-            array(
+            [
                 'User-Agent' => 'Unit-Test',
-                'Host'       => 'www.example.com'
-            ),
+                'Host' => 'www.example.com',
+            ],
             $this->request->getHeaders()
         );
     }
@@ -278,7 +278,7 @@ class RequestTest extends TestCase
     {
         $getRequest = new Request('GET', 'http://example.com');
         $getRequest->setCurlOptions([
-            CURLOPT_CUSTOMREQUEST => 'PUT'
+            CURLOPT_CUSTOMREQUEST => 'PUT',
         ]);
         $this->assertEquals('PUT', $getRequest->getCurlOption(CURLOPT_CUSTOMREQUEST));
     }

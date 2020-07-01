@@ -3,9 +3,9 @@
 namespace VCR\Event;
 
 use PHPUnit\Framework\TestCase;
-use VCR\Request;
 use VCR\Cassette;
 use VCR\Configuration;
+use VCR\Request;
 use VCR\Storage;
 
 class BeforePlaybackEventTest extends TestCase

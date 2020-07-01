@@ -11,26 +11,27 @@ class SoapCodeTransform extends AbstractCodeTransform
     /**
      * @var string[]
      */
-    private static $replacements = array(
+    private static $replacements = [
         'new \VCR\Util\SoapClient(',
         'extends \VCR\Util\SoapClient',
-    );
+    ];
 
     /**
      * @var string[]
      */
-    private static $patterns = array(
+    private static $patterns = [
         '@new\s+\\\?SoapClient\W*\(@i',
         '@extends\s+\\\?SoapClient@i',
-    );
+    ];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function transformCode(string $code): string
     {
         $transformedCode = preg_replace(self::$patterns, self::$replacements, $code);
         Assertion::string($transformedCode);
+
         return $transformedCode;
     }
 }

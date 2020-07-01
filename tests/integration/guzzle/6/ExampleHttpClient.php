@@ -13,9 +13,10 @@ class ExampleHttpClient
 
         try {
             $response = $client->get($url);
+
             return json_decode($response->getBody(), true);
         } catch (ClientException $e) {
-            if ($e->getCode() !== 404) {
+            if (404 !== $e->getCode()) {
                 throw $e;
             }
         }
@@ -26,12 +27,13 @@ class ExampleHttpClient
     public function post($url, $body)
     {
         $client = new Client();
-        
+
         try {
-            $response = $client->post($url, array('body' => $body));
+            $response = $client->post($url, ['body' => $body]);
+
             return json_decode($response->getBody(), true);
         } catch (ClientException $e) {
-            if ($e->getCode() !== 404) {
+            if (404 !== $e->getCode()) {
                 throw $e;
             }
         }

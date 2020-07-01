@@ -15,7 +15,7 @@ use VCR\Util\Assertion;
 class Configuration
 {
     /**
-     * @var string Path where cassette files should be stored.
+     * @var string path where cassette files should be stored
      */
     private $cassettePath = 'tests/fixtures';
 
@@ -25,7 +25,8 @@ class Configuration
      * A value of null means all hooks are enabled.
      *
      * @see \VCR\LibraryHooks\LibraryHook
-     * @var string[]|null List of enabled LibraryHook names.
+     *
+     * @var string[]|null list of enabled LibraryHook names
      */
     private $enabledLibraryHooks;
 
@@ -36,13 +37,14 @@ class Configuration
      * array(
      *  'name' => 'class name'
      * )
-     * @var array<string, class-string> List of library hooks.
+     *
+     * @var array<string, class-string> List of library hooks
      */
-    private $availableLibraryHooks = array(
+    private $availableLibraryHooks = [
         'stream_wrapper' => 'VCR\LibraryHooks\StreamWrapperHook',
-        'curl'           => 'VCR\LibraryHooks\CurlHook',
-        'soap'           => 'VCR\LibraryHooks\SoapHook',
-    );
+        'curl' => 'VCR\LibraryHooks\CurlHook',
+        'soap' => 'VCR\LibraryHooks\SoapHook',
+    ];
 
     /**
      * Name of the enabled storage.
@@ -50,7 +52,7 @@ class Configuration
      * Only one storage can be enabled at a time.
      * By default YAML is enabled.
      *
-     * @var string Enabled storage name.
+     * @var string enabled storage name
      */
     private $enabledStorage = 'yaml';
 
@@ -62,18 +64,18 @@ class Configuration
      *  'name' => 'class name'
      * )
      *
-     * @var array<string, class-string> List of available storages.
+     * @var array<string, class-string> List of available storages
      */
-    private $availableStorages = array(
+    private $availableStorages = [
         'blackhole' => 'VCR\Storage\Blackhole',
-        'json'      => 'VCR\Storage\Json',
-        'yaml'      => 'VCR\Storage\Yaml',
-    );
+        'json' => 'VCR\Storage\Json',
+        'yaml' => 'VCR\Storage\Yaml',
+    ];
 
     /**
      * A value of null means all RequestMatchers are enabled.
      *
-     * @var string[] Names of the RequestMatchers which are enabled.
+     * @var string[] names of the RequestMatchers which are enabled
      */
     private $enabledRequestMatchers;
 
@@ -81,23 +83,23 @@ class Configuration
      * Format:
      * array(
      *  'name' => callback
-     * )
+     * ).
      *
      * The RequestMatcher callback takes two Request objects and
      * returns true if they match or false otherwise.
      *
-     * @var array<string,callable(Request $first, Request $second):bool> List of RequestMatcher names and callbacks.
+     * @var array<string,callable(Request, Request):bool> List of RequestMatcher names and callbacks
      */
-    private $availableRequestMatchers = array(
-        'method'         => array(RequestMatcher::class, 'matchMethod'),
-        'url'            => array(RequestMatcher::class, 'matchUrl'),
-        'host'           => array(RequestMatcher::class, 'matchHost'),
-        'headers'        => array(RequestMatcher::class, 'matchHeaders'),
-        'body'           => array(RequestMatcher::class, 'matchBody'),
-        'post_fields'    => array(RequestMatcher::class, 'matchPostFields'),
-        'query_string'   => array(RequestMatcher::class, 'matchQueryString'),
-        'soap_operation' => array(RequestMatcher::class, 'matchSoapOperation'),
-    );
+    private $availableRequestMatchers = [
+        'method' => [RequestMatcher::class, 'matchMethod'],
+        'url' => [RequestMatcher::class, 'matchUrl'],
+        'host' => [RequestMatcher::class, 'matchHost'],
+        'headers' => [RequestMatcher::class, 'matchHeaders'],
+        'body' => [RequestMatcher::class, 'matchBody'],
+        'post_fields' => [RequestMatcher::class, 'matchPostFields'],
+        'query_string' => [RequestMatcher::class, 'matchQueryString'],
+        'soap_operation' => [RequestMatcher::class, 'matchSoapOperation'],
+    ];
 
     /**
      * A whitelist is a list of paths.
@@ -107,9 +109,9 @@ class Configuration
      * all files (which are not blacklisted) are being considered for
      * code transformation.
      *
-     * @var string[] A whitelist is a list of paths.
+     * @var string[] a whitelist is a list of paths
      */
-    private $whiteList = array();
+    private $whiteList = [];
 
     /**
      * A blacklist is a list of paths which may not be processed for code transformation.
@@ -117,9 +119,9 @@ class Configuration
      * Files in this path are left as is. Blacklisting PHP-VCRs own paths is necessary
      * to avoid infinite loops.
      *
-     * @var string[] A blacklist is a list of paths.
+     * @var string[] a blacklist is a list of paths
      */
-    private $blackList = array('src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter');
+    private $blackList = ['src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter'];
 
     /**
      * The mode which determines how requests are handled. One of the MODE constants.
@@ -136,13 +138,13 @@ class Configuration
      *  'name'
      * )
      *
-     * @var string[] List of available modes.
+     * @var string[] list of available modes
      */
-    private $availableModes = array(
+    private $availableModes = [
         VCR::MODE_NEW_EPISODES,
         VCR::MODE_ONCE,
         VCR::MODE_NONE,
-    );
+    ];
 
     /**
      * Returns the current blacklist.
@@ -157,13 +159,13 @@ class Configuration
     /**
      * Sets one or more paths to blacklist.
      *
-     * @param string|string[] $paths Path(s) to blacklist.
+     * @param string|string[] $paths path(s) to blacklist
      *
      * @return Configuration
      */
     public function setBlackList($paths): self
     {
-        $paths = (is_array($paths)) ? $paths : array($paths);
+        $paths = (\is_array($paths)) ? $paths : [$paths];
 
         $this->blackList = $paths;
 
@@ -173,7 +175,7 @@ class Configuration
     /**
      * Returns the path to where cassettes are stored.
      *
-     * @return string Path to where cassettes are stored.
+     * @return string path to where cassettes are stored
      */
     public function getCassettePath(): string
     {
@@ -185,10 +187,11 @@ class Configuration
     /**
      * Sets the cassette path where a cassettes should be stored in.
      *
-     * @param string $cassettePath Path where to store cassettes.
+     * @param string $cassettePath path where to store cassettes
      *
      * @return Configuration
-     * @throws VCRException If provided cassette path is invalid.
+     *
+     * @throws VCRException if provided cassette path is invalid
      */
     public function setCassettePath(string $cassettePath): self
     {
@@ -204,11 +207,11 @@ class Configuration
      * Only class names are returned, any object creation happens
      * in the VCRFactory.
      *
-     * @return string[] List of LibraryHook class names.
+     * @return string[] list of LibraryHook class names
      */
     public function getLibraryHooks(): array
     {
-        if ($this->enabledLibraryHooks === null) {
+        if (null === $this->enabledLibraryHooks) {
             return array_values($this->availableLibraryHooks);
         }
 
@@ -221,16 +224,18 @@ class Configuration
     /**
      * Enables specified LibraryHook(s) by its name.
      *
-     * @param string|string[] $hooks Name of the LibraryHook(s) to enable.
+     * @param string|string[] $hooks name of the LibraryHook(s) to enable
+     *
      * @return Configuration
-     * @throws \InvalidArgumentException If a specified library hook doesn't exist.
+     *
+     * @throws \InvalidArgumentException if a specified library hook doesn't exist
      */
     public function enableLibraryHooks($hooks): self
     {
-        $hooks = is_array($hooks) ? $hooks : array($hooks);
+        $hooks = \is_array($hooks) ? $hooks : [$hooks];
         $invalidHooks = array_diff($hooks, array_keys($this->availableLibraryHooks));
         if ($invalidHooks) {
-            throw new \InvalidArgumentException("Library hooks don't exist: " . join(', ', $invalidHooks));
+            throw new \InvalidArgumentException("Library hooks don't exist: ".implode(', ', $invalidHooks));
         }
         $this->enabledLibraryHooks = $hooks;
 
@@ -242,7 +247,7 @@ class Configuration
      *
      * Objects are created in the VCRFactory.
      *
-     * @return string Class name of the storage to use.
+     * @return string class name of the storage to use
      */
     public function getStorage(): string
     {
@@ -252,11 +257,11 @@ class Configuration
     /**
      * Returns a list of enabled RequestMatcher callbacks.
      *
-     * @return callable[] List of enabled RequestMatcher callbacks.
+     * @return callable[] list of enabled RequestMatcher callbacks
      */
     public function getRequestMatchers(): array
     {
-        if ($this->enabledRequestMatchers === null) {
+        if (null === $this->enabledRequestMatchers) {
             return array_values($this->availableRequestMatchers);
         }
 
@@ -269,11 +274,12 @@ class Configuration
     /**
      * Adds a new RequestMatcher callback.
      *
-     * @param string $name Name of the RequestMatcher.
-     * @param callable $callback A callback taking two Request objects as parameters and returns true if those match.
+     * @param string   $name     name of the RequestMatcher
+     * @param callable $callback a callback taking two Request objects as parameters and returns true if those match
      *
      * @return Configuration
-     * @throws VCRException If specified parameters are invalid.
+     *
+     * @throws VCRException if specified parameters are invalid
      */
     public function addRequestMatcher(string $name, callable $callback): self
     {
@@ -286,30 +292,29 @@ class Configuration
     /**
      * Enables specified RequestMatchers by its name.
      *
-     * @param string[] $matchers List of RequestMatcher names to enable.
+     * @param string[] $matchers list of RequestMatcher names to enable
      *
      * @return Configuration
      *
-     * @throws \InvalidArgumentException If a specified request matcher does not exist.
+     * @throws \InvalidArgumentException if a specified request matcher does not exist
      */
     public function enableRequestMatchers(array $matchers): self
     {
         $invalidMatchers = array_diff($matchers, array_keys($this->availableRequestMatchers));
         if ($invalidMatchers) {
-            throw new \InvalidArgumentException("Request matchers don't exist: " . join(', ', $invalidMatchers));
+            throw new \InvalidArgumentException("Request matchers don't exist: ".implode(', ', $invalidMatchers));
         }
         $this->enabledRequestMatchers = $matchers;
-        
+
         return $this;
     }
 
     /**
      * Enables a storage by name.
      *
-     * @param string $storageName Name of the storage to enable.
+     * @param string $storageName name of the storage to enable
      *
-     * @return self
-     * @throws VCRException If a invalid storage name is given.
+     * @throws VCRException if a invalid storage name is given
      */
     public function setStorage(string $storageName): self
     {
@@ -320,10 +325,10 @@ class Configuration
     }
 
     /**
-      * Returns a list of whitelisted paths.
-      *
-      * @return string[]
-      */
+     * Returns a list of whitelisted paths.
+     *
+     * @return string[]
+     */
     public function getWhiteList(): array
     {
         return $this->whiteList;
@@ -332,13 +337,11 @@ class Configuration
     /**
      * Sets a list of paths to whitelist when processing in the StreamProcessor.
      *
-     * @param string|string[] $paths Single path or list of path which are whitelisted.
-     *
-     * @return Configuration
+     * @param string|string[] $paths single path or list of path which are whitelisted
      */
-    public function setWhiteList($paths): Configuration
+    public function setWhiteList($paths): self
     {
-        $paths = (is_array($paths)) ? $paths : array($paths);
+        $paths = (\is_array($paths)) ? $paths : [$paths];
 
         $this->whiteList = $paths;
 
@@ -346,10 +349,8 @@ class Configuration
     }
 
     /**
-      * Returns the current mode.
-      *
-      * @return string
-      */
+     * Returns the current mode.
+     */
     public function getMode(): string
     {
         return $this->mode;
@@ -359,10 +360,8 @@ class Configuration
      * Sets the current mode.
      *
      * @param string $mode The mode to set VCR to
-     *
-     * @return Configuration
      */
-    public function setMode(string $mode): Configuration
+    public function setMode(string $mode): self
     {
         Assertion::choice($mode, $this->availableModes, "Mode '{$mode}' does not exist.");
         $this->mode = $mode;
@@ -373,16 +372,17 @@ class Configuration
     /**
      * Validates a specified cassette path.
      *
-     * @param string $cassettePath Path to a cassette.
-     * @throws VCRException If cassette path is invalid.
+     * @param string $cassettePath path to a cassette
+     *
+     * @throws VCRException if cassette path is invalid
      */
     private function assertValidCassettePath(string $cassettePath): void
     {
         Assertion::directory(
             $cassettePath,
             "Cassette path '{$cassettePath}' is not a directory. Please either "
-            . 'create it or set a different cassette path using '
-            . "\\VCR\\VCR::configure()->setCassettePath('directory')."
+            .'create it or set a different cassette path using '
+            ."\\VCR\\VCR::configure()->setCassettePath('directory')."
         );
     }
 }
