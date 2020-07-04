@@ -85,6 +85,19 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         restore_error_handler();
     }
 
+    public function testUrlStatViaSplFileInfoShouldNotFailOnNonExistingFile()
+    {
+        $processor = new StreamProcessor();
+        $processor->intercept();
+        $path = new \SplFileInfo('tests/fixtures/unknown');
+        try {
+            $path->isFile();
+        } catch (\RuntimeException $e) {
+            $this->fail('should not throw RuntimeException');
+        }
+        $processor->restore();
+    }
+
     public function testUrlStatSuccessfully()
     {
         $test = $this;
