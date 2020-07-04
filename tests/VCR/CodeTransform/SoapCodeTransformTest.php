@@ -29,6 +29,8 @@ class SoapCodeTransformTest extends TestCase
           ['new \VCR\Util\SoapClient(', 'new SoapClient('],
           ['extends \VCR\Util\SoapClient', 'extends \SoapClient'],
           ["extends \\VCR\\Util\\SoapClient\n", "extends \\SoapClient\n"],
+          ["extends MySoapClientBuilder\n", "extends MySoapClientBuilder\n"],
+          ["extends SoapClientFactory\n", "extends SoapClientFactory\n"],
           ['new SoapClientExtended(', 'new SoapClientExtended('],
           ['new \SoapClientExtended(', 'new \SoapClientExtended('],
         ];
