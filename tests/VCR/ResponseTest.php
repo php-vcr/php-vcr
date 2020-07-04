@@ -138,4 +138,27 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedArray, $response->toArray());
     }
+
+    public function testIsBinaryResponse()
+    {
+        $this->assertTrue(Response::isBinaryResponse([]));
+
+        $this->assertTrue(Response::isBinaryResponse(['Content-Type' => 'application/zip']));
+        $this->assertTrue(Response::isBinaryResponse(['Content-Type' => 'application/pdf']));
+        $this->assertTrue(Response::isBinaryResponse(['Content-Type' => 'audio/vorbis']));
+        $this->assertTrue(Response::isBinaryResponse(['Content-Type' => 'image/png']));
+
+        $this->assertTrue(Response::isBinaryResponse(['Content-Encoding' => 'gzip']));
+        $this->assertTrue(Response::isBinaryResponse(['Transfer-Encoding' => 'gzip']));
+        $this->assertTrue(Response::isBinaryResponse(['Content-Transfer-Encoding' => 'gzip']));
+
+        $this->assertTrue(Response::isBinaryResponse(['Content-Encoding' => 'gzip', 'Content-Type' => 'text/html']));
+
+        $this->assertFalse(Response::isBinaryResponse(['Content-Type' => 'text/html']));
+        $this->assertFalse(Response::isBinaryResponse(['Content-Type' => 'text/plain']));
+        $this->assertFalse(Response::isBinaryResponse(['Content-Type' => 'text/css']));
+        $this->assertFalse(Response::isBinaryResponse(['Content-Type' => 'application/javascript']));
+        $this->assertFalse(Response::isBinaryResponse(['Content-Type' => 'application/json']));
+        $this->assertFalse(Response::isBinaryResponse(['Content-Type' => 'application/xml']));
+    }
 }

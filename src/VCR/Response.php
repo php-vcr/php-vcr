@@ -54,10 +54,7 @@ class Response
     public function toArray()
     {
         $body = $this->getBody();
-        // Base64 encode when binary
-        if (strpos($this->getContentType(), 'application/x-gzip') !== false
-            || $this->getHeader('Content-Transfer-Encoding') == 'binary'
-        ) {
+        if (!empty($body) && self::isBinaryResponse($this->getHeaders())) {
             $body = base64_encode($body);
         }
 
@@ -79,15 +76,7 @@ class Response
     public static function fromArray(array $response)
     {
         $body = isset($response['body']) ? $response['body'] : null;
-
-        $gzip = isset($response['headers']['Content-Type'])
-            && strpos($response['headers']['Content-Type'], 'application/x-gzip') !== false;
-
-        $binary = isset($response['headers']['Content-Transfer-Encoding'])
-            && $response['headers']['Content-Transfer-Encoding'] == 'binary';
-
-        // Base64 decode when binary
-        if ($gzip || $binary) {
+        if (!empty($body) && self::isBinaryResponse($response['headers'])) {
             $body = base64_decode($response['body']);
         }
 
@@ -182,5 +171,36 @@ class Response
             Assertion::numeric($status, 'Response status must be either an array or a number.');
             $this->status['code'] = $status;
         }
+    }
+
+    /**
+     * @param array $headers
+     * @return bool
+     */
+    public static function isBinaryResponse(array $headers)
+    {
+        if (empty($headers)) {
+            return true;
+        }
+
+        foreach (['Content-Encoding', 'Transfer-Encoding', 'Content-Transfer-Encoding'] as $header) {
+            if (isset($headers[$header])) {
+                return true;
+            }
+        }
+
+        if (!isset($headers['Content-Type'])) {
+            return true;
+        }
+
+        $contentType = $headers['Content-Type'];
+        $textContentTypes = ['json', 'xml', 'text', 'css', 'html', 'plain', 'javascript'];
+        foreach ($textContentTypes as $textContentType) {
+            if (strpos($contentType, $textContentType) !== false) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
