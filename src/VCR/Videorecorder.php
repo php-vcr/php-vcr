@@ -153,7 +153,15 @@ class Videorecorder
     public function eject()
     {
         Assertion::true($this->isOn, 'Please turn on VCR before ejecting a cassette, use: VCR::turnOn().');
+
+        $cassette = $this->cassette;
         $this->cassette = null;
+
+        if ($cassette && $this->config->getMode() === VCR::MODE_STRICT && !$cassette->isFinished()) {
+            throw new \LogicException(
+                'Strict playback was requested but the cassette did not play in its entirety.'
+            );
+        }
     }
 
     /**
@@ -175,6 +183,10 @@ class Videorecorder
         }
 
         $storage = $this->factory->get('Storage', array($cassetteName));
+
+        if ($this->config->getMode() === VCR::MODE_STRICT) {
+            $storage->rewind();
+        }
 
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
         $this->enableLibraryHooks();
@@ -229,10 +241,8 @@ class Videorecorder
             return $response;
         }
 
-        if (VCR::MODE_NONE === $this->config->getMode()
-            || VCR::MODE_ONCE === $this->config->getMode()
-            && $this->cassette->isNew() === false
-        ) {
+        if (in_array($this->config->getMode(), array(VCR::MODE_NONE, VCR::MODE_STRICT)) ||
+            VCR::MODE_ONCE === $this->config->getMode() && $this->cassette->isNew() === false) {
             throw new \LogicException(
                 sprintf(
                     "The request does not match a previously recorded request and the 'mode' is set to '%s'. "
@@ -273,7 +283,6 @@ class Videorecorder
             $hook->disable();
         }
     }
-
     /**
      * Enables configured library hooks.
      *
