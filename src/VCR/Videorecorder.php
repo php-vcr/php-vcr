@@ -220,30 +220,22 @@ class Videorecorder
         $event = new BeforePlaybackEvent($request, $this->cassette);
         $this->dispatch(VCREvents::VCR_BEFORE_PLAYBACK, $event);
 
-        $response = $this->cassette->playback($request);
-
-        // Playback succeeded and the recorded response can be returned.
-        if (!empty($response)) {
+        try {
+            $response = $this->cassette->playback($request);
+            // Playback succeeded and the recorded response can be returned.
             $event = new AfterPlaybackEvent($request, $response, $this->cassette);
             $this->dispatch(VCREvents::VCR_AFTER_PLAYBACK, $event);
             return $response;
-        }
-
-        if (VCR::MODE_NONE === $this->config->getMode()
-            || VCR::MODE_ONCE === $this->config->getMode()
-            && $this->cassette->isNew() === false
-        ) {
-            throw new \LogicException(
-                sprintf(
-                    "The request does not match a previously recorded request and the 'mode' is set to '%s'. "
+        } catch (\OutOfBoundsException $e) {
+            if (VCR::MODE_NONE === $this->config->getMode() || VCR::MODE_ONCE === $this->config->getMode() && $this->cassette->isNew() === false) {
+                throw new \LogicException(
+                    "The request does not match a previously recorded request and the 'mode' is set to '{$this->config->getMode()}'. "
                     . "If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. "
-                    . 'Please see http://php-vcr.github.io/documentation/configuration/#record-modes.'
-                    . "\nCassette: %s \n Request: %s",
-                    $this->config->getMode(),
-                    $this->cassette->getName(),
-                    print_r($request->toArray(), true)
-                )
-            );
+                    . 'Please see http://php-vcr.github.io/documentation/configuration/#record-modes.',
+                    0,
+                    $e
+                );
+            }
         }
 
         $this->disableLibraryHooks();
