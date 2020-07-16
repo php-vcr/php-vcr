@@ -155,7 +155,7 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         );
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt_array(
+        $result = curl_setopt_array(
             $curlHandle,
             array(
                 CURLOPT_POSTFIELDS => array('para1' => 'val1', 'para2' => 'val2')
@@ -164,6 +164,7 @@ class CurlHookTest extends \PHPUnit_Framework_TestCase
         curl_exec($curlHandle);
         curl_close($curlHandle);
         $this->curlHook->disable();
+        $this->assertTrue($result);
     }
 
     public function testShouldReturnCurlInfoStatusCode()
