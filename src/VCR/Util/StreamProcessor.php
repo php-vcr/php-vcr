@@ -54,6 +54,11 @@ class StreamProcessor
     protected $isIntercepting = false;
 
     /**
+     * @var bool True if any code transformer has been attached to the stream, false otherwise
+     */
+    protected $isTransforming = false;
+
+    /**
      *
      * @param Configuration $configuration
      */
@@ -272,7 +277,11 @@ class StreamProcessor
      */
     public function stream_stat()
     {
-        return false;
+        if ($this->isTransforming) {
+            return false;
+        }
+
+        return \fstat($this->resource);
     }
 
     /**
@@ -629,9 +638,13 @@ class StreamProcessor
      */
     protected function appendFiltersToStream($stream)
     {
+        if (\count(static::$codeTransformers) === 0) {
+            return;
+        }
         foreach (static::$codeTransformers as $codeTransformer) {
             stream_filter_append($stream, $codeTransformer::NAME, STREAM_FILTER_READ);
         }
+        $this->isTransforming = true;
     }
 
     /**

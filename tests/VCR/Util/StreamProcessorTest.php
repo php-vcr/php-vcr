@@ -2,6 +2,8 @@
 
 namespace VCR\Util;
 
+use VCR\CodeTransform\AbstractCodeTransform;
+
 class StreamProcessorTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -181,6 +183,32 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($mock->stream_metadata($path, STREAM_META_ACCESS, 0777));
 
         $this->assertTrue($mock->unlink($path));
+    }
+
+
+    /**
+     * @dataProvider streamStatfailsOnlyWhenStreamIsTransformedProvider
+     */
+    public function testStreamStatFailsOnlyWhenStreamIsTransformed($expectedStatSuccess, $option, $shouldProcess)
+    {
+        $streamProcessorMock = $this->getMockBuilder('VCR\Util\StreamProcessor')
+            ->disableOriginalConstructor()
+            ->setMethods(array('shouldProcess'))
+            ->getMock();
+
+        $streamProcessorMock->expects($this->once())->method('shouldProcess')->will($this->returnValue($shouldProcess));
+
+        $streamProcessorMock->stream_open('tests/fixtures/streamprocessor_data', 'r', $option, $fullPath);
+        $this->assertTrue($expectedStatSuccess == $streamProcessorMock->stream_stat());
+        $streamProcessorMock->stream_close();
+    }
+
+    public function streamStatfailsOnlyWhenStreamIsTransformedProvider()
+    {
+        return [
+            [false, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, true],
+            [true, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, false],
+        ];
     }
 
     protected function getStreamProcessorMock()
