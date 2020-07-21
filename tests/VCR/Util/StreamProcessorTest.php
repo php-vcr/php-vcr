@@ -205,10 +205,10 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function streamStatfailsOnlyWhenStreamIsTransformedProvider()
     {
-        return [
-            [false, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, true],
-            [true, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, false],
-        ];
+        return array(
+            array(false, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, true),
+            array(true, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, false),
+        );
     }
 
     protected function getStreamProcessorMock()
