@@ -3,7 +3,6 @@
 namespace VCR\Event;
 
 use VCR\Request;
-use Symfony\Component\EventDispatcher\Event;
 
 class BeforeHttpRequestEvent extends Event
 {
@@ -12,18 +11,12 @@ class BeforeHttpRequestEvent extends Event
      */
     protected $request;
 
-    /**
-     * @param Request $request
-     */
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
-    /**
-     * @return Request
-     */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }

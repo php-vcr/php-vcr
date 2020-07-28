@@ -5,7 +5,6 @@ namespace VCR\Event;
 use VCR\Cassette;
 use VCR\Request;
 use VCR\Response;
-use Symfony\Component\EventDispatcher\Event;
 
 class AfterPlaybackEvent extends Event
 {
@@ -24,11 +23,6 @@ class AfterPlaybackEvent extends Event
      */
     protected $cassette;
 
-    /**
-     * @param Request $request
-     * @param Response $response
-     * @param Cassette $cassette
-     */
     public function __construct(Request $request, Response $response, Cassette $cassette)
     {
         $this->request = $request;
@@ -36,26 +30,17 @@ class AfterPlaybackEvent extends Event
         $this->cassette = $cassette;
     }
 
-    /**
-     * @return Request
-     */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }
 
-    /**
-     * @return Response
-     */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->response;
     }
 
-    /**
-     * @return Cassette
-     */
-    public function getCassette()
+    public function getCassette(): Cassette
     {
         return $this->cassette;
     }

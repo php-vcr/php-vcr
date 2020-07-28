@@ -2,10 +2,11 @@
 
 namespace VCR\Event;
 
+use PHPUnit\Framework\TestCase;
 use VCR\Request;
 use VCR\Response;
 
-class AfterHttpRequestEventTest extends \PHPUnit_Framework_TestCase
+class AfterHttpRequestEventTest extends TestCase
 {
     /**
      * @var AfterHttpRequestEvent

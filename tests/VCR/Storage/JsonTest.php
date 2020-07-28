@@ -3,11 +3,12 @@
 namespace VCR\Storage;
 
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class JsonTest extends \PHPUnit_Framework_TestCase
+class JsonTest extends TestCase
 {
     protected $handle;
     protected $filePath;
@@ -16,7 +17,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         vfsStream::setup('test');
-        $this->filePath = vfsStream::url('test/') . 'json_test';
+        $this->filePath = vfsStream::url('test/').'json_test';
         $this->jsonObject = new Json(vfsStream::url('test/'), 'json_test');
     }
 
@@ -24,9 +25,9 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     {
         $this->iterateAndTest(
             '[{"para1": "val1"}]',
-            array(
-                array('para1' => 'val1'),
-            ),
+            [
+                ['para1' => 'val1'],
+            ],
             'Single json object was not parsed correctly.'
         );
     }
@@ -35,10 +36,10 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     {
         $this->iterateAndTest(
             '[{"para1": "val1"}, {"para2": "val2"}]',
-            array(
-                array('para1' => 'val1'),
-                array('para2' => 'val2'),
-            ),
+            [
+                ['para1' => 'val1'],
+                ['para2' => 'val2'],
+            ],
             'Two json objects were not parsed correctly.'
         );
     }
@@ -47,10 +48,10 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     {
         $this->iterateAndTest(
             '[{"para1": {"para2": "val2"}}, {"para3": "val3"}]',
-            array(
-                array('para1' => array('para2' => 'val2')),
-                array('para3' => 'val3'),
-            ),
+            [
+                ['para1' => ['para2' => 'val2']],
+                ['para3' => 'val3'],
+            ],
             'Nested json objects were not parsed correctly.'
         );
     }
@@ -59,10 +60,10 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     {
         $this->iterateAndTest(
             '[{"para1": "val1"}, {"para2": {"para3": "val3"}}]',
-            array(
-                array('para1' => 'val1'),
-                array('para2' => array('para3' => 'val3')),
-            ),
+            [
+                ['para1' => 'val1'],
+                ['para2' => ['para3' => 'val3']],
+            ],
             'Nested json objects were not parsed correctly.'
         );
     }
@@ -71,21 +72,21 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     {
         $this->iterateAndTest(
             '[]',
-            array(),
+            [],
             'Empty json was not parsed correctly.'
         );
     }
 
     public function testStoreRecording()
     {
-        $expected = array(
+        $expected = [
             'request' => 'some request',
-            'response' => 'some response'
-        );
+            'response' => 'some response',
+        ];
 
         $this->jsonObject->storeRecording($expected);
 
-        $actual = array();
+        $actual = [];
         foreach ($this->jsonObject as $recording) {
             $actual[] = $recording;
         }
@@ -95,10 +96,10 @@ class JsonTest extends \PHPUnit_Framework_TestCase
 
     public function testValidJson()
     {
-        $stored = array(
+        $stored = [
             'request' => 'some request',
-            'response' => 'some response'
-        );
+            'response' => 'some response',
+        ];
         $this->jsonObject->storeRecording($stored);
         $this->jsonObject->storeRecording($stored);
 
@@ -107,14 +108,14 @@ class JsonTest extends \PHPUnit_Framework_TestCase
 
     public function testStoreRecordingWhenBlankFileAlreadyExists()
     {
-        vfsStream::create(array('blank_file_test' => ''));
-        $filePath = vfsStream::url('test/') . 'blank_file_test';
+        vfsStream::create(['blank_file_test' => '']);
+        $filePath = vfsStream::url('test/').'blank_file_test';
 
         $jsonObject = new Json(vfsStream::url('test/'), 'blank_file_test');
-        $stored = array(
+        $stored = [
             'request' => 'some request',
-            'response' => 'some response'
-        );
+            'response' => 'some response',
+        ];
         $jsonObject->storeRecording($stored);
 
         $this->assertJson(file_get_contents($filePath));
@@ -124,7 +125,7 @@ class JsonTest extends \PHPUnit_Framework_TestCase
     {
         file_put_contents($this->filePath, $json);
 
-        $actual = array();
+        $actual = [];
         foreach ($this->jsonObject as $object) {
             $actual[] = $object;
         }

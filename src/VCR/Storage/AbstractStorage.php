@@ -3,7 +3,6 @@
 namespace VCR\Storage;
 
 use VCR\Util\Assertion;
-use VCR\VCRException;
 
 /**
  * Abstract base for reading and storing records.
@@ -14,37 +13,37 @@ use VCR\VCRException;
 abstract class AbstractStorage implements Storage
 {
     /**
-     * @var resource File handle.
+     * @var resource file handle
      */
     protected $handle;
 
     /**
-     * @var string Path to storage file.
+     * @var string path to storage file
      */
     protected $filePath;
 
     /**
-     * @var array Current parsed record.
+     * @var array<string,mixed>|null current parsed record
      */
     protected $current;
 
     /**
-     * @var integer Number of the current recording.
+     * @var int number of the current recording
      */
     protected $position = 0;
 
     /**
-     * @var boolean True when parser is at the end of the file.
+     * @var bool true when parser is at the end of the file
      */
     protected $isEOF = false;
 
     /**
-     * @var boolean If the cassette file is new.
+     * @var bool if the cassette file is new
      */
     protected $isNew = false;
 
     /**
-     * @var boolean If the current position is valid.
+     * @var bool if the current position is valid
      */
     protected $isValidPosition = true;
 
@@ -54,18 +53,18 @@ abstract class AbstractStorage implements Storage
      * If the cassetteName contains PATH_SEPARATORs, subfolders of the
      * cassettePath are autocreated when not existing.
      *
-     * @param string  $cassettePath   Path to the cassette directory.
-     * @param string  $cassetteName   Path to the cassette file, relative to the path.
-     * @param string  $defaultContent Default data for this cassette if its not existing
+     * @param string $cassettePath   path to the cassette directory
+     * @param string $cassetteName   path to the cassette file, relative to the path
+     * @param string $defaultContent Default data for this cassette if its not existing
      */
-    public function __construct($cassettePath, $cassetteName, $defaultContent = '[]')
+    public function __construct(string $cassettePath, string $cassetteName, string $defaultContent = '[]')
     {
         Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' is not existing or not a directory");
 
-        $this->filePath = rtrim($cassettePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $cassetteName;
+        $this->filePath = rtrim($cassettePath, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR.$cassetteName;
 
-        if (!is_dir(dirname($this->filePath))) {
-            mkdir(dirname($this->filePath), 0777, true);
+        if (!is_dir(\dirname($this->filePath))) {
+            mkdir(\dirname($this->filePath), 0777, true);
         }
 
         if (!file_exists($this->filePath) || 0 === filesize($this->filePath)) {
@@ -76,13 +75,17 @@ abstract class AbstractStorage implements Storage
         Assertion::file($this->filePath, "Specified path '{$this->filePath}' is not a file.");
         Assertion::readable($this->filePath, "Specified file '{$this->filePath}' must be readable.");
 
-        $this->handle = fopen($this->filePath, 'r+');
+        $handle = fopen($this->filePath, 'r+');
+
+        Assertion::isResource($handle);
+
+        $this->handle = $handle;
     }
 
     /**
      * Returns the current record.
      *
-     * @return array Parsed current record.
+     * @return array<string,mixed>|null parsed current record
      */
     public function current()
     {
@@ -92,7 +95,7 @@ abstract class AbstractStorage implements Storage
     /**
      * Returns the current key.
      *
-     * @return integer
+     * @return int
      */
     public function key()
     {
@@ -102,9 +105,9 @@ abstract class AbstractStorage implements Storage
     /**
      * Returns true if the file did not exist and had to be created.
      *
-     * @return boolean TRUE if created, FALSE if not
+     * @return bool TRUE if created, FALSE if not
      */
-    public function isNew()
+    public function isNew(): bool
     {
         return $this->isNew;
     }
@@ -114,7 +117,7 @@ abstract class AbstractStorage implements Storage
      */
     public function __destruct()
     {
-        if (is_resource($this->handle)) {
+        if (\is_resource($this->handle)) {
             fclose($this->handle);
         }
     }

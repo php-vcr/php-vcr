@@ -3,15 +3,16 @@
 namespace VCR;
 
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test instance creation.
  */
-class VCRFactoryTest extends \PHPUnit_Framework_TestCase
+class VCRFactoryTest extends TestCase
 {
     /**
      * @dataProvider instanceProvider
-     * @covers VCR\VCRFactory::createVCRVideorecorder()
+     * @covers \VCR\VCRFactory::createVCRVideorecorder()
      */
     public function testCreateInstances($instance)
     {
@@ -20,17 +21,17 @@ class VCRFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function instanceProvider()
     {
-        return array(
-            array('VCR\Videorecorder'),
-            array('VCR\Configuration'),
-            array('VCR\Util\StreamProcessor'),
-            array('VCR\Util\HttpClient'),
-            array('VCR\CodeTransform\CurlCodeTransform'),
-            array('VCR\CodeTransform\SoapCodeTransform'),
-            array('VCR\LibraryHooks\CurlHook'),
-            array('VCR\LibraryHooks\SoapHook'),
-            array('VCR\LibraryHooks\StreamWrapperHook'),
-        );
+        return [
+            ['VCR\Videorecorder'],
+            ['VCR\Configuration'],
+            ['VCR\Util\StreamProcessor'],
+            ['VCR\Util\HttpClient'],
+            ['VCR\CodeTransform\CurlCodeTransform'],
+            ['VCR\CodeTransform\SoapCodeTransform'],
+            ['VCR\LibraryHooks\CurlHook'],
+            ['VCR\LibraryHooks\SoapHook'],
+            ['VCR\LibraryHooks\StreamWrapperHook'],
+        ];
     }
 
     /**
@@ -43,16 +44,16 @@ class VCRFactoryTest extends \PHPUnit_Framework_TestCase
         VCRFactory::get('VCR\Configuration')->setStorage($storage);
         VCRFactory::get('VCR\Configuration')->setCassettePath(vfsStream::url('test/'));
 
-        $instance = VCRFactory::get('Storage', array(rand()));
+        $instance = VCRFactory::get('Storage', [rand()]);
 
         $this->assertInstanceOf($className, $instance);
     }
 
     public function storageProvider()
     {
-        return array(
-            array('json', 'VCR\Storage\Json'),
-            array('yaml', 'VCR\Storage\Yaml'),
-        );
+        return [
+            ['json', 'VCR\Storage\Json'],
+            ['yaml', 'VCR\Storage\Yaml'],
+        ];
     }
 }

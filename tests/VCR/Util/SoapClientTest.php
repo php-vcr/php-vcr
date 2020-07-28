@@ -2,11 +2,10 @@
 
 namespace VCR\Util;
 
-use lapistano\ProxyObject\ProxyBuilder;
-use VCR\VCRException;
-use VCR\Util\SoapClient;
+use PHPUnit\Framework\TestCase;
+use VCR\LibraryHooks\SoapHook;
 
-class SoapClientTest extends \PHPUnit_Framework_TestCase
+class SoapClientTest extends TestCase
 {
     const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl';
     const ACTION = 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP';
@@ -15,13 +14,13 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
     {
         $hookMock = $this->getMockBuilder('\VCR\LibraryHooks\SoapHook')
             ->disableOriginalConstructor()
-            ->setMethods(array('isEnabled', 'doRequest'))
+            ->setMethods(['isEnabled', 'doRequest'])
             ->getMock();
 
         $hookMock
             ->expects($this->any())
             ->method('isEnabled')
-            ->will($this->returnValue($enabled));
+            ->willReturn($enabled);
 
         return $hookMock;
     }
@@ -40,7 +39,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
                 $this->isType('string'),
                 $this->isType('integer')
             )
-            ->will($this->returnValue($expected));
+            ->willReturn($expected);
 
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
@@ -54,7 +53,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
     public function testDoRequestOneWayEnabled()
     {
         $hook = $this->getLibraryHookMock(true);
-        $hook->expects($this->once())->method('doRequest')->will($this->returnValue('some value'));
+        $hook->expects($this->once())->method('doRequest')->willReturn('some value');
 
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
@@ -66,7 +65,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
     {
         $expected = 'some value';
         $hook = $this->getLibraryHookMock(true);
-        $hook ->expects($this->once()) ->method('doRequest')->will($this->returnValue($expected));
+        $hook->expects($this->once())->method('doRequest')->willReturn($expected);
 
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
@@ -81,7 +80,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMockBuilder('\VCR\Util\SoapClient')
             ->disableOriginalConstructor()
-            ->setMethods(array('realDoRequest'))
+            ->setMethods(['realDoRequest'])
             ->getMock();
 
         $client
@@ -118,26 +117,26 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
 
-        $this->setExpectedException($exception);
+        $this->expectException($exception);
 
         $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, SOAP_1_2);
     }
 
     public function testLibraryHook()
     {
-        $client = new SoapClient(self::WSDL);
+        $client = new class(self::WSDL) extends SoapClient {
+            // A proxy to access the protected getLibraryHook method.
+            public function publicGetLibraryHook(): SoapHook
+            {
+                return $this->getLibraryHook();
+            }
+        };
 
-        $proxy = new ProxyBuilder('\VCR\Util\SoapClient');
-        $client = $proxy
-            ->disableOriginalConstructor()
-            ->setMethods(array('getLibraryHook'))
-            ->getProxy();
-
-        $this->assertInstanceOf('\VCR\LibraryHooks\SoapHook', $client->getLibraryHook());
+        $this->assertInstanceOf('\VCR\LibraryHooks\SoapHook', $client->publicGetLibraryHook());
 
         $client->setLibraryHook($this->getLibraryHookMock(true));
 
-        $this->assertInstanceOf('\VCR\LibraryHooks\SoapHook', $client->getLibraryHook());
+        $this->assertInstanceOf('\VCR\LibraryHooks\SoapHook', $client->publicGetLibraryHook());
     }
 
     public function testGetLastWhateverBeforeRequest()
@@ -150,11 +149,11 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLastWhateverAfterRequest()
     {
-        $request  = 'Knorx ist groß';
+        $request = 'Knorx ist groß';
         $response = 'some value';
 
         $hook = $this->getLibraryHookMock(true);
-        $hook->expects($this->once())->method('doRequest')->will($this->returnValue($response));
+        $hook->expects($this->once())->method('doRequest')->willReturn($response);
 
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);

@@ -12,11 +12,11 @@ class TextUtil
      *
      * Example: curl_multi_exec -> curlMultiExec
      *
-     * @param  string $underscore Lowercased text.
+     * @param string $underscore lowercased text
      *
-     * @return string Lowercase camelcased version of specified text.
+     * @return string lowercase camelcased version of specified text
      */
-    public static function underscoreToLowerCamelcase($underscore)
+    public static function underscoreToLowerCamelcase(string $underscore): string
     {
         return lcfirst(
             str_replace(

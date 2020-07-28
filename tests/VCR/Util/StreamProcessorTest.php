@@ -2,11 +2,13 @@
 
 namespace VCR\Util;
 
-class StreamProcessorTest extends \PHPUnit_Framework_TestCase
-{
+use PHPUnit\Framework\Error\Warning;
+use PHPUnit\Framework\TestCase;
 
+class StreamProcessorTest extends TestCase
+{
     /**
-     * test flock with file_put_contents
+     * test flock with file_put_contents.
      */
     public function testFlockWithFilePutContents()
     {
@@ -19,24 +21,25 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         unlink($testFilePath);
 
         $processor->restore();
-        $this->assertEquals(strlen($testData), $res);
+        $this->assertEquals(\strlen($testData), $res);
     }
 
     /**
      * @dataProvider streamOpenAppendFilterProvider
-     * @param  boolean $expected
-     * @param  boolean $shouldProcess
-     * @param  integer $option
+     *
+     * @param bool $expected
+     * @param bool $shouldProcess
+     * @param int  $option
      */
     public function testStreamOpenShouldAppendFilters($expected, $option, $shouldProcess = null)
     {
         $mock = $this->getMockBuilder('VCR\Util\StreamProcessor')
             ->disableOriginalConstructor()
-            ->setMethods(array('intercept', 'restore', 'appendFiltersToStream', 'shouldProcess'))
+            ->setMethods(['intercept', 'restore', 'appendFiltersToStream', 'shouldProcess'])
             ->getMock();
 
-        if (!is_null($shouldProcess)) {
-            $mock->expects($this->once())->method('shouldProcess')->will($this->returnValue($shouldProcess));
+        if (null !== $shouldProcess) {
+            $mock->expects($this->once())->method('shouldProcess')->willReturn($shouldProcess);
         }
 
         if ($expected) {
@@ -51,22 +54,23 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function streamOpenAppendFilterProvider()
     {
-        return array(
-            array(true, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, true),
-            array(false, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, false),
-            array(false, 0),
-        );
+        return [
+            [true, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, true],
+            [false, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, false],
+            [false, 0],
+        ];
     }
 
     public function streamOpenFileModesWhichDoNotCreateFiles()
     {
-        return array(
-            array('r'),
-            array('rb'),
-            array('rt'),
-            array('r+')
-        );
+        return [
+            ['r'],
+            ['rb'],
+            ['rt'],
+            ['r+'],
+        ];
     }
+
     /**
      * @dataProvider streamOpenFileModesWhichDoNotCreateFiles
      */
@@ -85,6 +89,9 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         restore_error_handler();
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testUrlStatSuccessfully()
     {
         $test = $this;
@@ -98,15 +105,16 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
         restore_error_handler();
     }
 
-    /**
-     * @expectedException PHPUnit_Framework_Error_Warning
-     */
     public function testUrlStatFileNotFound()
     {
         $processor = new StreamProcessor();
+        $this->expectException(Warning::class);
         $processor->url_stat('file_not_found', 0);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testQuietUrlStatFileNotFoundToBeQuiet()
     {
         $processor = new StreamProcessor();
@@ -160,7 +168,7 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped('Behavior is only applicable and testable for PHP 5.4+');
         }
 
-        if (!function_exists('posix_getuid')) {
+        if (!\function_exists('posix_getuid')) {
             $this->markTestSkipped('Requires "posix_getuid" function.');
         }
 
@@ -170,7 +178,7 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
 
         $path = 'tests/fixtures/unnitest_streamprocessor_metadata';
         $this->assertTrue($mock->stream_metadata($path, STREAM_META_TOUCH, null));
-        $this->assertTrue($mock->stream_metadata($path, STREAM_META_TOUCH, array(time(), time())));
+        $this->assertTrue($mock->stream_metadata($path, STREAM_META_TOUCH, [time(), time()]));
 
         $this->assertTrue($mock->stream_metadata($path, STREAM_META_OWNER_NAME, posix_getuid()));
         $this->assertTrue($mock->stream_metadata($path, STREAM_META_OWNER, posix_getuid()));
@@ -187,7 +195,7 @@ class StreamProcessorTest extends \PHPUnit_Framework_TestCase
     {
         return $this->getMockBuilder('VCR\Util\StreamProcessor')
             ->disableOriginalConstructor()
-            ->setMethods(array('intercept', 'restore'))
+            ->setMethods(['intercept', 'restore'])
             ->getMock();
     }
 }

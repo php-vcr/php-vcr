@@ -8,39 +8,40 @@ namespace VCR\Storage;
 class Blackhole implements Storage
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function storeRecording(array $recording)
+    public function storeRecording(array $recording): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function isNew()
+    public function isNew(): bool
     {
         return true;
     }
 
-    public function current()
+    /** @return array<string, mixed> */
+    public function current(): ?array
     {
         throw new \BadMethodCallException('Not implemented');
     }
 
-    public function key()
+    public function key(): int
     {
         throw new \BadMethodCallException('Not implemented');
     }
 
-    public function next()
+    public function next(): void
     {
     }
 
-    public function rewind()
+    public function rewind(): void
     {
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return false;
     }

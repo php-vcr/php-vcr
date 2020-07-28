@@ -1,13 +1,12 @@
-<phpunit bootstrap="../test/bootstrap.php"
-         colors="true"
+<phpunit colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
 >
 
     <testsuites>
-        <testsuite>
-            <directory>../test</directory>
+        <testsuite name="Tests">
+            <directory>./test</directory>
         </testsuite>
     </testsuites>
 
