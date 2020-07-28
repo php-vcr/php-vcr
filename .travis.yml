@@ -19,10 +19,6 @@ matrix:
       - docker
     - env: TEST_DIR=tests/integration/guzzle/3
       php: 7.2
-# Guzzle 4 is not compatible with PHP >= 7.1 due to an error in the code that was only fixed in Guzzle 5.
-# See: https://github.com/guzzle/guzzle/pull/1393
-#    - env: TEST_DIR=tests/integration/guzzle/4
-#      php: 7.2
     - env: TEST_DIR=tests/integration/guzzle/5
       php: 7.2
     - env: TEST_DIR=tests/integration/guzzle/6
@@ -52,7 +48,6 @@ cache:
   directories:
     - vendor
     - tests/integration/guzzle/3/vendor
-#    - tests/integration/guzzle/4/vendor
     - tests/integration/guzzle/5/vendor
     - tests/integration/guzzle/6/vendor
     - tests/integration/soap/vendor
