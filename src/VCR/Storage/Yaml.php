@@ -2,9 +2,8 @@
 
 namespace VCR\Storage;
 
-use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
-use VCR\Util\Assertion;
+use Symfony\Component\Yaml\Parser;
 
 /**
  * Yaml based storage for records.
@@ -15,22 +14,22 @@ use VCR\Util\Assertion;
 class Yaml extends AbstractStorage
 {
     /**
-     * @var Parser Yaml parser.
+     * @var Parser yaml parser
      */
     protected $yamlParser;
 
     /**
-     * @var  Dumper Yaml writer.
+     * @var Dumper yaml writer
      */
     protected $yamlDumper;
 
     /**
      * Creates a new YAML based file store.
      *
-     * @param string $cassettePath Path to the cassette directory.
-     * @param string $cassetteName Path to a file, will be created if not existing.
-     * @param Parser $parser Parser used to decode yaml.
-     * @param Dumper $dumper Dumper used to encode yaml.
+     * @param string $cassettePath path to the cassette directory
+     * @param string $cassetteName path to a file, will be created if not existing
+     * @param Parser $parser       parser used to decode yaml
+     * @param Dumper $dumper       dumper used to encode yaml
      */
     public function __construct($cassettePath, $cassetteName, Parser $parser = null, Dumper $dumper = null)
     {
@@ -41,12 +40,12 @@ class Yaml extends AbstractStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function storeRecording(array $recording)
+    public function storeRecording(array $recording): void
     {
         fseek($this->handle, -1, SEEK_END);
-        fwrite($this->handle, "\n" . $this->yamlDumper->dump(array($recording), 4));
+        fwrite($this->handle, "\n".$this->yamlDumper->dump([$recording], 4));
         fflush($this->handle);
     }
 
@@ -58,16 +57,16 @@ class Yaml extends AbstractStorage
     public function next()
     {
         $recording = $this->yamlParser->parse($this->readNextRecord());
-        $this->current = $recording[0];
+        $this->current = $recording[0] ?? null;
         ++$this->position;
     }
 
     /**
      * Returns the next record in raw format.
      *
-     * @return string Next record in raw format.
+     * @return string next record in raw format
      */
-    private function readNextRecord()
+    private function readNextRecord(): string
     {
         if ($this->isEOF) {
             $this->isValidPosition = false;
@@ -77,10 +76,10 @@ class Yaml extends AbstractStorage
         $recording = '';
 
         while (false !== ($line = fgets($this->handle))) {
-            $isNewArrayStart = strpos($line, '-') === 0;
+            $isNewArrayStart = 0 === strpos($line, '-');
 
             if ($isInRecord && $isNewArrayStart) {
-                fseek($this->handle, -strlen($line), SEEK_CUR);
+                fseek($this->handle, -\strlen($line), SEEK_CUR);
                 break;
             }
 
@@ -93,7 +92,7 @@ class Yaml extends AbstractStorage
             }
         }
 
-        if ($line == false) {
+        if (false == $line) {
             $this->isEOF = true;
         }
 
@@ -116,14 +115,14 @@ class Yaml extends AbstractStorage
     /**
      * Returns true if the current record is valid.
      *
-     * @return boolean True if the current record is valid.
+     * @return bool true if the current record is valid
      */
     public function valid()
     {
-        if (is_null($this->current)) {
+        if (null === $this->current) {
             $this->next();
         }
 
-        return ! is_null($this->current) && $this->isValidPosition;
+        return null !== $this->current && $this->isValidPosition;
     }
 }

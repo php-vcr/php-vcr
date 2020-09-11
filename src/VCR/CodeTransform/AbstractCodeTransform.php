@@ -2,34 +2,25 @@
 
 namespace VCR\CodeTransform;
 
+use function stream_get_filters;
+use VCR\Util\Assertion;
+
 /**
  * A stream wrapper filter to transform code.
- *
- * @package VCR\CodeTransform
  */
-abstract class AbstractCodeTransform extends \PHP_User_Filter
+abstract class AbstractCodeTransform extends \php_user_filter
 {
     const NAME = 'vcr_abstract_filter';
 
     /**
-     * Flag to signalize the current filter is registered.
-     *
-     * @var bool
-     */
-    protected $isRegistered = false;
-
-    /**
      * Attaches the current filter to a stream.
-     *
-     * @return bool true on success or false on failure.
      */
-    public function register()
+    public function register(): void
     {
-        if (!$this->isRegistered) {
-            $this->isRegistered = stream_filter_register(static::NAME, get_called_class());
+        if (!\in_array(static::NAME, stream_get_filters(), true)) {
+            $isRegistered = stream_filter_register(static::NAME, static::class);
+            Assertion::true($isRegistered, sprintf('Failed registering stream filter "%s" on stream "%s"', static::class, static::NAME));
         }
-
-        return $this->isRegistered;
     }
 
     /**
@@ -42,7 +33,7 @@ abstract class AbstractCodeTransform extends \PHP_User_Filter
      *
      * @return int PSFS_PASS_ON
      *
-     * @link http://www.php.net/manual/en/php-user-filter.filter.php
+     * @see http://www.php.net/manual/en/php-user-filter.filter.php
      */
     public function filter($in, $out, &$consumed, $closing)
     {
@@ -57,10 +48,6 @@ abstract class AbstractCodeTransform extends \PHP_User_Filter
 
     /**
      * Transcodes the provided data to whatever.
-     *
-     * @param string $code
-     *
-     * @return string
      */
-    abstract protected function transformCode($code);
+    abstract protected function transformCode(string $code): string;
 }

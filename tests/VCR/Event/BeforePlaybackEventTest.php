@@ -2,12 +2,13 @@
 
 namespace VCR\Event;
 
-use VCR\Request;
+use PHPUnit\Framework\TestCase;
 use VCR\Cassette;
 use VCR\Configuration;
+use VCR\Request;
 use VCR\Storage;
 
-class BeforePlaybackEventTest extends \PHPUnit_Framework_TestCase
+class BeforePlaybackEventTest extends TestCase
 {
     /**
      * @var BeforePlaybackEvent

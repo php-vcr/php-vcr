@@ -8,13 +8,13 @@ This is a port of the [VCR](http://github.com/vcr/vcr) Ruby library to PHP.
 
 Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests. A bit of documentation can be found on the [php-vcr website](http://php-vcr.github.io).
 
-Disclaimer: Doing this in PHP is not as easy as in programming languages which support monkey patching (I'm looking at you, Ruby) – this project is not yet fully tested, so please use at your own risk!
+Disclaimer: Doing this in PHP is not as easy as in programming languages which support monkey patching (I'm looking at you, Ruby)
 
 ## Features
 
 * Automatically records and replays your HTTP(s) interactions with minimal setup/configuration code.
 * Supports common http functions and extensions
-  * everyting using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification (except `$http_response_header` see #96)
+  * everything using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification (except `$http_response_header` see #96)
   * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
   * curl(), by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
 * The same request can receive different responses in different tests -- just use different cassettes.
@@ -30,7 +30,7 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 Using static method calls:
 
 ``` php
-class VCRTest extends \PHPUnit_Framework_TestCase
+class VCRTest extends TestCase
 {
     public function testShouldInterceptStreamWrapper()
     {
@@ -68,7 +68,7 @@ class VCRTest extends \PHPUnit_Framework_TestCase
 You can use annotations in PHPUnit by using [phpunit-testlistener-vcr](https://github.com/php-vcr/phpunit-testlistener-vcr):
 
 ``` php
-class VCRTest extends \PHPUnit_Framework_TestCase
+class VCRTest extends TestCase
 {
     /**
      * @vcr unittest_annotation_test
@@ -97,9 +97,9 @@ $ composer require --dev php-vcr/php-vcr
 
 PHP-VCR depends on:
 
-  * PHP 5.3+
+  * PHP 7.2+
   * Curl extension
-  * HTTP library [Guzzle](http://guzzlephp.org)
+  * [symfony/event-dispatcher](https://github.com/symfony/event-dispatcher)
   * [symfony/yaml](https://github.com/symfony/yaml)
   * [beberlei/assert](https://github.com/beberlei/assert)
 

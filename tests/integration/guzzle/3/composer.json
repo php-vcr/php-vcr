@@ -1,5 +1,6 @@
 {
     "require": {
-        "guzzlehttp/guzzle": "~3.0"
+        "guzzlehttp/guzzle": "~3.0",
+        "symfony/event-dispatcher": "<4.3"
     }
 }

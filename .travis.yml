@@ -1,41 +1,30 @@
 language: php
-dist: precise
 
 matrix:
   fast_finish: true
   include:
-    - env: TEST_DIR=.
-      php: 5.3
-    - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
-      php: 5.3
-    - env: TEST_DIR=.
-      php: 5.4
-    - env: TEST_DIR=.
-      php: 5.5
-    - env: TEST_DIR=.
-      php: 5.6
-    - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
-      php: 5.6
-    - env: TEST_DIR=.
-      php: 7.0
-    - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
-      php: 7.0
-    - env: TEST_DIR=.
-      php: 7.1
-    - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
-      php: 7.1
-    - env: TEST_DIR=. PHP_CS_FIXER=true
+    - env: TEST_DIR=. PHP_CS_FIXER=true PHPSTAN=true
       php: 7.2
+    - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
+      php: 7.2
+    - env: TEST_DIR=.
+      php: 7.3
+    - env: TEST_DIR=.
+      php: 7.4
+    - env: TEST_DIR=tests/integration/apache
+      php: 7.2
+      dist: trusty
+      sudo: required
+      services:
+      - docker
     - env: TEST_DIR=tests/integration/guzzle/3
-      php: 5.6
-    - env: TEST_DIR=tests/integration/guzzle/4
-      php: 5.6
+      php: 7.2
     - env: TEST_DIR=tests/integration/guzzle/5
-      php: 5.6
+      php: 7.2
     - env: TEST_DIR=tests/integration/guzzle/6
-      php: 5.6
+      php: 7.2
     - env: TEST_DIR=tests/integration/soap
-      php: 5.6
+      php: 7.2
 
 before_install:
   - composer self-update
@@ -48,7 +37,8 @@ install:
 
 script:
   - $PHPUNIT_BIN --coverage-clover=coverage.clover
-  - if [ "${PHP_CS_FIXER}" = "true" ]; then wget http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar && php ./php-cs-fixer-v2.phar fix --dry-run --diff $TRAVIS_BUILD_DIR; fi
+  - if [ "${PHP_CS_FIXER}" = "true" ]; then vendor/bin/php-cs-fixer fix --dry-run --diff $TRAVIS_BUILD_DIR; fi
+  - if [ "${PHPSTAN}" = "true" ]; then composer phpstan; fi
 
 after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
@@ -58,7 +48,7 @@ cache:
   directories:
     - vendor
     - tests/integration/guzzle/3/vendor
-    - tests/integration/guzzle/4/vendor
     - tests/integration/guzzle/5/vendor
     - tests/integration/guzzle/6/vendor
+    - tests/integration/soap/vendor
     - $HOME/.composer/cache

@@ -2,7 +2,9 @@
 
 namespace VCR\Storage;
 
-class BlackholeTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class BlackholeTest extends TestCase
 {
     protected $storage;
 
@@ -13,7 +15,7 @@ class BlackholeTest extends \PHPUnit_Framework_TestCase
 
     public function testStoreRecordingIsCallable()
     {
-        $this->assertNull($this->storage->storeRecording(array('empty or not, we don\'t care')));
+        $this->assertNull($this->storage->storeRecording(['empty or not, we don\'t care']));
     }
 
     public function testNextIsCallable()
@@ -26,19 +28,17 @@ class BlackholeTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->storage->rewind());
     }
 
-    /**
-     * @expectedException BadMethodCallException
-     */
     public function testKeyIsNotCallable()
     {
+        $this->expectException(\BadMethodCallException::class);
+
         $this->storage->key();
     }
 
-    /**
-     * @expectedException BadMethodCallException
-     */
     public function testCurrentIsNotCallable()
     {
+        $this->expectException(\BadMethodCallException::class);
+
         $this->storage->current();
     }
 

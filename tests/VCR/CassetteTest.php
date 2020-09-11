@@ -3,13 +3,13 @@
 namespace VCR;
 
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test integration of PHPVCR with PHPUnit.
  */
-class CassetteTest extends \PHPUnit_Framework_TestCase
+class CassetteTest extends TestCase
 {
-
     /**
      * @var Cassette
      */
@@ -21,12 +21,6 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
         $this->cassette = new Cassette('test', new Configuration(), new Storage\Yaml(vfsStream::url('test/'), 'json_test'));
     }
 
-    public function testInvalidCassetteName()
-    {
-        $this->setExpectedException('\VCR\VCRException', 'Cassette name must be a string, array given.');
-        new Cassette(array(), new Configuration(), new Storage\Yaml(vfsStream::url('test/'), 'json_test'));
-    }
-
     public function testGetName()
     {
         $this->assertEquals('test', $this->cassette->getName());
@@ -35,8 +29,8 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
     public function testDontOverwriteRecord()
     {
         $request = new Request('GET', 'https://example.com');
-        $response1 = new Response(200, array(), 'sometest');
-        $response2 = new Response(200, array(), 'sometest');
+        $response1 = new Response(200, [], 'sometest');
+        $response2 = new Response(200, [], 'sometest');
         $this->cassette->record($request, $response1);
         $this->cassette->record($request, $response2);
 
@@ -46,7 +40,7 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
     public function testPlaybackAlreadyRecordedRequest()
     {
         $request = new Request('GET', 'https://example.com');
-        $response = new Response(200, array(), 'sometest');
+        $response = new Response(200, [], 'sometest');
         $this->cassette->record($request, $response);
 
         $this->assertEquals($response->toArray(), $this->cassette->playback($request)->toArray());
@@ -62,7 +56,7 @@ class CassetteTest extends \PHPUnit_Framework_TestCase
     public function testHasResponseFound()
     {
         $request = new Request('GET', 'https://example.com');
-        $response = new Response(200, array(), 'sometest');
+        $response = new Response(200, [], 'sometest');
         $this->cassette->record($request, $response);
 
         $this->assertTrue($this->cassette->hasResponse($request), 'Expected true if request was found.');
