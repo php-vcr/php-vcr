@@ -25,6 +25,8 @@ matrix:
       php: 7.2
     - env: TEST_DIR=tests/integration/soap
       php: 7.2
+    - env: TEST_DIR=tests/integration/symfony/5
+      php: 7.2
 
 before_install:
   - composer self-update
@@ -51,4 +53,5 @@ cache:
     - tests/integration/guzzle/5/vendor
     - tests/integration/guzzle/6/vendor
     - tests/integration/soap/vendor
+    - tests/integration/symfony/5/vendor
     - $HOME/.composer/cache
