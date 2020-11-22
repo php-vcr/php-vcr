@@ -267,6 +267,81 @@ class CurlHelperTest extends TestCase
         $this->assertEquals($expected, $actualHeaders);
     }
 
+    public function testHandleOutputHeaderFunctionWithPublicFunction()
+    {
+        $this->headersFound = [];
+        $curlOptions = [
+            CURLOPT_HEADERFUNCTION => [$this, 'publicCurlHeaderFunction'],
+        ];
+        $status = [
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1',
+        ];
+        $headers = [
+            'Content-Length' => 0,
+        ];
+        $response = new Response($status, $headers, 'example response');
+        CurlHelper::handleOutput($response, $curlOptions, curl_init());
+
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Length: 0',
+            '',
+        ];
+        $this->assertEquals($expected, $this->headersFound);
+    }
+
+    public function testHandleOutputHeaderFunctionWithProtectedFunction()
+    {
+        $this->headersFound = [];
+        $curlOptions = [
+            CURLOPT_HEADERFUNCTION => [$this, 'protectedCurlHeaderFunction'],
+        ];
+        $status = [
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1',
+        ];
+        $headers = [
+            'Content-Length' => 0,
+        ];
+        $response = new Response($status, $headers, 'example response');
+        CurlHelper::handleOutput($response, $curlOptions, curl_init());
+
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Length: 0',
+            '',
+        ];
+        $this->assertEquals($expected, $this->headersFound);
+    }
+
+    public function testHandleOutputHeaderFunctionWithPrivateFunction()
+    {
+        $this->headersFound = [];
+        $curlOptions = [
+            CURLOPT_HEADERFUNCTION => [$this, 'privateCurlHeaderFunction'],
+        ];
+        $status = [
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1',
+        ];
+        $headers = [
+            'Content-Length' => 0,
+        ];
+        $response = new Response($status, $headers, 'example response');
+        CurlHelper::handleOutput($response, $curlOptions, curl_init());
+
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Length: 0',
+            '',
+        ];
+        $this->assertEquals($expected, $this->headersFound);
+    }
+
     public function testHandleResponseUsesWriteFunction()
     {
         $test = $this;
@@ -279,6 +354,19 @@ class CurlHelperTest extends TestCase
 
                 return \strlen($body);
             },
+        ];
+        $response = new Response(200, [], $expectedBody);
+
+        CurlHelper::handleOutput($response, $curlOptions, $expectedCh);
+    }
+
+    public function testHandleResponseUsesWriteFunctionWithPrivateFunction()
+    {
+        $test = $this;
+        $expectedCh = curl_init();
+        $expectedBody = 'example response';
+        $curlOptions = [
+            CURLOPT_WRITEFUNCTION => [$this, 'privateCurlWriteFunction'],
         ];
         $response = new Response(200, [], $expectedBody);
 
@@ -440,5 +528,32 @@ class CurlHelperTest extends TestCase
         CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, ['some' => 'test']);
 
         $this->assertEquals('DELETE', $request->getMethod());
+    }
+
+    // Function used for testing CURLOPT_HEADERFUNCTION
+    public function publicCurlHeaderFunction($ch, $header)
+    {
+        $this->headersFound[] = $header;
+    }
+
+    // Function used for testing CURLOPT_HEADERFUNCTION
+    protected function protectedCurlHeaderFunction($ch, $header)
+    {
+        $this->headersFound[] = $header;
+    }
+
+    // Function used for testing CURLOPT_HEADERFUNCTION
+    private function privateCurlHeaderFunction($ch, $header)
+    {
+        $this->headersFound[] = $header;
+    }
+
+    // Function used for testing CURLOPT_WRITEFUNCTION
+    private function privateCurlWriteFunction($ch, $body)
+    {
+        $this->assertEquals('resource', \gettype($ch));
+        $this->assertEquals('example response', $body);
+
+        return \strlen($body);
     }
 }
