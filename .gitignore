@@ -6,3 +6,4 @@ notes.md
 tests/fixtures/cassette*
 /.php_cs.cache
 /.php_cs
+composer.lock
