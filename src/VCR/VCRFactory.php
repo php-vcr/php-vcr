@@ -32,6 +32,10 @@ class VCRFactory
     protected function __construct(Configuration $config = null)
     {
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
+
+        // This constant exists only from PHP 7.3
+        // Once we are no longer supporting 7.2, we can remove this
+        \defined('CURLPROXY_HTTPS') or \define('CURLPROXY_HTTPS', 2);
     }
 
     protected function createVCRVideorecorder(): Videorecorder

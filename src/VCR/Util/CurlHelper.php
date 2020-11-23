@@ -111,6 +111,9 @@ class CurlHelper
             case CURLINFO_HEADER_SIZE:
                 $info = mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
                 break;
+            case CURLPROXY_HTTPS:
+                $info = '';
+                break;
             default:
                 $info = $response->getCurlInfo(self::$curlInfoList[$option]);
                 break;

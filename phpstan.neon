@@ -2,6 +2,8 @@ parameters:
     level: 7
     paths:
         - src
+    # Can remove reportUnmatchedIgnoredErrors option after php 7.2 is no longer supported
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         # This part of PHP is not very well documented, resulting PHPStan's definitions not being accurate
         - "#Access to an undefined property object::\\$data\\.#"
@@ -14,6 +16,8 @@ parameters:
         # The EventDispatcherInterface::dispatch signature is different (!) between Symfony <4.3 and >=4.3
         - '/Parameter #1 \$event of method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) expects object, string\|null given./'
         - '/Parameter #2 \$eventName of method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) expects string\|null, VCR\\Event\\Event given./'
+        # PHPStan cannot deal with manually defined constants - can be removed once php 7.2 no longer supported
+        - '#Constant CURLPROXY_HTTPS not found.#'
 includes:
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
     - vendor/phpstan/phpstan-beberlei-assert/extension.neon
