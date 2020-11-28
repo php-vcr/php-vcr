@@ -1,0 +1,5 @@
+{
+    "require": {
+        "symfony/http-client": "~5.0"
+    }
+}

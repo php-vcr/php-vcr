@@ -1,0 +1,15 @@
+<phpunit bootstrap="../test/bootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+>
+
+    <testsuites>
+        <testsuite name="Symfony 5 test suite">
+            <directory>../test</directory>
+            <directory>test</directory>
+        </testsuite>
+    </testsuites>
+
+</phpunit>

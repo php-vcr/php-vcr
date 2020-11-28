@@ -109,15 +109,17 @@ class Response
     }
 
     /**
+     * @param mixed $default
+     *
      * @return array<string,mixed>|mixed|null
      */
-    public function getCurlInfo(?string $option = null)
+    public function getCurlInfo(?string $option = null, $default = null)
     {
         if (empty($option)) {
             return $this->curlInfo;
         }
         if (!isset($this->curlInfo[$option])) {
-            return null;
+            return $default;
         }
 
         return $this->curlInfo[$option];

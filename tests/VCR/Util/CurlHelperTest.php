@@ -260,9 +260,9 @@ class CurlHelperTest extends TestCase
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
         $expected = [
-            'HTTP/1.1 200 OK',
-            'Content-Length: 0',
-            '',
+            "HTTP/1.1 200 OK\r\n",
+            "Content-Length: 0\r\n",
+            "\r\n",
         ];
         $this->assertEquals($expected, $actualHeaders);
     }
@@ -388,6 +388,24 @@ class CurlHelperTest extends TestCase
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
         $this->assertEquals($expectedBody, file_get_contents($testFile));
+    }
+
+    public function testGetCurlOptionFromResponseHandleCertinfo()
+    {
+        $status = [
+            'code' => 200,
+            'message' => 'OK',
+            'http_version' => '1.1',
+        ];
+        $headers = [
+            'Content-Length' => 0,
+        ];
+        $response = new Response($status, $headers, 'example response');
+
+        $this->assertEquals(
+            [],
+            CurlHelper::getCurlOptionFromResponse($response, CURLINFO_CERTINFO)
+        );
     }
 
     /**
