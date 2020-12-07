@@ -304,6 +304,10 @@ class CurlHook implements LibraryHook
             return static::$curlOptions[(int) $curlHandle][CURLOPT_PRIVATE];
         }
 
+        if ($option === 0 && !in_array((int) $curlHandle, self::$responses, true)) {
+            return array_fill_keys(CurlHelper::$curlInfoList, null);
+        }
+
         return CurlHelper::getCurlOptionFromResponse(
             self::$responses[(int) $curlHandle],
             $option

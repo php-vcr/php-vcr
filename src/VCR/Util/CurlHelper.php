@@ -13,7 +13,7 @@ class CurlHelper
     /**
      * @var array List of cURL info constants.
      */
-    private static $curlInfoList = array(
+    public static $curlInfoList = array(
         //"certinfo"?
         CURLINFO_HTTP_CODE => 'http_code',
         CURLINFO_EFFECTIVE_URL => 'url',
