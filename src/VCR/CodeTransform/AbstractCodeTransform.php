@@ -12,6 +12,12 @@ abstract class AbstractCodeTransform extends \php_user_filter
 {
     const NAME = 'vcr_abstract_filter';
 
+    /** @var string The code to transform */
+    private  $data = "";
+
+    /** @var stdClass The clast bucket we operated on */
+    private  $lastBucket = "";
+    
     /**
      * Attaches the current filter to a stream.
      */
@@ -38,9 +44,18 @@ abstract class AbstractCodeTransform extends \php_user_filter
     public function filter($in, $out, &$consumed, $closing)
     {
         while ($bucket = stream_bucket_make_writeable($in)) {
-            $bucket->data = $this->transformCode($bucket->data);
-            $consumed += $bucket->datalen;
-            stream_bucket_append($out, $bucket);
+            $this->data = $this->data.$bucket->data;
+            if ($bucket !== null) {
+                $this->lastBucket = $bucket;
+            }
+        }
+
+        if ($closing) {
+            $this->lastBucket->data = $this->transformCode($this->data);
+            $consumed += $this->lastBucket->datalen;
+            stream_bucket_append($out, $this->lastBucket);
+            $this->data = null;
+            $this->lastBucket = null;
         }
 
         return PSFS_PASS_ON;
