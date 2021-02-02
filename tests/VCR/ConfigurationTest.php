@@ -27,6 +27,16 @@ class ConfigurationTest extends TestCase
         $this->config->setCassettePath('invalid_path');
     }
 
+    public function testGetAvailableMatcherNames()
+    {
+        $reflect = new \ReflectionClass($this->config);
+        $availableMatchers = $reflect->getProperty('availableRequestMatchers');
+        $availableMatchers->setAccessible(true);
+        $availableMatcherNames = array_keys($availableMatchers->getValue($this->config));
+
+        $this->assertSame($this->config->getAvailableRequestMatcherNames(), $availableMatcherNames);
+    }
+
     public function testGetLibraryHooks()
     {
         $this->assertEquals(
