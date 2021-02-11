@@ -200,6 +200,10 @@ class CurlHelper
      */
     public static function validateCurlPOSTBody(Request $request, $curlHandle = null): void
     {
+        if ('POST' !== $request->getMethod()) {
+            return;
+        }
+        
         $readFunction = $request->getCurlOption(CURLOPT_READFUNCTION);
         if (null === $readFunction) {
             return;
