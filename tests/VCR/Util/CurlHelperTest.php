@@ -199,6 +199,14 @@ class CurlHelperTest extends TestCase
         $this->assertEquals($expected, $request->getBody());
     }
 
+    public function testSetCurlOptionOnRequestNoBody()
+    {
+        $request = new Request('GET', 'example.com');
+        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_NOBODY, true);
+
+        $this->assertEquals('HEAD', $request->getMethod());
+    }
+
     public function testHandleResponseReturnsBody()
     {
         $curlOptions = [
