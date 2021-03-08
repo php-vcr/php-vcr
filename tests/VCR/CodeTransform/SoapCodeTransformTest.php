@@ -9,7 +9,7 @@ class SoapCodeTransformTest extends TestCase
     /**
      * @dataProvider codeSnippetProvider
      */
-    public function testTransformCode($expected, $code)
+    public function testTransformCode($expected, $code): void
     {
         $codeTransform = new class() extends SoapCodeTransform {
             // A proxy to access the protected transformCode method.

@@ -10,7 +10,7 @@ use VCR\Util\Assertion;
  */
 abstract class AbstractCodeTransform extends \php_user_filter
 {
-    const NAME = 'vcr_abstract_filter';
+    public const NAME = 'vcr_abstract_filter';
 
     /**
      * Attaches the current filter to a stream.

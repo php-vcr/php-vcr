@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class RequestMatcherTest extends TestCase
 {
-    public function testMatchingMethod()
+    public function testMatchingMethod(): void
     {
         $first = new Request('GET', 'http://example.com', []);
         $second = new Request('GET', 'http://example.com', []);
@@ -19,7 +19,7 @@ class RequestMatcherTest extends TestCase
         $this->assertFalse(RequestMatcher::matchMethod($first, $second));
     }
 
-    public function testMatchingUrl()
+    public function testMatchingUrl(): void
     {
         $first = new Request('GET', 'http://example.com/common/path', []);
         $second = new Request('GET', 'http://example.com/common/path', []);
@@ -37,7 +37,7 @@ class RequestMatcherTest extends TestCase
         $this->assertFalse(RequestMatcher::matchUrl($first, $second));
     }
 
-    public function testMatchingHost()
+    public function testMatchingHost(): void
     {
         $first = new Request('GET', 'http://example.com/common/path', []);
         $second = new Request('GET', 'http://example.com/common/path', []);
@@ -50,7 +50,7 @@ class RequestMatcherTest extends TestCase
         $this->assertFalse(RequestMatcher::matchHost($first, $second));
     }
 
-    public function testMatchingHeaders()
+    public function testMatchingHeaders(): void
     {
         $first = new Request('GET', 'http://example.com', ['Accept' => 'Everything']);
         $second = new Request('GET', 'http://example.com', ['Accept' => 'Everything']);
@@ -63,7 +63,7 @@ class RequestMatcherTest extends TestCase
         $this->assertFalse(RequestMatcher::matchHeaders($first, $second));
     }
 
-    public function testHeaderMatchingDisallowsMissingHeaders()
+    public function testHeaderMatchingDisallowsMissingHeaders(): void
     {
         $first = new Request('GET', 'http://example.com', ['Accept' => 'Everything', 'MyHeader' => 'value']);
         $second = new Request('GET', 'http://example.com', ['Accept' => 'Everything']);
@@ -76,7 +76,7 @@ class RequestMatcherTest extends TestCase
         $this->assertFalse(RequestMatcher::matchHeaders($first, $second));
     }
 
-    public function testHeaderMatchingAllowsEmptyVals()
+    public function testHeaderMatchingAllowsEmptyVals(): void
     {
         $first = new Request('GET', 'http://example.com', ['Accept' => null, 'Content-Type' => 'application/json']);
         $second = new Request('GET', 'http://example.com', ['Accept' => null, 'Content-Type' => 'application/json']);
@@ -84,7 +84,7 @@ class RequestMatcherTest extends TestCase
         $this->assertTrue(RequestMatcher::matchHeaders($first, $second));
     }
 
-    public function testMatchingPostFields()
+    public function testMatchingPostFields(): void
     {
         $mock = [
             'method' => 'POST',
@@ -107,7 +107,7 @@ class RequestMatcherTest extends TestCase
         $this->assertFalse(RequestMatcher::matchPostFields($first, $third));
     }
 
-    public function testMatchingQueryString()
+    public function testMatchingQueryString(): void
     {
         $first = new Request('GET', 'http://example.com/search?query=test', []);
         $second = new Request('GET', 'http://example.com/search?query=test', []);
@@ -120,7 +120,7 @@ class RequestMatcherTest extends TestCase
         $this->assertFalse(RequestMatcher::matchQueryString($first, $second));
     }
 
-    public function testMatchingBody()
+    public function testMatchingBody(): void
     {
         $first = new Request('GET', 'http://example.com', []);
         $first->setBody('test');
@@ -137,7 +137,7 @@ class RequestMatcherTest extends TestCase
         $this->assertFalse(RequestMatcher::matchBody($first, $second), 'Bodies are different.');
     }
 
-    public function testMatchingSoapOperation()
+    public function testMatchingSoapOperation(): void
     {
         $storedRequest = Request::fromArray([
             'method' => 'POST',

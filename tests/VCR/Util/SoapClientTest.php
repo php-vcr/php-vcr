@@ -7,8 +7,8 @@ use VCR\LibraryHooks\SoapHook;
 
 class SoapClientTest extends TestCase
 {
-    const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl';
-    const ACTION = 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP';
+    public const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl';
+    public const ACTION = 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP';
 
     protected function getLibraryHookMock($enabled)
     {
@@ -25,7 +25,7 @@ class SoapClientTest extends TestCase
         return $hookMock;
     }
 
-    public function testDoRequest()
+    public function testDoRequest(): void
     {
         $expected = 'Knorx ist groß';
 
@@ -50,7 +50,7 @@ class SoapClientTest extends TestCase
         );
     }
 
-    public function testDoRequestOneWayEnabled()
+    public function testDoRequestOneWayEnabled(): void
     {
         $hook = $this->getLibraryHookMock(true);
         $hook->expects($this->once())->method('doRequest')->willReturn('some value');
@@ -61,7 +61,7 @@ class SoapClientTest extends TestCase
         $this->assertNull($client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2, 1));
     }
 
-    public function testDoRequestOneWayDisabled()
+    public function testDoRequestOneWayDisabled(): void
     {
         $expected = 'some value';
         $hook = $this->getLibraryHookMock(true);
@@ -76,7 +76,7 @@ class SoapClientTest extends TestCase
         );
     }
 
-    public function testDoRequestHandlesHookDisabled()
+    public function testDoRequestHandlesHookDisabled(): void
     {
         $client = $this->getMockBuilder('\VCR\Util\SoapClient')
             ->disableOriginalConstructor()
@@ -100,7 +100,7 @@ class SoapClientTest extends TestCase
         $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2);
     }
 
-    public function testDoRequestExpectingException()
+    public function testDoRequestExpectingException(): void
     {
         $exception = '\LogicException';
 
@@ -122,7 +122,7 @@ class SoapClientTest extends TestCase
         $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2);
     }
 
-    public function testLibraryHook()
+    public function testLibraryHook(): void
     {
         $client = new class(self::WSDL) extends SoapClient {
             // A proxy to access the protected getLibraryHook method.
@@ -139,7 +139,7 @@ class SoapClientTest extends TestCase
         $this->assertInstanceOf('\VCR\LibraryHooks\SoapHook', $client->publicGetLibraryHook());
     }
 
-    public function testGetLastWhateverBeforeRequest()
+    public function testGetLastWhateverBeforeRequest(): void
     {
         $client = new SoapClient(self::WSDL);
 
@@ -147,7 +147,7 @@ class SoapClientTest extends TestCase
         $this->assertNull($client->__getLastResponse());
     }
 
-    public function testGetLastWhateverAfterRequest()
+    public function testGetLastWhateverAfterRequest(): void
     {
         $request = 'Knorx ist groß';
         $response = 'some value';

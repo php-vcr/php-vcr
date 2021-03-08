@@ -28,7 +28,7 @@ class AbstractCodeTransformTest extends TestCase
         return $filter;
     }
 
-    public function testRegisterAlreadyRegistered()
+    public function testRegisterAlreadyRegistered(): void
     {
         $filter = $this->getFilter();
         $filter->register();

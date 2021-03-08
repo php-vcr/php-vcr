@@ -6,7 +6,7 @@ use VCR\Util\Assertion;
 
 class CurlCodeTransform extends AbstractCodeTransform
 {
-    const NAME = 'vcr_curl';
+    public const NAME = 'vcr_curl';
 
     /**
      * @var array<string, string>

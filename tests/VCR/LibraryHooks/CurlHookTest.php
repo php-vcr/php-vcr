@@ -31,7 +31,7 @@ class CurlHookTest extends TestCase
         $this->curlHook = new CurlHook(new CurlCodeTransform(), new StreamProcessor($this->config));
     }
 
-    public function testShouldBeEnabledAfterEnabling()
+    public function testShouldBeEnabledAfterEnabling(): void
     {
         $this->assertFalse($this->curlHook->isEnabled(), 'Initially the CurlHook should be disabled.');
 
@@ -42,7 +42,7 @@ class CurlHookTest extends TestCase
         $this->assertFalse($this->curlHook->isEnabled(), 'After disabling the CurlHook should be disabled.');
     }
 
-    public function testShouldInterceptCallWhenEnabled()
+    public function testShouldInterceptCallWhenEnabled(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -58,7 +58,7 @@ class CurlHookTest extends TestCase
     /**
      * @group uses_internet
      */
-    public function testShouldNotInterceptCallWhenNotEnabled()
+    public function testShouldNotInterceptCallWhenNotEnabled(): void
     {
         $curlHandle = curl_init('http://example.com/');
         curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
@@ -71,11 +71,11 @@ class CurlHookTest extends TestCase
     /**
      * @group uses_internet
      */
-    public function testShouldNotInterceptCallWhenDisabled()
+    public function testShouldNotInterceptCallWhenDisabled(): void
     {
         $intercepted = false;
         $this->curlHook->enable(
-            function () use (&$intercepted) {
+            function () use (&$intercepted): void {
                 $intercepted = true;
             }
         );
@@ -89,7 +89,7 @@ class CurlHookTest extends TestCase
         $this->assertFalse($intercepted, 'This request should not have been intercepted.');
     }
 
-    public function testShouldWriteFileOnFileDownload()
+    public function testShouldWriteFileOnFileDownload(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -106,7 +106,7 @@ class CurlHookTest extends TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written in file.');
     }
 
-    public function testShouldEchoResponseIfReturnTransferFalse()
+    public function testShouldEchoResponseIfReturnTransferFalse(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -122,7 +122,7 @@ class CurlHookTest extends TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
     }
 
-    public function testShouldPostFieldsAsArray()
+    public function testShouldPostFieldsAsArray(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -144,7 +144,7 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldPostFieldsAsArrayUsingSetoptarray()
+    public function testShouldPostFieldsAsArrayUsingSetoptarray(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -171,7 +171,7 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoStatusCode()
+    public function testShouldReturnCurlInfoStatusCode(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -189,7 +189,7 @@ class CurlHookTest extends TestCase
     /**
      * @see https://github.com/php-vcr/php-vcr/issues/136
      */
-    public function testShouldReturnCurlInfoStatusCodeAsInteger()
+    public function testShouldReturnCurlInfoStatusCodeAsInteger(): void
     {
         $stringStatusCode = '200';
         $integerStatusCode = 200;
@@ -206,7 +206,7 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoAll()
+    public function testShouldReturnCurlInfoAll(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -221,7 +221,7 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoAllKeys()
+    public function testShouldReturnCurlInfoAllKeys(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -258,7 +258,7 @@ class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotThrowErrorWhenDisabledTwice()
+    public function testShouldNotThrowErrorWhenDisabledTwice(): void
     {
         $this->curlHook->disable();
         $this->curlHook->disable();
@@ -267,14 +267,14 @@ class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotThrowErrorWhenEnabledTwice()
+    public function testShouldNotThrowErrorWhenEnabledTwice(): void
     {
         $this->curlHook->enable($this->getTestCallback());
         $this->curlHook->enable($this->getTestCallback());
         $this->curlHook->disable();
     }
 
-    public function testShouldInterceptMultiCallWhenEnabled()
+    public function testShouldInterceptMultiCallWhenEnabled(): void
     {
         $testClass = $this;
         $callCount = 0;
@@ -330,11 +330,11 @@ class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotInterceptMultiCallWhenDisabled()
+    public function testShouldNotInterceptMultiCallWhenDisabled(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
-            function () use ($testClass) {
+            function () use ($testClass): void {
                 $testClass->fail('This request should not have been intercepted.');
             }
         );
@@ -353,7 +353,7 @@ class CurlHookTest extends TestCase
     /**
      * @requires PHP 5.5.0
      */
-    public function testShouldResetRequest()
+    public function testShouldResetRequest(): void
     {
         $testClass = $this;
         $this->curlHook->enable(

@@ -10,12 +10,12 @@ interface LibraryHook
     /**
      * @var string enabled status for a hook
      */
-    const ENABLED = 'ENABLED';
+    public const ENABLED = 'ENABLED';
 
     /**
      * @var string disabled status for a hook
      */
-    const DISABLED = 'DISABLED';
+    public const DISABLED = 'DISABLED';
 
     /**
      * Enables library hook which means that all of this library

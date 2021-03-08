@@ -21,12 +21,12 @@ class StreamProcessor
     /**
      * Constant for a stream which was opened while including a file.
      */
-    const STREAM_OPEN_FOR_INCLUDE = 128;
+    public const STREAM_OPEN_FOR_INCLUDE = 128;
 
     /**
      * Stream protocol which is used when registering this wrapper.
      */
-    const PROTOCOL = 'file';
+    public const PROTOCOL = 'file';
 
     /**
      * @var Configuration

@@ -9,7 +9,7 @@ namespace VCR\Example;
  */
 class ExampleSoapClient
 {
-    const EXAMPLE_WSDL = 'http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL';
+    public const EXAMPLE_WSDL = 'http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL';
 
     public function call($number = 12)
     {
@@ -19,7 +19,7 @@ class ExampleSoapClient
         return trim((string) $response->NumberToWordsResult);
     }
 
-    public function callBadUrl()
+    public function callBadUrl(): void
     {
         // The port is not open. This leads to an error
         $client = new \SoapClient('http://localhost:9945', ['soap_version' => \SOAP_1_2]);

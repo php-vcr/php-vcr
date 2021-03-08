@@ -51,10 +51,8 @@ class Yaml extends AbstractStorage
 
     /**
      * Parses the next record.
-     *
-     * @return void
      */
-    public function next()
+    public function next(): void
     {
         $recording = $this->yamlParser->parse($this->readNextRecord());
         $this->current = $recording[0] ?? null;
@@ -101,10 +99,8 @@ class Yaml extends AbstractStorage
 
     /**
      * Resets the storage to the beginning.
-     *
-     * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         rewind($this->handle);
         $this->isEOF = false;

@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ErrorTest extends TestCase
 {
-    const TEST_GET_URL = 'http://localhost:9959';
+    public const TEST_GET_URL = 'http://localhost:9959';
 
     protected function setUp(): void
     {
@@ -20,7 +20,7 @@ class ErrorTest extends TestCase
         \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
-    public function testConnectException()
+    public function testConnectException(): void
     {
         $nonInstrumentedException = null;
         try {
@@ -44,7 +44,7 @@ class ErrorTest extends TestCase
         \VCR\VCR::turnOff();
     }
 
-    protected function assertValidGETResponse($info)
+    protected function assertValidGETResponse($info): void
     {
     }
 }

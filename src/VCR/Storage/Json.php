@@ -78,10 +78,8 @@ class Json extends AbstractStorage
 
     /**
      * Resets the storage to the beginning.
-     *
-     * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         rewind($this->handle);
         $this->isEOF = false;

@@ -10,7 +10,7 @@ class StreamProcessorTest extends TestCase
     /**
      * test flock with file_put_contents.
      */
-    public function testFlockWithFilePutContents()
+    public function testFlockWithFilePutContents(): void
     {
         $processor = new StreamProcessor();
         $processor->intercept();
@@ -31,7 +31,7 @@ class StreamProcessorTest extends TestCase
      * @param bool $shouldProcess
      * @param int  $option
      */
-    public function testStreamOpenShouldAppendFilters($expected, $option, $shouldProcess = null)
+    public function testStreamOpenShouldAppendFilters($expected, $option, $shouldProcess = null): void
     {
         $mock = $this->getMockBuilder('VCR\Util\StreamProcessor')
             ->disableOriginalConstructor()
@@ -74,10 +74,10 @@ class StreamProcessorTest extends TestCase
     /**
      * @dataProvider streamOpenFileModesWhichDoNotCreateFiles
      */
-    public function testStreamOpenShouldNotFailOnNonExistingFile($fileMode)
+    public function testStreamOpenShouldNotFailOnNonExistingFile($fileMode): void
     {
         $test = $this;
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test): void {
             $test->fail('should not throw errors');
         });
 
@@ -92,10 +92,10 @@ class StreamProcessorTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testUrlStatSuccessfully()
+    public function testUrlStatSuccessfully(): void
     {
         $test = $this;
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test): void {
             $test->fail('should not throw errors');
         });
 
@@ -105,7 +105,7 @@ class StreamProcessorTest extends TestCase
         restore_error_handler();
     }
 
-    public function testUrlStatFileNotFound()
+    public function testUrlStatFileNotFound(): void
     {
         $processor = new StreamProcessor();
         $this->expectException(Warning::class);
@@ -115,23 +115,23 @@ class StreamProcessorTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testQuietUrlStatFileNotFoundToBeQuiet()
+    public function testQuietUrlStatFileNotFoundToBeQuiet(): void
     {
         $processor = new StreamProcessor();
         $processor->url_stat('file_not_found', \STREAM_URL_STAT_QUIET);
     }
 
-    public function testDirOpendir()
+    public function testDirOpendir(): void
     {
         $processor = new StreamProcessor();
         $this->assertTrue($processor->dir_opendir('tests/fixtures'));
         $processor->dir_closedir();
     }
 
-    public function testDirOpendirNotFound()
+    public function testDirOpendirNotFound(): void
     {
         $test = $this;
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test): void {
             $test->assertStringContainsString('opendir(not_found', $errstr);
         });
 
@@ -141,7 +141,7 @@ class StreamProcessorTest extends TestCase
         restore_error_handler();
     }
 
-    public function testMakeDir()
+    public function testMakeDir(): void
     {
         $mock = $this->getStreamProcessorMock();
         $mock->expects($this->exactly(2))->method('restore');
@@ -151,7 +151,7 @@ class StreamProcessorTest extends TestCase
         $this->assertTrue($mock->rmdir('tests/fixtures/unittest_streamprocessor'));
     }
 
-    public function testRename()
+    public function testRename(): void
     {
         $mock = $this->getStreamProcessorMock();
         $mock->expects($this->exactly(3))->method('restore');
@@ -162,7 +162,7 @@ class StreamProcessorTest extends TestCase
         $this->assertTrue($mock->rmdir('tests/fixtures/sp'));
     }
 
-    public function testStreamMetadata()
+    public function testStreamMetadata(): void
     {
         if (version_compare(\PHP_VERSION, '5.4.0', '<')) {
             $this->markTestSkipped('Behavior is only applicable and testable for PHP 5.4+');

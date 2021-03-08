@@ -20,7 +20,7 @@ class RequestTest extends TestCase
         $this->request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
     }
 
-    public function testGetHeaders()
+    public function testGetHeaders(): void
     {
         $this->assertEquals(
             [
@@ -31,35 +31,35 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testSetMethod()
+    public function testSetMethod(): void
     {
         $this->request->setMethod('post');
 
         $this->assertEquals('POST', $this->request->getMethod());
     }
 
-    public function testSetAuthorization()
+    public function testSetAuthorization(): void
     {
         $this->request->setAuthorization('login', 'password');
 
         $this->assertEquals('Basic bG9naW46cGFzc3dvcmQ=', $this->request->getHeader('Authorization'));
     }
 
-    public function testMatches()
+    public function testMatches(): void
     {
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
 
         $this->assertTrue($this->request->matches($request, [['VCR\RequestMatcher', 'matchMethod']]));
     }
 
-    public function testDoesntMatch()
+    public function testDoesntMatch(): void
     {
         $request = new Request('POST', 'http://example.com', ['User-Agent' => 'Unit-Test']);
 
         $this->assertFalse($this->request->matches($request, [['VCR\RequestMatcher', 'matchMethod']]));
     }
 
-    public function testMatchesThrowsExceptionIfMatcherNotFound()
+    public function testMatchesThrowsExceptionIfMatcherNotFound(): void
     {
         $request = new Request('POST', 'http://example.com', ['User-Agent' => 'Unit-Test']);
         $this->expectException(
@@ -69,7 +69,7 @@ class RequestTest extends TestCase
         $this->request->matches($request, [['some', 'method']]);
     }
 
-    public function testRestoreRequest()
+    public function testRestoreRequest(): void
     {
         $restoredRequest = Request::fromArray($this->request->toArray());
         $this->assertEquals(
@@ -85,7 +85,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testStorePostFields()
+    public function testStorePostFields(): void
     {
         $this->request->setPostFields(['para1' => 'val1']);
         $this->assertEquals(
@@ -102,7 +102,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testRestorePostFields()
+    public function testRestorePostFields(): void
     {
         $this->request->setPostFields(['para1' => 'val1']);
         $restoredRequest = Request::fromArray($this->request->toArray());
@@ -120,7 +120,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testStorePostFile()
+    public function testStorePostFile(): void
     {
         $file = [
             'fieldName' => 'field_name',
@@ -143,7 +143,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testSetPostFiles()
+    public function testSetPostFiles(): void
     {
         $file = [
             'fieldName' => 'field_name',
@@ -166,7 +166,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testRestorePostFiles()
+    public function testRestorePostFiles(): void
     {
         $file = [
             'fieldName' => 'field_name',
@@ -190,7 +190,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testRestoreBody()
+    public function testRestoreBody(): void
     {
         $this->request->setBody('sometest');
         $restoredRequest = Request::fromArray($this->request->toArray());
@@ -208,7 +208,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testMatchesBody()
+    public function testMatchesBody(): void
     {
         $this->request->setBody('sometest');
         $request = new Request('POST', 'http://example.com');
@@ -222,7 +222,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testDoesntMatchBody()
+    public function testDoesntMatchBody(): void
     {
         $this->request->setBody('sometest');
         $request = new Request('POST', 'http://example.com');
@@ -236,13 +236,13 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testGetHostReturnsBothHostAndPort()
+    public function testGetHostReturnsBothHostAndPort(): void
     {
         $request = new Request('GET', 'http://example.com:5000/foo?param=key');
         $this->assertEquals('example.com:5000', $request->getHost());
     }
 
-    public function testDoNotOverwriteHostHeader()
+    public function testDoNotOverwriteHostHeader(): void
     {
         $this->request = new Request(
             'GET',
@@ -259,7 +259,7 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testCurlCustomRequestOverridesMethod()
+    public function testCurlCustomRequestOverridesMethod(): void
     {
         $postRequest = new Request('POST', 'http://example.com');
         $getRequest = new Request('GET', 'http://example.com');
@@ -274,7 +274,7 @@ class RequestTest extends TestCase
         $this->assertEquals('POST', $getRequest->getMethod());
     }
 
-    public function testSetCurlOptions()
+    public function testSetCurlOptions(): void
     {
         $getRequest = new Request('GET', 'http://example.com');
         $getRequest->setCurlOptions([

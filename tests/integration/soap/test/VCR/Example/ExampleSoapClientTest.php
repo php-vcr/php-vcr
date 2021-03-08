@@ -24,21 +24,21 @@ class ExampleSoapClientTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testCallDirectly()
+    public function testCallDirectly(): void
     {
         $actual = $this->callSoap();
         $this->assertIsString($actual);
         $this->assertEquals('twelve', $actual);
     }
 
-    public function testCallIntercepted()
+    public function testCallIntercepted(): void
     {
         $actual = $this->callSoapIntercepted();
         $this->assertIsString($actual);
         $this->assertEquals('twelve', $actual);
     }
 
-    public function testCallDirectlyEqualsIntercepted()
+    public function testCallDirectlyEqualsIntercepted(): void
     {
         $this->assertEquals($this->callSoap(), $this->callSoapIntercepted());
     }
@@ -47,7 +47,7 @@ class ExampleSoapClientTest extends TestCase
      * This test performs a SOAP request on a buggy WSDL.
      * It checks that the non instrumented code and the instrumented code return the same exception.
      */
-    public function testCallSoapWithError()
+    public function testCallSoapWithError(): void
     {
         $nonInstrumentedException = null;
         try {

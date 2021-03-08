@@ -9,7 +9,7 @@ class CurlCodeTransformTest extends TestCase
     /**
      * @dataProvider codeSnippetProvider
      */
-    public function testTransformCode($expected, $code)
+    public function testTransformCode($expected, $code): void
     {
         $codeTransform = new class() extends CurlCodeTransform {
             // A proxy to access the protected transformCode method.

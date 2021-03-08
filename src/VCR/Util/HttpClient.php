@@ -42,7 +42,7 @@ class HttpClient
         if (false === $result) {
             throw CurlException::create($ch);
         }
-        list($status, $headers, $body) = HttpUtil::parseResponse($result);
+        [$status, $headers, $body] = HttpUtil::parseResponse($result);
 
         return new Response(
             HttpUtil::parseStatus($status),

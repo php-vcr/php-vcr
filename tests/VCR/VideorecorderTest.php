@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class VideorecorderTest extends TestCase
 {
-    public function testCreateVideorecorder()
+    public function testCreateVideorecorder(): void
     {
         $this->assertInstanceOf(
             '\VCR\Videorecorder',
@@ -18,7 +18,7 @@ class VideorecorderTest extends TestCase
         );
     }
 
-    public function testInsertCassetteEjectExisting()
+    public function testInsertCassetteEjectExisting(): void
     {
         vfsStream::setup('testDir');
         $factory = VCRFactory::getInstance();
@@ -38,7 +38,7 @@ class VideorecorderTest extends TestCase
         $videorecorder->turnOff();
     }
 
-    public function testHandleRequestRecordsRequestWhenModeIsNewRecords()
+    public function testHandleRequestRecordsRequestWhenModeIsNewRecords(): void
     {
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
         $response = new Response(200, [], 'example response');
@@ -59,7 +59,7 @@ class VideorecorderTest extends TestCase
         $this->assertEquals($response, $videorecorder->handleRequest($request));
     }
 
-    public function testHandleRequestThrowsExceptionWhenModeIsNone()
+    public function testHandleRequestThrowsExceptionWhenModeIsNone(): void
     {
         $this->expectException(
             'LogicException',
@@ -86,7 +86,7 @@ class VideorecorderTest extends TestCase
         $videorecorder->handleRequest($request);
     }
 
-    public function testHandleRequestRecordsRequestWhenModeIsOnceAndCassetteIsNew()
+    public function testHandleRequestRecordsRequestWhenModeIsOnceAndCassetteIsNew(): void
     {
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
         $response = new Response(200, [], 'example response');
@@ -107,7 +107,7 @@ class VideorecorderTest extends TestCase
         $this->assertEquals($response, $videorecorder->handleRequest($request));
     }
 
-    public function testHandleRequestThrowsExceptionWhenModeIsOnceAndCassetteIsOld()
+    public function testHandleRequestThrowsExceptionWhenModeIsOnceAndCassetteIsOld(): void
     {
         $this->expectException(
             'LogicException',

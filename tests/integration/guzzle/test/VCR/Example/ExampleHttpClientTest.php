@@ -10,9 +10,9 @@ use PHPUnit\Framework\TestCase;
  */
 class ExampleHttpClientTest extends TestCase
 {
-    const TEST_GET_URL = 'https://api.chew.pro/trbmb';
-    const TEST_POST_URL = 'https://httpbin.org/post';
-    const TEST_POST_BODY = '{"foo":"bar"}';
+    public const TEST_GET_URL = 'https://api.chew.pro/trbmb';
+    public const TEST_POST_URL = 'https://httpbin.org/post';
+    public const TEST_POST_BODY = '{"foo":"bar"}';
 
     protected $ignoreHeaders = [
         'Accept',
@@ -27,7 +27,7 @@ class ExampleHttpClientTest extends TestCase
         \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
-    public function testRequestGET()
+    public function testRequestGET(): void
     {
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('test-cassette.yml');
@@ -41,7 +41,7 @@ class ExampleHttpClientTest extends TestCase
         \VCR\VCR::turnOff();
     }
 
-    public function testRequestPOST()
+    public function testRequestPOST(): void
     {
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('test-cassette.yml');
@@ -87,13 +87,13 @@ class ExampleHttpClientTest extends TestCase
         return $info;
     }
 
-    protected function assertValidGETResponse($info)
+    protected function assertValidGETResponse($info): void
     {
         $this->assertIsArray($info, 'Response is not an array.');
         $this->assertArrayHasKey('0', $info, 'API did not return any value.');
     }
 
-    protected function assertValidPOSTResponse($info)
+    protected function assertValidPOSTResponse($info): void
     {
         $this->assertIsArray($info, 'Response is not an array.');
         $this->assertArrayHasKey('url', $info, "Key 'url' not found.");
