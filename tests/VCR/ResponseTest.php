@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ResponseTest extends TestCase
 {
-    public function testGetHeaders()
+    public function testGetHeaders(): void
     {
         $expectedHeaders = [
             'User-Agent' => 'Unit-Test',
@@ -21,13 +21,13 @@ class ResponseTest extends TestCase
         $this->assertEquals($expectedHeaders, $response->getHeaders());
     }
 
-    public function testGetHeadersNoneDefined()
+    public function testGetHeadersNoneDefined(): void
     {
         $response = Response::fromArray([]);
         $this->assertEquals([], $response->getHeaders());
     }
 
-    public function testRestoreHeadersFromArray()
+    public function testRestoreHeadersFromArray(): void
     {
         $headers = [
             'Content-Type' => 'application/json',
@@ -41,7 +41,7 @@ class ResponseTest extends TestCase
         $this->assertEquals($headers, $restoredResponse->getHeaders());
     }
 
-    public function testGetBody()
+    public function testGetBody(): void
     {
         $expectedBody = 'This is test content';
 
@@ -50,13 +50,13 @@ class ResponseTest extends TestCase
         $this->assertEquals($expectedBody, $response->getBody());
     }
 
-    public function testGetBodyNoneDefined()
+    public function testGetBodyNoneDefined(): void
     {
         $response = Response::fromArray([]);
         $this->assertEmpty($response->getBody());
     }
 
-    public function testRestoreBodyFromArray()
+    public function testRestoreBodyFromArray(): void
     {
         $body = 'this is an example body';
         $response = new Response(200, [], $body);
@@ -65,7 +65,7 @@ class ResponseTest extends TestCase
         $this->assertEquals($body, $restoredResponse->getBody());
     }
 
-    public function testBase64EncodeCompressedBody()
+    public function testBase64EncodeCompressedBody(): void
     {
         $body = 'this is an example body';
         $response = new Response(200, ['Content-Type' => 'application/x-gzip'], $body);
@@ -74,7 +74,7 @@ class ResponseTest extends TestCase
         $this->assertEquals(base64_encode($body), $responseArray['body']);
     }
 
-    public function testBase64DecodeCompressedBody()
+    public function testBase64DecodeCompressedBody(): void
     {
         $body = 'this is an example body';
         $responseArray = [
@@ -86,7 +86,7 @@ class ResponseTest extends TestCase
         $this->assertEquals($body, $response->getBody());
     }
 
-    public function testRestoreCompressedBody()
+    public function testRestoreCompressedBody(): void
     {
         $body = 'this is an example body';
         $response = new Response(200, ['Content-Type' => 'application/x-gzip'], $body);
@@ -95,7 +95,7 @@ class ResponseTest extends TestCase
         $this->assertEquals($body, $restoredResponse->getBody());
     }
 
-    public function testGetStatus()
+    public function testGetStatus(): void
     {
         $expectedStatus = 200;
 
@@ -104,7 +104,7 @@ class ResponseTest extends TestCase
         $this->assertEquals($expectedStatus, $response->getStatusCode());
     }
 
-    public function testRestoreStatusFromArray()
+    public function testRestoreStatusFromArray(): void
     {
         $expectedStatus = 200;
 
@@ -114,7 +114,7 @@ class ResponseTest extends TestCase
         $this->assertEquals($expectedStatus, $restoredResponse->getStatusCode());
     }
 
-    public function testGetCurlInfo()
+    public function testGetCurlInfo(): void
     {
         $curlOptions = ['option' => 'value'];
         $response = new Response(200, [], null, $curlOptions);
@@ -122,7 +122,7 @@ class ResponseTest extends TestCase
         $this->assertEquals($curlOptions, $response->getCurlInfo());
     }
 
-    public function testRestoreCurlInfoFromArray()
+    public function testRestoreCurlInfoFromArray(): void
     {
         $expectedCurlOptions = ['option' => 'value'];
         $response = new Response(200, [], null, $expectedCurlOptions);
@@ -131,7 +131,7 @@ class ResponseTest extends TestCase
         $this->assertEquals($expectedCurlOptions, $response->getCurlInfo());
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $expectedArray = [
             'status' => [

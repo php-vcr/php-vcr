@@ -82,7 +82,7 @@ class Response
      */
     public static function fromArray(array $response): self
     {
-        $body = isset($response['body']) ? $response['body'] : null;
+        $body = $response['body'] ?? null;
 
         $gzip = isset($response['headers']['Content-Type'])
             && false !== strpos($response['headers']['Content-Type'], 'application/x-gzip');
@@ -96,10 +96,10 @@ class Response
         }
 
         return new static(
-            isset($response['status']) ? $response['status'] : 200,
-            isset($response['headers']) ? $response['headers'] : [],
+            $response['status'] ?? 200,
+            $response['headers'] ?? [],
             $body,
-            isset($response['curl_info']) ? $response['curl_info'] : []
+            $response['curl_info'] ?? []
         );
     }
 

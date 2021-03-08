@@ -2,10 +2,14 @@
 
 return PhpCsFixer\Config::create()
     ->setRules([
-        '@PSR2' => true,
+        '@PSR12' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
-        '@PHPUnit60Migration:risky' => true
+        '@PHP71Migration' => true,
+        '@PHP71Migration:risky' => true,
+        '@PHPUnit84Migration:risky' => true,
+        // Causes too much problems for now, fix later
+        'declare_strict_types' => false,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

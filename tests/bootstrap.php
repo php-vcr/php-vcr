@@ -1,7 +1,7 @@
 <?php
 
 if (!file_exists(__DIR__.'/../vendor/autoload.php')) {
-    die(
+    exit(
         "\n[ERROR] You need to run composer before running the test suite.\n".
         "To do so run the following commands:\n".
         "    curl -s http://getcomposer.org/installer | php\n".

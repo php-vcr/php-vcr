@@ -25,13 +25,13 @@ class CurlHookTest extends TestCase
      */
     protected $curlHook;
 
-    public function setup()
+    protected function setup(): void
     {
         $this->config = new Configuration();
         $this->curlHook = new CurlHook(new CurlCodeTransform(), new StreamProcessor($this->config));
     }
 
-    public function testShouldBeEnabledAfterEnabling()
+    public function testShouldBeEnabledAfterEnabling(): void
     {
         $this->assertFalse($this->curlHook->isEnabled(), 'Initially the CurlHook should be disabled.');
 
@@ -42,12 +42,12 @@ class CurlHookTest extends TestCase
         $this->assertFalse($this->curlHook->isEnabled(), 'After disabling the CurlHook should be disabled.');
     }
 
-    public function testShouldInterceptCallWhenEnabled()
+    public function testShouldInterceptCallWhenEnabled(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com/');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         $actual = curl_exec($curlHandle);
         curl_close($curlHandle);
 
@@ -58,44 +58,44 @@ class CurlHookTest extends TestCase
     /**
      * @group uses_internet
      */
-    public function testShouldNotInterceptCallWhenNotEnabled()
+    public function testShouldNotInterceptCallWhenNotEnabled(): void
     {
         $curlHandle = curl_init('http://example.com/');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertContains('Example Domain', $response, 'Response from http://example.com should contain "Example Domain".');
+        $this->assertStringContainsString('Example Domain', $response, 'Response from http://example.com should contain "Example Domain".');
     }
 
     /**
      * @group uses_internet
      */
-    public function testShouldNotInterceptCallWhenDisabled()
+    public function testShouldNotInterceptCallWhenDisabled(): void
     {
         $intercepted = false;
         $this->curlHook->enable(
-            function () use (&$intercepted) {
+            function () use (&$intercepted): void {
                 $intercepted = true;
             }
         );
         $this->curlHook->disable();
 
         $curlHandle = curl_init();
-        curl_setopt($curlHandle, CURLOPT_URL, 'http://example.com/');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandle, \CURLOPT_URL, 'http://example.com/');
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
         curl_close($curlHandle);
         $this->assertFalse($intercepted, 'This request should not have been intercepted.');
     }
 
-    public function testShouldWriteFileOnFileDownload()
+    public function testShouldWriteFileOnFileDownload(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('https://example.com/');
         $filePointer = fopen('php://temp/test_file', 'w');
-        curl_setopt($curlHandle, CURLOPT_FILE, $filePointer);
+        curl_setopt($curlHandle, \CURLOPT_FILE, $filePointer);
         curl_exec($curlHandle);
         curl_close($curlHandle);
         rewind($filePointer);
@@ -106,12 +106,12 @@ class CurlHookTest extends TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written in file.');
     }
 
-    public function testShouldEchoResponseIfReturnTransferFalse()
+    public function testShouldEchoResponseIfReturnTransferFalse(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com/');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, false);
         ob_start();
         curl_exec($curlHandle);
         $actual = ob_get_contents();
@@ -122,7 +122,7 @@ class CurlHookTest extends TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
     }
 
-    public function testShouldPostFieldsAsArray()
+    public function testShouldPostFieldsAsArray(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -138,13 +138,13 @@ class CurlHookTest extends TestCase
         );
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_POSTFIELDS, ['para1' => 'val1', 'para2' => 'val2']);
+        curl_setopt($curlHandle, \CURLOPT_POSTFIELDS, ['para1' => 'val1', 'para2' => 'val2']);
         curl_exec($curlHandle);
         curl_close($curlHandle);
         $this->curlHook->disable();
     }
 
-    public function testShouldPostFieldsAsArrayUsingSetoptarray()
+    public function testShouldPostFieldsAsArrayUsingSetoptarray(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -163,7 +163,7 @@ class CurlHookTest extends TestCase
         curl_setopt_array(
             $curlHandle,
             [
-                CURLOPT_POSTFIELDS => ['para1' => 'val1', 'para2' => 'val2'],
+                \CURLOPT_POSTFIELDS => ['para1' => 'val1', 'para2' => 'val2'],
             ]
         );
         curl_exec($curlHandle);
@@ -171,14 +171,14 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoStatusCode()
+    public function testShouldReturnCurlInfoStatusCode(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
-        $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        $infoHttpCode = curl_getinfo($curlHandle, \CURLINFO_HTTP_CODE);
         curl_close($curlHandle);
 
         $this->assertSame(200, $infoHttpCode, 'HTTP status not set.');
@@ -189,16 +189,16 @@ class CurlHookTest extends TestCase
     /**
      * @see https://github.com/php-vcr/php-vcr/issues/136
      */
-    public function testShouldReturnCurlInfoStatusCodeAsInteger()
+    public function testShouldReturnCurlInfoStatusCodeAsInteger(): void
     {
         $stringStatusCode = '200';
         $integerStatusCode = 200;
         $this->curlHook->enable($this->getTestCallback($stringStatusCode));
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
-        $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        $infoHttpCode = curl_getinfo($curlHandle, \CURLINFO_HTTP_CODE);
         curl_close($curlHandle);
 
         $this->assertSame($integerStatusCode, $infoHttpCode, 'HTTP status not set.');
@@ -206,32 +206,32 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoAll()
+    public function testShouldReturnCurlInfoAll(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
         $info = curl_getinfo($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertInternalType('array', $info, 'curl_getinfo() should return an array.');
+        $this->assertIsArray($info, 'curl_getinfo() should return an array.');
         $this->assertCount(21, $info, 'curl_getinfo() should return 21 values.');
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoAllKeys()
+    public function testShouldReturnCurlInfoAllKeys(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
         $info = curl_getinfo($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertInternalType('array', $info, 'curl_getinfo() should return an array.');
+        $this->assertIsArray($info, 'curl_getinfo() should return an array.');
         $this->assertArrayHasKey('url', $info);
         $this->assertArrayHasKey('content_type', $info);
         $this->assertArrayHasKey('http_code', $info);
@@ -258,7 +258,7 @@ class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotThrowErrorWhenDisabledTwice()
+    public function testShouldNotThrowErrorWhenDisabledTwice(): void
     {
         $this->curlHook->disable();
         $this->curlHook->disable();
@@ -267,14 +267,14 @@ class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotThrowErrorWhenEnabledTwice()
+    public function testShouldNotThrowErrorWhenEnabledTwice(): void
     {
         $this->curlHook->enable($this->getTestCallback());
         $this->curlHook->enable($this->getTestCallback());
         $this->curlHook->disable();
     }
 
-    public function testShouldInterceptMultiCallWhenEnabled()
+    public function testShouldInterceptMultiCallWhenEnabled(): void
     {
         $testClass = $this;
         $callCount = 0;
@@ -330,11 +330,11 @@ class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotInterceptMultiCallWhenDisabled()
+    public function testShouldNotInterceptMultiCallWhenDisabled(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
-            function () use ($testClass) {
+            function () use ($testClass): void {
                 $testClass->fail('This request should not have been intercepted.');
             }
         );
@@ -353,7 +353,7 @@ class CurlHookTest extends TestCase
     /**
      * @requires PHP 5.5.0
      */
-    public function testShouldResetRequest()
+    public function testShouldResetRequest(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -369,7 +369,7 @@ class CurlHookTest extends TestCase
         );
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($curlHandle, \CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_reset($curlHandle);
         curl_exec($curlHandle);
 

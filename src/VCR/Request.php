@@ -107,7 +107,7 @@ class Request
         $requestObject = new self(
             $request['method'],
             $request['url'],
-            isset($request['headers']) ? $request['headers'] : []
+            $request['headers'] ?? []
         );
 
         if (!empty($request['post_fields']) && \is_array($request['post_fields'])) {
@@ -142,8 +142,8 @@ class Request
 
     public function getMethod(): string
     {
-        if (null !== $this->getCurlOption(CURLOPT_CUSTOMREQUEST)) {
-            return $this->getCurlOption(CURLOPT_CUSTOMREQUEST);
+        if (null !== $this->getCurlOption(\CURLOPT_CUSTOMREQUEST)) {
+            return $this->getCurlOption(\CURLOPT_CUSTOMREQUEST);
         }
 
         return $this->method;
@@ -197,13 +197,13 @@ class Request
         $url = $this->getUrl();
         Assertion::string($url);
 
-        $host = parse_url($url, PHP_URL_HOST);
+        $host = parse_url($url, \PHP_URL_HOST);
 
         if (null === $host || false === $host) {
             throw InvalidHostException::create($this->getUrl());
         }
 
-        if ($port = parse_url($url, PHP_URL_PORT)) {
+        if ($port = parse_url($url, \PHP_URL_PORT)) {
             $host .= ':'.$port;
         }
 
@@ -217,7 +217,7 @@ class Request
     {
         $url = $this->getUrl();
         Assertion::string($url);
-        $path = parse_url($url, PHP_URL_PATH);
+        $path = parse_url($url, \PHP_URL_PATH);
         Assertion::notSame($path, false);
 
         return $path;
@@ -227,7 +227,7 @@ class Request
     {
         $url = $this->getUrl();
         Assertion::string($url);
-        $query = parse_url($url, PHP_URL_QUERY);
+        $query = parse_url($url, \PHP_URL_QUERY);
         Assertion::notSame($query, false);
 
         return $query;

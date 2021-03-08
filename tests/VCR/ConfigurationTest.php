@@ -11,12 +11,12 @@ class ConfigurationTest extends TestCase
      */
     private $config;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->config = new Configuration();
     }
 
-    public function testSetCassettePathThrowsErrorOnInvalidPath()
+    public function testSetCassettePathThrowsErrorOnInvalidPath(): void
     {
         $this->expectException(
             VCRException::class,
@@ -27,7 +27,7 @@ class ConfigurationTest extends TestCase
         $this->config->setCassettePath('invalid_path');
     }
 
-    public function testGetLibraryHooks()
+    public function testGetLibraryHooks(): void
     {
         $this->assertEquals(
             [
@@ -39,7 +39,7 @@ class ConfigurationTest extends TestCase
         );
     }
 
-    public function testEnableLibraryHooks()
+    public function testEnableLibraryHooks(): void
     {
         $this->config->enableLibraryHooks(['stream_wrapper']);
         $this->assertEquals(
@@ -50,7 +50,7 @@ class ConfigurationTest extends TestCase
         );
     }
 
-    public function testEnableSingleLibraryHook()
+    public function testEnableSingleLibraryHook(): void
     {
         $this->config->enableLibraryHooks('stream_wrapper');
         $this->assertEquals(
@@ -61,13 +61,13 @@ class ConfigurationTest extends TestCase
         );
     }
 
-    public function testEnableLibraryHooksFailsWithWrongHookName()
+    public function testEnableLibraryHooksFailsWithWrongHookName(): void
     {
         $this->expectException('InvalidArgumentException', "Library hooks don't exist: non_existing");
         $this->config->enableLibraryHooks(['non_existing']);
     }
 
-    public function testEnableRequestMatchers()
+    public function testEnableRequestMatchers(): void
     {
         $this->config->enableRequestMatchers(['body', 'headers']);
         $this->assertEquals(
@@ -79,13 +79,13 @@ class ConfigurationTest extends TestCase
         );
     }
 
-    public function testEnableRequestMatchersFailsWithNoExistingName()
+    public function testEnableRequestMatchersFailsWithNoExistingName(): void
     {
         $this->expectException('InvalidArgumentException', "Request matchers don't exist: wrong, name");
         $this->config->enableRequestMatchers(['wrong', 'name']);
     }
 
-    public function testAddRequestMatcherFailsWithNoName()
+    public function testAddRequestMatcherFailsWithNoName(): void
     {
         $this->expectException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
         $expected = function ($first, $second) {
@@ -94,7 +94,7 @@ class ConfigurationTest extends TestCase
         $this->config->addRequestMatcher('', $expected);
     }
 
-    public function testAddRequestMatchers()
+    public function testAddRequestMatchers(): void
     {
         $expected = function () {
             return true;
@@ -106,7 +106,7 @@ class ConfigurationTest extends TestCase
     /**
      * @dataProvider availableStorageProvider
      */
-    public function testSetStorage($name, $className)
+    public function testSetStorage($name, $className): void
     {
         $this->config->setStorage($name);
         $this->assertEquals($className, $this->config->getStorage(), "$name should be class $className.");
@@ -120,13 +120,13 @@ class ConfigurationTest extends TestCase
         ];
     }
 
-    public function testSetStorageInvalidName()
+    public function testSetStorageInvalidName(): void
     {
         $this->expectException('VCR\VCRException', "Storage 'Does not exist' not available.");
         $this->config->setStorage('Does not exist');
     }
 
-    public function testGetStorage()
+    public function testGetStorage(): void
     {
         $class = $this->config->getStorage();
         $this->assertContains('Iterator', class_implements($class));
@@ -134,7 +134,7 @@ class ConfigurationTest extends TestCase
         $this->assertContains('VCR\Storage\AbstractStorage', class_parents($class));
     }
 
-    public function testWhitelist()
+    public function testWhitelist(): void
     {
         $expected = ['Tux', 'Gnu'];
 
@@ -143,7 +143,7 @@ class ConfigurationTest extends TestCase
         $this->assertEquals($expected, $this->config->getWhiteList());
     }
 
-    public function testBlacklist()
+    public function testBlacklist(): void
     {
         $expected = ['Tux', 'Gnu'];
 
@@ -152,7 +152,7 @@ class ConfigurationTest extends TestCase
         $this->assertEquals($expected, $this->config->getBlackList());
     }
 
-    public function testSetModeInvalidName()
+    public function testSetModeInvalidName(): void
     {
         $this->expectException('VCR\VCRException', "Mode 'invalid' does not exist.");
         $this->config->setMode('invalid');

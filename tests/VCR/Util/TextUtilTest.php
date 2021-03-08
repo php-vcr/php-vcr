@@ -12,7 +12,7 @@ class TextUtilTest extends TestCase
     /**
      * @dataProvider curlMethodsProvider
      */
-    public function testUnderscoreToLowerCamelcase($expected, $method)
+    public function testUnderscoreToLowerCamelcase($expected, $method): void
     {
         $this->assertEquals($expected, TextUtil::underscoreToLowerCamelcase($method));
     }

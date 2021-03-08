@@ -45,15 +45,15 @@ class StreamHelper
         }
 
         if (isset($http['follow_location'])) {
-            $request->setCurlOption(CURLOPT_FOLLOWLOCATION, (bool) $http['follow_location']);
+            $request->setCurlOption(\CURLOPT_FOLLOWLOCATION, (bool) $http['follow_location']);
         }
 
         if (isset($http['max_redirects'])) {
-            $request->setCurlOption(CURLOPT_MAXREDIRS, $http['max_redirects']);
+            $request->setCurlOption(\CURLOPT_MAXREDIRS, $http['max_redirects']);
         }
 
         if (isset($http['timeout'])) {
-            $request->setCurlOption(CURLOPT_TIMEOUT, $http['timeout']);
+            $request->setCurlOption(\CURLOPT_TIMEOUT, $http['timeout']);
         }
 
         // TODO: protocol_version

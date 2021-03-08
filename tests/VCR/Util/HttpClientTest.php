@@ -7,7 +7,7 @@ use VCR\Request;
 
 class HttpClientTest extends TestCase
 {
-    public function testHttpClientOnError()
+    public function testHttpClientOnError(): void
     {
         $httpClient = new HttpClient();
         // Request on a closed port

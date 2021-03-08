@@ -11,12 +11,12 @@ use VCR\Event\Event;
  */
 class VCRTest extends TestCase
 {
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         VCR::configure()->setCassettePath('tests/fixtures');
     }
 
-    public function testUseStaticCallsNotInitialized()
+    public function testUseStaticCallsNotInitialized(): void
     {
         VCR::configure()->enableLibraryHooks(['stream_wrapper']);
         $this->expectException(
@@ -26,7 +26,7 @@ class VCRTest extends TestCase
         VCR::insertCassette('some_name');
     }
 
-    public function testShouldInterceptStreamWrapper()
+    public function testShouldInterceptStreamWrapper(): void
     {
         VCR::configure()->enableLibraryHooks(['stream_wrapper']);
         VCR::turnOn();
@@ -37,7 +37,7 @@ class VCRTest extends TestCase
         VCR::turnOff();
     }
 
-    public function testShouldInterceptCurlLibrary()
+    public function testShouldInterceptCurlLibrary(): void
     {
         VCR::configure()->enableLibraryHooks(['curl']);
         VCR::turnOn();
@@ -53,22 +53,22 @@ class VCRTest extends TestCase
     private function doCurlGetRequest($url)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, false);
+        curl_setopt($ch, \CURLOPT_URL, $url);
+        curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, \CURLOPT_POST, false);
         $output = curl_exec($ch);
         curl_close($ch);
 
         return $output;
     }
 
-    public function testShouldInterceptSoapLibrary()
+    public function testShouldInterceptSoapLibrary(): void
     {
         VCR::configure()->enableLibraryHooks(['soap']);
         VCR::turnOn();
         VCR::insertCassette('unittest_soap_test');
 
-        $client = new \SoapClient('https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl', ['soap_version' => SOAP_1_2]);
+        $client = new \SoapClient('https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl', ['soap_version' => \SOAP_1_2]);
         $actual = $client->GetCityWeatherByZIP(['ZIP' => '10013']);
         $temperature = $actual->GetCityWeatherByZIPResult->Temperature;
 
@@ -80,7 +80,7 @@ class VCRTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotInterceptCallsToDevUrandom()
+    public function testShouldNotInterceptCallsToDevUrandom(): void
     {
         if ('\\' === \DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('/dev/urandom is not supported on Windows');
@@ -98,7 +98,7 @@ class VCRTest extends TestCase
         VCR::turnOff();
     }
 
-    public function testShouldThrowExceptionIfNoCassettePresent()
+    public function testShouldThrowExceptionIfNoCassettePresent(): void
     {
         $this->expectException(
             'BadMethodCallException',
@@ -124,7 +124,7 @@ class VCRTest extends TestCase
         // TODO: Check of cassette was changed
     }*/
 
-    public function testDoesNotBlockThrowingExceptions()
+    public function testDoesNotBlockThrowingExceptions(): void
     {
         $this->configureVirtualCassette();
 
@@ -134,13 +134,13 @@ class VCRTest extends TestCase
         throw new \InvalidArgumentException('test');
     }
 
-    private function configureVirtualCassette()
+    private function configureVirtualCassette(): void
     {
         vfsStream::setup('testDir');
         VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
-    public function testShouldSetAConfiguration()
+    public function testShouldSetAConfiguration(): void
     {
         VCR::configure()->setCassettePath('tests');
         VCR::turnOn();
@@ -148,7 +148,7 @@ class VCRTest extends TestCase
         VCR::turnOff();
     }
 
-    public function testShouldDispatchBeforeAndAfterPlaybackWhenCassetteHasResponse()
+    public function testShouldDispatchBeforeAndAfterPlaybackWhenCassetteHasResponse(): void
     {
         VCR::configure()
             ->enableLibraryHooks(['curl']);
@@ -166,7 +166,7 @@ class VCRTest extends TestCase
         VCR::turnOff();
     }
 
-    public function testShouldDispatchBeforeAfterHttpRequestAndBeforeRecordWhenCassetteHasNoResponse()
+    public function testShouldDispatchBeforeAfterHttpRequestAndBeforeRecordWhenCassetteHasNoResponse(): void
     {
         vfsStream::setup('testDir');
         VCR::configure()
@@ -193,7 +193,7 @@ class VCRTest extends TestCase
 
     public function testFinfoWorksCorrectly(): void
     {
-        $fileinfo = new \finfo(FILEINFO_MIME_TYPE);
+        $fileinfo = new \finfo(\FILEINFO_MIME_TYPE);
 
         $this->assertEquals(
             'text/plain',
@@ -201,7 +201,7 @@ class VCRTest extends TestCase
         );
     }
 
-    private function recordAllEvents()
+    private function recordAllEvents(): void
     {
         $allEventsToListen = [
             VCREvents::VCR_BEFORE_PLAYBACK,
@@ -215,7 +215,7 @@ class VCRTest extends TestCase
         }
     }
 
-    public function recordEvent(Event $event, $eventName)
+    public function recordEvent(Event $event, $eventName): void
     {
         $this->events[$eventName] = $event;
     }

@@ -11,7 +11,7 @@ use function strpos;
 
 class OpcacheTest extends TestCase
 {
-    public function testOpcache()
+    public function testOpcache(): void
     {
         // Step 0: cleanup
         if (file_exists(__DIR__.'/../www/vcr.yaml')) {

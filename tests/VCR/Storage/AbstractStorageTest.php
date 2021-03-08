@@ -14,7 +14,7 @@ class AbstractStorageTest extends TestCase
     protected $filePath;
     protected $storage;
 
-    public function testFilePathCreated()
+    public function testFilePathCreated(): void
     {
         $fs = vfsStream::setup('test');
 
@@ -26,7 +26,7 @@ class AbstractStorageTest extends TestCase
         $this->assertTrue($fs->getChild('folder')->hasChild('file'));
     }
 
-    public function testRootNotExisting()
+    public function testRootNotExisting(): void
     {
         $this->expectException('\VCR\VCRException', "Cassette path 'vfs://test/foo' is not existing or not a directory");
 
@@ -46,7 +46,7 @@ class TestStorage extends AbstractStorage
 
     public function next()
     {
-        list($this->position, $this->current) = each($this->recording);
+        [$this->position, $this->current] = each($this->recording);
 
         return $this->current;
     }
@@ -56,7 +56,7 @@ class TestStorage extends AbstractStorage
         return (bool) $this->position;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->recording);
     }

@@ -15,12 +15,12 @@ class Json extends AbstractStorage
      */
     public function storeRecording(array $recording): void
     {
-        fseek($this->handle, -1, SEEK_END);
+        fseek($this->handle, -1, \SEEK_END);
         if (ftell($this->handle) > 2) {
             fwrite($this->handle, ',');
         }
         if (\defined('JSON_PRETTY_PRINT')) {
-            $json = json_encode($recording, JSON_PRETTY_PRINT);
+            $json = json_encode($recording, \JSON_PRETTY_PRINT);
         } else {
             $json = json_encode($recording);
         }
@@ -78,10 +78,8 @@ class Json extends AbstractStorage
 
     /**
      * Resets the storage to the beginning.
-     *
-     * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         rewind($this->handle);
         $this->isEOF = false;

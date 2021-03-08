@@ -15,18 +15,18 @@ class CassetteTest extends TestCase
      */
     private $cassette;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('test');
         $this->cassette = new Cassette('test', new Configuration(), new Storage\Yaml(vfsStream::url('test/'), 'json_test'));
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertEquals('test', $this->cassette->getName());
     }
 
-    public function testDontOverwriteRecord()
+    public function testDontOverwriteRecord(): void
     {
         $request = new Request('GET', 'https://example.com');
         $response1 = new Response(200, [], 'sometest');
@@ -37,7 +37,7 @@ class CassetteTest extends TestCase
         $this->assertEquals($response1->toArray(), $this->cassette->playback($request)->toArray());
     }
 
-    public function testPlaybackAlreadyRecordedRequest()
+    public function testPlaybackAlreadyRecordedRequest(): void
     {
         $request = new Request('GET', 'https://example.com');
         $response = new Response(200, [], 'sometest');
@@ -46,14 +46,14 @@ class CassetteTest extends TestCase
         $this->assertEquals($response->toArray(), $this->cassette->playback($request)->toArray());
     }
 
-    public function testHasResponseNotFound()
+    public function testHasResponseNotFound(): void
     {
         $request = new Request('GET', 'https://example.com');
 
         $this->assertFalse($this->cassette->hasResponse($request), 'Expected false if request not found.');
     }
 
-    public function testHasResponseFound()
+    public function testHasResponseFound(): void
     {
         $request = new Request('GET', 'https://example.com');
         $response = new Response(200, [], 'sometest');

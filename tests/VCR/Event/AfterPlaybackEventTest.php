@@ -16,7 +16,7 @@ class AfterPlaybackEventTest extends TestCase
      */
     private $event;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->event = new AfterPlaybackEvent(
             new Request('GET', 'http://example.com'),
@@ -25,17 +25,17 @@ class AfterPlaybackEventTest extends TestCase
         );
     }
 
-    public function testGetRequest()
+    public function testGetRequest(): void
     {
         $this->assertInstanceOf('VCR\Request', $this->event->getRequest());
     }
 
-    public function testGetResponse()
+    public function testGetResponse(): void
     {
         $this->assertInstanceOf('VCR\Response', $this->event->getResponse());
     }
 
-    public function testGetCassette()
+    public function testGetCassette(): void
     {
         $this->assertInstanceOf('VCR\Cassette', $this->event->getCassette());
     }
