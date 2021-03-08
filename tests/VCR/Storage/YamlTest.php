@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class YamlTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('test');
         $this->filePath = vfsStream::url('test/').\DIRECTORY_SEPARATOR.'yaml_test';

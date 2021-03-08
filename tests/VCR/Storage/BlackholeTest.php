@@ -8,7 +8,7 @@ class BlackholeTest extends TestCase
 {
     protected $storage;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->storage = new Blackhole();
     }

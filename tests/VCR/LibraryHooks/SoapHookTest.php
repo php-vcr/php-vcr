@@ -24,7 +24,7 @@ class SoapHookTest extends TestCase
     /** @var SoapHook */
     protected $soapHook;
 
-    protected function setup()
+    protected function setup(): void
     {
         $this->config = new Configuration();
         $this->soapHook = new SoapHook(new SoapCodeTransform(), new StreamProcessor($this->config));

@@ -46,7 +46,7 @@ class SoapClientTest extends TestCase
 
         $this->assertEquals(
             $expected,
-            $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, SOAP_1_2)
+            $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2)
         );
     }
 
@@ -58,7 +58,7 @@ class SoapClientTest extends TestCase
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
 
-        $this->assertNull($client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, SOAP_1_2, 1));
+        $this->assertNull($client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2, 1));
     }
 
     public function testDoRequestOneWayDisabled()
@@ -72,7 +72,7 @@ class SoapClientTest extends TestCase
 
         $this->assertEquals(
             $expected,
-            $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, SOAP_1_2, 0)
+            $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2, 0)
         );
     }
 
@@ -90,14 +90,14 @@ class SoapClientTest extends TestCase
                 $this->equalTo('Knorx ist groß'),
                 $this->equalTo(self::WSDL),
                 $this->equalTo(self::ACTION),
-                $this->equalTo(SOAP_1_2),
+                $this->equalTo(\SOAP_1_2),
                 $this->equalTo(0)
             );
 
         $hook = $this->getLibraryHookMock(false);
         $client->setLibraryHook($hook);
 
-        $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, SOAP_1_2);
+        $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2);
     }
 
     public function testDoRequestExpectingException()
@@ -119,7 +119,7 @@ class SoapClientTest extends TestCase
 
         $this->expectException($exception);
 
-        $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, SOAP_1_2);
+        $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2);
     }
 
     public function testLibraryHook()
@@ -158,7 +158,7 @@ class SoapClientTest extends TestCase
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
 
-        $client->__doRequest($request, self::WSDL, self::ACTION, SOAP_1_2, 0);
+        $client->__doRequest($request, self::WSDL, self::ACTION, \SOAP_1_2, 0);
 
         $this->assertEquals($request, $client->__getLastRequest());
         $this->assertEquals($response, $client->__getLastResponse());

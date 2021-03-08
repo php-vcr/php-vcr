@@ -15,7 +15,7 @@ class CassetteTest extends TestCase
      */
     private $cassette;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('test');
         $this->cassette = new Cassette('test', new Configuration(), new Storage\Yaml(vfsStream::url('test/'), 'json_test'));

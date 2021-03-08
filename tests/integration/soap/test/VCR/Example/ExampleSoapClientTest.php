@@ -13,7 +13,7 @@ use SoapFault;
  */
 class ExampleSoapClientTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         // Configure virtual filesystem.
         vfsStream::setup('testDir');
@@ -27,14 +27,14 @@ class ExampleSoapClientTest extends TestCase
     public function testCallDirectly()
     {
         $actual = $this->callSoap();
-        $this->assertInternalType('string', $actual);
+        $this->assertIsString($actual);
         $this->assertEquals('twelve', $actual);
     }
 
     public function testCallIntercepted()
     {
         $actual = $this->callSoapIntercepted();
-        $this->assertInternalType('string', $actual);
+        $this->assertIsString($actual);
         $this->assertEquals('twelve', $actual);
     }
 

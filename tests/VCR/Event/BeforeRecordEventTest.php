@@ -16,7 +16,7 @@ class BeforeRecordEventTest extends TestCase
      */
     private $event;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->event = new BeforeRecordEvent(
             new Request('GET', 'http://example.com'),

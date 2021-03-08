@@ -16,7 +16,7 @@ class AfterPlaybackEventTest extends TestCase
      */
     private $event;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->event = new AfterPlaybackEvent(
             new Request('GET', 'http://example.com'),

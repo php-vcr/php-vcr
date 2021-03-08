@@ -5,7 +5,7 @@ return PhpCsFixer\Config::create()
         '@PSR2' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
-        '@PHPUnit60Migration:risky' => true
+        '@PHPUnit84Migration:risky' => true
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

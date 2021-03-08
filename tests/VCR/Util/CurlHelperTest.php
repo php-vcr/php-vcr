@@ -185,8 +185,8 @@ class CurlHelperTest extends TestCase
 
         $test = $this;
         $callback = function ($curlHandle, $fileHandle, $size) use ($test, $expected) {
-            $test->assertInternalType('resource', $curlHandle);
-            $test->assertInternalType('resource', $fileHandle);
+            $test->assertIsResource($curlHandle);
+            $test->assertIsResource($fileHandle);
             $test->assertEquals(\strlen($expected), $size);
 
             return $expected;

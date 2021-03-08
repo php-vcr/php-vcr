@@ -21,7 +21,7 @@ class ExampleHttpClientTest extends TestCase
         'X-Request-Id',
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('testDir');
         \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
@@ -89,17 +89,17 @@ class ExampleHttpClientTest extends TestCase
 
     protected function assertValidGETResponse($info)
     {
-        $this->assertInternalType('array', $info, 'Response is not an array.');
+        $this->assertIsArray($info, 'Response is not an array.');
         $this->assertArrayHasKey('0', $info, 'API did not return any value.');
     }
 
     protected function assertValidPOSTResponse($info)
     {
-        $this->assertInternalType('array', $info, 'Response is not an array.');
+        $this->assertIsArray($info, 'Response is not an array.');
         $this->assertArrayHasKey('url', $info, "Key 'url' not found.");
         $this->assertEquals(self::TEST_POST_URL, $info['url'], "Value for key 'url' wrong.");
         $this->assertArrayHasKey('headers', $info, "Key 'headers' not found.");
-        $this->assertInternalType('array', $info['headers'], 'Headers is not an array.');
+        $this->assertIsArray($info['headers'], 'Headers is not an array.');
         $this->assertEquals(self::TEST_POST_BODY, $info['data'], 'Correct request body was not sent.');
     }
 }
