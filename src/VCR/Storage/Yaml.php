@@ -44,7 +44,7 @@ class Yaml extends AbstractStorage
      */
     public function storeRecording(array $recording): void
     {
-        fseek($this->handle, -1, SEEK_END);
+        fseek($this->handle, -1, \SEEK_END);
         fwrite($this->handle, "\n".$this->yamlDumper->dump([$recording], 4));
         fflush($this->handle);
     }
@@ -79,7 +79,7 @@ class Yaml extends AbstractStorage
             $isNewArrayStart = 0 === strpos($line, '-');
 
             if ($isInRecord && $isNewArrayStart) {
-                fseek($this->handle, -\strlen($line), SEEK_CUR);
+                fseek($this->handle, -\strlen($line), \SEEK_CUR);
                 break;
             }
 

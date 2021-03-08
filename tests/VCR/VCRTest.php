@@ -53,9 +53,9 @@ class VCRTest extends TestCase
     private function doCurlGetRequest($url)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, false);
+        curl_setopt($ch, \CURLOPT_URL, $url);
+        curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, \CURLOPT_POST, false);
         $output = curl_exec($ch);
         curl_close($ch);
 
@@ -68,7 +68,7 @@ class VCRTest extends TestCase
         VCR::turnOn();
         VCR::insertCassette('unittest_soap_test');
 
-        $client = new \SoapClient('https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl', ['soap_version' => SOAP_1_2]);
+        $client = new \SoapClient('https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl', ['soap_version' => \SOAP_1_2]);
         $actual = $client->GetCityWeatherByZIP(['ZIP' => '10013']);
         $temperature = $actual->GetCityWeatherByZIPResult->Temperature;
 
@@ -193,7 +193,7 @@ class VCRTest extends TestCase
 
     public function testFinfoWorksCorrectly(): void
     {
-        $fileinfo = new \finfo(FILEINFO_MIME_TYPE);
+        $fileinfo = new \finfo(\FILEINFO_MIME_TYPE);
 
         $this->assertEquals(
             'text/plain',

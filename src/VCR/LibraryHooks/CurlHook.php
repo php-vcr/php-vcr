@@ -281,7 +281,7 @@ class CurlHook implements LibraryHook
             }
         }
 
-        return CURLM_OK;
+        return \CURLM_OK;
     }
 
     /**
@@ -295,9 +295,9 @@ class CurlHook implements LibraryHook
     {
         if (!empty(self::$multiExecLastChs)) {
             $info = [
-                'msg' => CURLMSG_DONE,
+                'msg' => \CURLMSG_DONE,
                 'handle' => array_pop(self::$multiExecLastChs),
-                'result' => CURLE_OK,
+                'result' => \CURLE_OK,
             ];
 
             return $info;

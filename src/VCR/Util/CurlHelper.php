@@ -15,27 +15,27 @@ class CurlHelper
      */
     private static $curlInfoList = [
         //"certinfo"?
-        CURLINFO_HTTP_CODE => 'http_code',
-        CURLINFO_EFFECTIVE_URL => 'url',
-        CURLINFO_TOTAL_TIME => 'total_time',
-        CURLINFO_NAMELOOKUP_TIME => 'namelookup_time',
-        CURLINFO_CONNECT_TIME => 'connect_time',
-        CURLINFO_PRETRANSFER_TIME => 'pretransfer_time',
-        CURLINFO_STARTTRANSFER_TIME => 'starttransfer_time',
-        CURLINFO_REDIRECT_COUNT => 'redirect_count',
-        CURLINFO_REDIRECT_TIME => 'redirect_time',
-        CURLINFO_SIZE_UPLOAD => 'size_upload',
-        CURLINFO_SIZE_DOWNLOAD => 'size_download',
-        CURLINFO_SPEED_DOWNLOAD => 'speed_download',
-        CURLINFO_SPEED_UPLOAD => 'speed_upload',
-        CURLINFO_HEADER_SIZE => 'header_size',
-        CURLINFO_HEADER_OUT => 'request_header',
-        CURLINFO_FILETIME => 'filetime',
-        CURLINFO_REQUEST_SIZE => 'request_size',
-        CURLINFO_SSL_VERIFYRESULT => 'ssl_verify_result',
-        CURLINFO_CONTENT_LENGTH_DOWNLOAD => 'download_content_length',
-        CURLINFO_CONTENT_LENGTH_UPLOAD => 'upload_content_length',
-        CURLINFO_CONTENT_TYPE => 'content_type',
+        \CURLINFO_HTTP_CODE => 'http_code',
+        \CURLINFO_EFFECTIVE_URL => 'url',
+        \CURLINFO_TOTAL_TIME => 'total_time',
+        \CURLINFO_NAMELOOKUP_TIME => 'namelookup_time',
+        \CURLINFO_CONNECT_TIME => 'connect_time',
+        \CURLINFO_PRETRANSFER_TIME => 'pretransfer_time',
+        \CURLINFO_STARTTRANSFER_TIME => 'starttransfer_time',
+        \CURLINFO_REDIRECT_COUNT => 'redirect_count',
+        \CURLINFO_REDIRECT_TIME => 'redirect_time',
+        \CURLINFO_SIZE_UPLOAD => 'size_upload',
+        \CURLINFO_SIZE_DOWNLOAD => 'size_download',
+        \CURLINFO_SPEED_DOWNLOAD => 'speed_download',
+        \CURLINFO_SPEED_UPLOAD => 'speed_upload',
+        \CURLINFO_HEADER_SIZE => 'header_size',
+        \CURLINFO_HEADER_OUT => 'request_header',
+        \CURLINFO_FILETIME => 'filetime',
+        \CURLINFO_REQUEST_SIZE => 'request_size',
+        \CURLINFO_SSL_VERIFYRESULT => 'ssl_verify_result',
+        \CURLINFO_CONTENT_LENGTH_DOWNLOAD => 'download_content_length',
+        \CURLINFO_CONTENT_LENGTH_UPLOAD => 'upload_content_length',
+        \CURLINFO_CONTENT_TYPE => 'content_type',
     ];
 
     /**
@@ -53,27 +53,27 @@ class CurlHelper
     public static function handleOutput(Response $response, array $curlOptions, $ch): ?string
     {
         // If there is a header function set, feed the http status and headers to it.
-        if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
+        if (isset($curlOptions[\CURLOPT_HEADERFUNCTION])) {
             $headerList = [HttpUtil::formatAsStatusString($response)];
             $headerList = array_merge($headerList, HttpUtil::formatHeadersForCurl($response->getHeaders()));
             $headerList[] = '';
             foreach ($headerList as $header) {
-                self::callFunction($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $header);
+                self::callFunction($curlOptions[\CURLOPT_HEADERFUNCTION], $ch, $header);
             }
         }
 
         $body = $response->getBody();
 
-        if (!empty($curlOptions[CURLOPT_HEADER])) {
+        if (!empty($curlOptions[\CURLOPT_HEADER])) {
             $body = HttpUtil::formatAsStatusWithHeadersString($response).$body;
         }
 
-        if (isset($curlOptions[CURLOPT_WRITEFUNCTION])) {
-            self::callFunction($curlOptions[CURLOPT_WRITEFUNCTION], $ch, $body);
-        } elseif (isset($curlOptions[CURLOPT_RETURNTRANSFER]) && true == $curlOptions[CURLOPT_RETURNTRANSFER]) {
+        if (isset($curlOptions[\CURLOPT_WRITEFUNCTION])) {
+            self::callFunction($curlOptions[\CURLOPT_WRITEFUNCTION], $ch, $body);
+        } elseif (isset($curlOptions[\CURLOPT_RETURNTRANSFER]) && true == $curlOptions[\CURLOPT_RETURNTRANSFER]) {
             return $body;
-        } elseif (isset($curlOptions[CURLOPT_FILE])) {
-            $fp = $curlOptions[CURLOPT_FILE];
+        } elseif (isset($curlOptions[\CURLOPT_FILE])) {
+            $fp = $curlOptions[\CURLOPT_FILE];
             fwrite($fp, $body);
             fflush($fp);
         } else {
@@ -102,13 +102,13 @@ class CurlHelper
                     $info[$key] = $response->getCurlInfo($key);
                 }
                 break;
-            case CURLINFO_HTTP_CODE:
+            case \CURLINFO_HTTP_CODE:
                 $info = (int) $response->getStatusCode();
                 break;
-            case CURLINFO_SIZE_DOWNLOAD:
+            case \CURLINFO_SIZE_DOWNLOAD:
                 $info = $response->getHeader('Content-Length');
                 break;
-            case CURLINFO_HEADER_SIZE:
+            case \CURLINFO_HEADER_SIZE:
                 $info = mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
                 break;
             case CURLPROXY_HTTPS:
@@ -139,18 +139,18 @@ class CurlHelper
     public static function setCurlOptionOnRequest(Request $request, int $option, $value, $curlHandle = null): void
     {
         switch ($option) {
-            case CURLOPT_URL:
+            case \CURLOPT_URL:
                 $request->setUrl($value);
                 break;
-            case CURLOPT_CUSTOMREQUEST:
-                $request->setCurlOption(CURLOPT_CUSTOMREQUEST, $value);
+            case \CURLOPT_CUSTOMREQUEST:
+                $request->setCurlOption(\CURLOPT_CUSTOMREQUEST, $value);
                 break;
-            case CURLOPT_POST:
+            case \CURLOPT_POST:
                 if (true == $value) {
                     $request->setMethod('POST');
                 }
                 break;
-            case CURLOPT_POSTFIELDS:
+            case \CURLOPT_POSTFIELDS:
                 // todo: check for file @
                 if (\is_array($value)) {
                     foreach ($value as $name => $fieldValue) {
@@ -167,7 +167,7 @@ class CurlHelper
                 }
                 $request->setMethod('POST');
                 break;
-            case CURLOPT_HTTPHEADER:
+            case \CURLOPT_HTTPHEADER:
                 foreach ($value as $header) {
                     $headerParts = explode(': ', $header, 2);
                     if (!isset($headerParts[1])) {
@@ -177,11 +177,11 @@ class CurlHelper
                     $request->setHeader($headerParts[0], $headerParts[1]);
                 }
                 break;
-            case CURLOPT_FILE:
-            case CURLOPT_HEADER:
-            case CURLOPT_WRITEFUNCTION:
-            case CURLOPT_HEADERFUNCTION:
-            case CURLOPT_UPLOAD:
+            case \CURLOPT_FILE:
+            case \CURLOPT_HEADER:
+            case \CURLOPT_WRITEFUNCTION:
+            case \CURLOPT_HEADERFUNCTION:
+            case \CURLOPT_UPLOAD:
                 // Ignore header, file and writer functions.
                 // These options are stored and will be handled later in handleOutput().
                 break;
@@ -200,7 +200,7 @@ class CurlHelper
      */
     public static function validateCurlPOSTBody(Request $request, $curlHandle = null): void
     {
-        $readFunction = $request->getCurlOption(CURLOPT_READFUNCTION);
+        $readFunction = $request->getCurlOption(\CURLOPT_READFUNCTION);
         if (null === $readFunction) {
             return;
         }
@@ -211,7 +211,7 @@ class CurlHelper
             return;
         }
 
-        $bodySize = $request->getCurlOption(CURLOPT_INFILESIZE);
+        $bodySize = $request->getCurlOption(\CURLOPT_INFILESIZE);
         Assertion::notEmpty($bodySize, 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $body = \call_user_func_array($readFunction, [$curlHandle, fopen('php://memory', 'r'), $bodySize]);
         $request->setBody($body);

@@ -18,7 +18,7 @@ class CurlHelperTest extends TestCase
         $request = new Request($method, 'http://example.com');
         $headers = ['Host: example.com'];
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_HTTPHEADER, $headers);
 
         $this->assertEquals($method, $request->getMethod());
     }
@@ -47,7 +47,7 @@ class CurlHelperTest extends TestCase
         $request = new Request('POST', 'http://example.com');
         $payload = 'para1=val1&para2=val2';
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_POSTFIELDS, $payload);
 
         $this->assertEquals($payload, (string) $request->getBody());
     }
@@ -57,7 +57,7 @@ class CurlHelperTest extends TestCase
         $request = new Request('POST', 'http://example.com');
         $payload = ['some' => 'test'];
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_POSTFIELDS, $payload);
 
         $this->assertNull($request->getBody());
         $this->assertEquals($payload, $request->getPostFields());
@@ -68,7 +68,7 @@ class CurlHelperTest extends TestCase
         $request = new Request('POST', 'http://example.com');
         $payload = json_encode(['some' => 'test']);
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_POSTFIELDS, $payload);
 
         $this->assertEquals($payload, (string) $request->getBody());
     }
@@ -78,7 +78,7 @@ class CurlHelperTest extends TestCase
         $request = new Request('POST', 'http://example.com');
         $payload = '';
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_POSTFIELDS, $payload);
 
         // This is consistent with how requests are read out of storage using
         // \VCR\Request::fromArray(array $request).
@@ -90,7 +90,7 @@ class CurlHelperTest extends TestCase
         $request = new Request('GET', 'http://example.com');
         $headers = ['Host: example.com'];
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_HTTPHEADER, $headers);
 
         $this->assertEquals(['Host' => 'example.com'], $request->getHeaders());
     }
@@ -100,8 +100,8 @@ class CurlHelperTest extends TestCase
         $request = new Request('GET', 'http://example.com');
         $headers = ['Host: example.com'];
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_HTTPHEADER, $headers);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_HTTPHEADER, $headers);
 
         $this->assertEquals(['Host' => 'example.com'], $request->getHeaders());
     }
@@ -114,8 +114,8 @@ class CurlHelperTest extends TestCase
             'Content-Type: application/json',
         ];
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_HTTPHEADER, $headers);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_HTTPHEADER, $headers);
 
         $expected = [
             'Host' => 'example.com',
@@ -132,8 +132,8 @@ class CurlHelperTest extends TestCase
             'Content-Type: application/json',
         ];
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_HTTPHEADER, $headers);
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, []);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_HTTPHEADER, $headers);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_POSTFIELDS, []);
 
         $expected = [
             'Host' => 'example.com',
@@ -146,7 +146,7 @@ class CurlHelperTest extends TestCase
         $request = new Request('GET', 'http://example.com');
         $payload = json_encode(['some' => 'test']);
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, $payload);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_POSTFIELDS, $payload);
 
         $this->assertEquals('POST', $request->getMethod());
     }
@@ -155,9 +155,9 @@ class CurlHelperTest extends TestCase
     {
         $request = new Request('POST', 'http://example.com');
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, null, curl_init());
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, null, curl_init());
 
-        $this->assertNull($request->getCurlOption(CURLOPT_READFUNCTION));
+        $this->assertNull($request->getCurlOption(\CURLOPT_READFUNCTION));
     }
 
     public function testInvalidHostException()
@@ -174,7 +174,7 @@ class CurlHelperTest extends TestCase
         $callback = function ($curlHandle, $fileHandle, $size) {
         };
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, $callback, curl_init());
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, $callback, curl_init());
         CurlHelper::validateCurlPOSTBody($request, curl_init());
     }
 
@@ -192,8 +192,8 @@ class CurlHelperTest extends TestCase
             return $expected;
         };
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_INFILESIZE, \strlen($expected));
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_READFUNCTION, $callback, curl_init());
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_INFILESIZE, \strlen($expected));
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, $callback, curl_init());
         CurlHelper::validateCurlPOSTBody($request, curl_init());
 
         $this->assertEquals($expected, $request->getBody());
@@ -202,7 +202,7 @@ class CurlHelperTest extends TestCase
     public function testHandleResponseReturnsBody()
     {
         $curlOptions = [
-            CURLOPT_RETURNTRANSFER => true,
+            \CURLOPT_RETURNTRANSFER => true,
         ];
         $response = new Response(200, [], 'example response');
 
@@ -225,8 +225,8 @@ class CurlHelperTest extends TestCase
     public function testHandleResponseIncludesHeader()
     {
         $curlOptions = [
-            CURLOPT_HEADER => true,
-            CURLOPT_RETURNTRANSFER => true,
+            \CURLOPT_HEADER => true,
+            \CURLOPT_RETURNTRANSFER => true,
         ];
         $status = [
             'code' => 200,
@@ -244,7 +244,7 @@ class CurlHelperTest extends TestCase
     {
         $actualHeaders = [];
         $curlOptions = [
-            CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$actualHeaders) {
+            \CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$actualHeaders) {
                 $actualHeaders[] = $header;
             },
         ];
@@ -271,7 +271,7 @@ class CurlHelperTest extends TestCase
     {
         $this->headersFound = [];
         $curlOptions = [
-            CURLOPT_HEADERFUNCTION => [$this, 'publicCurlHeaderFunction'],
+            \CURLOPT_HEADERFUNCTION => [$this, 'publicCurlHeaderFunction'],
         ];
         $status = [
             'code' => 200,
@@ -296,7 +296,7 @@ class CurlHelperTest extends TestCase
     {
         $this->headersFound = [];
         $curlOptions = [
-            CURLOPT_HEADERFUNCTION => [$this, 'protectedCurlHeaderFunction'],
+            \CURLOPT_HEADERFUNCTION => [$this, 'protectedCurlHeaderFunction'],
         ];
         $status = [
             'code' => 200,
@@ -321,7 +321,7 @@ class CurlHelperTest extends TestCase
     {
         $this->headersFound = [];
         $curlOptions = [
-            CURLOPT_HEADERFUNCTION => [$this, 'privateCurlHeaderFunction'],
+            \CURLOPT_HEADERFUNCTION => [$this, 'privateCurlHeaderFunction'],
         ];
         $status = [
             'code' => 200,
@@ -348,7 +348,7 @@ class CurlHelperTest extends TestCase
         $expectedCh = curl_init();
         $expectedBody = 'example response';
         $curlOptions = [
-            CURLOPT_WRITEFUNCTION => function ($ch, $body) use ($test, $expectedCh, $expectedBody) {
+            \CURLOPT_WRITEFUNCTION => function ($ch, $body) use ($test, $expectedCh, $expectedBody) {
                 $test->assertEquals($expectedCh, $ch);
                 $test->assertEquals($expectedBody, $body);
 
@@ -366,7 +366,7 @@ class CurlHelperTest extends TestCase
         $expectedCh = curl_init();
         $expectedBody = 'example response';
         $curlOptions = [
-            CURLOPT_WRITEFUNCTION => [$this, 'privateCurlWriteFunction'],
+            \CURLOPT_WRITEFUNCTION => [$this, 'privateCurlWriteFunction'],
         ];
         $response = new Response(200, [], $expectedBody);
 
@@ -380,7 +380,7 @@ class CurlHelperTest extends TestCase
         $testFile = vfsStream::url('test/write_file');
 
         $curlOptions = [
-            CURLOPT_FILE => fopen($testFile, 'w+'),
+            \CURLOPT_FILE => fopen($testFile, 'w+'),
         ];
 
         $response = new Response(200, [], $expectedBody);
@@ -422,7 +422,7 @@ class CurlHelperTest extends TestCase
                         ],
                     ]
                 ),
-                CURLINFO_HEADER_SIZE,
+                \CURLINFO_HEADER_SIZE,
                 100,
             ],
             [
@@ -440,7 +440,7 @@ class CurlHelperTest extends TestCase
                         ],
                     ]
                 ),
-                CURLINFO_HEADER_SIZE,
+                \CURLINFO_HEADER_SIZE,
                 107,
             ],
             [
@@ -459,7 +459,7 @@ class CurlHelperTest extends TestCase
                         ],
                     ]
                 ),
-                CURLINFO_HEADER_SIZE,
+                \CURLINFO_HEADER_SIZE,
                 134,
             ],
             [
@@ -479,7 +479,7 @@ class CurlHelperTest extends TestCase
                         ],
                     ]
                 ),
-                CURLINFO_HEADER_SIZE,
+                \CURLINFO_HEADER_SIZE,
                 160,
             ],
             [
@@ -502,7 +502,7 @@ class CurlHelperTest extends TestCase
                         ],
                     ]
                 ),
-                CURLINFO_HEADER_SIZE,
+                \CURLINFO_HEADER_SIZE,
                 290,
             ],
         ];
@@ -512,20 +512,20 @@ class CurlHelperTest extends TestCase
     {
         $request = new Request('POST', 'http://example.com');
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_CUSTOMREQUEST, 'PUT');
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_CUSTOMREQUEST, 'PUT');
 
-        $this->assertEquals('PUT', $request->getCurlOption(CURLOPT_CUSTOMREQUEST));
+        $this->assertEquals('PUT', $request->getCurlOption(\CURLOPT_CUSTOMREQUEST));
     }
 
     public function testCurlCustomRequestAlwaysOverridesMethod()
     {
         $request = new Request('POST', 'http://example.com');
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_CUSTOMREQUEST, 'DELETE');
 
         $this->assertEquals('DELETE', $request->getMethod());
 
-        CurlHelper::setCurlOptionOnRequest($request, CURLOPT_POSTFIELDS, ['some' => 'test']);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_POSTFIELDS, ['some' => 'test']);
 
         $this->assertEquals('DELETE', $request->getMethod());
     }

@@ -13,7 +13,7 @@ use SoapFault;
  */
 class ExampleSoapClientTest extends TestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         // Configure virtual filesystem.
         vfsStream::setup('testDir');

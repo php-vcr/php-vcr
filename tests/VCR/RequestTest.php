@@ -15,7 +15,7 @@ class RequestTest extends TestCase
      */
     protected $request;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
     }

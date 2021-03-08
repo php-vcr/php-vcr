@@ -17,7 +17,7 @@ class StreamProcessorTest extends TestCase
 
         $testData = 'test data';
         $testFilePath = 'tests/fixtures/file_put_contents';
-        $res = file_put_contents($testFilePath, $testData, LOCK_EX);
+        $res = file_put_contents($testFilePath, $testData, \LOCK_EX);
         unlink($testFilePath);
 
         $processor->restore();
@@ -118,7 +118,7 @@ class StreamProcessorTest extends TestCase
     public function testQuietUrlStatFileNotFoundToBeQuiet()
     {
         $processor = new StreamProcessor();
-        $processor->url_stat('file_not_found', STREAM_URL_STAT_QUIET);
+        $processor->url_stat('file_not_found', \STREAM_URL_STAT_QUIET);
     }
 
     public function testDirOpendir()
@@ -164,7 +164,7 @@ class StreamProcessorTest extends TestCase
 
     public function testStreamMetadata()
     {
-        if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+        if (version_compare(\PHP_VERSION, '5.4.0', '<')) {
             $this->markTestSkipped('Behavior is only applicable and testable for PHP 5.4+');
         }
 
@@ -177,16 +177,16 @@ class StreamProcessorTest extends TestCase
         $mock->expects($this->exactly(8))->method('intercept');
 
         $path = 'tests/fixtures/unnitest_streamprocessor_metadata';
-        $this->assertTrue($mock->stream_metadata($path, STREAM_META_TOUCH, null));
-        $this->assertTrue($mock->stream_metadata($path, STREAM_META_TOUCH, [time(), time()]));
+        $this->assertTrue($mock->stream_metadata($path, \STREAM_META_TOUCH, null));
+        $this->assertTrue($mock->stream_metadata($path, \STREAM_META_TOUCH, [time(), time()]));
 
-        $this->assertTrue($mock->stream_metadata($path, STREAM_META_OWNER_NAME, posix_getuid()));
-        $this->assertTrue($mock->stream_metadata($path, STREAM_META_OWNER, posix_getuid()));
+        $this->assertTrue($mock->stream_metadata($path, \STREAM_META_OWNER_NAME, posix_getuid()));
+        $this->assertTrue($mock->stream_metadata($path, \STREAM_META_OWNER, posix_getuid()));
 
-        $this->assertTrue($mock->stream_metadata($path, STREAM_META_GROUP_NAME, posix_getgid()));
-        $this->assertTrue($mock->stream_metadata($path, STREAM_META_GROUP, posix_getgid()));
+        $this->assertTrue($mock->stream_metadata($path, \STREAM_META_GROUP_NAME, posix_getgid()));
+        $this->assertTrue($mock->stream_metadata($path, \STREAM_META_GROUP, posix_getgid()));
 
-        $this->assertTrue($mock->stream_metadata($path, STREAM_META_ACCESS, 0777));
+        $this->assertTrue($mock->stream_metadata($path, \STREAM_META_ACCESS, 0777));
 
         $this->assertTrue($mock->unlink($path));
     }

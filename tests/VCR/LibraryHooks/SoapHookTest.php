@@ -24,7 +24,7 @@ class SoapHookTest extends TestCase
     /** @var SoapHook */
     protected $soapHook;
 
-    public function setup()
+    protected function setup()
     {
         $this->config = new Configuration();
         $this->soapHook = new SoapHook(new SoapCodeTransform(), new StreamProcessor($this->config));
@@ -34,7 +34,7 @@ class SoapHookTest extends TestCase
     {
         $this->soapHook->enable($this->getContentCheckCallback());
 
-        $client = new \SoapClient(self::WSDL, ['soap_version' => SOAP_1_2]);
+        $client = new \SoapClient(self::WSDL, ['soap_version' => \SOAP_1_2]);
         $client->setLibraryHook($this->soapHook);
         $actual = $client->GetCityWeatherByZIP(['ZIP' => '10013']);
 
@@ -53,7 +53,7 @@ class SoapHookTest extends TestCase
 
         $client = new \SoapClient(
             self::WSDL,
-            ['soap_version' => SOAP_1_1]
+            ['soap_version' => \SOAP_1_1]
         );
         $client->setLibraryHook($this->soapHook);
         $client->GetCityWeatherByZIP(['ZIP' => '10013']);
@@ -69,7 +69,7 @@ class SoapHookTest extends TestCase
 
         $client = new \SoapClient(
             self::WSDL,
-            ['soap_version' => SOAP_1_2]
+            ['soap_version' => \SOAP_1_2]
         );
         $client->setLibraryHook($this->soapHook);
         $client->GetCityWeatherByZIP(['ZIP' => '10013']);
@@ -81,7 +81,7 @@ class SoapHookTest extends TestCase
 
         $client = new \SoapClient(
             self::WSDL,
-            ['soap_version' => SOAP_1_1, 'trace' => 1]
+            ['soap_version' => \SOAP_1_1, 'trace' => 1]
         );
         $client->setLibraryHook($this->soapHook);
         $client->GetCityWeatherByZIP(['ZIP' => '10013']);

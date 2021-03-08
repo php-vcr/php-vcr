@@ -51,21 +51,21 @@ class StreamHelperTest extends TestCase
             'follow_location' => [
                 ['follow_location' => '0'],
                 function (Request $request) use ($test) {
-                    $test->assertEquals(false, $request->getCurlOption(CURLOPT_FOLLOWLOCATION));
+                    $test->assertEquals(false, $request->getCurlOption(\CURLOPT_FOLLOWLOCATION));
                 },
             ],
 
             'max_redirects' => [
                 ['max_redirects' => '2'],
                 function (Request $request) use ($test) {
-                    $test->assertEquals('2', $request->getCurlOption(CURLOPT_MAXREDIRS));
+                    $test->assertEquals('2', $request->getCurlOption(\CURLOPT_MAXREDIRS));
                 },
             ],
 
             'timeout' => [
                 ['timeout' => '100'],
                 function (Request $request) use ($test) {
-                    $test->assertEquals('100', $request->getCurlOption(CURLOPT_TIMEOUT));
+                    $test->assertEquals('100', $request->getCurlOption(\CURLOPT_TIMEOUT));
                 },
             ],
         ];

@@ -134,7 +134,7 @@ class StreamProcessor
      */
     protected function isPhpFile(string $uri): bool
     {
-        return 'php' === pathinfo($uri, PATHINFO_EXTENSION);
+        return 'php' === pathinfo($uri, \PATHINFO_EXTENSION);
     }
 
     protected function shouldProcess(string $uri): bool
@@ -165,9 +165,9 @@ class StreamProcessor
         $this->restore();
 
         if (isset($this->context)) {
-            $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH), $this->context);
+            $this->resource = fopen($path, $mode, (bool) ($options & \STREAM_USE_PATH), $this->context);
         } else {
-            $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH));
+            $this->resource = fopen($path, $mode, (bool) ($options & \STREAM_USE_PATH));
         }
 
         if (false !== $this->resource && $options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
@@ -254,7 +254,7 @@ class StreamProcessor
      *
      * @return bool return TRUE if the position was updated, FALSE otherwise
      */
-    public function stream_seek(int $offset, int $whence = SEEK_SET): bool
+    public function stream_seek(int $offset, int $whence = \SEEK_SET): bool
     {
         if (false === $this->resource) {
             return false;
@@ -318,7 +318,7 @@ class StreamProcessor
     public function url_stat(string $path, int $flags)
     {
         $this->restore();
-        if ($flags & STREAM_URL_STAT_QUIET) {
+        if ($flags & \STREAM_URL_STAT_QUIET) {
             set_error_handler(function () {
                 // Use native error handler
                 return false;
@@ -422,9 +422,9 @@ class StreamProcessor
     {
         $this->restore();
         if (isset($this->context)) {
-            $result = mkdir($path, $mode, (bool) ($options & STREAM_MKDIR_RECURSIVE), $this->context);
+            $result = mkdir($path, $mode, (bool) ($options & \STREAM_MKDIR_RECURSIVE), $this->context);
         } else {
-            $result = mkdir($path, $mode, (bool) ($options & STREAM_MKDIR_RECURSIVE));
+            $result = mkdir($path, $mode, (bool) ($options & \STREAM_MKDIR_RECURSIVE));
         }
         $this->intercept();
 
@@ -506,7 +506,7 @@ class StreamProcessor
             return false;
         }
 
-        $operation = (0 === $operation ? LOCK_EX : $operation);
+        $operation = (0 === $operation ? \LOCK_EX : $operation);
 
         return flock($this->resource, $operation);
     }
@@ -530,14 +530,14 @@ class StreamProcessor
         }
 
         switch ($option) {
-            case STREAM_OPTION_BLOCKING:
+            case \STREAM_OPTION_BLOCKING:
                 return stream_set_blocking($this->resource, (bool) $arg1);
-            case STREAM_OPTION_READ_TIMEOUT:
+            case \STREAM_OPTION_READ_TIMEOUT:
                 return stream_set_timeout($this->resource, $arg1, $arg2);
-            case STREAM_OPTION_WRITE_BUFFER:
+            case \STREAM_OPTION_WRITE_BUFFER:
                 // stream_set_write_buffer returns 0 in case of success
                 return 0 === stream_set_write_buffer($this->resource, $arg1);
-            case STREAM_OPTION_READ_BUFFER:
+            case \STREAM_OPTION_READ_BUFFER:
                 // stream_set_read_buffer returns 0 in case of success
                 return 0 === stream_set_read_buffer($this->resource, $arg1);
             // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
@@ -607,22 +607,22 @@ class StreamProcessor
         $result = false;
 
         switch ($option) {
-            case STREAM_META_TOUCH:
+            case \STREAM_META_TOUCH:
                 if (empty($value)) {
                     $result = touch($path);
                 } else {
                     $result = touch($path, $value[0], $value[1]);
                 }
                 break;
-            case STREAM_META_OWNER_NAME:
-            case STREAM_META_OWNER:
+            case \STREAM_META_OWNER_NAME:
+            case \STREAM_META_OWNER:
                 $result = chown($path, $value);
                 break;
-            case STREAM_META_GROUP_NAME:
-            case STREAM_META_GROUP:
+            case \STREAM_META_GROUP_NAME:
+            case \STREAM_META_GROUP:
                 $result = chgrp($path, $value);
                 break;
-            case STREAM_META_ACCESS:
+            case \STREAM_META_ACCESS:
                 $result = chmod($path, $value);
                 break;
         }
@@ -675,7 +675,7 @@ class StreamProcessor
     protected function appendFiltersToStream($stream): void
     {
         foreach (static::$codeTransformers as $codeTransformer) {
-            stream_filter_append($stream, $codeTransformer::NAME, STREAM_FILTER_READ);
+            stream_filter_append($stream, $codeTransformer::NAME, \STREAM_FILTER_READ);
         }
     }
 
