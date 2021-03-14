@@ -45,11 +45,9 @@ class TestStorage extends AbstractStorage
         $this->recording = $recording;
     }
 
-    public function next()
+    public function next(): void
     {
         [$this->position, $this->current] = each($this->recording);
-
-        return $this->current;
     }
 
     public function valid()
