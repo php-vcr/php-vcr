@@ -35,7 +35,7 @@ class ResponseTest extends TestCase
             'Connection' => 'close',
             'Date' => 'Fri, 31 Jan 2014 15:37:13 GMT',
         ];
-        $response = new Response(200, $headers);
+        $response = new Response('200', $headers);
         $restoredResponse = Response::fromArray($response->toArray());
 
         $this->assertEquals($headers, $restoredResponse->getHeaders());
@@ -59,7 +59,7 @@ class ResponseTest extends TestCase
     public function testRestoreBodyFromArray(): void
     {
         $body = 'this is an example body';
-        $response = new Response(200, [], $body);
+        $response = new Response('200', [], $body);
         $restoredResponse = Response::fromArray($response->toArray());
 
         $this->assertEquals($body, $restoredResponse->getBody());
@@ -68,7 +68,7 @@ class ResponseTest extends TestCase
     public function testBase64EncodeCompressedBody(): void
     {
         $body = 'this is an example body';
-        $response = new Response(200, ['Content-Type' => 'application/x-gzip'], $body);
+        $response = new Response('200', ['Content-Type' => 'application/x-gzip'], $body);
         $responseArray = $response->toArray();
 
         $this->assertEquals(base64_encode($body), $responseArray['body']);
@@ -89,7 +89,7 @@ class ResponseTest extends TestCase
     public function testRestoreCompressedBody(): void
     {
         $body = 'this is an example body';
-        $response = new Response(200, ['Content-Type' => 'application/x-gzip'], $body);
+        $response = new Response('200', ['Content-Type' => 'application/x-gzip'], $body);
         $restoredResponse = Response::fromArray($response->toArray());
 
         $this->assertEquals($body, $restoredResponse->getBody());
@@ -97,7 +97,7 @@ class ResponseTest extends TestCase
 
     public function testGetStatus(): void
     {
-        $expectedStatus = 200;
+        $expectedStatus = '200';
 
         $response = new Response($expectedStatus);
 
@@ -106,7 +106,7 @@ class ResponseTest extends TestCase
 
     public function testRestoreStatusFromArray(): void
     {
-        $expectedStatus = 200;
+        $expectedStatus = '200';
 
         $response = new Response($expectedStatus);
         $restoredResponse = Response::fromArray($response->toArray());
@@ -117,7 +117,7 @@ class ResponseTest extends TestCase
     public function testGetCurlInfo(): void
     {
         $curlOptions = ['option' => 'value'];
-        $response = new Response(200, [], null, $curlOptions);
+        $response = new Response('200', [], null, $curlOptions);
 
         $this->assertEquals($curlOptions, $response->getCurlInfo());
     }
@@ -125,7 +125,7 @@ class ResponseTest extends TestCase
     public function testRestoreCurlInfoFromArray(): void
     {
         $expectedCurlOptions = ['option' => 'value'];
-        $response = new Response(200, [], null, $expectedCurlOptions);
+        $response = new Response('200', [], null, $expectedCurlOptions);
         $restoredResponse = Response::fromArray($response->toArray());
 
         $this->assertEquals($expectedCurlOptions, $response->getCurlInfo());

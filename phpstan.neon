@@ -2,6 +2,7 @@ parameters:
     level: 7
     paths:
         - src
+        - tests/VCR
     # Can remove reportUnmatchedIgnoredErrors option after php 7.2 is no longer supported
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
@@ -18,6 +19,8 @@ parameters:
         - '/Parameter #2 \$eventName of method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) expects string\|null, VCR\\Event\\Event given./'
         # PHPStan cannot deal with manually defined constants - can be removed once php 7.2 no longer supported
         - '#Constant CURLPROXY_HTTPS not found.#'
+        - '#Call to an undefined method (VCR\\Util\\|)SoapClient::GetCityWeatherByZIP\(\)\.#'
+        - '#Call to an undefined method org\\bovigo\\vfs\\vfsStreamContent::hasChild\(\)\.#'
 includes:
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
     - vendor/phpstan/phpstan-beberlei-assert/extension.neon

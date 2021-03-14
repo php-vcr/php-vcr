@@ -10,10 +10,13 @@ use VCR\Response;
 
 class CurlHelperTest extends TestCase
 {
+    /** @var string[] */
+    private $headersFound;
+
     /**
      * @dataProvider getHttpMethodsProvider()
      */
-    public function testSetCurlOptionMethods($method): void
+    public function testSetCurlOptionMethods(string $method): void
     {
         $request = new Request($method, 'http://example.com');
         $headers = ['Host: example.com'];
@@ -24,11 +27,9 @@ class CurlHelperTest extends TestCase
     }
 
     /**
-     * Returns a list of HTTP methods for testing testSetCurlOptionMethods.
-     *
-     * @return array HTTP methods
+     * @return array<string[]>
      */
-    public function getHttpMethodsProvider()
+    public function getHttpMethodsProvider(): array
     {
         return [
             ['CONNECT'],
@@ -162,13 +163,15 @@ class CurlHelperTest extends TestCase
 
     public function testInvalidHostException(): void
     {
-        $this->expectException(InvalidHostException::class, 'URL must be valid.');
+        $this->expectException(InvalidHostException::class);
+        $this->expectExceptionMessage('Could not read host from URL "example.com". Please check the URL syntax.');
         new Request('POST', 'example.com');
     }
 
     public function testSetCurlOptionReadFunctionMissingSize(): void
     {
-        $this->expectException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
+        $this->expectException(\VCR\VCRException::class);
+        $this->expectExceptionMessage('To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $request = new Request('POST', 'http://example.com');
 
         $callback = function ($curlHandle, $fileHandle, $size): void {
@@ -204,22 +207,22 @@ class CurlHelperTest extends TestCase
         $curlOptions = [
             \CURLOPT_RETURNTRANSFER => true,
         ];
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
 
         $output = CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
-        $this->assertEquals($response->getBody(true), $output);
+        $this->assertEquals($response->getBody(), $output);
     }
 
     public function testHandleResponseEchosBody(): void
     {
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
 
         ob_start();
         CurlHelper::handleOutput($response, [], curl_init());
         $output = ob_get_clean();
 
-        $this->assertEquals($response->getBody(true), $output);
+        $this->assertEquals($response->getBody(), $output);
     }
 
     public function testHandleResponseIncludesHeader(): void
@@ -229,7 +232,7 @@ class CurlHelperTest extends TestCase
             \CURLOPT_RETURNTRANSFER => true,
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
@@ -249,12 +252,12 @@ class CurlHelperTest extends TestCase
             },
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
         $headers = [
-            'Content-Length' => 0,
+            'Content-Length' => '0',
         ];
         $response = new Response($status, $headers, 'example response');
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
@@ -274,12 +277,12 @@ class CurlHelperTest extends TestCase
             \CURLOPT_HEADERFUNCTION => [$this, 'publicCurlHeaderFunction'],
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
         $headers = [
-            'Content-Length' => 0,
+            'Content-Length' => '0',
         ];
         $response = new Response($status, $headers, 'example response');
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
@@ -299,12 +302,12 @@ class CurlHelperTest extends TestCase
             \CURLOPT_HEADERFUNCTION => [$this, 'protectedCurlHeaderFunction'],
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
         $headers = [
-            'Content-Length' => 0,
+            'Content-Length' => '0',
         ];
         $response = new Response($status, $headers, 'example response');
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
@@ -324,12 +327,12 @@ class CurlHelperTest extends TestCase
             \CURLOPT_HEADERFUNCTION => [$this, 'privateCurlHeaderFunction'],
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
         $headers = [
-            'Content-Length' => 0,
+            'Content-Length' => '0',
         ];
         $response = new Response($status, $headers, 'example response');
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
@@ -355,7 +358,7 @@ class CurlHelperTest extends TestCase
                 return \strlen($body);
             },
         ];
-        $response = new Response(200, [], $expectedBody);
+        $response = new Response('200', [], $expectedBody);
 
         CurlHelper::handleOutput($response, $curlOptions, $expectedCh);
     }
@@ -368,7 +371,7 @@ class CurlHelperTest extends TestCase
         $curlOptions = [
             \CURLOPT_WRITEFUNCTION => [$this, 'privateCurlWriteFunction'],
         ];
-        $response = new Response(200, [], $expectedBody);
+        $response = new Response('200', [], $expectedBody);
 
         CurlHelper::handleOutput($response, $curlOptions, $expectedCh);
     }
@@ -383,7 +386,7 @@ class CurlHelperTest extends TestCase
             \CURLOPT_FILE => fopen($testFile, 'w+'),
         ];
 
-        $response = new Response(200, [], $expectedBody);
+        $response = new Response('200', [], $expectedBody);
 
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
@@ -404,7 +407,8 @@ class CurlHelperTest extends TestCase
         );
     }
 
-    public function getCurlOptionProvider()
+    /** @return array<mixed> */
+    public function getCurlOptionProvider(): array
     {
         return [
             [
@@ -530,26 +534,42 @@ class CurlHelperTest extends TestCase
         $this->assertEquals('DELETE', $request->getMethod());
     }
 
-    // Function used for testing CURLOPT_HEADERFUNCTION
-    public function publicCurlHeaderFunction($ch, $header): void
+    /**
+     * Function used for testing CURLOPT_HEADERFUNCTION.
+     *
+     * @param resource $ch
+     */
+    public function publicCurlHeaderFunction($ch, string $header): void
     {
         $this->headersFound[] = $header;
     }
 
-    // Function used for testing CURLOPT_HEADERFUNCTION
-    protected function protectedCurlHeaderFunction($ch, $header): void
+    /**
+     * Function used for testing CURLOPT_HEADERFUNCTION.
+     *
+     * @param resource $ch
+     */
+    protected function protectedCurlHeaderFunction($ch, string $header): void
     {
         $this->headersFound[] = $header;
     }
 
-    // Function used for testing CURLOPT_HEADERFUNCTION
-    private function privateCurlHeaderFunction($ch, $header): void
+    /**
+     * Function used for testing CURLOPT_HEADERFUNCTION.
+     *
+     * @param resource $ch
+     */
+    private function privateCurlHeaderFunction($ch, string $header): void
     {
         $this->headersFound[] = $header;
     }
 
-    // Function used for testing CURLOPT_WRITEFUNCTION
-    private function privateCurlWriteFunction($ch, $body)
+    /**
+     * Function used for testing CURLOPT_WRITEFUNCTION.
+     *
+     * @param resource $ch
+     */
+    private function privateCurlWriteFunction($ch, string $body): int
     {
         $this->assertEquals('resource', \gettype($ch));
         $this->assertEquals('example response', $body);

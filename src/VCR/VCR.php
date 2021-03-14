@@ -12,6 +12,7 @@ use Assert\Assertion;
  * @method static void turnOn()
  * @method static void turnOff()
  * @method static void eject()
+ * @mixin Videorecorder
  */
 class VCR
 {
@@ -37,7 +38,7 @@ class VCR
      */
     public static function __callStatic(string $method, array $parameters)
     {
-        $callable = [VCRFactory::get('VCR\Videorecorder'), $method];
+        $callable = [VCRFactory::get(Videorecorder::class), $method];
 
         Assertion::isCallable($callable);
 

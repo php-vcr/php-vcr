@@ -10,8 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractStorageTest extends TestCase
 {
-    protected $handle;
-    protected $filePath;
+    /** @var TestStorage */
     protected $storage;
 
     public function testFilePathCreated(): void
@@ -28,7 +27,8 @@ class AbstractStorageTest extends TestCase
 
     public function testRootNotExisting(): void
     {
-        $this->expectException('\VCR\VCRException', "Cassette path 'vfs://test/foo' is not existing or not a directory");
+        $this->expectException(\VCR\VCRException::class);
+        $this->expectExceptionMessage("Cassette path 'vfs://test/foo' is not existing or not a directory");
 
         vfsStream::setup('test');
         new TestStorage(vfsStream::url('test/foo'), 'file');
@@ -37,6 +37,7 @@ class AbstractStorageTest extends TestCase
 
 class TestStorage extends AbstractStorage
 {
+    /** @var array<mixed> */
     private $recording;
 
     public function storeRecording(array $recording): void
@@ -44,11 +45,9 @@ class TestStorage extends AbstractStorage
         $this->recording = $recording;
     }
 
-    public function next()
+    public function next(): void
     {
         [$this->position, $this->current] = each($this->recording);
-
-        return $this->current;
     }
 
     public function valid()

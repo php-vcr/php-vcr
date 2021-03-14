@@ -20,7 +20,7 @@ class AfterPlaybackEventTest extends TestCase
     {
         $this->event = new AfterPlaybackEvent(
             new Request('GET', 'http://example.com'),
-            new Response(200),
+            new Response('200'),
             new Cassette('test', new Configuration(), new Storage\Blackhole())
         );
     }

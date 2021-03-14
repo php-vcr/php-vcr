@@ -2,6 +2,7 @@
 
 namespace VCR;
 
+use Assert\Assertion;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use VCR\Event\Event;
@@ -11,6 +12,9 @@ use VCR\Event\Event;
  */
 class VCRTest extends TestCase
 {
+    /** @var array<string, Event> */
+    private $events;
+
     public static function setupBeforeClass(): void
     {
         VCR::configure()->setCassettePath('tests/fixtures');
@@ -19,10 +23,8 @@ class VCRTest extends TestCase
     public function testUseStaticCallsNotInitialized(): void
     {
         VCR::configure()->enableLibraryHooks(['stream_wrapper']);
-        $this->expectException(
-            'VCR\VCRException',
-            'Please turn on VCR before inserting a cassette, use: VCR::turnOn()'
-        );
+        $this->expectException(\VCR\VCRException::class);
+        $this->expectExceptionMessage('Please turn on VCR before inserting a cassette, use: VCR::turnOn()');
         VCR::insertCassette('some_name');
     }
 
@@ -50,7 +52,7 @@ class VCRTest extends TestCase
         VCR::turnOff();
     }
 
-    private function doCurlGetRequest($url)
+    private function doCurlGetRequest(string $url): string
     {
         $ch = curl_init();
         curl_setopt($ch, \CURLOPT_URL, $url);
@@ -58,6 +60,8 @@ class VCRTest extends TestCase
         curl_setopt($ch, \CURLOPT_POST, false);
         $output = curl_exec($ch);
         curl_close($ch);
+
+        Assertion::string($output);
 
         return $output;
     }
@@ -100,8 +104,8 @@ class VCRTest extends TestCase
 
     public function testShouldThrowExceptionIfNoCassettePresent(): void
     {
-        $this->expectException(
-            'BadMethodCallException',
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage(
             'Invalid http request. No cassette inserted. Please make sure to insert '
             ."a cassette in your unit test using VCR::insertCassette('name');"
         );
@@ -215,12 +219,13 @@ class VCRTest extends TestCase
         }
     }
 
-    public function recordEvent(Event $event, $eventName): void
+    public function recordEvent(Event $event, string $eventName): void
     {
         $this->events[$eventName] = $event;
     }
 
-    private function getRecordedEventNames()
+    /** @return string[] */
+    private function getRecordedEventNames(): array
     {
         return array_keys($this->events);
     }

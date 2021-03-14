@@ -4,6 +4,7 @@ namespace VCR;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use VCR\Util\HttpClient;
 
 /**
  * Test Videorecorder.
@@ -41,7 +42,7 @@ class VideorecorderTest extends TestCase
     public function testHandleRequestRecordsRequestWhenModeIsNewRecords(): void
     {
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
         $client = $this->getClientMock($request, $response);
         $configuration = new Configuration();
         $configuration->enableLibraryHooks([]);
@@ -61,14 +62,14 @@ class VideorecorderTest extends TestCase
 
     public function testHandleRequestThrowsExceptionWhenModeIsNone(): void
     {
-        $this->expectException(
-            'LogicException',
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
             "The request does not match a previously recorded request and the 'mode' is set to 'none'. "
             ."If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'."
         );
 
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
         $client = $this->getMockBuilder('\VCR\Util\HttpClient')->getMock();
         $configuration = new Configuration();
         $configuration->enableLibraryHooks([]);
@@ -89,7 +90,7 @@ class VideorecorderTest extends TestCase
     public function testHandleRequestRecordsRequestWhenModeIsOnceAndCassetteIsNew(): void
     {
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
         $client = $this->getClientMock($request, $response);
         $configuration = new Configuration();
         $configuration->enableLibraryHooks([]);
@@ -109,14 +110,14 @@ class VideorecorderTest extends TestCase
 
     public function testHandleRequestThrowsExceptionWhenModeIsOnceAndCassetteIsOld(): void
     {
-        $this->expectException(
-            'LogicException',
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
             "The request does not match a previously recorded request and the 'mode' is set to 'once'. "
             ."If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'."
         );
 
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
         $client = $this->getMockBuilder('\VCR\Util\HttpClient')->getMock();
         $configuration = new Configuration();
         $configuration->enableLibraryHooks([]);
@@ -134,9 +135,9 @@ class VideorecorderTest extends TestCase
         $videorecorder->handleRequest($request);
     }
 
-    protected function getClientMock($request, $response)
+    protected function getClientMock(Request $request, Response $response): HttpClient
     {
-        $client = $this->getMockBuilder('\VCR\Util\HttpClient')->setMethods(['send'])->getMock();
+        $client = $this->getMockBuilder(HttpClient::class)->setMethods(['send'])->getMock();
         $client
             ->expects($this->once())
             ->method('send')
@@ -146,9 +147,9 @@ class VideorecorderTest extends TestCase
         return $client;
     }
 
-    protected function getCassetteMock($request, $response, $mode = VCR::MODE_NEW_EPISODES, $isNew = false)
+    protected function getCassetteMock(Request $request, Response $response, string $mode = VCR::MODE_NEW_EPISODES, bool $isNew = false): Cassette
     {
-        $cassette = $this->getMockBuilder('\VCR\Cassette')
+        $cassette = $this->getMockBuilder(Cassette::class)
             ->disableOriginalConstructor()
             ->setMethods(['record', 'playback', 'isNew', 'getName'])
             ->getMock();

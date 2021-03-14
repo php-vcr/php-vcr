@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class BlackholeTest extends TestCase
 {
+    /** @var Blackhole */
     protected $storage;
 
     protected function setUp(): void
@@ -13,9 +14,19 @@ class BlackholeTest extends TestCase
         $this->storage = new Blackhole();
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testStoreRecordingIsCallable(): void
     {
-        $this->assertNull($this->storage->storeRecording(['empty or not, we don\'t care']));
+        $this->storage->storeRecording([
+            'request' => [
+                'some' => 'request',
+            ],
+            'response' => [
+                'some' => 'response',
+            ],
+        ]);
     }
 
     public function testNextIsCallable(): void
@@ -23,9 +34,12 @@ class BlackholeTest extends TestCase
         $this->assertNull($this->storage->next());
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testRewindIsCallable(): void
     {
-        $this->assertNull($this->storage->rewind());
+        $this->storage->rewind();
     }
 
     public function testKeyIsNotCallable(): void
