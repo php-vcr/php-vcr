@@ -74,8 +74,8 @@ class StreamHelperTest extends TestCase
     /**
      * @dataProvider streamContexts
      *
-     * @param $context
-     * @param $testCallback
+     * @param array    $context
+     * @param callable $testCallback
      */
     public function testStreamHttpContext($context, $testCallback): void
     {

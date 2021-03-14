@@ -34,6 +34,7 @@ class SoapHookTest extends TestCase
     {
         $this->soapHook->enable($this->getContentCheckCallback());
 
+        /** @var \VCR\Util\SoapClient $client */
         $client = new \SoapClient(self::WSDL, ['soap_version' => \SOAP_1_2]);
         $client->setLibraryHook($this->soapHook);
         $actual = $client->GetCityWeatherByZIP(['ZIP' => '10013']);
@@ -51,6 +52,7 @@ class SoapHookTest extends TestCase
         ];
         $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
 
+        /** @var \VCR\Util\SoapClient $client */
         $client = new \SoapClient(
             self::WSDL,
             ['soap_version' => \SOAP_1_1]
@@ -67,6 +69,7 @@ class SoapHookTest extends TestCase
 
         $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
 
+        /** @var \VCR\Util\SoapClient $client */
         $client = new \SoapClient(
             self::WSDL,
             ['soap_version' => \SOAP_1_2]
@@ -79,6 +82,7 @@ class SoapHookTest extends TestCase
     {
         $this->soapHook->enable($this->getContentCheckCallback());
 
+        /** @var \VCR\Util\SoapClient $client */
         $client = new \SoapClient(
             self::WSDL,
             ['soap_version' => \SOAP_1_1, 'trace' => 1]
