@@ -18,8 +18,8 @@ class ConfigurationTest extends TestCase
 
     public function testSetCassettePathThrowsErrorOnInvalidPath(): void
     {
-        $this->expectException(
-            VCRException::class,
+        $this->expectException(VCRException::class);
+        $this->expectExceptionMessage(
             "Cassette path 'invalid_path' is not a directory. Please either "
             .'create it or set a different cassette path using '
             ."\\VCR\\VCR::configure()->setCassettePath('directory')."
@@ -63,7 +63,8 @@ class ConfigurationTest extends TestCase
 
     public function testEnableLibraryHooksFailsWithWrongHookName(): void
     {
-        $this->expectException('InvalidArgumentException', "Library hooks don't exist: non_existing");
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Library hooks don't exist: non_existing");
         $this->config->enableLibraryHooks(['non_existing']);
     }
 
@@ -81,13 +82,15 @@ class ConfigurationTest extends TestCase
 
     public function testEnableRequestMatchersFailsWithNoExistingName(): void
     {
-        $this->expectException('InvalidArgumentException', "Request matchers don't exist: wrong, name");
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Request matchers don't exist: wrong, name");
         $this->config->enableRequestMatchers(['wrong', 'name']);
     }
 
     public function testAddRequestMatcherFailsWithNoName(): void
     {
-        $this->expectException('VCR\VCRException', "A request matchers name must be at least one character long. Found ''");
+        $this->expectException(\VCR\VCRException::class);
+        $this->expectExceptionMessage("A request matchers name must be at least one character long. Found ''");
         $expected = function ($first, $second) {
             return true;
         };
@@ -122,7 +125,8 @@ class ConfigurationTest extends TestCase
 
     public function testSetStorageInvalidName(): void
     {
-        $this->expectException('VCR\VCRException', "Storage 'Does not exist' not available.");
+        $this->expectException(\VCR\VCRException::class);
+        $this->expectExceptionMessage("Storage 'Does not exist' not available.");
         $this->config->setStorage('Does not exist');
     }
 
@@ -154,7 +158,8 @@ class ConfigurationTest extends TestCase
 
     public function testSetModeInvalidName(): void
     {
-        $this->expectException('VCR\VCRException', "Mode 'invalid' does not exist.");
+        $this->expectException(\VCR\VCRException::class);
+        $this->expectExceptionMessage("Mode 'invalid' does not exist.");
         $this->config->setMode('invalid');
     }
 }

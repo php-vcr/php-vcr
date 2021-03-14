@@ -61,8 +61,8 @@ class VideorecorderTest extends TestCase
 
     public function testHandleRequestThrowsExceptionWhenModeIsNone(): void
     {
-        $this->expectException(
-            'LogicException',
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
             "The request does not match a previously recorded request and the 'mode' is set to 'none'. "
             ."If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'."
         );
@@ -109,8 +109,8 @@ class VideorecorderTest extends TestCase
 
     public function testHandleRequestThrowsExceptionWhenModeIsOnceAndCassetteIsOld(): void
     {
-        $this->expectException(
-            'LogicException',
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
             "The request does not match a previously recorded request and the 'mode' is set to 'once'. "
             ."If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'."
         );

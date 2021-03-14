@@ -165,13 +165,15 @@ class CurlHelperTest extends TestCase
 
     public function testInvalidHostException(): void
     {
-        $this->expectException(InvalidHostException::class, 'URL must be valid.');
+        $this->expectException(InvalidHostException::class);
+        $this->expectExceptionMessage('Could not read host from URL "example.com". Please check the URL syntax.');
         new Request('POST', 'example.com');
     }
 
     public function testSetCurlOptionReadFunctionMissingSize(): void
     {
-        $this->expectException('\VCR\VCRException', 'To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
+        $this->expectException(\VCR\VCRException::class);
+        $this->expectExceptionMessage('To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $request = new Request('POST', 'http://example.com');
 
         $callback = function ($curlHandle, $fileHandle, $size): void {
