@@ -10,8 +10,10 @@ use PHPUnit\Framework\TestCase;
  */
 class JsonTest extends TestCase
 {
-    protected $handle;
+    /** @var string */
     protected $filePath;
+
+    /** @var Json */
     protected $jsonObject;
 
     protected function setUp(): void
@@ -125,7 +127,8 @@ class JsonTest extends TestCase
         $this->assertJson(file_get_contents($filePath));
     }
 
-    private function iterateAndTest($json, $expected, $message): void
+    /** @param array<mixed> $expected */
+    private function iterateAndTest(string $json, $expected, string $message): void
     {
         file_put_contents($this->filePath, $json);
 

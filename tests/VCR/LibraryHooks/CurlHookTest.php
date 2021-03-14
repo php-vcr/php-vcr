@@ -15,11 +15,14 @@ use VCR\Util\StreamProcessor;
  */
 class CurlHookTest extends TestCase
 {
+    /** @var string */
     public $expected = 'example response body';
+
     /**
      * @var \VCR\Configuration
      */
     protected $config;
+
     /**
      * @var \VCR\LibraryHooks\CurlHook
      */
@@ -376,7 +379,7 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    protected function getTestCallback($statusCode = 200): Closure
+    protected function getTestCallback(string $statusCode = '200'): Closure
     {
         $testClass = $this;
 

@@ -7,7 +7,8 @@ use VCR\Request;
 
 class StreamHelperTest extends TestCase
 {
-    public function streamContexts()
+    /** @return array<string, mixed> */
+    public function streamContexts(): array
     {
         $test = $this;
 
@@ -74,10 +75,10 @@ class StreamHelperTest extends TestCase
     /**
      * @dataProvider streamContexts
      *
-     * @param array    $context
-     * @param callable $testCallback
+     * @param array<mixed> $context
+     * @param callable     $testCallback
      */
-    public function testStreamHttpContext($context, $testCallback): void
+    public function testStreamHttpContext(array $context, $testCallback): void
     {
         $context = stream_context_create([
             'http' => $context,

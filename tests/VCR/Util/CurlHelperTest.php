@@ -16,7 +16,7 @@ class CurlHelperTest extends TestCase
     /**
      * @dataProvider getHttpMethodsProvider()
      */
-    public function testSetCurlOptionMethods($method): void
+    public function testSetCurlOptionMethods(string $method): void
     {
         $request = new Request($method, 'http://example.com');
         $headers = ['Host: example.com'];
@@ -27,11 +27,9 @@ class CurlHelperTest extends TestCase
     }
 
     /**
-     * Returns a list of HTTP methods for testing testSetCurlOptionMethods.
-     *
-     * @return array HTTP methods
+     * @return array<string[]>
      */
-    public function getHttpMethodsProvider()
+    public function getHttpMethodsProvider(): array
     {
         return [
             ['CONNECT'],
@@ -409,7 +407,8 @@ class CurlHelperTest extends TestCase
         );
     }
 
-    public function getCurlOptionProvider()
+    /** @return array<mixed> */
+    public function getCurlOptionProvider(): array
     {
         return [
             [
@@ -535,26 +534,42 @@ class CurlHelperTest extends TestCase
         $this->assertEquals('DELETE', $request->getMethod());
     }
 
-    // Function used for testing CURLOPT_HEADERFUNCTION
-    public function publicCurlHeaderFunction($ch, $header): void
+    /**
+     * Function used for testing CURLOPT_HEADERFUNCTION.
+     *
+     * @param resource $ch
+     */
+    public function publicCurlHeaderFunction($ch, string $header): void
     {
         $this->headersFound[] = $header;
     }
 
-    // Function used for testing CURLOPT_HEADERFUNCTION
-    protected function protectedCurlHeaderFunction($ch, $header): void
+    /**
+     * Function used for testing CURLOPT_HEADERFUNCTION.
+     *
+     * @param resource $ch
+     */
+    protected function protectedCurlHeaderFunction($ch, string $header): void
     {
         $this->headersFound[] = $header;
     }
 
-    // Function used for testing CURLOPT_HEADERFUNCTION
-    private function privateCurlHeaderFunction($ch, $header): void
+    /**
+     * Function used for testing CURLOPT_HEADERFUNCTION.
+     *
+     * @param resource $ch
+     */
+    private function privateCurlHeaderFunction($ch, string $header): void
     {
         $this->headersFound[] = $header;
     }
 
-    // Function used for testing CURLOPT_WRITEFUNCTION
-    private function privateCurlWriteFunction($ch, $body)
+    /**
+     * Function used for testing CURLOPT_WRITEFUNCTION.
+     *
+     * @param resource $ch
+     */
+    private function privateCurlWriteFunction($ch, string $body): int
     {
         $this->assertEquals('resource', \gettype($ch));
         $this->assertEquals('example response', $body);

@@ -127,7 +127,8 @@ class YamlTest extends TestCase
         $this->assertEquals($expected, $actual[1], 'Storing and reading second recording failed.');
     }
 
-    private function iterateAndTest($yaml, $expected, $message): void
+    /** @param array<mixed> $expected */
+    private function iterateAndTest(string $yaml, array $expected, string $message): void
     {
         file_put_contents($this->filePath, $yaml);
 

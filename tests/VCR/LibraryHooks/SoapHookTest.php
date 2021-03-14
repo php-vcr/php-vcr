@@ -17,8 +17,10 @@ class SoapHookTest extends TestCase
 {
     public const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl';
 
+    /** @var string */
     public $expected = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetCityWeatherByZIPResponse xmlns="http://ws.cdyne.com/WeatherWS/"><GetCityWeatherByZIPResult><Success>true</Success></GetCityWeatherByZIPResult></GetCityWeatherByZIPResponse></soap:Body></soap:Envelope>';
 
+    /** @var Configuration */
     protected $config;
 
     /** @var SoapHook */
@@ -104,6 +106,7 @@ class SoapHookTest extends TestCase
         });
     }
 
+    /** @param array<mixed> $expectedHeaders */
     protected function getHeadersCheckCallback(array $expectedHeaders): Closure
     {
         $test = $this;

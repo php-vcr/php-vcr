@@ -10,8 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractStorageTest extends TestCase
 {
-    protected $handle;
-    protected $filePath;
+    /** @var TestStorage */
     protected $storage;
 
     public function testFilePathCreated(): void
@@ -38,6 +37,7 @@ class AbstractStorageTest extends TestCase
 
 class TestStorage extends AbstractStorage
 {
+    /** @var array<mixed> */
     private $recording;
 
     public function storeRecording(array $recording): void

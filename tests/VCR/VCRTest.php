@@ -51,7 +51,7 @@ class VCRTest extends TestCase
         VCR::turnOff();
     }
 
-    private function doCurlGetRequest($url)
+    private function doCurlGetRequest(string $url): string
     {
         $ch = curl_init();
         curl_setopt($ch, \CURLOPT_URL, $url);
@@ -216,12 +216,13 @@ class VCRTest extends TestCase
         }
     }
 
-    public function recordEvent(Event $event, $eventName): void
+    public function recordEvent(Event $event, string $eventName): void
     {
         $this->events[$eventName] = $event;
     }
 
-    private function getRecordedEventNames()
+    /** @return string[] */
+    private function getRecordedEventNames(): array
     {
         return array_keys($this->events);
     }

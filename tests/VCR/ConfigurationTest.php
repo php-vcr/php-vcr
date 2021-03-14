@@ -109,13 +109,14 @@ class ConfigurationTest extends TestCase
     /**
      * @dataProvider availableStorageProvider
      */
-    public function testSetStorage($name, $className): void
+    public function testSetStorage(string $name, string $className): void
     {
         $this->config->setStorage($name);
         $this->assertEquals($className, $this->config->getStorage(), "$name should be class $className.");
     }
 
-    public function availableStorageProvider()
+    /** @return array<string[]> */
+    public function availableStorageProvider(): array
     {
         return [
             ['json', 'VCR\Storage\Json'],
