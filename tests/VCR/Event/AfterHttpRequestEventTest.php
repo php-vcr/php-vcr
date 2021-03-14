@@ -15,7 +15,7 @@ class AfterHttpRequestEventTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->event = new AfterHttpRequestEvent(new Request('GET', 'http://example.com'), new Response(200));
+        $this->event = new AfterHttpRequestEvent(new Request('GET', 'http://example.com'), new Response('200'));
     }
 
     public function testGetRequest(): void

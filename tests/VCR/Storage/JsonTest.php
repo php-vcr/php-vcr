@@ -80,8 +80,12 @@ class JsonTest extends TestCase
     public function testStoreRecording(): void
     {
         $expected = [
-            'request' => 'some request',
-            'response' => 'some response',
+            'request' => [
+                'some' => 'request',
+            ],
+            'response' => [
+                'some' => 'response',
+            ],
         ];
 
         $this->jsonObject->storeRecording($expected);

@@ -41,7 +41,7 @@ class VideorecorderTest extends TestCase
     public function testHandleRequestRecordsRequestWhenModeIsNewRecords(): void
     {
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
         $client = $this->getClientMock($request, $response);
         $configuration = new Configuration();
         $configuration->enableLibraryHooks([]);
@@ -68,7 +68,7 @@ class VideorecorderTest extends TestCase
         );
 
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
         $client = $this->getMockBuilder('\VCR\Util\HttpClient')->getMock();
         $configuration = new Configuration();
         $configuration->enableLibraryHooks([]);
@@ -89,7 +89,7 @@ class VideorecorderTest extends TestCase
     public function testHandleRequestRecordsRequestWhenModeIsOnceAndCassetteIsNew(): void
     {
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
         $client = $this->getClientMock($request, $response);
         $configuration = new Configuration();
         $configuration->enableLibraryHooks([]);
@@ -116,7 +116,7 @@ class VideorecorderTest extends TestCase
         );
 
         $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
         $client = $this->getMockBuilder('\VCR\Util\HttpClient')->getMock();
         $configuration = new Configuration();
         $configuration->enableLibraryHooks([]);

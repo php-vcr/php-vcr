@@ -40,7 +40,7 @@ class Request
     protected $curlOptions = [];
 
     /**
-     * @param array<string,string> $headers
+     * @param array<string,string|null> $headers
      */
     public function __construct(string $method, ?string $url, array $headers = [])
     {

@@ -131,8 +131,10 @@ class StreamProcessorTest extends TestCase
     public function testDirOpendirNotFound(): void
     {
         $test = $this;
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test): void {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test): bool {
             $test->assertStringContainsString('opendir(not_found', $errstr);
+
+            return true;
         });
 
         $processor = new StreamProcessor();

@@ -29,8 +29,8 @@ class CassetteTest extends TestCase
     public function testDontOverwriteRecord(): void
     {
         $request = new Request('GET', 'https://example.com');
-        $response1 = new Response(200, [], 'sometest');
-        $response2 = new Response(200, [], 'sometest');
+        $response1 = new Response('200', [], 'sometest');
+        $response2 = new Response('200', [], 'sometest');
         $this->cassette->record($request, $response1);
         $this->cassette->record($request, $response2);
 
@@ -40,7 +40,7 @@ class CassetteTest extends TestCase
     public function testPlaybackAlreadyRecordedRequest(): void
     {
         $request = new Request('GET', 'https://example.com');
-        $response = new Response(200, [], 'sometest');
+        $response = new Response('200', [], 'sometest');
         $this->cassette->record($request, $response);
 
         $this->assertEquals($response->toArray(), $this->cassette->playback($request)->toArray());
@@ -56,7 +56,7 @@ class CassetteTest extends TestCase
     public function testHasResponseFound(): void
     {
         $request = new Request('GET', 'https://example.com');
-        $response = new Response(200, [], 'sometest');
+        $response = new Response('200', [], 'sometest');
         $this->cassette->record($request, $response);
 
         $this->assertTrue($this->cassette->hasResponse($request), 'Expected true if request was found.');

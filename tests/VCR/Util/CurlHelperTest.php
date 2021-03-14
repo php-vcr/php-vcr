@@ -209,7 +209,7 @@ class CurlHelperTest extends TestCase
         $curlOptions = [
             \CURLOPT_RETURNTRANSFER => true,
         ];
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
 
         $output = CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
@@ -218,7 +218,7 @@ class CurlHelperTest extends TestCase
 
     public function testHandleResponseEchosBody(): void
     {
-        $response = new Response(200, [], 'example response');
+        $response = new Response('200', [], 'example response');
 
         ob_start();
         CurlHelper::handleOutput($response, [], curl_init());
@@ -234,7 +234,7 @@ class CurlHelperTest extends TestCase
             \CURLOPT_RETURNTRANSFER => true,
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
@@ -254,12 +254,12 @@ class CurlHelperTest extends TestCase
             },
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
         $headers = [
-            'Content-Length' => 0,
+            'Content-Length' => '0',
         ];
         $response = new Response($status, $headers, 'example response');
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
@@ -279,12 +279,12 @@ class CurlHelperTest extends TestCase
             \CURLOPT_HEADERFUNCTION => [$this, 'publicCurlHeaderFunction'],
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
         $headers = [
-            'Content-Length' => 0,
+            'Content-Length' => '0',
         ];
         $response = new Response($status, $headers, 'example response');
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
@@ -304,12 +304,12 @@ class CurlHelperTest extends TestCase
             \CURLOPT_HEADERFUNCTION => [$this, 'protectedCurlHeaderFunction'],
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
         $headers = [
-            'Content-Length' => 0,
+            'Content-Length' => '0',
         ];
         $response = new Response($status, $headers, 'example response');
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
@@ -329,12 +329,12 @@ class CurlHelperTest extends TestCase
             \CURLOPT_HEADERFUNCTION => [$this, 'privateCurlHeaderFunction'],
         ];
         $status = [
-            'code' => 200,
+            'code' => '200',
             'message' => 'OK',
             'http_version' => '1.1',
         ];
         $headers = [
-            'Content-Length' => 0,
+            'Content-Length' => '0',
         ];
         $response = new Response($status, $headers, 'example response');
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
@@ -360,7 +360,7 @@ class CurlHelperTest extends TestCase
                 return \strlen($body);
             },
         ];
-        $response = new Response(200, [], $expectedBody);
+        $response = new Response('200', [], $expectedBody);
 
         CurlHelper::handleOutput($response, $curlOptions, $expectedCh);
     }
@@ -373,7 +373,7 @@ class CurlHelperTest extends TestCase
         $curlOptions = [
             \CURLOPT_WRITEFUNCTION => [$this, 'privateCurlWriteFunction'],
         ];
-        $response = new Response(200, [], $expectedBody);
+        $response = new Response('200', [], $expectedBody);
 
         CurlHelper::handleOutput($response, $curlOptions, $expectedCh);
     }
@@ -388,7 +388,7 @@ class CurlHelperTest extends TestCase
             \CURLOPT_FILE => fopen($testFile, 'w+'),
         ];
 
-        $response = new Response(200, [], $expectedBody);
+        $response = new Response('200', [], $expectedBody);
 
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 

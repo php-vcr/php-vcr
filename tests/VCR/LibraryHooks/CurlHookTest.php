@@ -133,7 +133,7 @@ class CurlHookTest extends TestCase
                     'Post query string was not parsed and set correctly.'
                 );
 
-                return new Response(200);
+                return new Response('200');
             }
         );
 
@@ -155,7 +155,7 @@ class CurlHookTest extends TestCase
                     'Post query string was not parsed and set correctly.'
                 );
 
-                return new Response(200);
+                return new Response('200');
             }
         );
 
@@ -287,7 +287,7 @@ class CurlHookTest extends TestCase
                 );
                 ++$callCount;
 
-                return new Response(200);
+                return new Response('200');
             }
         );
 
@@ -299,11 +299,11 @@ class CurlHookTest extends TestCase
         curl_multi_add_handle($curlMultiHandle, $curlHandle2);
 
         $stillRunning = null;
-        $mh = curl_multi_exec($curlMultiHandle, $stillRunning);
+        curl_multi_exec($curlMultiHandle, $stillRunning);
 
-        $lastInfo = curl_multi_info_read($mh);
-        $secondLastInfo = curl_multi_info_read($mh);
-        $afterLastInfo = curl_multi_info_read($mh);
+        $lastInfo = curl_multi_info_read($curlMultiHandle);
+        $secondLastInfo = curl_multi_info_read($curlMultiHandle);
+        $afterLastInfo = curl_multi_info_read($curlMultiHandle);
 
         curl_multi_remove_handle($curlMultiHandle, $curlHandle1);
         curl_multi_remove_handle($curlMultiHandle, $curlHandle2);
@@ -364,7 +364,7 @@ class CurlHookTest extends TestCase
                     ''
                 );
 
-                return new Response(200);
+                return new Response('200');
             }
         );
 

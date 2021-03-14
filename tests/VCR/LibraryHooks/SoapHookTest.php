@@ -100,7 +100,7 @@ class SoapHookTest extends TestCase
         $testClass = $this;
 
         return Closure::fromCallable(function () use ($testClass) {
-            return new Response(200, [], $testClass->expected);
+            return new Response('200', [], $testClass->expected);
         });
     }
 
@@ -113,7 +113,7 @@ class SoapHookTest extends TestCase
                 $test->assertEquals($expectedHeader, $request->getHeader($expectedHeaderName));
             }
 
-            return new Response(200, [], '');
+            return new Response('200', [], '');
         });
     }
 }
