@@ -10,6 +10,9 @@ use VCR\Response;
 
 class CurlHelperTest extends TestCase
 {
+    /** @var string[] */
+    private $headersFound;
+
     /**
      * @dataProvider getHttpMethodsProvider()
      */

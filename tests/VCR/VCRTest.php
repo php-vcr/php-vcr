@@ -11,6 +11,9 @@ use VCR\Event\Event;
  */
 class VCRTest extends TestCase
 {
+    /** @var array<string, Event> */
+    private $events;
+
     public static function setupBeforeClass(): void
     {
         VCR::configure()->setCassettePath('tests/fixtures');
