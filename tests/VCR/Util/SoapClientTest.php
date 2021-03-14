@@ -11,7 +11,7 @@ class SoapClientTest extends TestCase
     public const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl';
     public const ACTION = 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP';
 
-    /** @return SoapHook|MockObject */
+    /** @return SoapHook&MockObject */
     protected function getLibraryHookMock(bool $enabled)
     {
         $hookMock = $this->getMockBuilder(SoapHook::class)

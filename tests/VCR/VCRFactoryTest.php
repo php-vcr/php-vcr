@@ -13,6 +13,8 @@ class VCRFactoryTest extends TestCase
     /**
      * @dataProvider instanceProvider
      * @covers \VCR\VCRFactory::createVCRVideorecorder()
+     *
+     * @param class-string $instance
      */
     public function testCreateInstances(string $instance): void
     {
@@ -37,6 +39,8 @@ class VCRFactoryTest extends TestCase
 
     /**
      * @dataProvider storageProvider
+     *
+     * @param class-string $className
      */
     public function testCreateStorage(string $storage, string $className): void
     {

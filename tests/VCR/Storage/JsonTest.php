@@ -109,7 +109,7 @@ class JsonTest extends TestCase
         $this->jsonObject->storeRecording($stored);
         $this->jsonObject->storeRecording($stored);
 
-        $this->assertJson(file_get_contents($this->filePath));
+        $this->assertJson((string) file_get_contents($this->filePath));
     }
 
     public function testStoreRecordingWhenBlankFileAlreadyExists(): void
@@ -124,7 +124,7 @@ class JsonTest extends TestCase
         ];
         $jsonObject->storeRecording($stored);
 
-        $this->assertJson(file_get_contents($filePath));
+        $this->assertJson((string) file_get_contents($filePath));
     }
 
     /** @param array<mixed> $expected */

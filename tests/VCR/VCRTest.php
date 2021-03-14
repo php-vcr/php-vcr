@@ -2,6 +2,7 @@
 
 namespace VCR;
 
+use Assert\Assertion;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use VCR\Event\Event;
@@ -59,6 +60,8 @@ class VCRTest extends TestCase
         curl_setopt($ch, \CURLOPT_POST, false);
         $output = curl_exec($ch);
         curl_close($ch);
+
+        Assertion::string($output);
 
         return $output;
     }

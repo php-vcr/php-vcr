@@ -192,7 +192,7 @@ class StreamProcessorTest extends TestCase
         $this->assertTrue($mock->unlink($path));
     }
 
-    /** @return StreamProcessor|MockObject */
+    /** @return StreamProcessor&MockObject */
     protected function getStreamProcessorMock()
     {
         return $this->getMockBuilder(StreamProcessor::class)

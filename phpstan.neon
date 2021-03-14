@@ -2,6 +2,7 @@ parameters:
     level: 7
     paths:
         - src
+        - tests/VCR
     # Can remove reportUnmatchedIgnoredErrors option after php 7.2 is no longer supported
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:

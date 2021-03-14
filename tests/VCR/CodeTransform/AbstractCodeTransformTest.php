@@ -10,7 +10,7 @@ class AbstractCodeTransformTest extends TestCase
     /**
      * @param string[] $methods
      *
-     * @return AbstractCodeTransform|MockObject
+     * @return AbstractCodeTransform&MockObject
      */
     protected function getFilter(array $methods = [])
     {
