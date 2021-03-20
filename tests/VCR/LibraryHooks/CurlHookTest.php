@@ -373,6 +373,78 @@ class CurlHookTest extends TestCase
         curl_multi_close($curlMultiHandle);
     }
 
+    public function testShouldReturnMultiCallValues(): void
+    {
+        $testClass = $this;
+        $callCount = 0;
+        $this->curlHook->enable(
+            function (Request $request) use ($testClass, &$callCount) {
+                $testClass->assertEquals(
+                    'example.com',
+                    $request->getHost(),
+                    ''
+                );
+                ++$callCount;
+
+                return new Response('200', [], $testClass->expected.$callCount);
+            }
+        );
+
+        $curlHandle1 = curl_init('http://example.com');
+        Assertion::isResource($curlHandle1);
+        curl_setopt($curlHandle1, \CURLOPT_RETURNTRANSFER, true);
+        $curlHandle2 = curl_init('http://example.com');
+        Assertion::isResource($curlHandle2);
+        curl_setopt($curlHandle2, \CURLOPT_RETURNTRANSFER, true);
+        $curlHandle3 = curl_init('http://example.com');
+        Assertion::isResource($curlHandle3);
+        curl_setopt($curlHandle3, \CURLOPT_RETURNTRANSFER, false);
+
+        $curlMultiHandle = curl_multi_init();
+        Assertion::isResource($curlMultiHandle);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle2);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle3);
+
+        $stillRunning = null;
+        ob_start();
+        curl_multi_exec($curlMultiHandle, $stillRunning);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $returnValue1 = curl_multi_getcontent($curlHandle1);
+        $returnValue2 = curl_multi_getcontent($curlHandle2);
+        $returnValue3 = curl_multi_getcontent($curlHandle3);
+
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle2);
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle3);
+        curl_multi_close($curlMultiHandle);
+
+        $this->curlHook->disable();
+
+        $this->assertEquals(3, $callCount, 'Hook should have been called thrice.');
+        $this->assertSame(
+            $this->expected.'1',
+            $returnValue1,
+            'When called with the first handle the curl_multi_getcontent should return the body of the first response.'
+        );
+
+        $this->assertSame(
+            $this->expected.'2',
+            $returnValue2,
+            'When called with the second handle the curl_multi_getcontent should return the body of the second response.'
+        );
+
+        $this->assertNull($returnValue3, 'When called with the third handle the curl_multi_getcontent should return null.');
+
+        $this->assertSame(
+            $this->expected.'3',
+            $output,
+            'The third response was not written on stdout.'
+        );
+    }
+
     /**
      * @requires PHP 5.5.0
      */
