@@ -3,6 +3,7 @@
 namespace VCR;
 
 use VCR\Storage\Storage;
+use VCR\Util\Scrubber;
 
 /**
  * A Cassette records and plays back pairs of Requests and Responses in a Storage.
@@ -67,10 +68,14 @@ class Cassette
      */
     public function playback(Request $request): ?Response
     {
+        $scrubber = new Scrubber($this->config);
+
         foreach ($this->storage as $recording) {
-            $storedRequest = Request::fromArray($recording['request']);
+            $unscrubbedRecording = $scrubber->unscrub($recording);
+
+            $storedRequest = Request::fromArray($unscrubbedRecording['request']);
             if ($storedRequest->matches($request, $this->getRequestMatchers())) {
-                return Response::fromArray($recording['response']);
+                return Response::fromArray($unscrubbedRecording['response']);
             }
         }
 
@@ -89,10 +94,8 @@ class Cassette
             return;
         }
 
-        $recording = [
-            'request' => $request->toArray(),
-            'response' => $response->toArray(),
-        ];
+        $scrubber = new Scrubber($this->config);
+        $recording = $scrubber->scrub($request, $response);
 
         $this->storage->storeRecording($recording);
     }
