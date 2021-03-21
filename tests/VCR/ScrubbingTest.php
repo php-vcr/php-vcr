@@ -74,7 +74,7 @@ class ScrubbingTest extends TestCase
         $requestPart = $this->storedRecording()['request'];
 
         $this->assertEquals('http://example.com?secret=<REQ_QUERY_SECRET>', $requestPart['url']);
-        $this->assertContains('X-Req-Header: secret;<REQ_HEADER_SECRET>', $requestPart['headers']);
+        $this->assertEquals('secret;<REQ_HEADER_SECRET>', $requestPart['headers']['X-Req-Header']);
         $this->assertEquals('This is a <REQ_BODY_SECRET>', $requestPart['body']);
         $this->assertEquals('<REQ_FIELD_SECRET>', $requestPart['post_fields']['password']);
     }
@@ -101,7 +101,7 @@ class ScrubbingTest extends TestCase
         $cassette->record($this->request, $this->response);
         $responsePart = $this->storedRecording()['response'];
 
-        $this->assertContains('X-Resp-Header: secret;<RESP_HEADER_SECRET>', $responsePart['headers']);
+        $this->assertEquals('secret;<RESP_HEADER_SECRET>', $responsePart['headers']['X-Resp-Header']);
         $this->assertEquals('This is a <RESP_BODY_SECRET>', $responsePart['body']);
     }
 
