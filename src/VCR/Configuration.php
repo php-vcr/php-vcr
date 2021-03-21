@@ -84,10 +84,10 @@ class Configuration
      *
      * Format:
      * array(
-     *  '<REPLACEMENT>' => Closure(VCR\Request $request, VCR\Response $response): ?string
+     *  '<REPLACEMENT>' => callable(VCR\Request $request, VCR\Response $response): ?string
      * )
      *
-     * @var array<string, Closure>
+     * @var array<string, callable>
      */
     private $redactions;
 
@@ -384,7 +384,7 @@ class Configuration
     /**
      * Gets the defined redactions.
      *
-     * @return array<string, string|callable>
+     * @return array<string, callable>
      */
     public function getRedactions(): array
     {
@@ -394,21 +394,19 @@ class Configuration
     /**
      * Adds a redaction.
      *
-     * @param string          $replacement  the string that replaces the private value in storage
-     * @param string|callable $value Either the secret to replace, or a callback which returns the secret
+     * @param string          $replacement The string that replaces the private value in storage
+     * @param string|callable $secret      Either the secret to replace, or a callback which returns the secret
      */
     public function addRedaction(string $replacement, $secret): self
     {
-        if (\is_string($secret) && $replacement != "") {
-            $func = function($request, $response) use ($secret) {
+        if (\is_string($secret) && '' != $replacement) {
+            $func = function ($request, $response) use ($secret) {
                 return $secret;
             };
         } elseif (\is_callable($secret)) {
             $func = $secret;
         } else {
-            throw new \InvalidArgumentException(
-                "Redaction replacement string must be a non-empty string or callable."
-            );
+            throw new \InvalidArgumentException('Redaction replacement string must be a non-empty string or callable.');
         }
 
         $this->redactions[$replacement] = $func;

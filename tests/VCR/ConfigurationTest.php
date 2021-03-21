@@ -167,7 +167,7 @@ class ConfigurationTest extends TestCase
     public function testAddRedactionFailsWithNoToken(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage("Redaction replacement string must be a non-empty string or callable.");
+        $this->expectExceptionMessage('Redaction replacement string must be a non-empty string or callable.');
         $this->config->addRedaction('', 'secret123');
     }
 
@@ -180,7 +180,9 @@ class ConfigurationTest extends TestCase
         $this->assertIsCallable($filters['<PASSWORD>']);
 
         $request = new \VCR\Request('GET', 'http://example.com');
-        $response = new \VCR\Response(200, [], 'body');
+        $response = new \VCR\Response('200', [], 'body');
+
+        /* @phpstan-ignore-next-line */
         $this->assertEquals('secret123', $filters['<PASSWORD>']($request, $response));
     }
 

@@ -3,9 +3,6 @@
 namespace VCR;
 
 use PHPUnit\Framework\TestCase;
-use VCR\Cassette;
-use VCR\Configuration;
-use VCR\Request;
 use VCR\Storage\Blackhole;
 
 /**
@@ -13,19 +10,37 @@ use VCR\Storage\Blackhole;
  */
 class ScrubbingTest extends TestCase
 {
-    public function setUp(): void
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * @var Response
+     */
+    protected $response;
+
+    /**
+     * @var Storage\Storage
+     */
+    protected $storage;
+
+    protected function setUp(): void
     {
         $this->request = new Request('GET', 'http://example.com?secret=query_secret', [
-            'X-Req-Header: secret;request_header_secret'
+            'X-Req-Header' => 'secret;request_header_secret',
         ]);
         $this->request->setBody('This is a request_body_secret');
         $this->request->setPostFields([
-            'password' => 'post_field_secret'
+            'password' => 'post_field_secret',
         ]);
-        $this->response = new Response(200, [
-            'X-Resp-Header: secret;response_header_secret'
+        $this->response = new Response('200', [
+            'X-Resp-Header' => 'secret;response_header_secret',
         ], 'This is a response_body_secret');
         $this->storage = new class() extends Blackhole {
+            /**
+             * @var array<string,mixed>
+             */
             public $recording;
 
             public function storeRecording(array $recording): void
@@ -42,8 +57,8 @@ class ScrubbingTest extends TestCase
         $cassette = new Cassette('test', $config, $this->storage);
         $cassette->record($this->request, $this->response);
 
-        $this->assertArrayHasKey('request', $this->storage->recording);
-        $this->assertArrayHasKey('response', $this->storage->recording);
+        $this->assertArrayHasKey('request', $this->storedRecording());
+        $this->assertArrayHasKey('response', $this->storedRecording());
     }
 
     public function testItScrubsInRequest(): void
@@ -56,7 +71,7 @@ class ScrubbingTest extends TestCase
 
         $cassette = new Cassette('test', $config, $this->storage);
         $cassette->record($this->request, $this->response);
-        $requestPart = $this->storage->recording['request'];
+        $requestPart = $this->storedRecording()['request'];
 
         $this->assertEquals('http://example.com?secret=<REQ_QUERY_SECRET>', $requestPart['url']);
         $this->assertContains('X-Req-Header: secret;<REQ_HEADER_SECRET>', $requestPart['headers']);
@@ -64,7 +79,7 @@ class ScrubbingTest extends TestCase
         $this->assertEquals('<REQ_FIELD_SECRET>', $requestPart['post_fields']['password']);
     }
 
-    public function testItReplacesMultipleInOneField()
+    public function testItReplacesMultipleInOneField(): void
     {
         $config = new Configuration();
         $config->addRedaction('<SECRET1>', 'password is passw0rd')
@@ -73,7 +88,7 @@ class ScrubbingTest extends TestCase
 
         $cassette = new Cassette('test', $config, $this->storage);
         $cassette->record($this->request, $this->response);
-        $requestPart = $this->storage->recording['request'];
+        $requestPart = $this->storedRecording()['request'];
         $this->assertEquals('Your <SECRET1> and your <SECRET2>.', $requestPart['body']);
     }
 
@@ -84,7 +99,7 @@ class ScrubbingTest extends TestCase
             ->addRedaction('<RESP_HEADER_SECRET>', 'response_header_secret');
         $cassette = new Cassette('test', $config, $this->storage);
         $cassette->record($this->request, $this->response);
-        $responsePart = $this->storage->recording['response'];
+        $responsePart = $this->storedRecording()['response'];
 
         $this->assertContains('X-Resp-Header: secret;<RESP_HEADER_SECRET>', $responsePart['headers']);
         $this->assertEquals('This is a <RESP_BODY_SECRET>', $responsePart['body']);
@@ -93,7 +108,7 @@ class ScrubbingTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testDynamicFilterReturningFalseyWorks()
+    public function testDynamicFilterReturningFalseyWorks(): void
     {
         $config = new Configuration();
         $config->addRedaction('<DYNAMIC_SECRET>', function (Request $request, Response $response) {
@@ -103,7 +118,7 @@ class ScrubbingTest extends TestCase
         $cassette->record($this->request, $this->response);
     }
 
-    public function testDynamicFilterReturningTruthyIsScrubbed()
+    public function testDynamicFilterReturningTruthyIsScrubbed(): void
     {
         $config = new Configuration();
         $config->addRedaction('<DYNAMIC_SECRET>', function (Request $request, Response $response) {
@@ -111,12 +126,12 @@ class ScrubbingTest extends TestCase
         });
         $cassette = new Cassette('test', $config, $this->storage);
         $cassette->record($this->request, $this->response);
-        $responsePart = $this->storage->recording['response'];
+        $responsePart = $this->storedRecording()['response'];
 
         $this->assertEquals('<DYNAMIC_SECRET>', $responsePart['body']);
     }
 
-    public function testWorksWithNoMatchingFilters()
+    public function testWorksWithNoMatchingFilters(): void
     {
         $config = new Configuration();
         $config->enableRequestMatchers(['url']);
@@ -128,7 +143,7 @@ class ScrubbingTest extends TestCase
         $this->assertEquals('"359670651"', $response->getHeader('Etag'));
     }
 
-    public function testUnscrubsResponseFields()
+    public function testUnscrubsResponseFields(): void
     {
         $config = new Configuration();
         $config->enableRequestMatchers(['url'])
@@ -142,7 +157,7 @@ class ScrubbingTest extends TestCase
         $this->assertEquals('"RESP_HEADER_SECRET"', $response->getHeader('Etag'));
     }
 
-    public function testMatchesRequestsAfterUnscrubbing()
+    public function testMatchesRequestsAfterUnscrubbing(): void
     {
         $config = new Configuration();
         $config->enableRequestMatchers(['url'])
@@ -155,5 +170,14 @@ class ScrubbingTest extends TestCase
 
         $this->assertNotNull($response);
         $this->assertEquals('This is a RESP_BODY_SECRET.', $response->getBody());
+    }
+
+    /**
+     * @return array<string,mixed> The recording from the anonymous test Storage
+     */
+    private function storedRecording(): array
+    {
+        /* @phpstan-ignore-next-line */
+        return $this->storage->recording;
     }
 }

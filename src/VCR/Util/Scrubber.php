@@ -8,7 +8,6 @@ use VCR\Response;
 
 class Scrubber
 {
-
     /**
      * VCR configuration.
      *
@@ -31,7 +30,8 @@ class Scrubber
      *
      * @param Request  $request  request to scrub
      * @param Response $response response to scrub
-     * @return array   The scrubbed recording, ie. an array with request and response keys
+     *
+     * @return array<string,mixed> The scrubbed recording
      */
     public function scrub(Request $request, Response $response)
     {
@@ -44,8 +44,9 @@ class Scrubber
     /**
      * Unmask the redacted parts of a recording, using the configured redactions.
      *
-     * @param array  $recording  The recording, ie. an array with 'request' and 'response' keys
-     * @return array The unscrubbed recording
+     * @param array<string,mixed> $recording The recording, ie. an array with 'request' and 'response' keys
+     *
+     * @return array<string,mixed> The unscrubbed recording
      */
     public function unscrub($recording)
     {
@@ -60,8 +61,9 @@ class Scrubber
     /**
      * Evaluate the configured redactions in the context of the request/response pair.
      *
-     * @param Request  $request      The request
-     * @param Response $response     The response
+     * @param Request  $request  The request
+     * @param Response $response The response
+     *
      * @return array<string, string> An array of token => replacement pairs
      */
     private function evaluateRedactions($request, $response)
@@ -86,22 +88,24 @@ class Scrubber
      *
      * @param Request  $request  The request
      * @param Response $response The response
-     * @return array   The recording, ie. an array with request and response keys
+     *
+     * @return array<string,mixed> The recording, ie. an array with request and response keys
      */
     private function buildRecording(Request $request, Response $response)
     {
         return [
             'request' => $request->toArray(),
-            'response' => $response->toArray()
+            'response' => $response->toArray(),
         ];
     }
 
     /**
      * Walk an array recursively, replacing substrings on each key.
      *
-     * @param  array                $arr          The array to traverse
-     * @param  array<string,string> $replacements Replacements in search=>replacement pairs
-     * @return array                The resulting array with all replacements performed
+     * @param array<string,mixed>  $arr          The array to traverse
+     * @param array<string,string> $replacements Replacements in search=>replacement pairs
+     *
+     * @return array<string,mixed> The resulting array with all replacements performed
      */
     private function scrubArray(array &$arr, $replacements)
     {
