@@ -80,6 +80,18 @@ class Configuration
     private $enabledRequestMatchers;
 
     /**
+     * A hash of redactions that have been configured.
+     *
+     * Format:
+     * array(
+     *  '<REPLACEMENT>' => Closure(VCR\Request $request, VCR\Response $response): ?string
+     * )
+     *
+     * @var array<string, Closure>
+     */
+    private $redactions;
+
+    /**
      * Format:
      * array(
      *  'name' => callback
@@ -365,6 +377,41 @@ class Configuration
     {
         Assertion::choice($mode, $this->availableModes, "Mode '{$mode}' does not exist.");
         $this->mode = $mode;
+
+        return $this;
+    }
+
+    /**
+     * Gets the defined redactions.
+     *
+     * @return array<string, string|callable>
+     */
+    public function getRedactions(): array
+    {
+        return $this->redactions ?? [];
+    }
+
+    /**
+     * Adds a redaction.
+     *
+     * @param string          $replacement  the string that replaces the private value in storage
+     * @param string|callable $value Either the secret to replace, or a callback which returns the secret
+     */
+    public function addRedaction(string $replacement, $secret): self
+    {
+        if (\is_string($secret) && $replacement != "") {
+            $func = function($request, $response) use ($secret) {
+                return $secret;
+            };
+        } elseif (\is_callable($secret)) {
+            $func = $secret;
+        } else {
+            throw new \InvalidArgumentException(
+                "Redaction replacement string must be a non-empty string or callable."
+            );
+        }
+
+        $this->redactions[$replacement] = $func;
 
         return $this;
     }
