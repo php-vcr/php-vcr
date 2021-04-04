@@ -173,7 +173,7 @@ class CurlHelper
                     if (!isset($headerParts[1])) {
                         $headerParts[0] = rtrim($headerParts[0], ':');
                         $headerParts[1] = '';
-                        if (strpos($headerParts[0], ';') !== false) {       // new lines here
+                        if (strpos($headerParts[0], ';') !== false) {
                             $headerParts[0] = rtrim($headerParts[0], ';');
                             $headerParts[1] = ';';
                         }  
