@@ -188,7 +188,11 @@ class CurlHelperTest extends TestCase
 
         $test = $this;
         $callback = function ($curlHandle, $fileHandle, $size) use ($test, $expected) {
-            $test->assertIsResource($curlHandle);
+            if (\PHP_VERSION_ID < 80000) {
+                $test->assertIsResource($curlHandle);
+            } else {
+                $test->assertInstanceOf(\CurlHandle::class, $curlHandle);
+            }
             $test->assertIsResource($fileHandle);
             $test->assertEquals(\strlen($expected), $size);
 
@@ -571,7 +575,11 @@ class CurlHelperTest extends TestCase
      */
     private function privateCurlWriteFunction($ch, string $body): int
     {
-        $this->assertEquals('resource', \gettype($ch));
+        if (\PHP_VERSION_ID < 80000) {
+            $this->assertEquals('resource', \gettype($ch));
+        } else {
+            $this->assertInstanceOf(\CurlHandle::class, $ch);
+        }
         $this->assertEquals('example response', $body);
 
         return \strlen($body);
