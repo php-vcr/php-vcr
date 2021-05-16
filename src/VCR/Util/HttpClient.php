@@ -23,7 +23,11 @@ class HttpClient
     {
         $ch = curl_init($request->getUrl());
 
-        Assertion::isResource($ch, "Could not init curl with URL '{$request->getUrl()}'");
+        if (\PHP_VERSION_ID < 80000) {
+            Assertion::isResource($ch, "Could not init curl with URL '{$request->getUrl()}'");
+        } else {
+            Assertion::isObject($ch, "Could not init curl with URL '{$request->getUrl()}'");
+        }
 
         curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, $request->getMethod());
         curl_setopt($ch, \CURLOPT_HTTPHEADER, HttpUtil::formatHeadersForCurl($request->getHeaders()));
