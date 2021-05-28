@@ -51,4 +51,24 @@ class StreamWrapperHookTest extends TestCase
         // invalid whence
         $this->assertFalse($hook->stream_seek(0, -1));
     }
+
+    public function testReadHeaders()
+    {
+        $hook = new StreamWrapperHook();
+        $hook->enable(function ($request) {
+            return new Response(
+                array('code' => 200, 'http_version' => '1.1', 'message' => 'OK'),
+                array('Content-Type' => 'text/plain'),
+                'A Test'
+            );
+        });
+        $hook->stream_open('http://example.com', 'r', 0, $openedPath);
+
+        $this->assertArrayHasKey('headers', $hook);
+        $expected = array(
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/plain'
+        );
+        $this->assertEquals($expected, $hook['headers']);
+    }
 }
