@@ -11,6 +11,21 @@ class Assertion extends BaseAssertion
 
     public const INVALID_CALLABLE = 910;
 
+    public static function isCurlResource($value): bool
+    {
+        if(get_class($value) == CurlHandle::class) {
+            return true;
+        }
+
+        $errorMessage = "Could not init curl with URL '{$request->getUrl()}'";
+
+        if($value === false) {
+            throw new \Exception($errorMessage);
+        }
+
+        return Assertion::isResource($value, $errorMessage);
+    }
+
     /**
      * Assert that the value is callable.
      *
