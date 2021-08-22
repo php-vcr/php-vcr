@@ -34,5 +34,10 @@
         "psr-4": {
             "VCR\\": "src/VCR/"
         }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/"
+        ]
     }
 }
