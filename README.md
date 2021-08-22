@@ -1,6 +1,6 @@
 ![PHP-VCR](https://user-images.githubusercontent.com/133832/27151811-0d95c6c4-514c-11e7-834e-eff1eec2ea16.png)
 
-[![Build Status](https://travis-ci.org/php-vcr/php-vcr.svg?branch=master)](https://travis-ci.org/php-vcr/php-vcr)
+[![Build Status](https://github.com/php-vcr/php-vcr/actions/workflows/tests.yml/badge.svg)](https://github.com/php-vcr/php-vcr/actions/workflows/tests.yml)
 [![Code Coverage](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/coverage.png?s=15cf1644c8cf37a868e03cfba809a5e24c78f285)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/quality-score.png?s=4f638dbca5eb51fb9c87a1dd45c5df94687d85bd)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
 

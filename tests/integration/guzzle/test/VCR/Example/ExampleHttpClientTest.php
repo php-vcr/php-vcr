@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExampleHttpClientTest extends TestCase
 {
-    public const TEST_GET_URL = 'https://api.chew.pro/trbmb';
+    public const TEST_GET_URL = 'https://httpbin.org/get';
     public const TEST_POST_URL = 'https://httpbin.org/post';
     public const TEST_POST_BODY = '{"foo":"bar"}';
 
@@ -90,7 +90,7 @@ class ExampleHttpClientTest extends TestCase
     protected function assertValidGETResponse($info): void
     {
         $this->assertIsArray($info, 'Response is not an array.');
-        $this->assertArrayHasKey('0', $info, 'API did not return any value.');
+        $this->assertArrayHasKey('url', $info, 'API did not return any value.');
     }
 
     protected function assertValidPOSTResponse($info): void
