@@ -4,27 +4,25 @@ matrix:
   fast_finish: true
   include:
     - env: TEST_DIR=. PHP_CS_FIXER=true PHPSTAN=true
-      php: 7.2
+      php: 7.3
     - env: TEST_DIR=. COMPOSER_FLAGS="--prefer-lowest"
-      php: 7.2
-    - env: TEST_DIR=.
       php: 7.3
     - env: TEST_DIR=.
       php: 7.4
     - env: TEST_DIR=tests/integration/apache
-      php: 7.2
+      php: 7.3
       dist: trusty
       sudo: required
       services:
       - docker
     - env: TEST_DIR=tests/integration/guzzle/3
-      php: 7.2
+      php: 7.3
     - env: TEST_DIR=tests/integration/guzzle/5
-      php: 7.2
+      php: 7.3
     - env: TEST_DIR=tests/integration/guzzle/6
-      php: 7.2
+      php: 7.3
     - env: TEST_DIR=tests/integration/soap
-      php: 7.2
+      php: 7.3
 
 before_install:
   - composer self-update
