@@ -1,11 +1,11 @@
 <?php
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setRules([
         '@PSR12' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
-        '@PHP71Migration' => true,
+        '@PHP73Migration' => true,
         '@PHP71Migration:risky' => true,
         '@PHPUnit84Migration:risky' => true,
         // Causes too much problems for now, fix later
