@@ -1,0 +1,155 @@
+name: "tests"
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+
+jobs:
+  phpstan:
+    name: "PHPStan"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.3"
+          extensions: "curl, soap"
+          tools: "composer:v2"
+
+      - name: "Check Composer configuration"
+        run: "composer validate --strict"
+
+      - name: "Install dependencies"
+        run: "composer update --prefer-dist --no-interaction --no-progress"
+
+      - name: "Execute static analysis"
+        run: "composer run-script phpstan"
+
+  lint:
+    name: "PHP-CS-Fixer"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.3"
+          extensions: "curl, soap"
+          tools: "composer:v2"
+
+      - name: "Check Composer configuration"
+        run: "composer validate --strict"
+
+      - name: "Install dependencies"
+        run: "composer update --prefer-dist --no-interaction --no-progress"
+
+      - name: "Execute linting"
+        run: "composer run-script lint"
+
+  tests:
+    strategy:
+      fail-fast: true
+      matrix:
+        php: ["7.3", "7.4"]
+        composer_flags: ["", "--prefer-lowest"]
+
+    name: "Tests PHP ${{ matrix.php }} ${{ matrix.composer_flags}}"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php }}"
+          extensions: "curl, soap"
+          tools: "composer:v2"
+          coverage: "pcov"
+
+      - name: "Check Composer configuration"
+        run: "composer validate --strict"
+
+      - name: "Install dependencies"
+        run: "composer update -o ${{ matrix.composer_flags }} --prefer-dist --no-interaction --no-progress"
+
+      - name: "Execute tests"
+        run: "vendor/bin/phpunit --coverage-clover=coverage.clover"
+
+      - name: "Upload code coverage"
+        run: "wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover"
+
+  guzzle:
+    strategy:
+      fail-fast: true
+      matrix:
+        guzzle: ["3", "5", "6"]
+
+    name: "Integration test for Guzzle ${{ matrix.guzzle }}"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.3"
+          extensions: "curl, soap"
+          tools: "composer:v2"
+          coverage: "pcov"
+
+      - name: "Check Composer configuration"
+        run: "composer validate --strict"
+
+      - name: "Install dependencies"
+        run: "composer update --prefer-dist --no-interaction --no-progress"
+
+      - name: "Execute tests"
+        run: "cd tests/integration/guzzle/${{ matrix.guzzle }}/ && composer update --prefer-dist --no-interaction --no-progress && ../../../../vendor/bin/phpunit --coverage-clover=coverage.clover"
+
+      - name: "Upload code coverage"
+        run: "wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover"
+
+  soap:
+    strategy:
+      fail-fast: true
+
+    name: "SOAP integration test"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.3"
+          extensions: "curl, soap"
+          tools: "composer:v2"
+          coverage: "pcov"
+
+      - name: "Check Composer configuration"
+        run: "composer validate --strict"
+
+      - name: "Install dependencies"
+        run: "composer update --prefer-dist --no-interaction --no-progress"
+
+      - name: "Execute tests"
+        run: "cd tests/integration/soap/ && composer update --prefer-dist --no-interaction --no-progress && ../../../vendor/bin/phpunit --coverage-clover=coverage.clover"
+
+      - name: "Upload code coverage"
+        run: "wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover"

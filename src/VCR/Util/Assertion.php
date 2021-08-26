@@ -9,7 +9,7 @@ class Assertion extends BaseAssertion
 {
     protected static $exceptionClass = 'VCR\VCRException';
 
-    const INVALID_CALLABLE = 910;
+    public const INVALID_CALLABLE = 910;
 
     /**
      * Assert that the value is callable.

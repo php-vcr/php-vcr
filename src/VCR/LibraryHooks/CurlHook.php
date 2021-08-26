@@ -37,7 +37,7 @@ class CurlHook implements LibraryHook
     protected static $responses = [];
 
     /**
-     * @var array<int,mixed> additinal curl options, which are not stored within a request
+     * @var array<int,mixed> additional curl options, which are not stored within a request
      */
     protected static $curlOptions = [];
 
@@ -50,6 +50,11 @@ class CurlHook implements LibraryHook
      * @var array<int, array> last active curl_multi_exec() handles
      */
     protected static $multiExecLastChs = [];
+
+    /**
+     * @var array<int, string|null> return values of curl_multi responses
+     */
+    protected static $multiReturnValues = [];
 
     /**
      * @var CurlException[] last cURL error, as a CurlException
@@ -276,12 +281,12 @@ class CurlHook implements LibraryHook
             foreach (self::$multiHandles[(int) $multiHandle] as $curlHandle) {
                 if (!isset(self::$responses[(int) $curlHandle])) {
                     self::$multiExecLastChs[] = $curlHandle;
-                    self::curlExec($curlHandle);
+                    self::$multiReturnValues[(int) $curlHandle] = self::curlExec($curlHandle);
                 }
             }
         }
 
-        return CURLM_OK;
+        return \CURLM_OK;
     }
 
     /**
@@ -295,15 +300,29 @@ class CurlHook implements LibraryHook
     {
         if (!empty(self::$multiExecLastChs)) {
             $info = [
-                'msg' => CURLMSG_DONE,
+                'msg' => \CURLMSG_DONE,
                 'handle' => array_pop(self::$multiExecLastChs),
-                'result' => CURLE_OK,
+                'result' => \CURLE_OK,
             ];
 
             return $info;
         }
 
         return false;
+    }
+
+    /**
+     * Return the content of a cURL handle if CURLOPT_RETURNTRANSFER is set.
+     *
+     * @see https://www.php.net/manual/en/function.curl-multi-getcontent.php
+     *
+     * @param resource $curlHandle
+     *
+     * @return string|null return the content of a cURL handle if CURLOPT_RETURNTRANSFER is set
+     */
+    public static function curlMultiGetcontent($curlHandle): ?string
+    {
+        return self::$multiReturnValues[(int) $curlHandle] ?? null;
     }
 
     /**

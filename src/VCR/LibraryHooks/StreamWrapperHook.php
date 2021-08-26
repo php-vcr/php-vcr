@@ -45,10 +45,10 @@ class StreamWrapperHook implements LibraryHook
         Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
         self::$requestCallback = $requestCallback;
         stream_wrapper_unregister('http');
-        stream_wrapper_register('http', __CLASS__, STREAM_IS_URL);
+        stream_wrapper_register('http', __CLASS__, \STREAM_IS_URL);
 
         stream_wrapper_unregister('https');
-        stream_wrapper_register('https', __CLASS__, STREAM_IS_URL);
+        stream_wrapper_register('https', __CLASS__, \STREAM_IS_URL);
 
         $this->status = self::ENABLED;
     }
@@ -197,21 +197,21 @@ class StreamWrapperHook implements LibraryHook
     public function stream_seek(int $offset, int $whence): bool
     {
         switch ($whence) {
-            case SEEK_SET:
+            case \SEEK_SET:
                 if ($offset < \strlen($this->response->getBody()) && $offset >= 0) {
                     $this->position = $offset;
 
                     return true;
                 }
                 break;
-            case SEEK_CUR:
+            case \SEEK_CUR:
                 if ($offset >= 0) {
                     $this->position += $offset;
 
                     return true;
                 }
                 break;
-            case SEEK_END:
+            case \SEEK_END:
                 if (\strlen($this->response->getBody()) + $offset >= 0) {
                     $this->position = \strlen($this->response->getBody()) + $offset;
 

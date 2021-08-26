@@ -2,6 +2,7 @@
 
 namespace VCR\LibraryHooks;
 
+use Assert\Assertion;
 use Closure;
 use PHPUnit\Framework\TestCase;
 use VCR\CodeTransform\CurlCodeTransform;
@@ -15,23 +16,26 @@ use VCR\Util\StreamProcessor;
  */
 class CurlHookTest extends TestCase
 {
+    /** @var string */
     public $expected = 'example response body';
+
     /**
      * @var \VCR\Configuration
      */
     protected $config;
+
     /**
      * @var \VCR\LibraryHooks\CurlHook
      */
     protected $curlHook;
 
-    public function setup()
+    protected function setup(): void
     {
         $this->config = new Configuration();
         $this->curlHook = new CurlHook(new CurlCodeTransform(), new StreamProcessor($this->config));
     }
 
-    public function testShouldBeEnabledAfterEnabling()
+    public function testShouldBeEnabledAfterEnabling(): void
     {
         $this->assertFalse($this->curlHook->isEnabled(), 'Initially the CurlHook should be disabled.');
 
@@ -42,12 +46,13 @@ class CurlHookTest extends TestCase
         $this->assertFalse($this->curlHook->isEnabled(), 'After disabling the CurlHook should be disabled.');
     }
 
-    public function testShouldInterceptCallWhenEnabled()
+    public function testShouldInterceptCallWhenEnabled(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com/');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         $actual = curl_exec($curlHandle);
         curl_close($curlHandle);
 
@@ -58,44 +63,49 @@ class CurlHookTest extends TestCase
     /**
      * @group uses_internet
      */
-    public function testShouldNotInterceptCallWhenNotEnabled()
+    public function testShouldNotInterceptCallWhenNotEnabled(): void
     {
         $curlHandle = curl_init('http://example.com/');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($curlHandle);
+        Assertion::string($response);
         curl_close($curlHandle);
 
-        $this->assertContains('Example Domain', $response, 'Response from http://example.com should contain "Example Domain".');
+        $this->assertStringContainsString('Example Domain', $response, 'Response from http://example.com should contain "Example Domain".');
     }
 
     /**
      * @group uses_internet
      */
-    public function testShouldNotInterceptCallWhenDisabled()
+    public function testShouldNotInterceptCallWhenDisabled(): void
     {
         $intercepted = false;
         $this->curlHook->enable(
-            function () use (&$intercepted) {
+            function () use (&$intercepted): void {
                 $intercepted = true;
             }
         );
         $this->curlHook->disable();
 
         $curlHandle = curl_init();
-        curl_setopt($curlHandle, CURLOPT_URL, 'http://example.com/');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_URL, 'http://example.com/');
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
         curl_close($curlHandle);
         $this->assertFalse($intercepted, 'This request should not have been intercepted.');
     }
 
-    public function testShouldWriteFileOnFileDownload()
+    public function testShouldWriteFileOnFileDownload(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('https://example.com/');
+        Assertion::isResource($curlHandle);
         $filePointer = fopen('php://temp/test_file', 'w');
-        curl_setopt($curlHandle, CURLOPT_FILE, $filePointer);
+        Assertion::isResource($filePointer);
+        curl_setopt($curlHandle, \CURLOPT_FILE, $filePointer);
         curl_exec($curlHandle);
         curl_close($curlHandle);
         rewind($filePointer);
@@ -106,12 +116,13 @@ class CurlHookTest extends TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written in file.');
     }
 
-    public function testShouldEchoResponseIfReturnTransferFalse()
+    public function testShouldEchoResponseIfReturnTransferFalse(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com/');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, false);
         ob_start();
         curl_exec($curlHandle);
         $actual = ob_get_contents();
@@ -122,7 +133,7 @@ class CurlHookTest extends TestCase
         $this->assertEquals($this->expected, $actual, 'Response was not written on stdout.');
     }
 
-    public function testShouldPostFieldsAsArray()
+    public function testShouldPostFieldsAsArray(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -133,18 +144,19 @@ class CurlHookTest extends TestCase
                     'Post query string was not parsed and set correctly.'
                 );
 
-                return new Response(200);
+                return new Response('200');
             }
         );
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_POSTFIELDS, ['para1' => 'val1', 'para2' => 'val2']);
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_POSTFIELDS, ['para1' => 'val1', 'para2' => 'val2']);
         curl_exec($curlHandle);
         curl_close($curlHandle);
         $this->curlHook->disable();
     }
 
-    public function testShouldPostFieldsAsArrayUsingSetoptarray()
+    public function testShouldPostFieldsAsArrayUsingSetoptarray(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -155,15 +167,16 @@ class CurlHookTest extends TestCase
                     'Post query string was not parsed and set correctly.'
                 );
 
-                return new Response(200);
+                return new Response('200');
             }
         );
 
         $curlHandle = curl_init('http://example.com');
+        Assertion::isResource($curlHandle);
         curl_setopt_array(
             $curlHandle,
             [
-                CURLOPT_POSTFIELDS => ['para1' => 'val1', 'para2' => 'val2'],
+                \CURLOPT_POSTFIELDS => ['para1' => 'val1', 'para2' => 'val2'],
             ]
         );
         curl_exec($curlHandle);
@@ -171,14 +184,15 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoStatusCode()
+    public function testShouldReturnCurlInfoStatusCode(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
-        $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        $infoHttpCode = curl_getinfo($curlHandle, \CURLINFO_HTTP_CODE);
         curl_close($curlHandle);
 
         $this->assertSame(200, $infoHttpCode, 'HTTP status not set.');
@@ -189,16 +203,17 @@ class CurlHookTest extends TestCase
     /**
      * @see https://github.com/php-vcr/php-vcr/issues/136
      */
-    public function testShouldReturnCurlInfoStatusCodeAsInteger()
+    public function testShouldReturnCurlInfoStatusCodeAsInteger(): void
     {
         $stringStatusCode = '200';
         $integerStatusCode = 200;
         $this->curlHook->enable($this->getTestCallback($stringStatusCode));
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
-        $infoHttpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        $infoHttpCode = curl_getinfo($curlHandle, \CURLINFO_HTTP_CODE);
         curl_close($curlHandle);
 
         $this->assertSame($integerStatusCode, $infoHttpCode, 'HTTP status not set.');
@@ -206,32 +221,34 @@ class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoAll()
+    public function testShouldReturnCurlInfoAll(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
         $info = curl_getinfo($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertInternalType('array', $info, 'curl_getinfo() should return an array.');
+        $this->assertIsArray($info, 'curl_getinfo() should return an array.');
         $this->assertCount(21, $info, 'curl_getinfo() should return 21 values.');
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoAllKeys()
+    public function testShouldReturnCurlInfoAllKeys(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         curl_exec($curlHandle);
         $info = curl_getinfo($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertInternalType('array', $info, 'curl_getinfo() should return an array.');
+        $this->assertIsArray($info, 'curl_getinfo() should return an array.');
         $this->assertArrayHasKey('url', $info);
         $this->assertArrayHasKey('content_type', $info);
         $this->assertArrayHasKey('http_code', $info);
@@ -258,7 +275,7 @@ class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotThrowErrorWhenDisabledTwice()
+    public function testShouldNotThrowErrorWhenDisabledTwice(): void
     {
         $this->curlHook->disable();
         $this->curlHook->disable();
@@ -267,14 +284,14 @@ class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotThrowErrorWhenEnabledTwice()
+    public function testShouldNotThrowErrorWhenEnabledTwice(): void
     {
         $this->curlHook->enable($this->getTestCallback());
         $this->curlHook->enable($this->getTestCallback());
         $this->curlHook->disable();
     }
 
-    public function testShouldInterceptMultiCallWhenEnabled()
+    public function testShouldInterceptMultiCallWhenEnabled(): void
     {
         $testClass = $this;
         $callCount = 0;
@@ -287,23 +304,27 @@ class CurlHookTest extends TestCase
                 );
                 ++$callCount;
 
-                return new Response(200);
+                return new Response('200');
             }
         );
 
         $curlHandle1 = curl_init('http://example.com');
         $curlHandle2 = curl_init('http://example.com');
 
+        Assertion::isResource($curlHandle1);
+        Assertion::isResource($curlHandle2);
+
         $curlMultiHandle = curl_multi_init();
+        Assertion::isResource($curlMultiHandle);
         curl_multi_add_handle($curlMultiHandle, $curlHandle1);
         curl_multi_add_handle($curlMultiHandle, $curlHandle2);
 
         $stillRunning = null;
-        $mh = curl_multi_exec($curlMultiHandle, $stillRunning);
+        curl_multi_exec($curlMultiHandle, $stillRunning);
 
-        $lastInfo = curl_multi_info_read($mh);
-        $secondLastInfo = curl_multi_info_read($mh);
-        $afterLastInfo = curl_multi_info_read($mh);
+        $lastInfo = curl_multi_info_read($curlMultiHandle);
+        $secondLastInfo = curl_multi_info_read($curlMultiHandle);
+        $afterLastInfo = curl_multi_info_read($curlMultiHandle);
 
         curl_multi_remove_handle($curlMultiHandle, $curlHandle1);
         curl_multi_remove_handle($curlMultiHandle, $curlHandle2);
@@ -330,30 +351,104 @@ class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotInterceptMultiCallWhenDisabled()
+    public function testShouldNotInterceptMultiCallWhenDisabled(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
-            function () use ($testClass) {
+            function () use ($testClass): void {
                 $testClass->fail('This request should not have been intercepted.');
             }
         );
         $this->curlHook->disable();
 
         $curlHandle = curl_init('http://example.com');
+        Assertion::isResource($curlHandle);
 
         $stillRunning = null;
         $curlMultiHandle = curl_multi_init();
+        Assertion::isResource($curlMultiHandle);
         curl_multi_add_handle($curlMultiHandle, $curlHandle);
         curl_multi_exec($curlMultiHandle, $stillRunning);
         curl_multi_remove_handle($curlMultiHandle, $curlHandle);
         curl_multi_close($curlMultiHandle);
     }
 
+    public function testShouldReturnMultiCallValues(): void
+    {
+        $testClass = $this;
+        $callCount = 0;
+        $this->curlHook->enable(
+            function (Request $request) use ($testClass, &$callCount) {
+                $testClass->assertEquals(
+                    'example.com',
+                    $request->getHost(),
+                    ''
+                );
+                ++$callCount;
+
+                return new Response('200', [], $testClass->expected.$callCount);
+            }
+        );
+
+        $curlHandle1 = curl_init('http://example.com');
+        Assertion::isResource($curlHandle1);
+        curl_setopt($curlHandle1, \CURLOPT_RETURNTRANSFER, true);
+        $curlHandle2 = curl_init('http://example.com');
+        Assertion::isResource($curlHandle2);
+        curl_setopt($curlHandle2, \CURLOPT_RETURNTRANSFER, true);
+        $curlHandle3 = curl_init('http://example.com');
+        Assertion::isResource($curlHandle3);
+        curl_setopt($curlHandle3, \CURLOPT_RETURNTRANSFER, false);
+
+        $curlMultiHandle = curl_multi_init();
+        Assertion::isResource($curlMultiHandle);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle2);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle3);
+
+        $stillRunning = null;
+        ob_start();
+        curl_multi_exec($curlMultiHandle, $stillRunning);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $returnValue1 = curl_multi_getcontent($curlHandle1);
+        $returnValue2 = curl_multi_getcontent($curlHandle2);
+        $returnValue3 = curl_multi_getcontent($curlHandle3);
+
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle2);
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle3);
+        curl_multi_close($curlMultiHandle);
+
+        $this->curlHook->disable();
+
+        $this->assertEquals(3, $callCount, 'Hook should have been called thrice.');
+        $this->assertSame(
+            $this->expected.'1',
+            $returnValue1,
+            'When called with the first handle the curl_multi_getcontent should return the body of the first response.'
+        );
+
+        $this->assertSame(
+            $this->expected.'2',
+            $returnValue2,
+            'When called with the second handle the curl_multi_getcontent should return the body of the second response.'
+        );
+
+        $this->assertNull($returnValue3, 'When called with the third handle the curl_multi_getcontent should return null.');
+
+        $this->assertSame(
+            $this->expected.'3',
+            $output,
+            'The third response was not written on stdout.'
+        );
+    }
+
     /**
      * @requires PHP 5.5.0
      */
-    public function testShouldResetRequest()
+    public function testShouldResetRequest(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -364,19 +459,20 @@ class CurlHookTest extends TestCase
                     ''
                 );
 
-                return new Response(200);
+                return new Response('200');
             }
         );
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        Assertion::isResource($curlHandle);
+        curl_setopt($curlHandle, \CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_reset($curlHandle);
         curl_exec($curlHandle);
 
         $this->curlHook->disable();
     }
 
-    protected function getTestCallback($statusCode = 200): Closure
+    protected function getTestCallback(string $statusCode = '200'): Closure
     {
         $testClass = $this;
 

@@ -6,48 +6,62 @@ use PHPUnit\Framework\TestCase;
 
 class BlackholeTest extends TestCase
 {
+    /** @var Blackhole */
     protected $storage;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->storage = new Blackhole();
     }
 
-    public function testStoreRecordingIsCallable()
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testStoreRecordingIsCallable(): void
     {
-        $this->assertNull($this->storage->storeRecording(['empty or not, we don\'t care']));
+        $this->storage->storeRecording([
+            'request' => [
+                'some' => 'request',
+            ],
+            'response' => [
+                'some' => 'response',
+            ],
+        ]);
     }
 
-    public function testNextIsCallable()
+    public function testNextIsCallable(): void
     {
         $this->assertNull($this->storage->next());
     }
 
-    public function testRewindIsCallable()
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testRewindIsCallable(): void
     {
-        $this->assertNull($this->storage->rewind());
+        $this->storage->rewind();
     }
 
-    public function testKeyIsNotCallable()
+    public function testKeyIsNotCallable(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
         $this->storage->key();
     }
 
-    public function testCurrentIsNotCallable()
+    public function testCurrentIsNotCallable(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
         $this->storage->current();
     }
 
-    public function testValidIsAlwaysFalse()
+    public function testValidIsAlwaysFalse(): void
     {
         $this->assertFalse($this->storage->valid());
     }
 
-    public function testIsNewIsAlwaysTrue()
+    public function testIsNewIsAlwaysTrue(): void
     {
         $this->assertTrue($this->storage->isNew());
     }

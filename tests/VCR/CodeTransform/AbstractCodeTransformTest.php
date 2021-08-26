@@ -2,10 +2,16 @@
 
 namespace VCR\CodeTransform;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AbstractCodeTransformTest extends TestCase
 {
+    /**
+     * @param string[] $methods
+     *
+     * @return AbstractCodeTransform&MockObject
+     */
     protected function getFilter(array $methods = [])
     {
         $defaults = array_merge(
@@ -13,7 +19,7 @@ class AbstractCodeTransformTest extends TestCase
             $methods
         );
 
-        $filter = $this->getMockBuilder('\VCR\CodeTransform\AbstractCodeTransform')
+        $filter = $this->getMockBuilder(AbstractCodeTransform::class)
             ->setMethods($defaults)
             ->getMockForAbstractClass();
 
@@ -28,7 +34,7 @@ class AbstractCodeTransformTest extends TestCase
         return $filter;
     }
 
-    public function testRegisterAlreadyRegistered()
+    public function testRegisterAlreadyRegistered(): void
     {
         $filter = $this->getFilter();
         $filter->register();

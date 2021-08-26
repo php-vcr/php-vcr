@@ -11,16 +11,16 @@ use PHPUnit\Framework\TestCase;
  */
 class AsyncTest extends TestCase
 {
-    const TEST_GET_URL = 'https://api.chew.pro/trbmb';
-    const TEST_GET_URL_2 = 'https://api.chew.pro/trbmb?foo=42';
+    public const TEST_GET_URL = 'https://httpbin.org/get';
+    public const TEST_GET_URL_2 = 'https://httpbin.org/get?foo=42';
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('testDir');
         \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
-    public function testAsyncLock()
+    public function testAsyncLock(): void
     {
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('test-cassette.yml');
@@ -33,14 +33,14 @@ class AsyncTest extends TestCase
         // Let's check that we can perform 2 async request on different URLs without locking.
         // Solves https://github.com/php-vcr/php-vcr/issues/211
 
-        $this->assertValidGETResponse(\GuzzleHttp\json_decode($response->getBody()));
+        $this->assertValidGETResponse(\GuzzleHttp\json_decode($response->getBody(), true));
 
         \VCR\VCR::turnOff();
     }
 
-    protected function assertValidGETResponse($info)
+    protected function assertValidGETResponse($info): void
     {
-        $this->assertInternalType('array', $info, 'Response is not an array.');
-        $this->assertArrayHasKey('0', $info, 'API did not return any value.');
+        $this->assertIsArray($info, 'Response is not an array.');
+        $this->assertArrayHasKey('url', $info, 'API did not return any value.');
     }
 }

@@ -10,11 +10,10 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractStorageTest extends TestCase
 {
-    protected $handle;
-    protected $filePath;
+    /** @var TestStorage */
     protected $storage;
 
-    public function testFilePathCreated()
+    public function testFilePathCreated(): void
     {
         $fs = vfsStream::setup('test');
 
@@ -26,9 +25,10 @@ class AbstractStorageTest extends TestCase
         $this->assertTrue($fs->getChild('folder')->hasChild('file'));
     }
 
-    public function testRootNotExisting()
+    public function testRootNotExisting(): void
     {
-        $this->expectException('\VCR\VCRException', "Cassette path 'vfs://test/foo' is not existing or not a directory");
+        $this->expectException(\VCR\VCRException::class);
+        $this->expectExceptionMessage("Cassette path 'vfs://test/foo' is not existing or not a directory");
 
         vfsStream::setup('test');
         new TestStorage(vfsStream::url('test/foo'), 'file');
@@ -37,6 +37,7 @@ class AbstractStorageTest extends TestCase
 
 class TestStorage extends AbstractStorage
 {
+    /** @var array<mixed> */
     private $recording;
 
     public function storeRecording(array $recording): void
@@ -44,11 +45,9 @@ class TestStorage extends AbstractStorage
         $this->recording = $recording;
     }
 
-    public function next()
+    public function next(): void
     {
-        list($this->position, $this->current) = each($this->recording);
-
-        return $this->current;
+        [$this->position, $this->current] = each($this->recording);
     }
 
     public function valid()
@@ -56,7 +55,7 @@ class TestStorage extends AbstractStorage
         return (bool) $this->position;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->recording);
     }

@@ -9,7 +9,7 @@ class SoapCodeTransformTest extends TestCase
     /**
      * @dataProvider codeSnippetProvider
      */
-    public function testTransformCode($expected, $code)
+    public function testTransformCode(string $expected, string $code): void
     {
         $codeTransform = new class() extends SoapCodeTransform {
             // A proxy to access the protected transformCode method.
@@ -22,7 +22,8 @@ class SoapCodeTransformTest extends TestCase
         $this->assertEquals($expected, $codeTransform->publicTransformCode($code));
     }
 
-    public function codeSnippetProvider()
+    /** @return array<string[]> */
+    public function codeSnippetProvider(): array
     {
         return [
           ['new \VCR\Util\SoapClient(', 'new \SoapClient('],

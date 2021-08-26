@@ -10,14 +10,20 @@ use PHPUnit\Framework\TestCase;
  */
 class YamlTest extends TestCase
 {
-    public function setUp()
+    /** @var string */
+    private $filePath;
+
+    /** @var Yaml */
+    private $yamlObject;
+
+    protected function setUp(): void
     {
         vfsStream::setup('test');
         $this->filePath = vfsStream::url('test/').\DIRECTORY_SEPARATOR.'yaml_test';
         $this->yamlObject = new Yaml(vfsStream::url('test/'), 'yaml_test');
     }
 
-    public function testIterateOneObject()
+    public function testIterateOneObject(): void
     {
         $this->iterateAndTest(
             '-'."\n"
@@ -29,7 +35,7 @@ class YamlTest extends TestCase
         );
     }
 
-    public function testIterateTwoObjects()
+    public function testIterateTwoObjects(): void
     {
         $this->iterateAndTest(
             '-'."\n"
@@ -44,7 +50,7 @@ class YamlTest extends TestCase
         );
     }
 
-    public function testIterateFirstNestedObject()
+    public function testIterateFirstNestedObject(): void
     {
         $this->iterateAndTest(
             '-'."\n"
@@ -60,7 +66,7 @@ class YamlTest extends TestCase
         );
     }
 
-    public function testIterateSecondNestedObject()
+    public function testIterateSecondNestedObject(): void
     {
         $this->iterateAndTest(
             '-'."\n"
@@ -76,7 +82,7 @@ class YamlTest extends TestCase
         );
     }
 
-    public function testIterateEmpty()
+    public function testIterateEmpty(): void
     {
         $this->iterateAndTest(
             '',
@@ -85,7 +91,7 @@ class YamlTest extends TestCase
         );
     }
 
-    public function testStoreRecording()
+    public function testStoreRecording(): void
     {
         $expected = [
             'request' => 'some request',
@@ -102,7 +108,7 @@ class YamlTest extends TestCase
         $this->assertEquals($expected, $actual[0], 'Storing and reading a recording failed.');
     }
 
-    public function testStoreTwoRecording()
+    public function testStoreTwoRecording(): void
     {
         $expected = [
             'request' => ['headers' => ['Content-Type' => 'application/json']],
@@ -121,7 +127,8 @@ class YamlTest extends TestCase
         $this->assertEquals($expected, $actual[1], 'Storing and reading second recording failed.');
     }
 
-    private function iterateAndTest($yaml, $expected, $message)
+    /** @param array<mixed> $expected */
+    private function iterateAndTest(string $yaml, array $expected, string $message): void
     {
         file_put_contents($this->filePath, $yaml);
 

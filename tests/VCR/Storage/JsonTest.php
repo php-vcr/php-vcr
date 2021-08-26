@@ -10,18 +10,20 @@ use PHPUnit\Framework\TestCase;
  */
 class JsonTest extends TestCase
 {
-    protected $handle;
+    /** @var string */
     protected $filePath;
+
+    /** @var Json */
     protected $jsonObject;
 
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('test');
         $this->filePath = vfsStream::url('test/').'json_test';
         $this->jsonObject = new Json(vfsStream::url('test/'), 'json_test');
     }
 
-    public function testIterateOneObject()
+    public function testIterateOneObject(): void
     {
         $this->iterateAndTest(
             '[{"para1": "val1"}]',
@@ -32,7 +34,7 @@ class JsonTest extends TestCase
         );
     }
 
-    public function testIterateTwoObjects()
+    public function testIterateTwoObjects(): void
     {
         $this->iterateAndTest(
             '[{"para1": "val1"}, {"para2": "val2"}]',
@@ -44,7 +46,7 @@ class JsonTest extends TestCase
         );
     }
 
-    public function testIterateFirstNestedObject()
+    public function testIterateFirstNestedObject(): void
     {
         $this->iterateAndTest(
             '[{"para1": {"para2": "val2"}}, {"para3": "val3"}]',
@@ -56,7 +58,7 @@ class JsonTest extends TestCase
         );
     }
 
-    public function testIterateSecondNestedObject()
+    public function testIterateSecondNestedObject(): void
     {
         $this->iterateAndTest(
             '[{"para1": "val1"}, {"para2": {"para3": "val3"}}]',
@@ -68,7 +70,7 @@ class JsonTest extends TestCase
         );
     }
 
-    public function testIterateEmpty()
+    public function testIterateEmpty(): void
     {
         $this->iterateAndTest(
             '[]',
@@ -77,11 +79,15 @@ class JsonTest extends TestCase
         );
     }
 
-    public function testStoreRecording()
+    public function testStoreRecording(): void
     {
         $expected = [
-            'request' => 'some request',
-            'response' => 'some response',
+            'request' => [
+                'some' => 'request',
+            ],
+            'response' => [
+                'some' => 'response',
+            ],
         ];
 
         $this->jsonObject->storeRecording($expected);
@@ -94,7 +100,7 @@ class JsonTest extends TestCase
         $this->assertEquals($expected, $actual[0], 'Storing and reading a recording failed.');
     }
 
-    public function testValidJson()
+    public function testValidJson(): void
     {
         $stored = [
             'request' => 'some request',
@@ -103,10 +109,10 @@ class JsonTest extends TestCase
         $this->jsonObject->storeRecording($stored);
         $this->jsonObject->storeRecording($stored);
 
-        $this->assertJson(file_get_contents($this->filePath));
+        $this->assertJson((string) file_get_contents($this->filePath));
     }
 
-    public function testStoreRecordingWhenBlankFileAlreadyExists()
+    public function testStoreRecordingWhenBlankFileAlreadyExists(): void
     {
         vfsStream::create(['blank_file_test' => '']);
         $filePath = vfsStream::url('test/').'blank_file_test';
@@ -118,10 +124,11 @@ class JsonTest extends TestCase
         ];
         $jsonObject->storeRecording($stored);
 
-        $this->assertJson(file_get_contents($filePath));
+        $this->assertJson((string) file_get_contents($filePath));
     }
 
-    private function iterateAndTest($json, $expected, $message)
+    /** @param array<mixed> $expected */
+    private function iterateAndTest(string $json, $expected, string $message): void
     {
         file_put_contents($this->filePath, $json);
 

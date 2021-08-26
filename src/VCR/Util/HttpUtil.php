@@ -17,7 +17,7 @@ class HttpUtil
     {
         // Collect matching headers into groups
         foreach ($headers as $i => $line) {
-            list($key, $value) = explode(': ', $line, 2);
+            [$key, $value] = explode(': ', $line, 2);
             if (isset($headers[$key])) {
                 if (\is_array($headers[$key])) {
                     $headers[$key][] = $value;
@@ -53,7 +53,7 @@ class HttpUtil
         return [
             'http_version' => substr(strrchr($part[0], '/'), 1),
             'code' => $part[1],
-            'message' => isset($part[2]) ? $part[2] : '',
+            'message' => $part[2] ?? '',
         ];
     }
 
@@ -72,7 +72,7 @@ class HttpUtil
         $response = str_replace("HTTP/1.1 100 Continue\r\n", '', $response);
         $response = str_replace("X-Note: Gateway Ack\r\n\r\n", '', $response);
 
-        list($rawHeader, $rawBody) = explode("\r\n\r\n", $response, 2);
+        [$rawHeader, $rawBody] = explode("\r\n\r\n", $response, 2);
 
         // Parse headers and status.
         $headers = self::parseRawHeader($rawHeader);

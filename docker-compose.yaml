@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  workspace:
+    tty: true
+    build:
+      context: resources/docker/workspace
+      args:
+        PUID: "${PUID:-1000}"
+        PGID: "${PGID:-1000}"
+    volumes:
+      - .:/var/www/html
+      - ~/.composer:/home/user/.composer
