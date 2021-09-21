@@ -23,6 +23,7 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
   implement a custom request matcher to handle any need.
 * The recorded requests and responses are stored on disk in a serialization format of your choice
   (currently YAML and JSON are built in, and you can easily implement your own custom serializer)
+* Private data can be redacted from storage using `addRedaction()`
 * Supports PHPUnit annotations.
 
 ## Usage example

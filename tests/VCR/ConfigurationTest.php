@@ -163,4 +163,37 @@ class ConfigurationTest extends TestCase
         $this->expectExceptionMessage("Mode 'invalid' does not exist.");
         $this->config->setMode('invalid');
     }
+
+    public function testAddRedactionFailsWithNoToken(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Redaction replacement string must be a non-empty string or callable.');
+        $this->config->addRedaction('', 'secret123');
+    }
+
+    public function testAddRedactionWithString(): void
+    {
+        $this->config->addRedaction('<PASSWORD>', 'secret123');
+        $filters = $this->config->getRedactions();
+        $this->assertCount(1, $filters);
+        $this->assertArrayHasKey('<PASSWORD>', $filters);
+        $this->assertIsCallable($filters['<PASSWORD>']);
+
+        $request = new \VCR\Request('GET', 'http://example.com');
+        $response = new \VCR\Response('200', [], 'body');
+
+        /* @phpstan-ignore-next-line */
+        $this->assertEquals('secret123', $filters['<PASSWORD>']($request, $response));
+    }
+
+    public function testAddRedactionWithCallable(): void
+    {
+        $expected = function ($request, $response) {
+            return 'secret123';
+        };
+
+        $this->config->addRedaction('<PASSWORD>', $expected);
+        $filters = $this->config->getRedactions();
+        $this->assertEquals($expected, $filters['<PASSWORD>']);
+    }
 }
