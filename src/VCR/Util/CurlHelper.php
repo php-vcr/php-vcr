@@ -114,6 +114,10 @@ class CurlHelper
             case \CURLPROXY_HTTPS:
                 $info = '';
                 break;
+            case CURLINFO_CERTINFO:
+                $curlInfo = $response->getCurlInfo($option);
+                $info = (!is_null($curlInfo)) ? $curlInfo : [];
+                break;
             default:
                 $info = $response->getCurlInfo(self::$curlInfoList[$option]);
                 break;
