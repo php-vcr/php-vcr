@@ -2,6 +2,7 @@
 
 namespace VCR\Util;
 
+use CurlHandle;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use VCR\Exceptions\InvalidHostException;
@@ -156,7 +157,7 @@ class CurlHelperTest extends TestCase
     {
         $request = new Request('POST', 'http://example.com');
 
-        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, null, curl_init());
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, null);
 
         $this->assertNull($request->getCurlOption(\CURLOPT_READFUNCTION));
     }
@@ -177,7 +178,7 @@ class CurlHelperTest extends TestCase
         $callback = function ($curlHandle, $fileHandle, $size): void {
         };
 
-        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, $callback, curl_init());
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, $callback);
         CurlHelper::validateCurlPOSTBody($request, curl_init());
     }
 
@@ -188,7 +189,7 @@ class CurlHelperTest extends TestCase
 
         $test = $this;
         $callback = function ($curlHandle, $fileHandle, $size) use ($test, $expected) {
-            $test->assertIsResource($curlHandle);
+            $test->assertNotFalse($curlHandle);
             $test->assertIsResource($fileHandle);
             $test->assertEquals(\strlen($expected), $size);
 
@@ -196,7 +197,7 @@ class CurlHelperTest extends TestCase
         };
 
         CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_INFILESIZE, \strlen($expected));
-        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, $callback, curl_init());
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, $callback);
         CurlHelper::validateCurlPOSTBody($request, curl_init());
 
         $this->assertEquals($expected, $request->getBody());
@@ -566,12 +567,9 @@ class CurlHelperTest extends TestCase
 
     /**
      * Function used for testing CURLOPT_WRITEFUNCTION.
-     *
-     * @param resource $ch
      */
-    private function privateCurlWriteFunction($ch, string $body): int
+    private function privateCurlWriteFunction(CurlHandle $ch, string $body): int
     {
-        $this->assertEquals('resource', \gettype($ch));
         $this->assertEquals('example response', $body);
 
         return \strlen($body);

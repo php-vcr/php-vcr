@@ -2,6 +2,8 @@
 
 namespace VCR\Util;
 
+use CurlHandle;
+
 class CurlException extends \Exception
 {
     /**
@@ -9,12 +11,7 @@ class CurlException extends \Exception
      */
     private $info;
 
-    /**
-     * @param resource $ch The cURL handler
-     *
-     * @return CurlException
-     */
-    public static function create($ch): self
+    public static function create(CurlHandle $ch): self
     {
         $e = new self(curl_error($ch), curl_errno($ch));
         $e->info = curl_getinfo($ch);

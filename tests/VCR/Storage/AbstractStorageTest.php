@@ -3,6 +3,7 @@
 namespace VCR\Storage;
 
 use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,7 +23,8 @@ class AbstractStorageTest extends TestCase
 
         $this->storage = new TestStorage(vfsStream::url('test/'), 'folder/file');
         $this->assertTrue($fs->hasChild('folder'));
-        $this->assertTrue($fs->getChild('folder')->hasChild('file'));
+        $this->assertInstanceOf(vfsStreamDirectory::class, $child = $fs->getChild('folder'));
+        $this->assertTrue($child->hasChild('file'));
     }
 
     public function testRootNotExisting(): void
@@ -47,7 +49,6 @@ class TestStorage extends AbstractStorage
 
     public function next(): void
     {
-        [$this->position, $this->current] = each($this->recording);
     }
 
     public function valid()

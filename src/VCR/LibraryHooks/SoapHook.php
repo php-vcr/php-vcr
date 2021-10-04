@@ -54,10 +54,8 @@ class SoapHook implements LibraryHook
 
     /**
      * @param array<string,mixed> $options
-     *
-     * @return string SOAP response
      */
-    public function doRequest(string $request, string $location, string $action, int $version, int $one_way = 0, array $options = []): string
+    public function doRequest(string $request, string $location, string $action, int $version, bool $one_way = false, array $options = []): string
     {
         if (self::DISABLED === $this->status) {
             throw new VCRException('Hook must be enabled.', VCRException::LIBRARY_HOOK_DISABLED);

@@ -60,7 +60,7 @@ class SoapClientTest extends TestCase
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
 
-        $this->assertNull($client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2, 1));
+        $this->assertNull($client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2, true));
     }
 
     public function testDoRequestOneWayDisabled(): void
@@ -74,7 +74,7 @@ class SoapClientTest extends TestCase
 
         $this->assertEquals(
             $expected,
-            $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2, 0)
+            $client->__doRequest('Knorx ist groß', self::WSDL, self::ACTION, \SOAP_1_2, false)
         );
     }
 
@@ -160,7 +160,7 @@ class SoapClientTest extends TestCase
         $client = new SoapClient(self::WSDL);
         $client->setLibraryHook($hook);
 
-        $client->__doRequest($request, self::WSDL, self::ACTION, \SOAP_1_2, 0);
+        $client->__doRequest($request, self::WSDL, self::ACTION, \SOAP_1_2, false);
 
         $this->assertEquals($request, $client->__getLastRequest());
         $this->assertEquals($response, $client->__getLastResponse());

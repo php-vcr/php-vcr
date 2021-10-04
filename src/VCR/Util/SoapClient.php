@@ -49,12 +49,10 @@ class SoapClient extends \SoapClient
      * @param string $location the URL to request
      * @param string $action   the SOAP action
      * @param int    $version  the SOAP version
-     * @param int    $one_way  If one_way is set to 1, this method returns nothing.
-     *                         Use this where a response is not expected.
      *
      * @return string|null the XML SOAP response (or null if $one_way is set)
      */
-    public function __doRequest($request, $location, $action, $version, $one_way = 0)
+    public function __doRequest($request, $location, $action, $version, bool $one_way = false)
     {
         // Save a copy of the request, not the request itself -- see issue #153
         $this->request = (string) $request;
@@ -102,17 +100,8 @@ class SoapClient extends \SoapClient
      * Performs a real SOAP request over HTTP.
      *
      * @codeCoverageIgnore
-     *
-     * @param string $request  the XML SOAP request
-     * @param string $location the URL to request
-     * @param string $action   the SOAP action
-     * @param int    $version  the SOAP version
-     * @param int    $one_way  If one_way is set to 1, this method returns nothing.
-     *                         Use this where a response is not expected.
-     *
-     * @return string the XML SOAP response
      */
-    protected function realDoRequest(string $request, string $location, string $action, int $version, int $one_way = 0): string
+    protected function realDoRequest(string $request, string $location, string $action, int $version, bool $one_way = false): string
     {
         return parent::__doRequest($request, $location, $action, $version, $one_way);
     }
@@ -121,8 +110,6 @@ class SoapClient extends \SoapClient
      * Returns currently used SOAP library hook.
      *
      * If no library hook is set, a new one is created.
-     *
-     * @return soapHook SOAP library hook
      */
     protected function getLibraryHook(): SoapHook
     {

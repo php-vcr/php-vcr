@@ -95,14 +95,6 @@ class Videorecorder
      */
     private function dispatch(Event $event, $eventName = null): Event
     {
-        if (class_exists(\Symfony\Component\EventDispatcher\Event::class)) {
-            $res = $this->getEventDispatcher()->dispatch($eventName, $event);
-
-            Assertion::isInstanceOf($res, Event::class);
-
-            return $res;
-        }
-
         $res = $this->getEventDispatcher()->dispatch($event, $eventName);
 
         Assertion::isInstanceOf($res, Event::class);

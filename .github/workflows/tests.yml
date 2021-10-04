@@ -17,7 +17,7 @@ jobs:
       - name: "Setup PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "7.3"
+          php-version: "8.0"
           extensions: "curl, soap"
           tools: "composer:v2"
 
@@ -40,7 +40,7 @@ jobs:
       - name: "Setup PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "7.3"
+          php-version: "8.0"
           extensions: "curl, soap"
           tools: "composer:v2"
 
@@ -57,7 +57,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: ["7.3", "7.4"]
+        php: ["8.0"]
         composer_flags: ["", "--prefer-lowest"]
 
     name: "Tests PHP ${{ matrix.php }} ${{ matrix.composer_flags}}"
@@ -92,7 +92,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        guzzle: ["3", "5", "6"]
+        guzzle: ["5", "6"]
 
     name: "Integration test for Guzzle ${{ matrix.guzzle }}"
 
@@ -105,7 +105,7 @@ jobs:
       - name: "Setup PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "7.3"
+          php-version: "8.0"
           extensions: "curl, soap"
           tools: "composer:v2"
           coverage: "pcov"
@@ -137,7 +137,7 @@ jobs:
       - name: "Setup PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "7.3"
+          php-version: "8.0"
           extensions: "curl, soap"
           tools: "composer:v2"
           coverage: "pcov"
