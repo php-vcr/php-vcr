@@ -85,8 +85,10 @@ jobs:
       - name: "Execute tests"
         run: "vendor/bin/phpunit --coverage-clover=coverage.clover"
 
-      - name: "Upload code coverage"
-        run: "wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover"
+      - name: Upload Scrutinizer coverage
+        uses: sudo-bot/action-scrutinizer@latest
+        with:
+          cli-args: "--format=php-clover coverage.clover"
 
   guzzle:
     strategy:
@@ -119,8 +121,10 @@ jobs:
       - name: "Execute tests"
         run: "cd tests/integration/guzzle/${{ matrix.guzzle }}/ && composer update --prefer-dist --no-interaction --no-progress && ../../../../vendor/bin/phpunit --coverage-clover=coverage.clover"
 
-      - name: "Upload code coverage"
-        run: "wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover"
+      - name: Upload Scrutinizer coverage
+        uses: sudo-bot/action-scrutinizer@latest
+        with:
+          cli-args: "--format=php-clover coverage.clover"
 
   soap:
     strategy:
@@ -151,5 +155,7 @@ jobs:
       - name: "Execute tests"
         run: "cd tests/integration/soap/ && composer update --prefer-dist --no-interaction --no-progress && ../../../vendor/bin/phpunit --coverage-clover=coverage.clover"
 
-      - name: "Upload code coverage"
-        run: "wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover"
+      - name: Upload Scrutinizer coverage
+        uses: sudo-bot/action-scrutinizer@latest
+        with:
+          cli-args: "--format=php-clover coverage.clover"
