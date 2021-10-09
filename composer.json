@@ -22,6 +22,7 @@
         "symfony/event-dispatcher": "^5.0"
     },
     "require-dev": {
+        "guzzlehttp/guzzle": "^7.0",
         "phpunit/phpunit": "^9.5.0",
         "mikey179/vfsstream": "^1.6.10",
         "phpstan/phpstan": "^0.12.92",
@@ -37,8 +38,8 @@
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/"
-        ]
+        "psr-4": {
+            "VCR\\Tests\\": "tests"
+        }
     }
 }
