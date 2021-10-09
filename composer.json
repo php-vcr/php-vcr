@@ -44,5 +44,10 @@
         "allow-plugins": {
             "phpstan/extension-installer": true
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-1.5": "1.5.x-dev"
+        }
     }
 }
