@@ -6,7 +6,7 @@
         "test": "./vendor/bin/phpunit",
         "lint": "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
         "fix": "./vendor/bin/php-cs-fixer fix --verbose --diff",
-        "phpstan": "phpstan analyse -c phpstan.neon --no-progress -vvv"
+        "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.neon --no-progress -vvv"
     },
     "authors": [
         {
@@ -22,13 +22,16 @@
         "symfony/event-dispatcher": "^2.4|^3.0|^4.0|^5.0"
     },
     "require-dev": {
+        "guzzlehttp/guzzle": "^7.0",
         "phpunit/phpunit": "^8.4.0",
-        "mikey179/vfsstream": "^1.6",
-        "phpstan/phpstan": "^0.12",
+        "mikey179/vfsstream": "^1.6.10",
+        "phpstan/phpstan": "^0.12.92",
         "phpstan/phpstan-beberlei-assert": "^0.12.0",
         "thecodingmachine/phpstan-strict-rules": "^0.12",
         "sebastian/version": "^1.0.3|^2.0",
-        "friendsofphp/php-cs-fixer": "^2.16"
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpstan/phpstan-phpunit": "^0.12.22",
+        "phpstan/extension-installer": "^1.1"
     },
     "autoload": {
         "psr-4": {
@@ -36,9 +39,9 @@
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/"
-        ]
+        "psr-4": {
+            "VCR\\Tests\\": "tests"
+        }
     },
     "config": {
         "allow-plugins": {

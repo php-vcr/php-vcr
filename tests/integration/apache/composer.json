@@ -1,6 +1,0 @@
-{
-    "require": {
-        "ext-curl": "*",
-        "phpunit/phpunit": "^7.4"
-    }
-}
