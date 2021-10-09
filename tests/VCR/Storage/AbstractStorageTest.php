@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Storage;
 
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test integration of PHPVCR with PHPUnit.
- */
-class AbstractStorageTest extends TestCase
+final class AbstractStorageTest extends TestCase
 {
     /** @var TestStorage */
     protected $storage;

@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
-use PHPUnit\Framework\Error\Warning;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class StreamProcessorTest extends TestCase
+final class StreamProcessorTest extends TestCase
 {
     /**
      * test flock with file_put_contents.
@@ -107,7 +108,7 @@ class StreamProcessorTest extends TestCase
     public function testUrlStatFileNotFound(): void
     {
         $processor = new StreamProcessor();
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $processor->url_stat('file_not_found', 0);
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\LibraryHooks;
 
 use PHPUnit\Framework\TestCase;
@@ -31,9 +33,7 @@ class StreamWrapperHookTest extends TestCase
     public function testSeek(): void
     {
         $hook = new StreamWrapperHook();
-        $hook->enable(function ($request) {
-            return new Response('200', [], 'A Test');
-        });
+        $hook->enable(fn ($request) => new Response('200', [], 'A Test'));
         $hook->stream_open('http://example.com', 'r', 0, $openedPath);
 
         $this->assertFalse($hook->stream_seek(-1, \SEEK_SET));

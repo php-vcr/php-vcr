@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\CodeTransform;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class AbstractCodeTransformTest extends TestCase
+final class AbstractCodeTransformTest extends TestCase
 {
     /**
      * @param string[] $methods

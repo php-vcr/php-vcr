@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\CodeTransform;
 
 use PHPUnit\Framework\TestCase;
 
-class SoapCodeTransformTest extends TestCase
+final class SoapCodeTransformTest extends TestCase
 {
     /**
      * @dataProvider codeSnippetProvider

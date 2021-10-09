@@ -1,11 +1,8 @@
+includes:
+	- phpstan-baseline.neon
+
 parameters:
-    level: 7
+    level: max
     paths:
         - src
         - tests/VCR
-    ignoreErrors:
-        # This part of PHP is not very well documented, resulting PHPStan's definitions not being accurate
-        - "#Access to an undefined property object::\\$data\\.#"
-        - "#Access to an undefined property object::\\$datalen\\.#"
-        # PHPStan cannot detect that strrpos will succeed (because of Assertion above) in HttpUtil::parseStatus
-        - '#Parameter .* \$str(ing)? of function substr expects string, string\|false given.#'

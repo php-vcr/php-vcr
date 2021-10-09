@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\LibraryHooks;
 
 use CurlHandle;
+use CurlMultiHandle;
 use VCR\CodeTransform\AbstractCodeTransform;
 use VCR\Request;
 use VCR\Response;
@@ -12,80 +15,51 @@ use VCR\Util\CurlHelper;
 use VCR\Util\StreamProcessor;
 use VCR\Util\TextUtil;
 
-/**
- * Library hook for curl functions using include-overwrite.
- */
 class CurlHook implements LibraryHook
 {
-    /**
-     * @var \Closure|null callback which will be executed when a request is intercepted
-     */
-    protected static $requestCallback;
+    protected static ?\Closure $requestCallback;
 
-    /**
-     * @var string current status of this hook, either enabled or disabled
-     */
-    protected static $status = self::DISABLED;
+    protected static string $status = self::DISABLED;
 
     /**
      * @var Request[] all requests which have been intercepted
      */
-    protected static $requests = [];
+    protected static array $requests = [];
 
     /**
      * @var Response[] all responses which have been intercepted
      */
-    protected static $responses = [];
+    protected static array $responses = [];
 
     /**
      * @var array<int,mixed> additional curl options, which are not stored within a request
      */
-    protected static $curlOptions = [];
+    protected static array $curlOptions = [];
 
     /**
      * @var array<int, array> all curl handles which belong to curl_multi handles
      */
-    protected static $multiHandles = [];
+    protected static array $multiHandles = [];
 
     /**
      * @var array<int, array> last active curl_multi_exec() handles
      */
-    protected static $multiExecLastChs = [];
+    protected static array $multiExecLastChs = [];
 
     /**
      * @var array<int, string|null> return values of curl_multi responses
      */
-    protected static $multiReturnValues = [];
+    protected static array $multiReturnValues = [];
 
     /**
      * @var CurlException[] last cURL error, as a CurlException
      */
-    protected static $lastErrors = [];
+    protected static array $lastErrors = [];
 
-    /**
-     * @var AbstractCodeTransform
-     */
-    private $codeTransformer;
-
-    /**
-     * @var StreamProcessor
-     */
-    private $processor;
-
-    /**
-     * Creates a new cURL hook instance.
-     *
-     * @throws \BadMethodCallException in case the cURL extension is not installed
-     */
-    public function __construct(AbstractCodeTransform $codeTransformer, StreamProcessor $processor)
-    {
-        if (!\function_exists('curl_version')) {
-            // @codeCoverageIgnoreStart
-            throw new \BadMethodCallException('cURL extension not installed, please disable the cURL library hook');
-            // @codeCoverageIgnoreEnd
-        }
-        $this->processor = $processor;
-        $this->codeTransformer = $codeTransformer;
+    public function __construct(
+        private AbstractCodeTransform $codeTransformer,
+        private StreamProcessor $processor
+    ) {
     }
 
     /**
@@ -93,8 +67,6 @@ class CurlHook implements LibraryHook
      */
     public function enable(\Closure $requestCallback): void
     {
-        Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
-
         if (self::ENABLED == static::$status) {
             return;
         }
@@ -113,10 +85,6 @@ class CurlHook implements LibraryHook
      */
     public function disable(): void
     {
-        if (self::DISABLED == static::$status) {
-            return;
-        }
-
         self::$requestCallback = null;
 
         static::$status = self::DISABLED;
@@ -226,11 +194,8 @@ class CurlHook implements LibraryHook
      * Add a normal cURL handle to a cURL multi handle.
      *
      * @see http://www.php.net/manual/en/function.curl-multi-add-handle.php
-     *
-     * @param resource $multiHandle a cURL multi handle returned by curl_multi_init()
-     * @param resource $curlHandle  a cURL handle returned by curl_init()
      */
-    public static function curlMultiAddHandle($multiHandle, $curlHandle): void
+    public static function curlMultiAddHandle(CurlMultiHandle $multiHandle, CurlHandle $curlHandle): void
     {
         if (!isset(self::$multiHandles[(int) $multiHandle])) {
             self::$multiHandles[(int) $multiHandle] = [];
@@ -243,11 +208,8 @@ class CurlHook implements LibraryHook
      * Remove a multi handle from a set of cURL handles.
      *
      * @see http://www.php.net/manual/en/function.curl-multi-remove-handle.php
-     *
-     * @param resource $multiHandle a cURL multi handle returned by curl_multi_init()
-     * @param resource $curlHandle  a cURL handle returned by curl_init()
      */
-    public static function curlMultiRemoveHandle($multiHandle, $curlHandle): void
+    public static function curlMultiRemoveHandle(CurlMultiHandle $multiHandle, CurlHandle $curlHandle): void
     {
         if (isset(self::$multiHandles[(int) $multiHandle][(int) $curlHandle])) {
             unset(self::$multiHandles[(int) $multiHandle][(int) $curlHandle]);
@@ -258,13 +220,8 @@ class CurlHook implements LibraryHook
      * Run the sub-connections of the current cURL handle.
      *
      * @see http://www.php.net/manual/en/function.curl-multi-exec.php
-     *
-     * @param resource $multiHandle  a cURL multi handle returned by curl_multi_init()
-     * @param int      $stillRunning a reference to a flag to tell whether the operations are still running
-     *
-     * @return int a cURL code defined in the cURL Predefined Constants
      */
-    public static function curlMultiExec($multiHandle, ?int &$stillRunning): int
+    public static function curlMultiExec(CurlMultiHandle $multiHandle, ?int &$stillRunning): int
     {
         if (isset(self::$multiHandles[(int) $multiHandle])) {
             foreach (self::$multiHandles[(int) $multiHandle] as $curlHandle) {
@@ -305,11 +262,9 @@ class CurlHook implements LibraryHook
      *
      * @see https://www.php.net/manual/en/function.curl-multi-getcontent.php
      *
-     * @param resource $curlHandle
-     *
      * @return string|null return the content of a cURL handle if CURLOPT_RETURNTRANSFER is set
      */
-    public static function curlMultiGetcontent($curlHandle): ?string
+    public static function curlMultiGetcontent(CurlHandle $curlHandle): ?string
     {
         return self::$multiReturnValues[(int) $curlHandle] ?? null;
     }

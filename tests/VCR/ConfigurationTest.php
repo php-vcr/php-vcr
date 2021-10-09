@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use PHPUnit\Framework\TestCase;
 
-class ConfigurationTest extends TestCase
+final class ConfigurationTest extends TestCase
 {
-    /**
-     * @var Configuration
-     */
-    private $config;
+    private Configuration $config;
 
     protected function setUp(): void
     {
@@ -91,17 +90,13 @@ class ConfigurationTest extends TestCase
     {
         $this->expectException(\VCR\VCRException::class);
         $this->expectExceptionMessage("A request matchers name must be at least one character long. Found ''");
-        $expected = function ($first, $second) {
-            return true;
-        };
+        $expected = fn ($first, $second) => true;
         $this->config->addRequestMatcher('', $expected);
     }
 
     public function testAddRequestMatchers(): void
     {
-        $expected = function () {
-            return true;
-        };
+        $expected = fn () => true;
         $this->config->addRequestMatcher('new_matcher', $expected);
         $this->assertContains($expected, $this->config->getRequestMatchers());
     }
@@ -134,9 +129,9 @@ class ConfigurationTest extends TestCase
     public function testGetStorage(): void
     {
         $class = $this->config->getStorage();
-        $this->assertContains('Iterator', class_implements($class));
-        $this->assertContains('Traversable', class_implements($class));
-        $this->assertContains('VCR\Storage\AbstractStorage', class_parents($class));
+        $this->assertContains('Iterator', (array) class_implements($class));
+        $this->assertContains('Traversable', (array) class_implements($class));
+        $this->assertContains('VCR\Storage\AbstractStorage', (array) class_parents($class));
     }
 
     public function testWhitelist(): void

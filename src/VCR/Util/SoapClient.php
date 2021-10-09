@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use VCR\LibraryHooks\SoapHook;
@@ -10,25 +12,16 @@ use VCR\VCRFactory;
  */
 class SoapClient extends \SoapClient
 {
-    /**
-     * @var \VCR\LibraryHooks\SoapHook SOAP library hook used to intercept SOAP requests
-     */
-    protected $soapHook;
+    protected SoapHook $soapHook;
 
     /**
      * @var array<string,mixed>
      */
-    protected $options = [];
+    protected array $options = [];
 
-    /**
-     * @var string
-     */
-    protected $response;
+    protected string $response;
 
-    /**
-     * @var string
-     */
-    protected $request;
+    protected string $request;
 
     /**
      * @param mixed               $wsdl
@@ -44,30 +37,20 @@ class SoapClient extends \SoapClient
      * Performs (and may intercepts) SOAP request over HTTP.
      *
      * Requests will be intercepted if the library hook is enabled.
-     *
-     * @param string $request  the XML SOAP request
-     * @param string $location the URL to request
-     * @param string $action   the SOAP action
-     * @param int    $version  the SOAP version
-     *
-     * @return string|null the XML SOAP response (or null if $one_way is set)
      */
-    public function __doRequest($request, $location, $action, $version, bool $one_way = false)
+    public function __doRequest(string $request, string $location, string $action, int $version, bool $one_way = false): ?string
     {
-        // Save a copy of the request, not the request itself -- see issue #153
-        $this->request = (string) $request;
+        $this->request = $request;
 
         $soapHook = $this->getLibraryHook();
 
         if ($soapHook->isEnabled()) {
-            $response = $soapHook->doRequest($request, $location, $action, $version, $one_way, $this->options);
+            $this->response = $soapHook->doRequest($request, $location, $action, $version, $one_way, $this->options);
         } else {
-            $response = $this->realDoRequest($request, $location, $action, $version, $one_way);
+            $this->response = $this->realDoRequest($request, $location, $action, $version, $one_way);
         }
 
-        $this->response = $response;
-
-        return $one_way ? null : $response;
+        return $one_way ? null : $this->response;
     }
 
     /**
@@ -75,7 +58,7 @@ class SoapClient extends \SoapClient
      */
     public function __getLastRequest(): ?string
     {
-        return $this->request;
+        return $this->request ?? null;
     }
 
     /**
@@ -83,37 +66,22 @@ class SoapClient extends \SoapClient
      */
     public function __getLastResponse(): ?string
     {
-        return $this->response;
+        return $this->response ?? null;
     }
 
-    /**
-     * Sets the SOAP library hook which is used to intercept SOAP requests.
-     *
-     * @param soapHook $hook SOAP library hook to use when intercepting SOAP requests
-     */
     public function setLibraryHook(SoapHook $hook): void
     {
         $this->soapHook = $hook;
     }
 
-    /**
-     * Performs a real SOAP request over HTTP.
-     *
-     * @codeCoverageIgnore
-     */
     protected function realDoRequest(string $request, string $location, string $action, int $version, bool $one_way = false): string
     {
         return parent::__doRequest($request, $location, $action, $version, $one_way);
     }
 
-    /**
-     * Returns currently used SOAP library hook.
-     *
-     * If no library hook is set, a new one is created.
-     */
     protected function getLibraryHook(): SoapHook
     {
-        if (empty($this->soapHook)) {
+        if (!isset($this->soapHook)) {
             $this->soapHook = VCRFactory::get('VCR\LibraryHooks\SoapHook');
         }
 

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\CodeTransform;
 
 use PHPUnit\Framework\TestCase;
 
-class CurlCodeTransformTest extends TestCase
+final class CurlCodeTransformTest extends TestCase
 {
     /**
      * @dataProvider codeSnippetProvider

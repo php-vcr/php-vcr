@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test VCRs response object.
- */
-class ResponseTest extends TestCase
+final class ResponseTest extends TestCase
 {
     public function testGetHeaders(): void
     {
@@ -135,7 +134,6 @@ class ResponseTest extends TestCase
     {
         $expectedArray = [
             'status' => [
-                'http_version' => '1.1',
                 'code' => 200,
                 'message' => 'OK',
             ],

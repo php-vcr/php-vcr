@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use PHPUnit\Framework\TestCase;
 
-class RequestMatcherTest extends TestCase
+final class RequestMatcherTest extends TestCase
 {
     public function testMatchingMethod(): void
     {

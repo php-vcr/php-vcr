@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use PHPUnit\Framework\TestCase;
 use VCR\Request;
 
-class HttpClientTest extends TestCase
+final class HttpClientTest extends TestCase
 {
     public function testHttpClientOnError(): void
     {

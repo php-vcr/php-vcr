@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use CurlHandle;
@@ -9,7 +11,7 @@ use VCR\Exceptions\InvalidHostException;
 use VCR\Request;
 use VCR\Response;
 
-class CurlHelperTest extends TestCase
+final class CurlHelperTest extends TestCase
 {
     /** @var string[] */
     private $headersFound;

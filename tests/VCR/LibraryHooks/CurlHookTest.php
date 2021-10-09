@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\LibraryHooks;
 
 use Assert\Assertion;
@@ -11,23 +13,14 @@ use VCR\Request;
 use VCR\Response;
 use VCR\Util\StreamProcessor;
 
-/**
- * Test if intercepting http/https using curl works.
- */
-class CurlHookTest extends TestCase
+final class CurlHookTest extends TestCase
 {
     /** @var string */
     public $expected = 'example response body';
 
-    /**
-     * @var \VCR\Configuration
-     */
-    protected $config;
+    protected Configuration $config;
 
-    /**
-     * @var \VCR\LibraryHooks\CurlHook
-     */
-    protected $curlHook;
+    protected CurlHook $curlHook;
 
     protected function setup(): void
     {
@@ -476,8 +469,6 @@ class CurlHookTest extends TestCase
     {
         $testClass = $this;
 
-        return Closure::fromCallable(function () use ($statusCode, $testClass) {
-            return new Response($statusCode, [], $testClass->expected);
-        });
+        return Closure::fromCallable(fn () => new Response($statusCode, [], $testClass->expected));
     }
 }

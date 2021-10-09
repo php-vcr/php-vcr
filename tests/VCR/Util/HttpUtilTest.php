@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use PHPUnit\Framework\TestCase;
 
-class HttpUtilTest extends TestCase
+final class HttpUtilTest extends TestCase
 {
     public function testParseResponseBasic(): void
     {

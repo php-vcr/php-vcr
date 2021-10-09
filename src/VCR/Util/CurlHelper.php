@@ -1,14 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use CurlHandle;
 use VCR\Request;
 use VCR\Response;
 
-/**
- * cURL helper class.
- */
 class CurlHelper
 {
     /**
@@ -83,10 +82,7 @@ class CurlHelper
     }
 
     /**
-     * Returns a cURL option from a Response.
-     *
-     * @param Response $response response to get cURL option from
-     * @param int      $option   cURL option to get
+     * @param int $option cURL option to get
      *
      * @throws \BadMethodCallException
      *

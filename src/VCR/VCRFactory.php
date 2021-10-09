@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use VCR\LibraryHooks\CurlHook;
@@ -9,10 +11,7 @@ use VCR\Util\StreamProcessor;
 
 class VCRFactory
 {
-    /**
-     * @var Configuration
-     **/
-    protected $config;
+    protected Configuration $config;
 
     /**
      * @var array<string, object>
@@ -24,18 +23,9 @@ class VCRFactory
      */
     protected static $instance;
 
-    /**
-     * Creates a new VCRFactory instance.
-     *
-     * @param Configuration $config
-     */
     protected function __construct(Configuration $config = null)
     {
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
-
-        // This constant exists only from PHP 7.3
-        // Once we are no longer supporting 7.2, we can remove this
-        \defined('CURLPROXY_HTTPS') || \define('CURLPROXY_HTTPS', 2);
     }
 
     protected function createVCRVideorecorder(): Videorecorder
@@ -47,9 +37,6 @@ class VCRFactory
         );
     }
 
-    /**
-     * Provides an instance of the StreamProcessor.
-     */
     protected function createVCRUtilStreamProcessor(): StreamProcessor
     {
         return new StreamProcessor($this->config);
@@ -80,13 +67,6 @@ class VCRFactory
         );
     }
 
-    /**
-     * Returns the same VCRFactory instance on ever call (singleton).
-     *
-     * @param Configuration $config (Optional) configuration
-     *
-     * @return VCRFactory
-     */
     public static function getInstance(Configuration $config = null): self
     {
         if (!self::$instance) {

@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * Tests TextUtil methods.
- */
-class TextUtilTest extends TestCase
+final class TextUtilTest extends TestCase
 {
     /**
      * @dataProvider curlMethodsProvider

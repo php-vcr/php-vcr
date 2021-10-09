@@ -1,19 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test integration of PHPVCR with PHPUnit.
- */
-class CassetteTest extends TestCase
+final class CassetteTest extends TestCase
 {
-    /**
-     * @var Cassette
-     */
-    private $cassette;
+    private Cassette $cassette;
 
     protected function setUp(): void
     {
@@ -34,7 +30,7 @@ class CassetteTest extends TestCase
         $this->cassette->record($request, $response1);
         $this->cassette->record($request, $response2);
 
-        $this->assertEquals($response1->toArray(), $this->cassette->playback($request)->toArray());
+        $this->assertEquals($response1->toArray(), $this->cassette->playback($request)?->toArray());
     }
 
     public function testPlaybackAlreadyRecordedRequest(): void
@@ -43,7 +39,7 @@ class CassetteTest extends TestCase
         $response = new Response('200', [], 'sometest');
         $this->cassette->record($request, $response);
 
-        $this->assertEquals($response->toArray(), $this->cassette->playback($request)->toArray());
+        $this->assertEquals($response->toArray(), $this->cassette->playback($request)?->toArray());
     }
 
     public function testHasResponseNotFound(): void

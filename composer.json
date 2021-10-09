@@ -22,12 +22,11 @@
         "symfony/event-dispatcher": "^5.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.4.0",
+        "phpunit/phpunit": "^9.5.0",
         "mikey179/vfsstream": "^1.6.10",
         "phpstan/phpstan": "^0.12.92",
         "phpstan/phpstan-beberlei-assert": "^0.12.0",
         "thecodingmachine/phpstan-strict-rules": "^0.12",
-        "sebastian/version": "^1.0.3|^2.0",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan-phpunit": "^0.12.22",
         "phpstan/extension-installer": "^1.1"

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use VCR\LibraryHooks\SoapHook;
 
-class SoapClientTest extends TestCase
+final class SoapClientTest extends TestCase
 {
     public const WSDL = 'https://raw.githubusercontent.com/php-vcr/php-vcr/master/tests/fixtures/soap/wsdl/weather.wsdl';
     public const ACTION = 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP';
@@ -80,7 +82,7 @@ class SoapClientTest extends TestCase
 
     public function testDoRequestHandlesHookDisabled(): void
     {
-        $client = $this->getMockBuilder('\VCR\Util\SoapClient')
+        $client = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->setMethods(['realDoRequest'])
             ->getMock();

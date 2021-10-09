@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use PHPUnit\Framework\TestCase;
 use VCR\Request;
 
-class StreamHelperTest extends TestCase
+final class StreamHelperTest extends TestCase
 {
     /** @return array<string, mixed> */
     public function streamContexts(): array

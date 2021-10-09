@@ -1,14 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test instance creation.
- */
-class VCRFactoryTest extends TestCase
+final class VCRFactoryTest extends TestCase
 {
     /**
      * @dataProvider instanceProvider
@@ -49,7 +48,7 @@ class VCRFactoryTest extends TestCase
         VCRFactory::get('VCR\Configuration')->setStorage($storage);
         VCRFactory::get('VCR\Configuration')->setCassettePath(vfsStream::url('test/'));
 
-        $instance = VCRFactory::get('Storage', [random_int(0, getrandmax())]);
+        $instance = VCRFactory::get('Storage', [(string) random_int(0, getrandmax())]);
 
         $this->assertInstanceOf($className, $instance);
     }

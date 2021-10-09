@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\LibraryHooks;
 
 use Closure;
@@ -101,9 +103,7 @@ class SoapHookTest extends TestCase
     {
         $testClass = $this;
 
-        return Closure::fromCallable(function () use ($testClass) {
-            return new Response('200', [], $testClass->expected);
-        });
+        return Closure::fromCallable(fn () => new Response('200', [], $testClass->expected));
     }
 
     /** @param array<mixed> $expectedHeaders */

@@ -1,16 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Event;
 
 use PHPUnit\Framework\TestCase;
 use VCR\Request;
 
-class BeforeHttpRequestEventTest extends TestCase
+final class BeforeHttpRequestEventTest extends TestCase
 {
-    /**
-     * @var BeforeHttpRequestEvent
-     */
-    private $event;
+    private BeforeHttpRequestEvent $event;
 
     protected function setUp(): void
     {
@@ -19,6 +18,6 @@ class BeforeHttpRequestEventTest extends TestCase
 
     public function testGetRequest(): void
     {
-        $this->assertInstanceOf('VCR\Request', $this->event->getRequest());
+        $this->assertInstanceOf(Request::class, $this->event->getRequest());
     }
 }

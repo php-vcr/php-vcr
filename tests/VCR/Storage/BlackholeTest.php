@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Storage;
 
 use PHPUnit\Framework\TestCase;
 
-class BlackholeTest extends TestCase
+final class BlackholeTest extends TestCase
 {
-    /** @var Blackhole */
-    protected $storage;
+    protected Blackhole $storage;
 
     protected function setUp(): void
     {

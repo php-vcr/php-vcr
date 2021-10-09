@@ -1,20 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Storage;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test integration of PHPVCR with PHPUnit.
- */
-class YamlTest extends TestCase
+final class YamlTest extends TestCase
 {
-    /** @var string */
-    private $filePath;
+    private string $filePath;
 
-    /** @var Yaml */
-    private $yamlObject;
+    private Yaml $yamlObject;
 
     protected function setUp(): void
     {

@@ -1,20 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Storage;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test integration of PHPVCR with PHPUnit.
- */
-class JsonTest extends TestCase
+final class JsonTest extends TestCase
 {
-    /** @var string */
-    protected $filePath;
+    protected string $filePath;
 
-    /** @var Json */
-    protected $jsonObject;
+    protected Json $jsonObject;
 
     protected function setUp(): void
     {

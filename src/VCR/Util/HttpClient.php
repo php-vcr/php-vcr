@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use VCR\Request;
@@ -12,10 +14,6 @@ class HttpClient
 {
     /**
      * Returns a response for specified HTTP request.
-     *
-     * @param request $request HTTP Request to send
-     *
-     * @return Response response for specified request
      *
      * @throws CurlException In case of cURL error
      */

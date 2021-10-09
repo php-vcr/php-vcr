@@ -1,19 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use const CURLOPT_CUSTOMREQUEST;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test integration of PHPVCR with PHPUnit.
- */
-class RequestTest extends TestCase
+final class RequestTest extends TestCase
 {
-    /**
-     * @var \VCR\Request
-     */
-    protected $request;
+    protected Request $request;
 
     protected function setUp(): void
     {

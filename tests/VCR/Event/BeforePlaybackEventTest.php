@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Event;
 
 use PHPUnit\Framework\TestCase;
@@ -8,12 +10,9 @@ use VCR\Configuration;
 use VCR\Request;
 use VCR\Storage;
 
-class BeforePlaybackEventTest extends TestCase
+final class BeforePlaybackEventTest extends TestCase
 {
-    /**
-     * @var BeforePlaybackEvent
-     */
-    private $event;
+    private BeforePlaybackEvent $event;
 
     protected function setUp(): void
     {
@@ -25,11 +24,11 @@ class BeforePlaybackEventTest extends TestCase
 
     public function testGetRequest(): void
     {
-        $this->assertInstanceOf('VCR\Request', $this->event->getRequest());
+        $this->assertInstanceOf(Request::class, $this->event->getRequest());
     }
 
     public function testGetCassette(): void
     {
-        $this->assertInstanceOf('VCR\Cassette', $this->event->getCassette());
+        $this->assertInstanceOf(Cassette::class, $this->event->getCassette());
     }
 }

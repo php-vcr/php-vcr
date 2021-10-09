@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use VCR\Util\HttpClient;
 
-/**
- * Test Videorecorder.
- */
-class VideorecorderTest extends TestCase
+final class VideorecorderTest extends TestCase
 {
     public function testCreateVideorecorder(): void
     {

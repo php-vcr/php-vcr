@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use Assert\Assertion;
@@ -7,10 +9,7 @@ use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use VCR\Event\Event;
 
-/**
- * Test integration of PHPVCR with PHPUnit.
- */
-class VCRTest extends TestCase
+final class VCRTest extends TestCase
 {
     /** @var array<string, Event> */
     private $events;
