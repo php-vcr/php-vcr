@@ -21,3 +21,65 @@
             x-ec-custom-error: '1'
             Content-Length: '1270'
         body: "This is a stream wrapper test dummy."
+-
+    request:
+        method: GET
+        url: 'http://example.com'
+        headers:
+            Host: example.com
+    response:
+        status:
+            http_version: '1.1'
+            code: '200'
+            message: OK
+        headers:
+            Age: '598777'
+            Cache-Control: max-age=604800
+            Content-Type: 'text/html; charset=UTF-8'
+            Date: 'Mon, 04 Oct 2021 14:21:18 GMT'
+            Etag: '"3147526947+ident"'
+            Expires: 'Mon, 11 Oct 2021 14:21:18 GMT'
+            Last-Modified: 'Thu, 17 Oct 2019 07:18:26 GMT'
+            Server: 'ECS (dcb/7ECA)'
+            Vary: Accept-Encoding
+            X-Cache: HIT
+            Content-Length: '1256'
+        body: "<!doctype html>\n<html>\n<head>\n    <title>Example Domain</title>\n\n    <meta charset=\"utf-8\" />\n    <meta http-equiv=\"Content-type\" content=\"text/html; charset=utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <style type=\"text/css\">\n    body {\n        background-color: #f0f0f2;\n        margin: 0;\n        padding: 0;\n        font-family: -apple-system, system-ui, BlinkMacSystemFont, \"Segoe UI\", \"Open Sans\", \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n        \n    }\n    div {\n        width: 600px;\n        margin: 5em auto;\n        padding: 2em;\n        background-color: #fdfdff;\n        border-radius: 0.5em;\n        box-shadow: 2px 3px 7px 2px rgba(0,0,0,0.02);\n    }\n    a:link, a:visited {\n        color: #38488f;\n        text-decoration: none;\n    }\n    @media (max-width: 700px) {\n        div {\n            margin: 0 auto;\n            width: auto;\n        }\n    }\n    </style>    \n</head>\n\n<body>\n<div>\n    <h1>Example Domain</h1>\n    <p>This domain is for use in illustrative examples in documents. You may use this\n    domain in literature without prior coordination or asking for permission.</p>\n    <p><a href=\"https://www.iana.org/domains/example\">More information...</a></p>\n</div>\n</body>\n</html>\n"
+        curl_info:
+            url: 'http://example.com/'
+            content_type: 'text/html; charset=UTF-8'
+            http_code: 200
+            header_size: 335
+            request_size: 50
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.200784
+            namelookup_time: 0.000519
+            connect_time: 0.098396
+            pretransfer_time: 0.098542
+            size_upload: !!float 0
+            size_download: !!float 1256
+            speed_download: !!float 6280
+            speed_upload: !!float 0
+            download_content_length: !!float 1256
+            upload_content_length: !!float 0
+            starttransfer_time: 0.20076
+            redirect_time: !!float 0
+            redirect_url: ''
+            primary_ip: 93.184.216.34
+            certinfo: {  }
+            primary_port: 80
+            local_ip: 172.20.0.2
+            local_port: 53712
+            http_version: 2
+            protocol: 1
+            ssl_verifyresult: 0
+            scheme: HTTP
+            appconnect_time_us: 0
+            connect_time_us: 98396
+            namelookup_time_us: 519
+            pretransfer_time_us: 98542
+            redirect_time_us: 0
+            starttransfer_time_us: 200760
+            total_time_us: 200784

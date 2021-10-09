@@ -5,11 +5,9 @@ return (new PhpCsFixer\Config())
         '@PSR12' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
-        '@PHP73Migration' => true,
-        '@PHP71Migration:risky' => true,
+        '@PHP80Migration' => true,
+        '@PHP80Migration:risky' => true,
         '@PHPUnit84Migration:risky' => true,
-        // Causes too much problems for now, fix later
-        'declare_strict_types' => false,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

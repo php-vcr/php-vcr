@@ -41,3 +41,123 @@
             starttransfer_time: 0.194476
             certinfo: {  }
             primary_port: 80
+-
+    request:
+        method: GET
+        url: 'http://google.com/'
+        headers:
+            Host: google.com
+    response:
+        status:
+            http_version: '1.1'
+            code: '301'
+            message: 'Moved Permanently'
+        headers:
+            Location: 'http://www.google.com/'
+            Content-Type: 'text/html; charset=UTF-8'
+            Date: 'Mon, 04 Oct 2021 14:21:19 GMT'
+            Expires: 'Wed, 03 Nov 2021 14:21:19 GMT'
+            Cache-Control: 'public, max-age=2592000'
+            Server: gws
+            Content-Length: '219'
+            X-XSS-Protection: '0'
+            X-Frame-Options: SAMEORIGIN
+        body: "<HTML><HEAD><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n<TITLE>301 Moved</TITLE></HEAD><BODY>\n<H1>301 Moved</H1>\nThe document has moved\n<A HREF=\"http://www.google.com/\">here</A>.\r\n</BODY></HTML>\r\n"
+        curl_info:
+            url: 'http://google.com/'
+            content_type: 'text/html; charset=UTF-8'
+            http_code: 301
+            header_size: 309
+            request_size: 49
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.06217
+            namelookup_time: 0.017595
+            connect_time: 0.034427
+            pretransfer_time: 0.034588
+            size_upload: !!float 0
+            size_download: !!float 219
+            speed_download: !!float 3532
+            speed_upload: !!float 0
+            download_content_length: !!float 219
+            upload_content_length: !!float 0
+            starttransfer_time: 0.062072
+            redirect_time: !!float 0
+            redirect_url: 'http://www.google.com/'
+            primary_ip: 142.251.36.14
+            certinfo: {  }
+            primary_port: 80
+            local_ip: 172.20.0.2
+            local_port: 33950
+            http_version: 2
+            protocol: 1
+            ssl_verifyresult: 0
+            scheme: HTTP
+            appconnect_time_us: 0
+            connect_time_us: 34427
+            namelookup_time_us: 17595
+            pretransfer_time_us: 34588
+            redirect_time_us: 0
+            starttransfer_time_us: 62072
+            total_time_us: 62170
+-
+    request:
+        method: GET
+        url: 'http://google.com/'
+        headers:
+            Host: google.com
+    response:
+        status:
+            http_version: '1.1'
+            code: '301'
+            message: 'Moved Permanently'
+        headers:
+            Location: 'http://www.google.com/'
+            Content-Type: 'text/html; charset=UTF-8'
+            Date: 'Mon, 04 Oct 2021 14:21:19 GMT'
+            Expires: 'Wed, 03 Nov 2021 14:21:19 GMT'
+            Cache-Control: 'public, max-age=2592000'
+            Server: gws
+            Content-Length: '219'
+            X-XSS-Protection: '0'
+            X-Frame-Options: SAMEORIGIN
+        body: "<HTML><HEAD><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n<TITLE>301 Moved</TITLE></HEAD><BODY>\n<H1>301 Moved</H1>\nThe document has moved\n<A HREF=\"http://www.google.com/\">here</A>.\r\n</BODY></HTML>\r\n"
+        curl_info:
+            url: 'http://google.com/'
+            content_type: 'text/html; charset=UTF-8'
+            http_code: 301
+            header_size: 309
+            request_size: 49
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.04403
+            namelookup_time: 0.001969
+            connect_time: 0.016764
+            pretransfer_time: 0.016885
+            size_upload: !!float 0
+            size_download: !!float 219
+            speed_download: !!float 4977
+            speed_upload: !!float 0
+            download_content_length: !!float 219
+            upload_content_length: !!float 0
+            starttransfer_time: 0.043945
+            redirect_time: !!float 0
+            redirect_url: 'http://www.google.com/'
+            primary_ip: 142.251.36.14
+            certinfo: {  }
+            primary_port: 80
+            local_ip: 172.20.0.2
+            local_port: 33952
+            http_version: 2
+            protocol: 1
+            ssl_verifyresult: 0
+            scheme: HTTP
+            appconnect_time_us: 0
+            connect_time_us: 16764
+            namelookup_time_us: 1969
+            pretransfer_time_us: 16885
+            redirect_time_us: 0
+            starttransfer_time_us: 43945
+            total_time_us: 44030

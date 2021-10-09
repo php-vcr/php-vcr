@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
+use CurlHandle;
 use VCR\Request;
 use VCR\Response;
 
-/**
- * cURL helper class.
- */
 class CurlHelper
 {
     /**
@@ -46,11 +46,9 @@ class CurlHelper
      *
      * The response header might be passed to a custom function.
      *
-     * @param Response          $response    response which contains the response body
      * @param array<int, mixed> $curlOptions cURL options which are not stored within the Response
-     * @param resource          $ch          cURL handle to add headers if needed
      */
-    public static function handleOutput(Response $response, array $curlOptions, $ch): ?string
+    public static function handleOutput(Response $response, array $curlOptions, CurlHandle $ch): ?string
     {
         // If there is a header function set, feed the http status and headers to it.
         if (isset($curlOptions[\CURLOPT_HEADERFUNCTION])) {
@@ -84,10 +82,7 @@ class CurlHelper
     }
 
     /**
-     * Returns a cURL option from a Response.
-     *
-     * @param Response $response response to get cURL option from
-     * @param int      $option   cURL option to get
+     * @param int $option cURL option to get
      *
      * @throws \BadMethodCallException
      *
@@ -129,14 +124,9 @@ class CurlHelper
     }
 
     /**
-     * Sets a cURL option on a Request.
-     *
-     * @param Request  $request    request to set cURL option to
-     * @param int      $option     cURL option to set
-     * @param mixed    $value      value of the cURL option
-     * @param resource $curlHandle cURL handle where this option is set on (optional)
+     * @param mixed $value value of the cURL option
      */
-    public static function setCurlOptionOnRequest(Request $request, int $option, $value, $curlHandle = null): void
+    public static function setCurlOptionOnRequest(Request $request, int $option, $value): void
     {
         switch ($option) {
             case \CURLOPT_URL:
@@ -194,11 +184,8 @@ class CurlHelper
     /**
      * Makes sure we've properly handled the POST body, such as ensuring that
      * CURLOPT_INFILESIZE is set if CURLOPT_READFUNCTION is set.
-     *
-     * @param Request  $request    request to set cURL option to
-     * @param resource $curlHandle cURL handle associated with the request
      */
-    public static function validateCurlPOSTBody(Request $request, $curlHandle = null): void
+    public static function validateCurlPOSTBody(Request $request, CurlHandle $curlHandle = null): void
     {
         $readFunction = $request->getCurlOption(\CURLOPT_READFUNCTION);
         if (null === $readFunction) {
@@ -221,13 +208,12 @@ class CurlHelper
      * A wrapper around call_user_func that attempts to properly handle private
      * and protected methods on objects.
      *
-     * @param mixed    $callback   The callable to pass to call_user_func
-     * @param resource $curlHandle cURL handle associated with the request
-     * @param mixed    $argument   The third argument to pass to call_user_func
+     * @param mixed $callback The callable to pass to call_user_func
+     * @param mixed $argument The third argument to pass to call_user_func
      *
      * @return mixed value returned by the callback function
      */
-    private static function callFunction($callback, $curlHandle, $argument)
+    private static function callFunction($callback, CurlHandle $curlHandle, $argument)
     {
         if (!\is_callable($callback) && \is_array($callback) && 2 === \count($callback)) {
             // This is probably a private or protected method on an object. Try and

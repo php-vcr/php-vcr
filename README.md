@@ -97,7 +97,7 @@ $ composer require --dev php-vcr/php-vcr
 
 PHP-VCR depends on:
 
-  * PHP 7.2+
+  * PHP 8
   * Curl extension
   * [symfony/event-dispatcher](https://github.com/symfony/event-dispatcher)
   * [symfony/yaml](https://github.com/symfony/yaml)
