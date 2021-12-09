@@ -18,8 +18,8 @@
         "php": "^8.0",
         "ext-curl": "*",
         "beberlei/assert": "^3.2.5",
-        "symfony/yaml": "^3.0|^4.0|^5.0",
-        "symfony/event-dispatcher": "^5.0"
+        "symfony/yaml": "^3.0|^4.0|^5.0|^6.0",
+        "symfony/event-dispatcher": "^5.0|^6.0"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.0",
