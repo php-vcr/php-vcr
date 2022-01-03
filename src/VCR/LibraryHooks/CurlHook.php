@@ -11,6 +11,7 @@ use VCR\Util\CurlHelper;
 use VCR\Util\StreamProcessor;
 use VCR\Util\TextUtil;
 
+use function array_fill_keys;
 use function in_array;
 
 use const CURLINFO_PRIVATE;
@@ -337,6 +338,10 @@ class CurlHook implements LibraryHook
             if ($option === CURLINFO_PRIVATE) {
                 return static::$curlOptions[(int) $curlHandle][CURLOPT_PRIVATE];
             }
+
+//            if ($option === 0 && !in_array((int) $curlHandle, self::$responses, true)) {
+//                return array_fill_keys(CurlHelper::$curlInfoList, null);
+//            }
 
             throw new \RuntimeException('Unexpected error, could not find curl_getinfo in response or errors');
         }

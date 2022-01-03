@@ -13,7 +13,7 @@ class CurlHelper
     /**
      * @var array<int, string> list of cURL info constants
      */
-    private static $curlInfoList = [
+    public static $curlInfoList = [
         //"certinfo"?
         CURLINFO_HTTP_CODE => 'http_code',
         CURLINFO_EFFECTIVE_URL => 'url',
@@ -56,7 +56,7 @@ class CurlHelper
         if (isset($curlOptions[CURLOPT_HEADERFUNCTION])) {
             $headerList = [HttpUtil::formatAsStatusString($response)];
             $headerList = array_merge($headerList, HttpUtil::formatHeadersForCurl($response->getHeaders()));
-            $headerList[] = '';
+            $headerList[] = "\r\n";
             foreach ($headerList as $header) {
                 \call_user_func($curlOptions[CURLOPT_HEADERFUNCTION], $ch, $header);
             }
