@@ -335,9 +335,9 @@ class CurlHook implements LibraryHook
             // Workaround for CURLINFO_PRIVATE.
             // It can be set AND read before the response is available, e.g by symfony/http-client.
             //   - We return what was first set.
-//            if ($option === CURLINFO_PRIVATE) {
-//                return static::$curlOptions[(int) $curlHandle][CURLOPT_PRIVATE];
-//            }
+            if ($option === CURLINFO_PRIVATE) {
+                return static::$curlOptions[(int) $curlHandle][CURLOPT_PRIVATE];
+            }
 
 //            if ($option === 0 && !in_array((int) $curlHandle, self::$responses, true)) {
 //                return array_fill_keys(CurlHelper::$curlInfoList, null);
