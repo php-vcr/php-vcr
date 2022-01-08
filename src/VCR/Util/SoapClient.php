@@ -54,7 +54,7 @@ class SoapClient extends \SoapClient
      *
      * @return string|null the XML SOAP response (or null if $one_way is set)
      */
-    public function __doRequest($request, $location, $action, $version, $one_way = 0)
+    public function __doRequest(string $request, string $location, string $action, int $version, bool $one_way = false)
     {
         // Save a copy of the request, not the request itself -- see issue #153
         $this->request = (string) $request;
