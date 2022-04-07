@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use Assert\Assertion;
@@ -10,55 +12,40 @@ use VCR\Exceptions\InvalidHostException;
  */
 class Request
 {
-    /**
-     * @var string
-     */
-    protected $method;
-    /**
-     * @var string|null
-     */
-    protected $url;
-    /**
-     * @var array<string,string>
-     */
-    protected $headers = [];
-    /**
-     * @var string|null
-     */
-    protected $body;
+    protected ?string $body = null;
+
     /**
      * @var array<int,array<string,string>>
      */
-    protected $postFiles = [];
+    protected array $postFiles = [];
+
     /**
      * @var array<string,mixed>
      */
-    protected $postFields = [];
+    protected array $postFields = [];
+
     /**
      * @var array<int,mixed>
      */
-    protected $curlOptions = [];
+    protected array $curlOptions = [];
 
     /**
      * @param array<string,string|null> $headers
      */
-    public function __construct(string $method, ?string $url, array $headers = [])
-    {
+    public function __construct(
+        protected string $method,
+        protected ?string $url,
+        protected array $headers = []
+    ) {
         $this->method = $method;
         $this->headers = $headers;
         $this->setUrl($url);
     }
 
     /**
-     * Returns true if specified request matches the current one
-     * with specified request matcher callbacks.
-     *
-     * @param Request    $request         request to check if it matches the current one
      * @param callable[] $requestMatchers request matcher callbacks
      *
      * @throws \BadFunctionCallException if one of the specified request matchers is not callable
-     *
-     * @return bool true if specified request matches the current one
      */
     public function matches(self $request, array $requestMatchers): bool
     {
@@ -76,31 +63,23 @@ class Request
     }
 
     /**
-     * Returns an array representation of this request.
-     *
-     * @return array<string,mixed> array representation of this request
+     * @return array<string,mixed>
      */
     public function toArray(): array
     {
-        return array_filter(
-            [
-                'method' => $this->getMethod(),
-                'url' => $this->getUrl(),
-                'headers' => $this->getHeaders(),
-                'body' => $this->getBody(),
-                'post_files' => $this->getPostFiles(),
-                'post_fields' => $this->getPostFields(),
-            ]
-        );
+        return array_filter([
+            'method' => $this->getMethod(),
+            'url' => $this->getUrl(),
+            'headers' => $this->getHeaders(),
+            'body' => $this->getBody(),
+            'post_files' => $this->getPostFiles(),
+            'post_fields' => $this->getPostFields(),
+        ]);
     }
 
     /**
-     * Creates a new Request from a specified array.
-     *
      * @param array<string,mixed> $request Request represented as an array. Allowed keys: "method", "url", "headers",
      *                                     "post_fields", "post_files", "body"
-     *
-     * @return Request a new Request from specified array
      */
     public static function fromArray(array $request): self
     {
@@ -150,7 +129,7 @@ class Request
     }
 
     /**
-     * @return array<string,string>
+     * @return array<string,string|null>
      */
     public function getHeaders(): array
     {
@@ -210,9 +189,6 @@ class Request
         return $host;
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): ?string
     {
         $url = $this->getUrl();
@@ -253,11 +229,6 @@ class Request
         return $this->curlOptions[$key];
     }
 
-    /**
-     * Sets the request method.
-     *
-     * @param string $method HTTP request method like GET, POST, PUT, ...
-     */
     public function setMethod(string $method): void
     {
         $this->method = strtoupper($method);
@@ -284,12 +255,6 @@ class Request
         $this->body = $body;
     }
 
-    /**
-     * Sets the authorization credentials as header.
-     *
-     * @param string $username username
-     * @param string $password password
-     */
     public function setAuthorization(string $username, string $password): void
     {
         $this->setHeader('Authorization', 'Basic '.base64_encode($username.':'.$password));

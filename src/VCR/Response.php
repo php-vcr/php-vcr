@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use VCR\Util\Assertion;
@@ -9,13 +11,9 @@ use VCR\Util\Assertion;
  */
 class Response
 {
-    /**
-     * @var array<string, string|null>
-     */
-    protected $status = [
-        'code' => null,
-        'message' => '',
-    ];
+    protected int $statusCode;
+
+    protected string $statusMessage = '';
 
     /**
      * @var array<string,string>
@@ -57,15 +55,24 @@ class Response
     {
         $body = $this->getBody();
         // Base64 encode when binary
-        if (false !== strpos($this->getContentType(), 'application/x-gzip')
-            || 'binary' == $this->getHeader('Content-Transfer-Encoding')
+        if (
+            null !== $this->getContentType()
+            &&
+            (
+                str_contains($this->getContentType(), 'application/x-gzip')
+                ||
+                'binary' == $this->getHeader('Content-Transfer-Encoding')
+            )
         ) {
             $body = base64_encode($body);
         }
 
         return array_filter(
             [
-                'status' => $this->status,
+                'status' => [
+                    'code' => $this->statusCode,
+                    'message' => $this->statusMessage,
+                ],
                 'headers' => $this->getHeaders(),
                 'body' => $body,
                 'curl_info' => $this->curlInfo,
@@ -85,7 +92,7 @@ class Response
         $body = $response['body'] ?? null;
 
         $gzip = isset($response['headers']['Content-Type'])
-            && false !== strpos($response['headers']['Content-Type'], 'application/x-gzip');
+            && str_contains($response['headers']['Content-Type'], 'application/x-gzip');
 
         $binary = isset($response['headers']['Content-Transfer-Encoding'])
             && 'binary' == $response['headers']['Content-Transfer-Encoding'];
@@ -131,9 +138,9 @@ class Response
         return $this->headers;
     }
 
-    public function getStatusCode(): string
+    public function getStatusCode(): int
     {
-        return $this->status['code'];
+        return $this->statusCode;
     }
 
     public function getContentType(): ?string
@@ -160,7 +167,7 @@ class Response
 
     public function getStatusMessage(): string
     {
-        return $this->status['message'];
+        return $this->statusMessage;
     }
 
     /**
@@ -169,13 +176,14 @@ class Response
     protected function setStatus($status): void
     {
         if (\is_array($status)) {
-            $this->status = $status;
+            $this->statusCode = (int) $status['code'];
+            $this->statusMessage = $status['message'];
             if (!empty($status['http_version'])) {
                 $this->httpVersion = $status['http_version'];
             }
         } else {
             Assertion::numeric($status, 'Response status must be either an array or a number.');
-            $this->status['code'] = $status;
+            $this->statusCode = (int) $status;
         }
     }
 }

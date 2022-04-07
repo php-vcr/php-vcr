@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use VCR\Request;
@@ -13,17 +15,13 @@ class HttpClient
     /**
      * Returns a response for specified HTTP request.
      *
-     * @param request $request HTTP Request to send
-     *
-     * @return Response response for specified request
-     *
      * @throws CurlException In case of cURL error
      */
     public function send(Request $request): Response
     {
         $ch = curl_init($request->getUrl());
 
-        Assertion::isResource($ch, "Could not init curl with URL '{$request->getUrl()}'");
+        Assertion::notSame($ch, false, "Could not init curl with URL '{$request->getUrl()}'");
 
         curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, $request->getMethod());
         curl_setopt($ch, \CURLOPT_HTTPHEADER, HttpUtil::formatHeadersForCurl($request->getHeaders()));

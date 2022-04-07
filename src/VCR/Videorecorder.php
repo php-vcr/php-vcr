@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -30,48 +32,17 @@ use VCR\Util\HttpClient;
  */
 class Videorecorder
 {
-    /**
-     * @var Configuration config options like which library hooks to use
-     */
-    protected $config;
+    protected ?Cassette $cassette = null;
 
-    /**
-     * @var HttpClient client to use to issue HTTP requests
-     */
-    protected $client;
+    protected bool $isOn = false;
 
-    /**
-     * @var VCRFactory factory which can create instances and resolve dependencies
-     */
-    protected $factory;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var Cassette|null cassette on which to store requests and responses
-     */
-    protected $cassette;
-
-    /**
-     * @var bool flag if this videorecorder is turned on or not
-     */
-    protected $isOn = false;
-
-    /**
-     * @var EventDispatcherInterface|null
-     */
-    protected $eventDispatcher;
-
-    /**
-     * Creates a videorecorder instance.
-     *
-     * @param Configuration $config  config options like which library hooks to use
-     * @param HttpClient    $client  client which is used to issue HTTP requests
-     * @param VCRFactory    $factory factory which can create instances and resolve dependencies
-     */
-    public function __construct(Configuration $config, HttpClient $client, VCRFactory $factory)
-    {
-        $this->config = $config;
-        $this->client = $client;
-        $this->factory = $factory;
+    public function __construct(
+        protected Configuration $config,
+        protected HttpClient $client,
+        protected VCRFactory $factory
+    ) {
     }
 
     public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
@@ -81,20 +52,14 @@ class Videorecorder
 
     public function getEventDispatcher(): EventDispatcherInterface
     {
-        if (!$this->eventDispatcher) {
+        if (!isset($this->eventDispatcher)) {
             $this->eventDispatcher = new EventDispatcher();
         }
 
         return $this->eventDispatcher;
     }
 
-    /**
-     * Dispatches an event to all registered listeners.
-     *
-     * @param Event  $event     the event to pass to the event handlers/listeners
-     * @param string $eventName the name of the event to dispatch
-     */
-    private function dispatch(Event $event, $eventName = null): Event
+    private function dispatch(Event $event, string $eventName = null): Event
     {
         $dispatcher = $this->getEventDispatcher();
 
@@ -113,10 +78,6 @@ class Videorecorder
     }
 
     /**
-     * Turns on this videorecorder.
-     *
-     * This enables configured library hooks.
-     *
      * @api
      */
     public function turnOn(): void
@@ -130,10 +91,6 @@ class Videorecorder
     }
 
     /**
-     * Turns off this videorecorder.
-     *
-     * Library hooks will be disabled and cassettes ejected.
-     *
      * @api
      */
     public function turnOff(): void
@@ -146,10 +103,6 @@ class Videorecorder
     }
 
     /**
-     * Eject the currently inserted cassette.
-     *
-     * Recording and playing back requests won't be possible after ejecting.
-     *
      * @api
      */
     public function eject(): void
@@ -159,13 +112,7 @@ class Videorecorder
     }
 
     /**
-     * Inserts a cassette to record responses and requests on.
-     *
      * @api
-     *
-     * @param string $cassetteName name of the cassette (used for the cassette filename)
-     *
-     * @throws VCRException if videorecorder is turned off when inserting a cassette
      */
     public function insertCassette(string $cassetteName): void
     {
@@ -182,11 +129,7 @@ class Videorecorder
     }
 
     /**
-     * Returns the current Configuration for this videorecorder.
-     *
      * @api
-     *
-     * @return Configuration configuration for this videorecorder
      */
     public function configure(): Configuration
     {
@@ -200,14 +143,10 @@ class Videorecorder
      * otherwise the request is issued and it's response recorded (and returned).
      *
      * @api
+
      *
-     * @param Request $request intercepted request
-     *
-     * @return Response response for the intercepted request
-     *
-     * @throws \BadMethodCallException if there was no cassette inserted
-     * @throws \LogicException         if the mode is set to none or once and
-     *                                 the cassette did not have a matching response
+     * @throws \LogicException if the mode is set to none or once and
+     *                         the cassette did not have a matching response
      */
     public function handleRequest(Request $request): Response
     {
@@ -215,15 +154,13 @@ class Videorecorder
             throw new \BadMethodCallException('Invalid http request. No cassette inserted. '.'Please make sure to insert a cassette in your unit test using '."VCR::insertCassette('name');");
         }
 
-        $event = new BeforePlaybackEvent($request, $this->cassette);
-        $this->dispatch($event, VCREvents::VCR_BEFORE_PLAYBACK);
+        $this->dispatch(new BeforePlaybackEvent($request, $this->cassette), VCREvents::VCR_BEFORE_PLAYBACK);
 
         $response = $this->cassette->playback($request);
 
         // Playback succeeded and the recorded response can be returned.
         if (!empty($response)) {
-            $event = new AfterPlaybackEvent($request, $response, $this->cassette);
-            $this->dispatch($event, VCREvents::VCR_AFTER_PLAYBACK);
+            $this->dispatch(new AfterPlaybackEvent($request, $response, $this->cassette), VCREvents::VCR_AFTER_PLAYBACK);
 
             return $response;
         }
@@ -252,8 +189,6 @@ class Videorecorder
     }
 
     /**
-     * Disables all library hooks.
-     *
      * @api
      */
     protected function disableLibraryHooks(): void
@@ -265,8 +200,6 @@ class Videorecorder
     }
 
     /**
-     * Enables configured library hooks.
-     *
      * @api
      */
     protected function enableLibraryHooks(): void
@@ -275,9 +208,7 @@ class Videorecorder
         foreach ($this->config->getLibraryHooks() as $hookClass) {
             $hook = $this->factory->get($hookClass);
             $hook->enable(
-                function (Request $request) use ($self) {
-                    return $self->handleRequest($request);
-                }
+                fn (Request $request) => $self->handleRequest($request)
             );
         }
     }

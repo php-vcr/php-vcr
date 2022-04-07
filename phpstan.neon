@@ -1,18 +1,8 @@
+includes:
+	- phpstan-baseline.neon
+
 parameters:
-    level: 7
+    level: max
     paths:
         - src
-        - tests/VCR
-    ignoreErrors:
-        # This part of PHP is not very well documented, resulting PHPStan's definitions not being accurate
-        - "#Access to an undefined property object::\\$data\\.#"
-        - "#Access to an undefined property object::\\$datalen\\.#"
-        # PHPStan cannot detect that strrpos will succeed (because of Assertion above) in HttpUtil::parseStatus
-        - '#Parameter .* \$str(ing)? of function substr expects string, string\|false given.#'
-        # The EventDispatcherInterface::dispatch signature is different (!) between Symfony <4.3 and >=4.3
-        - '/Parameter #1 \$event of method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) expects object, string\|null given./'
-        - '/Parameter #2 \$eventName of method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) expects string\|null, VCR\\Event\\Event given./'
-        - '#Call to an undefined method org\\bovigo\\vfs\\vfsStreamContent::hasChild\(\)\.#'
-includes:
-    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
-    - vendor/phpstan/phpstan-beberlei-assert/extension.neon
+        - tests

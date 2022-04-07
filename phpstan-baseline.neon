@@ -1,0 +1,27 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$data\\.$#"
+			count: 2
+			path: src/VCR/CodeTransform/AbstractCodeTransform.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$datalen\\.$#"
+			count: 1
+			path: src/VCR/CodeTransform/AbstractCodeTransform.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpUtil.php
+
+		-
+			message: "#^Cannot call method record\\(\\) on VCR\\\\Cassette\\|null\\.$#"
+			count: 1
+			path: src/VCR/Videorecorder.php
+
+		-
+			message: "#^Parameter \\#3 \\$cassette of class VCR\\\\Event\\\\BeforeRecordEvent constructor expects VCR\\\\Cassette, VCR\\\\Cassette\\|null given\\.$#"
+			count: 1
+			path: src/VCR/Videorecorder.php
+

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\CodeTransform;
 
 use VCR\Util\Assertion;

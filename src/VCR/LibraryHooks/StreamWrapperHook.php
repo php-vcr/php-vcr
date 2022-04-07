@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\LibraryHooks;
 
 use VCR\Response;
@@ -7,25 +9,13 @@ use VCR\Util\Assertion;
 use VCR\Util\CurlException;
 use VCR\Util\StreamHelper;
 
-/**
- * Library hook for streamWrapper functions using stream_wrapper_register().
- */
 class StreamWrapperHook implements LibraryHook
 {
-    /**
-     * @var \Closure|null callback which will be executed when a request is intercepted
-     */
-    protected static $requestCallback;
+    protected static ?\Closure $requestCallback;
 
-    /**
-     * @var int position in the current response body
-     */
-    protected $position;
+    protected int $position = 0;
 
-    /**
-     * @var string current status of this hook, either enabled or disabled
-     */
-    protected $status = self::DISABLED;
+    protected string $status = self::DISABLED;
 
     /**
      * @var Response
@@ -42,7 +32,6 @@ class StreamWrapperHook implements LibraryHook
      */
     public function enable(\Closure $requestCallback): void
     {
-        Assertion::isCallable($requestCallback, 'No valid callback for handling requests defined.');
         self::$requestCallback = $requestCallback;
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', __CLASS__, \STREAM_IS_URL);
@@ -112,20 +101,16 @@ class StreamWrapperHook implements LibraryHook
      */
     public function stream_read(int $count): string
     {
-        $ret = substr($this->response->getBody(), $this->position, $count);
+        $ret = substr($this->response->getBody(), $this->position ?? 0, $count);
         $this->position += \strlen($ret);
 
         return $ret;
     }
 
     /**
-     * Write to stream.
-     *
      * @throws \BadMethodCallException if called, because this method is not applicable for this stream
      *
      * @see http://www.php.net/manual/en/streamwrapper.stream-write.php
-     *
-     * @param string $data should be stored into the underlying stream
      */
     public function stream_write(string $data): int
     {
@@ -138,8 +123,6 @@ class StreamWrapperHook implements LibraryHook
      * This method is called in response to fseek() to determine the current position.
      *
      * @see http://www.php.net/manual/en/streamwrapper.stream-tell.php
-     *
-     * @return int should return the current position of the stream
      */
     public function stream_tell(): int
     {
@@ -150,9 +133,6 @@ class StreamWrapperHook implements LibraryHook
      * Tests for end-of-file on a file pointer.
      *
      * @see http://www.php.net/manual/en/streamwrapper.stream-eof.php
-     *
-     * @return bool should return TRUE if the read/write position is at the end of the stream
-     *              and if no more data is available to be read, or FALSE otherwise
      */
     public function stream_eof(): bool
     {
@@ -223,15 +203,9 @@ class StreamWrapperHook implements LibraryHook
     }
 
     /**
-     * Change stream options.
-     *
      * @see http://www.php.net/manual/en/streamwrapper.stream-metadata.php
      *
-     * @param string $path   the file path or URL to set metadata
-     * @param int    $option one of the stream options
-     * @param mixed  $var    value depending on the option
-     *
-     * @return bool returns TRUE on success or FALSE on failure
+     * @param mixed $var value depending on the option
      */
     public function stream_metadata(string $path, int $option, $var): bool
     {
