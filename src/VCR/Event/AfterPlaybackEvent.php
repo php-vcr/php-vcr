@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Event;
 
 use VCR\Cassette;
@@ -8,26 +10,11 @@ use VCR\Response;
 
 class AfterPlaybackEvent extends Event
 {
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var Response
-     */
-    protected $response;
-
-    /**
-     * @var Cassette
-     */
-    protected $cassette;
-
-    public function __construct(Request $request, Response $response, Cassette $cassette)
-    {
-        $this->request = $request;
-        $this->response = $response;
-        $this->cassette = $cassette;
+    public function __construct(
+        protected Request $request,
+        protected Response $response,
+        protected Cassette $cassette
+    ) {
     }
 
     public function getRequest(): Request

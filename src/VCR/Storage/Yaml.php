@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Storage;
 
 use Symfony\Component\Yaml\Dumper;
@@ -13,25 +15,11 @@ use Symfony\Component\Yaml\Parser;
  */
 class Yaml extends AbstractStorage
 {
-    /**
-     * @var Parser yaml parser
-     */
-    protected $yamlParser;
+    protected Parser $yamlParser;
 
-    /**
-     * @var Dumper yaml writer
-     */
-    protected $yamlDumper;
+    protected Dumper $yamlDumper;
 
-    /**
-     * Creates a new YAML based file store.
-     *
-     * @param string $cassettePath path to the cassette directory
-     * @param string $cassetteName path to a file, will be created if not existing
-     * @param Parser $parser       parser used to decode yaml
-     * @param Dumper $dumper       dumper used to encode yaml
-     */
-    public function __construct($cassettePath, $cassetteName, Parser $parser = null, Dumper $dumper = null)
+    public function __construct(string $cassettePath, string $cassetteName, Parser $parser = null, Dumper $dumper = null)
     {
         parent::__construct($cassettePath, $cassetteName, '');
 
@@ -49,9 +37,6 @@ class Yaml extends AbstractStorage
         fflush($this->handle);
     }
 
-    /**
-     * Parses the next record.
-     */
     public function next(): void
     {
         $recording = $this->yamlParser->parse($this->readNextRecord());
@@ -61,8 +46,6 @@ class Yaml extends AbstractStorage
 
     /**
      * Returns the next record in raw format.
-     *
-     * @return string next record in raw format
      */
     private function readNextRecord(): string
     {
@@ -74,7 +57,7 @@ class Yaml extends AbstractStorage
         $recording = '';
 
         while (false !== ($line = fgets($this->handle))) {
-            $isNewArrayStart = 0 === strpos($line, '-');
+            $isNewArrayStart = str_starts_with($line, '-');
 
             if ($isInRecord && $isNewArrayStart) {
                 fseek($this->handle, -\strlen($line), \SEEK_CUR);
@@ -97,9 +80,6 @@ class Yaml extends AbstractStorage
         return $recording;
     }
 
-    /**
-     * Resets the storage to the beginning.
-     */
     public function rewind(): void
     {
         rewind($this->handle);
@@ -108,11 +88,6 @@ class Yaml extends AbstractStorage
         $this->position = 0;
     }
 
-    /**
-     * Returns true if the current record is valid.
-     *
-     * @return bool true if the current record is valid
-     */
     public function valid()
     {
         if (null === $this->current) {

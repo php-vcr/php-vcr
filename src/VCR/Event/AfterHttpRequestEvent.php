@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Event;
 
 use VCR\Request;
@@ -7,20 +9,10 @@ use VCR\Response;
 
 class AfterHttpRequestEvent extends Event
 {
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var Response
-     */
-    protected $response;
-
-    public function __construct(Request $request, Response $response)
-    {
-        $this->request = $request;
-        $this->response = $response;
+    public function __construct(
+        protected Request $request,
+        protected Response $response
+    ) {
     }
 
     public function getRequest(): Request

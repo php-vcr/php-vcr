@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
 use VCR\Util\Assertion;
@@ -14,10 +16,7 @@ use VCR\Util\Assertion;
  */
 class Configuration
 {
-    /**
-     * @var string path where cassette files should be stored
-     */
-    private $cassettePath = 'tests/fixtures';
+    private string $cassettePath = 'tests/fixtures';
 
     /**
      * List of enabled LibraryHook names.
@@ -123,12 +122,7 @@ class Configuration
      */
     private $blackList = ['src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter'];
 
-    /**
-     * The mode which determines how requests are handled. One of the MODE constants.
-     *
-     * @var string Current mode
-     */
-    private $mode = VCR::MODE_NEW_EPISODES;
+    private string $mode = VCR::MODE_NEW_EPISODES;
 
     /**
      * List of available modes.
@@ -147,8 +141,6 @@ class Configuration
     ];
 
     /**
-     * Returns the current blacklist.
-     *
      * @return string[]
      */
     public function getBlackList(): array
@@ -157,26 +149,17 @@ class Configuration
     }
 
     /**
-     * Sets one or more paths to blacklist.
-     *
-     * @param string|string[] $paths path(s) to blacklist
-     *
-     * @return Configuration
+     * @param string|string[] $paths
      */
     public function setBlackList($paths): self
     {
-        $paths = (\is_array($paths)) ? $paths : [$paths];
+        $paths = \is_array($paths) ? $paths : [$paths];
 
         $this->blackList = $paths;
 
         return $this;
     }
 
-    /**
-     * Returns the path to where cassettes are stored.
-     *
-     * @return string path to where cassettes are stored
-     */
     public function getCassettePath(): string
     {
         $this->assertValidCassettePath($this->cassettePath);
@@ -185,12 +168,6 @@ class Configuration
     }
 
     /**
-     * Sets the cassette path where a cassettes should be stored in.
-     *
-     * @param string $cassettePath path where to store cassettes
-     *
-     * @return Configuration
-     *
      * @throws VCRException if provided cassette path is invalid
      */
     public function setCassettePath(string $cassettePath): self
@@ -225,8 +202,6 @@ class Configuration
      * Enables specified LibraryHook(s) by its name.
      *
      * @param string|string[] $hooks name of the LibraryHook(s) to enable
-     *
-     * @return Configuration
      *
      * @throws \InvalidArgumentException if a specified library hook doesn't exist
      */
@@ -277,8 +252,6 @@ class Configuration
      * @param string   $name     name of the RequestMatcher
      * @param callable $callback a callback taking two Request objects as parameters and returns true if those match
      *
-     * @return Configuration
-     *
      * @throws VCRException if specified parameters are invalid
      */
     public function addRequestMatcher(string $name, callable $callback): self
@@ -294,8 +267,6 @@ class Configuration
      *
      * @param string[] $matchers list of RequestMatcher names to enable
      *
-     * @return Configuration
-     *
      * @throws \InvalidArgumentException if a specified request matcher does not exist
      */
     public function enableRequestMatchers(array $matchers): self
@@ -310,10 +281,6 @@ class Configuration
     }
 
     /**
-     * Enables a storage by name.
-     *
-     * @param string $storageName name of the storage to enable
-     *
      * @throws VCRException if a invalid storage name is given
      */
     public function setStorage(string $storageName): self
@@ -325,8 +292,6 @@ class Configuration
     }
 
     /**
-     * Returns a list of whitelisted paths.
-     *
      * @return string[]
      */
     public function getWhiteList(): array
@@ -335,32 +300,22 @@ class Configuration
     }
 
     /**
-     * Sets a list of paths to whitelist when processing in the StreamProcessor.
-     *
      * @param string|string[] $paths single path or list of path which are whitelisted
      */
     public function setWhiteList($paths): self
     {
-        $paths = (\is_array($paths)) ? $paths : [$paths];
+        $paths = \is_array($paths) ? $paths : [$paths];
 
         $this->whiteList = $paths;
 
         return $this;
     }
 
-    /**
-     * Returns the current mode.
-     */
     public function getMode(): string
     {
         return $this->mode;
     }
 
-    /**
-     * Sets the current mode.
-     *
-     * @param string $mode The mode to set VCR to
-     */
     public function setMode(string $mode): self
     {
         Assertion::choice($mode, $this->availableModes, "Mode '{$mode}' does not exist.");
@@ -370,10 +325,6 @@ class Configuration
     }
 
     /**
-     * Validates a specified cassette path.
-     *
-     * @param string $cassettePath path to a cassette
-     *
      * @throws VCRException if cassette path is invalid
      */
     private function assertValidCassettePath(string $cassettePath): void

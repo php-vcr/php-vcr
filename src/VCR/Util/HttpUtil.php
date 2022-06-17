@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use VCR\Response;
@@ -90,7 +92,7 @@ class HttpUtil
     /**
      * Returns a list of headers from a key/value paired array.
      *
-     * @param array<string,string|array<string,string>> $headers Headers as key/value pairs
+     * @param array<string,string|array<string,string>|null> $headers Headers as key/value pairs
      *
      * @return string[] List of headers ['Content-Type: text/html', '...'].
      */
