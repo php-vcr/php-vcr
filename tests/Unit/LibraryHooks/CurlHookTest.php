@@ -12,6 +12,7 @@ use VCR\Configuration;
 use VCR\LibraryHooks\CurlHook;
 use VCR\Request;
 use VCR\Response;
+use VCR\Util\CurlHelper;
 use VCR\Util\StreamProcessor;
 
 final class CurlHookTest extends TestCase
@@ -226,8 +227,10 @@ final class CurlHookTest extends TestCase
         $info = curl_getinfo($curlHandle);
         curl_close($curlHandle);
 
+        $expectedCount = CurlHelper::CURLINFO_ITEMS_COUNT;
+
         $this->assertIsArray($info, 'curl_getinfo() should return an array.');
-        $this->assertCount(21, $info, 'curl_getinfo() should return 21 values.');
+        $this->assertCount($expectedCount, $info, 'curl_getinfo() should return '. $expectedCount .' values.');
         $this->curlHook->disable();
     }
 

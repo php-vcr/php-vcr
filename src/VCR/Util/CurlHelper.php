@@ -36,7 +36,13 @@ class CurlHelper
         \CURLINFO_CONTENT_LENGTH_DOWNLOAD => 'download_content_length',
         \CURLINFO_CONTENT_LENGTH_UPLOAD => 'upload_content_length',
         \CURLINFO_CONTENT_TYPE => 'content_type',
+        \CURLINFO_APPCONNECT_TIME => 'appconnect_time',
     ];
+
+    /**
+     * How many items we expect in the curlinfo array - should correspond to the above list count
+     */
+    const CURLINFO_ITEMS_COUNT = 22;
 
     /**
      * Outputs a response depending on the set cURL option.
@@ -107,6 +113,7 @@ class CurlHelper
                 $info = mb_strlen(HttpUtil::formatAsStatusWithHeadersString($response), 'ISO-8859-1');
                 break;
             case \CURLPROXY_HTTPS:
+            case \CURLINFO_APPCONNECT_TIME:
                 $info = '';
                 break;
             default:
