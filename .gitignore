@@ -6,3 +6,4 @@ tests/fixtures/cassette*
 composer.lock
 .phpunit.result.cache
 .php-cs-fixer.cache
+.idea
