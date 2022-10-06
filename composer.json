@@ -1,5 +1,5 @@
 {
-    "name": "php-vcr/php-vcr",
+    "name": "covergenius/php-vcr",
     "description": "Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.",
     "license": "MIT",
     "scripts": {
@@ -12,14 +12,17 @@
         {
             "name": "Adrian Philipp",
             "email": "mail@adrian-philipp.com"
+        },
+        {
+            "name": "Cover Genius Engineering Team"
         }
     ],
     "require": {
         "php": "^8.0",
         "ext-curl": "*",
         "beberlei/assert": "^3.2.5",
-        "symfony/yaml": "^3.0|^4.0|^5.0",
-        "symfony/event-dispatcher": "^5.0"
+        "symfony/yaml": "^3.0|^4.0|^5.0|^6.0",
+        "symfony/event-dispatcher": "^5.0|^6.0"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.0",
@@ -40,6 +43,11 @@
     "autoload-dev": {
         "psr-4": {
             "VCR\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
         }
     }
 }
