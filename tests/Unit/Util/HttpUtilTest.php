@@ -96,6 +96,23 @@ final class HttpUtilTest extends TestCase
         $this->assertEquals($expectedHeaders, $headers);
     }
 
+    public function testParseMultipleResponseCodes(): void
+    {
+        $raw = "HTTP/1.1 200 OK\r\n\r\nHTTP/1.1 200 OK\r\n\r\nHTTP/1.1 201 Created\r\nContent-Type: text/html\r\nDate: Fri, 19 Jun 2015 16:05:18 GMT\r\nVary: Accept-Encoding\r\nContent-Length: 0\r\n\r\n";
+        [$status, $headers, $body] = HttpUtil::parseResponse($raw);
+
+        $expectedHeaders = [
+            'Content-Type: text/html',
+            'Date: Fri, 19 Jun 2015 16:05:18 GMT',
+            'Vary: Accept-Encoding',
+            'Content-Length: 0',
+        ];
+
+        $this->assertEquals('HTTP/1.1 201 Created', $status);
+        $this->assertEquals('', $body);
+        $this->assertEquals($expectedHeaders, $headers);
+    }
+
     public function testParseHeadersBasic(): void
     {
         $inputArray = [
