@@ -407,7 +407,7 @@ final class CurlHelperTest extends TestCase
     {
         $this->assertEquals(
             $expectedCurlOptionValue,
-            CurlHelper::getCurlOptionFromResponse($response, $curlOption)
+            CurlHelper::getCurlOptionFromResponse($response, '', $curlOption)
         );
     }
 

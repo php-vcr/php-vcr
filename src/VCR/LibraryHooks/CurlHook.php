@@ -281,6 +281,7 @@ class CurlHook implements LibraryHook
         if (isset(self::$responses[(int) $curlHandle])) {
             return CurlHelper::getCurlOptionFromResponse(
                 self::$responses[(int) $curlHandle],
+                self::$requests[(int) $curlHandle]->getUrl(),
                 $option
             );
         } elseif (isset(self::$lastErrors[(int) $curlHandle])) {
