@@ -88,7 +88,7 @@ class Yaml extends AbstractStorage
         $this->position = 0;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         if (null === $this->current) {
             $this->next();
