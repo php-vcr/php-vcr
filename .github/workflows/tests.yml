@@ -25,7 +25,10 @@ jobs:
         run: "composer validate --strict"
 
       - name: "Install dependencies"
-        run: "composer update --prefer-dist --no-interaction --no-progress"
+        uses: "ramsey/composer-install@v2"
+        with:
+          dependency-versions: "highest"
+          composer-options: "--prefer-dist"
 
       - name: "Execute static analysis"
         run: "composer run-script phpstan"
@@ -48,7 +51,10 @@ jobs:
         run: "composer validate --strict"
 
       - name: "Install dependencies"
-        run: "composer update --prefer-dist --no-interaction --no-progress"
+        uses: "ramsey/composer-install@v2"
+        with:
+          dependency-versions: "highest"
+          composer-options: "--prefer-dist"
 
       - name: "Execute linting"
         run: "composer run-script lint"
