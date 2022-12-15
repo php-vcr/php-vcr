@@ -57,10 +57,15 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: ["8.0"]
-        composer_flags: ["", "--prefer-lowest"]
+        php:
+          - "8.0"
+        stability:
+          - "stable"
+        dependencies:
+          - "lowest"
+          - "highest"
 
-    name: "Tests PHP ${{ matrix.php }} ${{ matrix.composer_flags}}"
+    name: "Tests PHP ${{ matrix.php }} ${{ matrix.stability}} ${{matrix.dependencies}}"
 
     runs-on: "ubuntu-latest"
 
@@ -75,12 +80,18 @@ jobs:
           extensions: "curl, soap"
           tools: "composer:v2"
           coverage: "pcov"
+      - name: "Enforce using stable dependencies"
+        run: "composer config minimum-stability stable"
+        if: "${{ matrix.stability == 'stable' }}"
 
       - name: "Check Composer configuration"
         run: "composer validate --strict"
 
       - name: "Install dependencies"
-        run: "composer update -o ${{ matrix.composer_flags }} --prefer-dist --no-interaction --no-progress"
+        uses: "ramsey/composer-install@v2"
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          composer-options: "--prefer-dist -o"
 
       - name: "Execute tests"
         run: "vendor/bin/phpunit --coverage-clover=coverage.clover"
