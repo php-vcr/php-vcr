@@ -35,7 +35,6 @@ class Blackhole implements Storage
         throw new \BadMethodCallException('Not implemented');
     }
 
-    /** @return array<mixed>|null */
     public function next(): void
     {
     }
