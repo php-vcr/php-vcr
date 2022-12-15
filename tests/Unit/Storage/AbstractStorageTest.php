@@ -51,7 +51,7 @@ class TestStorage extends AbstractStorage
     {
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return (bool) $this->position;
     }
