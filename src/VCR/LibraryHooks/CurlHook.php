@@ -35,12 +35,12 @@ class CurlHook implements LibraryHook
     protected static array $curlOptions = [];
 
     /**
-     * @var array<int, array> all curl handles which belong to curl_multi handles
+     * @var array<int, array<\CurlHandle>> all curl handles which belong to curl_multi handles
      */
     protected static array $multiHandles = [];
 
     /**
-     * @var array<int, array> last active curl_multi_exec() handles
+     * @var array<\CurlHandle> last active curl_multi_exec() handles
      */
     protected static array $multiExecLastChs = [];
 
