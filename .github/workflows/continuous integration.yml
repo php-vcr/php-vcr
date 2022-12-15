@@ -35,6 +35,20 @@ jobs:
       - name: "Run PHPStan"
         run: "composer run-script phpstan"
 
+  editorconfig-checker:
+    name: EditorConfig Checker
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Install EditorConfig Checker"
+        uses: "editorconfig-checker/action-editorconfig-checker@main"
+
+      - name: "Run EditorConfig Checker"
+        run: "editorconfig-checker"
+
   codestyle:
     name: "PHP-CS-Fixer"
     runs-on: "ubuntu-latest"
