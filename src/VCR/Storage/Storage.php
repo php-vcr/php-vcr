@@ -15,7 +15,7 @@ interface Storage extends \Iterator
     /**
      * Stores an array of data.
      *
-     * @param array<string,string|array<string,mixed>|null> $recording array to store in storage
+     * @param array<string,string|null|array<string,mixed>> $recording array to store in storage
      */
     public function storeRecording(array $recording): void;
 
