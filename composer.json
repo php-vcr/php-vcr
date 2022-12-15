@@ -15,11 +15,12 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8",
         "ext-curl": "*",
         "beberlei/assert": "^3.2.5",
-        "symfony/yaml": "^3.0|^4.0|^5.0",
-        "symfony/event-dispatcher": "^5.0"
+        "symfony/yaml": "^3|^4|^5",
+        "symfony/event-dispatcher": "^4|^5",
+        "symfony/event-dispatcher-contracts": "^1|^2|^3"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.0",
