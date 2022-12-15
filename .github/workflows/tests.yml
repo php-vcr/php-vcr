@@ -65,6 +65,7 @@ jobs:
       matrix:
         php:
           - "8.0"
+          - "8.1"
         stability:
           - "stable"
         dependencies:
