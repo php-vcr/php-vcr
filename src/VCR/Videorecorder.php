@@ -141,7 +141,7 @@ class Videorecorder
     public function handleRequest(Request $request): Response
     {
         if (null === $this->cassette) {
-            throw new \BadMethodCallException('Invalid http request. No cassette inserted. '.'Please make sure to insert a cassette in your unit test using '."VCR::insertCassette('name');");
+            throw new \BadMethodCallException('Invalid http request. No cassette inserted. Please make sure to insert a cassette in your unit test using '."VCR::insertCassette('name');");
         }
 
         $this->dispatch(new BeforePlaybackEvent($request, $this->cassette), VCREvents::VCR_BEFORE_PLAYBACK);
@@ -159,7 +159,7 @@ class Videorecorder
             || VCR::MODE_ONCE === $this->config->getMode()
             && false === $this->cassette->isNew()
         ) {
-            throw new \LogicException(sprintf("The request does not match a previously recorded request and the 'mode' is set to '%s'. "."If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. ".'Please see http://php-vcr.github.io/documentation/configuration/#record-modes.'."\nCassette: %s \n Request: %s", $this->config->getMode(), $this->cassette->getName(), print_r($request->toArray(), true)));
+            throw new \LogicException(sprintf("The request does not match a previously recorded request and the 'mode' is set to '%s'. If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. ".'Please see http://php-vcr.github.io/documentation/configuration/#record-modes.'."\nCassette: %s \n Request: %s", $this->config->getMode(), $this->cassette->getName(), print_r($request->toArray(), true)));
         }
 
         $this->disableLibraryHooks();

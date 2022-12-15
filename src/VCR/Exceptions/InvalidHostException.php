@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace VCR\Exceptions;
 
-use InvalidArgumentException;
-
-class InvalidHostException extends InvalidArgumentException
+class InvalidHostException extends \InvalidArgumentException
 {
     public static function create(?string $url): self
     {
