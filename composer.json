@@ -26,11 +26,11 @@
         "guzzlehttp/guzzle": "^7.0",
         "phpunit/phpunit": "^9.5.0",
         "mikey179/vfsstream": "^1.6.10",
-        "phpstan/phpstan": "^0.12.92",
-        "phpstan/phpstan-beberlei-assert": "^0.12.0",
-        "thecodingmachine/phpstan-strict-rules": "^0.12",
+        "phpstan/phpstan": "^1",
+        "phpstan/phpstan-beberlei-assert": "^1",
+        "thecodingmachine/phpstan-strict-rules": "^1",
         "friendsofphp/php-cs-fixer": "^3.0",
-        "phpstan/phpstan-phpunit": "^0.12.22",
+        "phpstan/phpstan-phpunit": "^1",
         "phpstan/extension-installer": "^1.1"
     },
     "autoload": {
