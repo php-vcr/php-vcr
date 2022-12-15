@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace VCR\Tests\Unit;
 
-use const CURLOPT_CUSTOMREQUEST;
 use PHPUnit\Framework\TestCase;
 use VCR\Request;
 
@@ -263,8 +262,8 @@ final class RequestTest extends TestCase
         $this->assertEquals('POST', $postRequest->getMethod());
         $this->assertEquals('GET', $getRequest->getMethod());
 
-        $postRequest->setCurlOption(CURLOPT_CUSTOMREQUEST, 'PUT');
-        $getRequest->setCurlOption(CURLOPT_CUSTOMREQUEST, 'POST');
+        $postRequest->setCurlOption(\CURLOPT_CUSTOMREQUEST, 'PUT');
+        $getRequest->setCurlOption(\CURLOPT_CUSTOMREQUEST, 'POST');
 
         $this->assertEquals('PUT', $postRequest->getMethod());
         $this->assertEquals('POST', $getRequest->getMethod());
@@ -274,8 +273,8 @@ final class RequestTest extends TestCase
     {
         $getRequest = new Request('GET', 'http://example.com');
         $getRequest->setCurlOptions([
-            CURLOPT_CUSTOMREQUEST => 'PUT',
+            \CURLOPT_CUSTOMREQUEST => 'PUT',
         ]);
-        $this->assertEquals('PUT', $getRequest->getCurlOption(CURLOPT_CUSTOMREQUEST));
+        $this->assertEquals('PUT', $getRequest->getCurlOption(\CURLOPT_CUSTOMREQUEST));
     }
 }
