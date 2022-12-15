@@ -70,7 +70,7 @@ jobs:
     runs-on: "ubuntu-latest"
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         php:
           - "7.2"
