@@ -27,14 +27,14 @@ class SoapCodeTransformTest extends TestCase
     public function codeSnippetProvider(): array
     {
         return [
-          ['new \VCR\Util\SoapClient(', 'new \SoapClient('],
-          ['new \VCR\Util\SoapClient(', 'new SoapClient('],
-          ['extends \VCR\Util\SoapClient', 'extends \SoapClient'],
-          ["extends \\VCR\\Util\\SoapClient\n", "extends \\SoapClient\n"],
-          ["extends MySoapClientBuilder\n", "extends MySoapClientBuilder\n"],
-          ["extends SoapClientFactory\n", "extends SoapClientFactory\n"],
-          ['new SoapClientExtended(', 'new SoapClientExtended('],
-          ['new \SoapClientExtended(', 'new \SoapClientExtended('],
+            ['new \VCR\Util\SoapClient(', 'new \SoapClient('],
+            ['new \VCR\Util\SoapClient(', 'new SoapClient('],
+            ['extends \VCR\Util\SoapClient', 'extends \SoapClient'],
+            ["extends \\VCR\\Util\\SoapClient\n", "extends \\SoapClient\n"],
+            ["extends MySoapClientBuilder\n", "extends MySoapClientBuilder\n"],
+            ["extends SoapClientFactory\n", "extends SoapClientFactory\n"],
+            ['new SoapClientExtended(', 'new SoapClientExtended('],
+            ['new \SoapClientExtended(', 'new \SoapClientExtended('],
         ];
     }
 }

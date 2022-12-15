@@ -79,7 +79,7 @@ class RequestTest extends TestCase
                 'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                 ],
+                ],
             ],
             $restoredRequest->toArray()
         );

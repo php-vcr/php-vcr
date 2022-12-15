@@ -1,4 +1,5 @@
 {
   "Verbose": true,
-  "IgnoreDefaults": false
+  "IgnoreDefaults": false,
+  "Exclude": ["tests/fixtures"]
 }
