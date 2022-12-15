@@ -41,5 +41,10 @@
         "psr-4": {
             "VCR\\Tests\\": "tests"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     }
 }
