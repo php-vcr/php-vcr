@@ -51,12 +51,7 @@ parameters:
 			path: src/VCR/Videorecorder.php
 
 		-
-			message: "#^Parameter \\#1 \\$event of method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:dispatch\\(\\) expects object, string\\|null given\\.$#"
-			count: 1
-			path: src/VCR/Videorecorder.php
-
-		-
-			message: "#^Parameter \\#2 \\$eventName of method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:dispatch\\(\\) expects string\\|null, VCR\\\\Event\\\\Event given\\.$#"
+			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
 			path: src/VCR/Videorecorder.php
 
