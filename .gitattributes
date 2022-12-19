@@ -6,7 +6,7 @@
 /.editorconfig          export-ignore
 /.ecrc                  export-ignore
 /docker-compose.yaml    export-ignore
-/phpstan.neo            export-ignore
+/phpstan.neon           export-ignore
 /phpstan-baseline.neon  export-ignore
 /phpunit.xml.dist       export-ignore
 /resources              export-ignore
