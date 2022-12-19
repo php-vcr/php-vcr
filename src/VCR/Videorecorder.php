@@ -50,6 +50,11 @@ class Videorecorder
     protected $cassette;
 
     /**
+     * @var array<string, int>
+     */
+    protected $indexTable = [];
+
+    /**
      * @var bool flag if this videorecorder is turned on or not
      */
     protected $isOn = false;
@@ -153,7 +158,9 @@ class Videorecorder
     public function eject(): void
     {
         Assertion::true($this->isOn, 'Please turn on VCR before ejecting a cassette, use: VCR::turnOn().');
+
         $this->cassette = null;
+        $this->resetIndex();
     }
 
     /**
@@ -177,6 +184,7 @@ class Videorecorder
 
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
         $this->enableLibraryHooks();
+        $this->resetIndex();
     }
 
     /**
@@ -206,6 +214,8 @@ class Videorecorder
      * @throws \BadMethodCallException if there was no cassette inserted
      * @throws \LogicException         if the mode is set to none or once and
      *                                 the cassette did not have a matching response
+     *
+     * @api
      */
     public function handleRequest(Request $request): Response
     {
@@ -216,12 +226,16 @@ class Videorecorder
         $event = new BeforePlaybackEvent($request, $this->cassette);
         $this->dispatch($event, VCREvents::VCR_BEFORE_PLAYBACK);
 
-        $response = $this->cassette->playback($request);
+        // Add an index to the request to allow recording identical requests and play them back in the same sequence.
+        $index = $this->iterateIndex($request);
+        $response = $this->cassette->playback($request, $index);
 
         // Playback succeeded and the recorded response can be returned.
         if (!empty($response)) {
             $event = new AfterPlaybackEvent($request, $response, $this->cassette);
-            $this->dispatch($event, VCREvents::VCR_AFTER_PLAYBACK);
+            $this->dispatch($event,
+                VCREvents::VCR_AFTER_PLAYBACK
+            );
 
             return $response;
         }
@@ -241,7 +255,7 @@ class Videorecorder
             $this->dispatch(new AfterHttpRequestEvent($request, $response), VCREvents::VCR_AFTER_HTTP_REQUEST);
 
             $this->dispatch(new BeforeRecordEvent($request, $response, $this->cassette), VCREvents::VCR_BEFORE_RECORD);
-            $this->cassette->record($request, $response);
+            $this->cassette->record($request, $response, $index);
         } finally {
             $this->enableLibraryHooks();
         }
@@ -290,5 +304,20 @@ class Videorecorder
         if ($this->isOn) {
             $this->turnOff();
         }
+    }
+
+    protected function iterateIndex(Request $request): int
+    {
+        $hash = $request->getHash();
+        if (!isset($this->indexTable[$hash])) {
+            $this->indexTable[$hash] = -1;
+        }
+
+        return ++$this->indexTable[$hash];
+    }
+
+    public function resetIndex(): void
+    {
+        $this->indexTable = [];
     }
 }

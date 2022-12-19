@@ -41,3 +41,107 @@
             starttransfer_time: 0.194476
             certinfo: {  }
             primary_port: 80
+-
+    request:
+        method: GET
+        url: 'http://google.com/'
+        headers:
+            Host: google.com
+    response:
+        status:
+            http_version: '1.1'
+            code: '301'
+            message: 'Moved Permanently'
+        headers:
+            Location: 'http://www.google.com/'
+            Content-Type: 'text/html; charset=UTF-8'
+            Cross-Origin-Opener-Policy-Report-Only: 'same-origin-allow-popups; report-to="gws"'
+            Report-To: '{"group":"gws","max_age":2592000,"endpoints":[{"url":"https://csp.withgoogle.com/csp/report-to/gws/other"}]}'
+            Date: 'Mon, 19 Dec 2022 18:14:52 GMT'
+            Expires: 'Wed, 18 Jan 2023 18:14:52 GMT'
+            Cache-Control: 'public, max-age=2592000'
+            Server: gws
+            Content-Length: '219'
+            X-XSS-Protection: '0'
+            X-Frame-Options: SAMEORIGIN
+        body: "<HTML><HEAD><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n<TITLE>301 Moved</TITLE></HEAD><BODY>\n<H1>301 Moved</H1>\nThe document has moved\n<A HREF=\"http://www.google.com/\">here</A>.\r\n</BODY></HTML>\r\n"
+        curl_info:
+            url: 'http://google.com/'
+            content_type: 'text/html; charset=UTF-8'
+            http_code: 301
+            header_size: 513
+            request_size: 49
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.123476
+            namelookup_time: 0.057769
+            connect_time: 0.078418
+            pretransfer_time: 0.078528
+            size_upload: 0.0
+            size_download: 219.0
+            speed_download: 1780.0
+            speed_upload: 0.0
+            download_content_length: 219.0
+            upload_content_length: -1.0
+            starttransfer_time: 0.123428
+            redirect_time: 0.0
+            redirect_url: 'http://www.google.com/'
+            primary_ip: 172.217.16.174
+            certinfo: {  }
+            primary_port: 80
+            local_ip: 172.18.0.2
+            local_port: 34248
+    index: 0
+-
+    request:
+        method: GET
+        url: 'http://google.com/'
+        headers:
+            Host: google.com
+    response:
+        status:
+            http_version: '1.1'
+            code: '301'
+            message: 'Moved Permanently'
+        headers:
+            Location: 'http://www.google.com/'
+            Content-Type: 'text/html; charset=UTF-8'
+            Cross-Origin-Opener-Policy-Report-Only: 'same-origin-allow-popups; report-to="gws"'
+            Report-To: '{"group":"gws","max_age":2592000,"endpoints":[{"url":"https://csp.withgoogle.com/csp/report-to/gws/other"}]}'
+            Date: 'Mon, 19 Dec 2022 18:14:52 GMT'
+            Expires: 'Wed, 18 Jan 2023 18:14:52 GMT'
+            Cache-Control: 'public, max-age=2592000'
+            Server: gws
+            Content-Length: '219'
+            X-XSS-Protection: '0'
+            X-Frame-Options: SAMEORIGIN
+        body: "<HTML><HEAD><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n<TITLE>301 Moved</TITLE></HEAD><BODY>\n<H1>301 Moved</H1>\nThe document has moved\n<A HREF=\"http://www.google.com/\">here</A>.\r\n</BODY></HTML>\r\n"
+        curl_info:
+            url: 'http://google.com/'
+            content_type: 'text/html; charset=UTF-8'
+            http_code: 301
+            header_size: 513
+            request_size: 49
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.068302
+            namelookup_time: 0.004149
+            connect_time: 0.022267
+            pretransfer_time: 0.022427
+            size_upload: 0.0
+            size_download: 219.0
+            speed_download: 3220.0
+            speed_upload: 0.0
+            download_content_length: 219.0
+            upload_content_length: -1.0
+            starttransfer_time: 0.068265
+            redirect_time: 0.0
+            redirect_url: 'http://www.google.com/'
+            primary_ip: 172.217.16.174
+            certinfo: {  }
+            primary_port: 80
+            local_ip: 172.18.0.2
+            local_port: 34264
+    index: 1
