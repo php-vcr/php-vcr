@@ -4,9 +4,10 @@
     "license": "MIT",
     "scripts": {
         "test": "./vendor/bin/phpunit",
-        "lint": "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
-        "fix": "./vendor/bin/php-cs-fixer fix --verbose --diff",
-        "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.neon --no-progress -vvv"
+        "cs": "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
+        "cs-fix": "./vendor/bin/php-cs-fixer fix --verbose --diff",
+        "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.neon --no-progress -vvv",
+        "ec": "./vendor/bin/ec"
     },
     "authors": [
         {
@@ -31,7 +32,8 @@
         "thecodingmachine/phpstan-strict-rules": "^1",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan-phpunit": "^1",
-        "phpstan/extension-installer": "^1.1"
+        "phpstan/extension-installer": "^1.1",
+        "editorconfig-checker/editorconfig-checker": "^10.3"
     },
     "autoload": {
         "psr-4": {
