@@ -1,5 +1,12 @@
 {
   "Verbose": true,
-  "IgnoreDefaults": false,
-  "Exclude": ["tests/fixtures"]
+  "IgnoreDefaults": true,
+  "Exclude": [
+    ".phpunit.result.cache",
+    ".php-cs-fixer.cache",
+    ".idea",
+    ".git",
+    "vendor/",
+    "tests/fixtures"
+  ]
 }
