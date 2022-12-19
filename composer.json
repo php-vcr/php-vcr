@@ -22,8 +22,8 @@
         "symfony/event-dispatcher": "^2.4|^3.0|^4.0|^5.0"
     },
     "require-dev": {
-        "guzzlehttp/guzzle": "^7.0",
-        "phpunit/phpunit": "^8.4.0",
+        "guzzlehttp/guzzle": "^7",
+        "phpunit/phpunit": "^8.5",
         "mikey179/vfsstream": "^1.6.10",
         "phpstan/phpstan": "^1",
         "phpstan/phpstan-beberlei-assert": "^1",
