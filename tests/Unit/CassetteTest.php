@@ -70,10 +70,10 @@ final class CassetteTest extends TestCase
     public function testPlaybackOfIdenticalRequestsFromLegacyCassette(): void
     {
         $request1 = new Request('GET', 'https://example.com');
-        $response1 = new Response(200, [], 'response1');
+        $response1 = new Response('200', [], 'response1');
 
         $request2 = new Request('GET', 'https://example.com');
-        $response2 = new Response(200, [], 'response2');
+        $response2 = new Response('200', [], 'response2');
 
         // These are legacy recordings with no index keys.
         $recordings = [
@@ -94,17 +94,48 @@ final class CassetteTest extends TestCase
     }
 
     /**
-     * Ensure that if a second identical request is played back from an cassette
+     * Ensure also mixed cassettes are working properly, if a legacy cassette has a first entry without index (should be
+     * 0) and a second entry for the same request with incremented index (should be 1).
+     */
+    public function testPlaybackOfIdenticalRequestsFromLegacyCassetteWithIndexedRecords(): void
+    {
+        $request1 = new Request('GET', 'https://example.com');
+        $response1 = new Response('200', [], 'response1');
+
+        $request2 = new Request('GET', 'https://example.com');
+        $response2 = new Response('200', [], 'response2');
+
+        // These are legacy recordings with no index keys.
+        $recordings = [
+            [
+                'request' => $request1->toArray(),
+                'response' => $response1->toArray(),
+            ],
+            [
+                'request' => $request2->toArray(),
+                'response' => $response2->toArray(),
+                'index' => 1,
+            ],
+        ];
+
+        $cassette = $this->createCassetteWithRecordings($recordings);
+
+        $this->assertEquals($response1->toArray(), $cassette->playback($request1, 0)->toArray());
+        $this->assertEquals($response2->toArray(), $cassette->playback($request2, 1)->toArray());
+    }
+
+    /**
+     * Ensure that if a second identical request is played back from a cassette
      * with indexed recordings, the response corresponding to the recording
      * index will be returned.
      */
     public function testPlaybackOfIdenticalRequests(): void
     {
         $request1 = new Request('GET', 'https://example.com');
-        $response1 = new Response(200, [], 'response1');
+        $response1 = new Response('200', [], 'response1');
 
         $request2 = new Request('GET', 'https://example.com');
-        $response2 = new Response(200, [], 'response2');
+        $response2 = new Response('200', [], 'response2');
 
         // These are recordings with index keys which support playback of
         // multiple identical requests.
