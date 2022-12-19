@@ -15,7 +15,7 @@ namespace VCR\Storage;
 interface Storage extends \Iterator
 {
     /**
-     * @param array<string,string|array<string,mixed>|null, int> $recording
+     * @param array<string,int|string|array<string,mixed>|null> $recording
      */
     public function storeRecording(array $recording): void;
 

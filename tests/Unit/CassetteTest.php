@@ -159,6 +159,9 @@ final class CassetteTest extends TestCase
         $this->assertEquals($response2->toArray(), $cassette->playback($request2, 1)->toArray());
     }
 
+    /**
+     * @param array<int,array<string,int|string|array<string,mixed>|null>> $recordings
+     */
     protected function createCassetteWithRecordings(array $recordings): Cassette
     {
         $storage = new Yaml(vfsStream::url('test/'), 'json_test');
