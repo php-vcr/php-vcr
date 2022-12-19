@@ -1,9 +1,29 @@
 version: "3.8"
 services:
-  workspace:
+  workspace72:
     tty: true
     build:
-      context: resources/docker/workspace
+      context: resources/docker/workspace/7.2
+      args:
+        PUID: "${PUID:-1000}"
+        PGID: "${PGID:-1000}"
+    volumes:
+      - .:/var/www/html
+      - ~/.composer:/home/user/.composer
+  workspace73:
+    tty: true
+    build:
+      context: resources/docker/workspace/7.3
+      args:
+        PUID: "${PUID:-1000}"
+        PGID: "${PGID:-1000}"
+    volumes:
+      - .:/var/www/html
+      - ~/.composer:/home/user/.composer
+  workspace74:
+    tty: true
+    build:
+      context: resources/docker/workspace/7.4
       args:
         PUID: "${PUID:-1000}"
         PGID: "${PGID:-1000}"
