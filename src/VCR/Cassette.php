@@ -70,15 +70,12 @@ class Cassette
         foreach ($this->storage as $recording) {
             $storedRequest = Request::fromArray($recording['request']);
 
-            // Support legacy cassettes which do not have the 'index' key.
-            if (!\array_key_exists('index', $recording)) {
-                $recording['index'] = 0;
-            }
+            // Support legacy cassettes which do not have the 'index' key by setting the index to the searched one to
+            // always match this record if the request matches
+            $recording['index'] = $recording['index'] ?? $index;
 
-            if ($index == $recording['index']) {
-                if ($storedRequest->matches($request, $this->getRequestMatchers())) {
-                    return Response::fromArray($recording['response']);
-                }
+            if ($storedRequest->matches($request, $this->getRequestMatchers()) && $index == $recording['index']) {
+                return Response::fromArray($recording['response']);
             }
         }
 
