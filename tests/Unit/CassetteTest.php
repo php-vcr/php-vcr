@@ -89,8 +89,8 @@ final class CassetteTest extends TestCase
 
         $cassette = $this->createCassetteWithRecordings($recordings);
 
-        $this->assertEquals($response1->toArray(), $cassette->playback($request1)->toArray());
-        $this->assertEquals($response1->toArray(), $cassette->playback($request2)->toArray());
+        $this->assertEquals($response1->toArray(), $cassette->playback($request1, 0)->toArray());
+        $this->assertEquals($response1->toArray(), $cassette->playback($request2, 1)->toArray());
     }
 
     /**
