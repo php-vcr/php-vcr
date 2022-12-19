@@ -10,10 +10,10 @@ use VCR\Util\Assertion;
 class Response
 {
     /**
-     * @var array<string, string|null>
+     * @var array<string, string>
      */
     protected $status = [
-        'code' => null,
+        'code' => '',
         'message' => '',
     ];
 
@@ -57,8 +57,12 @@ class Response
     {
         $body = $this->getBody();
         // Base64 encode when binary
-        if (false !== strpos($this->getContentType(), 'application/x-gzip')
-            || 'binary' == $this->getHeader('Content-Transfer-Encoding')
+        if (null !== $this->getContentType()
+            &&
+            (
+                false !== strpos($this->getContentType(), 'application/x-gzip')
+                || 'binary' == $this->getHeader('Content-Transfer-Encoding')
+            )
         ) {
             $body = base64_encode($body);
         }
@@ -164,7 +168,7 @@ class Response
     }
 
     /**
-     * @param string|array<string,mixed> $status
+     * @param string|array<string,string> $status
      */
     protected function setStatus($status): void
     {

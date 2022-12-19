@@ -11,7 +11,7 @@ class ExampleSoapClient
 {
     public const EXAMPLE_WSDL = 'http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL';
 
-    public function call($number = 12)
+    public function call(int $number = 12): string
     {
         $client = new \SoapClient(self::EXAMPLE_WSDL, ['soap_version' => \SOAP_1_2]);
         $response = $client->NumberToWords(['ubiNum' => $number]);

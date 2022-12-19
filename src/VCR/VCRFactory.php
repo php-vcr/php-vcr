@@ -2,6 +2,7 @@
 
 namespace VCR;
 
+use Assert\Assertion;
 use VCR\LibraryHooks\CurlHook;
 use VCR\LibraryHooks\SoapHook;
 use VCR\Storage\Storage;
@@ -59,9 +60,17 @@ class VCRFactory
     protected function createStorage(string $cassetteName): Storage
     {
         $dsn = $this->config->getCassettePath();
-        $class = $this->config->getStorage();
+        $className = $this->config->getStorage();
+        Assertion::subclassOf(
+            $className,
+            Storage::class,
+            sprintf('Storage class "%s" is not a subclass of "%s".', $className, Storage::class)
+        );
 
-        return new $class($dsn, $cassetteName);
+        /** @var Storage $storage */
+        $storage = new $className($dsn, $cassetteName);
+
+        return $storage;
     }
 
     protected function createVCRLibraryHooksSoapHook(): SoapHook

@@ -51,7 +51,7 @@ class HttpUtil
         $part = explode(' ', $status, 3);
 
         return [
-            'http_version' => substr(strrchr($part[0], '/'), 1),
+            'http_version' => substr(strrchr($part[0], '/') ?? '', 1),
             'code' => $part[1],
             'message' => $part[2] ?? '',
         ];

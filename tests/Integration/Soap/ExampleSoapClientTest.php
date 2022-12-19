@@ -71,14 +71,14 @@ class ExampleSoapClientTest extends TestCase
         \VCR\VCR::turnOff();
     }
 
-    protected function callSoap()
+    protected function callSoap(): string
     {
         $soapClient = new ExampleSoapClient();
 
         return $soapClient->call();
     }
 
-    protected function callSoapIntercepted()
+    protected function callSoapIntercepted(): string
     {
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('test-cassette.yml');

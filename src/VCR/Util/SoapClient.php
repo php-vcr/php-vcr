@@ -11,7 +11,7 @@ use VCR\VCRFactory;
 class SoapClient extends \SoapClient
 {
     /**
-     * @var \VCR\LibraryHooks\SoapHook SOAP library hook used to intercept SOAP requests
+     * @var \VCR\LibraryHooks\SoapHook|null SOAP library hook used to intercept SOAP requests
      */
     protected $soapHook;
 

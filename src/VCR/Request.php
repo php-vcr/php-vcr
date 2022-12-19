@@ -19,7 +19,7 @@ class Request
      */
     protected $url;
     /**
-     * @var array<string,string>
+     * @var array<string,string|null>
      */
     protected $headers = [];
     /**
@@ -150,7 +150,7 @@ class Request
     }
 
     /**
-     * @return array<string,string>
+     * @return array<string,string|null>
      */
     public function getHeaders(): array
     {

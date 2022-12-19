@@ -110,6 +110,10 @@ class RequestMatcher
      */
     public static function matchSoapOperation(Request $storedRequest, Request $request): bool
     {
+        if (null === $request->getBody() || null === $storedRequest->getBody()) {
+            return true;
+        }
+
         $soapOperationRequest = preg_match('/<SOAP-ENV:Body><(.*?)>/m', $request->getBody(), $matches);
         if (empty($matches)) {
             // The request is not a SOAP request

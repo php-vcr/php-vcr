@@ -1,0 +1,86 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#1 \\$url of function curl_init expects string, string\\|null given\\.$#"
+			count: 1
+			path: src/VCR/LibraryHooks/CurlHook.php
+
+		-
+			message: "#^Constant CURLPROXY_HTTPS not found\\.$#"
+			count: 1
+			path: src/VCR/Util/CurlHelper.php
+
+		-
+			message: "#^Parameter \\#1 \\$headers of static method VCR\\\\Util\\\\HttpUtil\\:\\:formatHeadersForCurl\\(\\) expects array\\<string, array\\<string, string\\>\\|string\\>, array\\<string, string\\|null\\> given\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpClient.php
+
+		-
+			message: "#^Parameter \\#1 \\$url of function curl_init expects string, string\\|null given\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpClient.php
+
+		-
+			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpUtil.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpUtil.php
+
+		-
+			message: "#^Method VCR\\\\Util\\\\SoapClient\\:\\:realDoRequest\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: src/VCR/Util/SoapClient.php
+
+		-
+			message: "#^Parameter \\#2 \\$length of function fread expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: "#^Parameter \\#2 \\$size of function ftruncate expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: "#^Cannot call method record\\(\\) on VCR\\\\Cassette\\|null\\.$#"
+			count: 1
+			path: src/VCR/Videorecorder.php
+
+		-
+			message: "#^Parameter \\#1 \\$event of method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:dispatch\\(\\) expects object, string\\|null given\\.$#"
+			count: 1
+			path: src/VCR/Videorecorder.php
+
+		-
+			message: "#^Parameter \\#2 \\$eventName of method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:dispatch\\(\\) expects string\\|null, VCR\\\\Event\\\\Event given\\.$#"
+			count: 1
+			path: src/VCR/Videorecorder.php
+
+		-
+			message: "#^Parameter \\#3 \\$cassette of class VCR\\\\Event\\\\BeforeRecordEvent constructor expects VCR\\\\Cassette, VCR\\\\Cassette\\|null given\\.$#"
+			count: 1
+			path: src/VCR/Videorecorder.php
+
+		-
+			message: "#^Parameter \\#1 \\$info of method VCR\\\\Tests\\\\Integration\\\\Guzzle\\\\AsyncTest\\:\\:assertValidGETResponse\\(\\) expects array\\<string, mixed\\>, array\\|bool\\|float\\|int\\|object\\|string\\|null given\\.$#"
+			count: 1
+			path: tests/Integration/Guzzle/AsyncTest.php
+
+		-
+			message: "#^Cannot call method toArray\\(\\) on VCR\\\\Response\\|null\\.$#"
+			count: 2
+			path: tests/Unit/CassetteTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertNull\\(\\) with string and 'When called with…' will always evaluate to false\\.$#"
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: "#^Call to an undefined method org\\\\bovigo\\\\vfs\\\\vfsStreamContent\\:\\:hasChild\\(\\)\\.$#"
+			count: 1
+			path: tests/Unit/Storage/AbstractStorageTest.php

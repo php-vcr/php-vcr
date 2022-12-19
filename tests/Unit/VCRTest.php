@@ -115,7 +115,7 @@ class VCRTest extends TestCase
         VCR::configure()->enableLibraryHooks(['stream_wrapper']);
         VCR::turnOn();
         // If there is no cassette inserted, a request should throw an exception
-        file_get_contents('http://example.com');
+        file_get_contents('http://example.com'); // @phpstan-ignore-line
         VCR::turnOff();
     }
 

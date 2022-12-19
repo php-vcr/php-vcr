@@ -35,6 +35,9 @@ class AsyncTest extends TestCase
         \VCR\VCR::turnOff();
     }
 
+    /**
+     * @param array<string, mixed> $info
+     */
     protected function assertValidGETResponse($info): void
     {
         $this->assertIsArray($info, 'Response is not an array.');
