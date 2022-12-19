@@ -66,18 +66,13 @@ parameters:
 			path: src/VCR/Videorecorder.php
 
 		-
-			message: "#^Cannot call method toArray\\(\\) on VCR\\\\Response\\|null\\.$#"
-			count: 7
-			path: tests/Unit/CassetteTest.php
-
-		-
 			message: "#^Parameter \\#1 \\$info of method VCR\\\\Tests\\\\Integration\\\\Guzzle\\\\AsyncTest\\:\\:assertValidGETResponse\\(\\) expects array\\<string, mixed\\>, array\\|bool\\|float\\|int\\|object\\|string\\|null given\\.$#"
 			count: 1
 			path: tests/Integration/Guzzle/AsyncTest.php
 
 		-
 			message: "#^Cannot call method toArray\\(\\) on VCR\\\\Response\\|null\\.$#"
-			count: 2
+			count: 7
 			path: tests/Unit/CassetteTest.php
 
 		-
