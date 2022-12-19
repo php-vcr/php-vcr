@@ -214,6 +214,8 @@ class Videorecorder
      * @throws \BadMethodCallException if there was no cassette inserted
      * @throws \LogicException         if the mode is set to none or once and
      *                                 the cassette did not have a matching response
+     *
+     * @api
      */
     public function handleRequest(Request $request): Response
     {
@@ -231,7 +233,9 @@ class Videorecorder
         // Playback succeeded and the recorded response can be returned.
         if (!empty($response)) {
             $event = new AfterPlaybackEvent($request, $response, $this->cassette);
-            $this->dispatch($event, VCREvents::VCR_AFTER_PLAYBACK);
+            $this->dispatch($event,
+                VCREvents::VCR_AFTER_PLAYBACK
+            );
 
             return $response;
         }
@@ -302,18 +306,18 @@ class Videorecorder
         }
     }
 
-      protected function iterateIndex(Request $request): int
-      {
-          $hash = $request->getHash();
-          if (!isset($this->indexTable[$hash])) {
-              $this->indexTable[$hash] = -1;
-          }
+    protected function iterateIndex(Request $request): int
+    {
+        $hash = $request->getHash();
+        if (!isset($this->indexTable[$hash])) {
+            $this->indexTable[$hash] = -1;
+        }
 
-          return ++$this->indexTable[$hash];
-      }
+        return ++$this->indexTable[$hash];
+    }
 
-      public function resetIndex(): void
-      {
-          $this->indexTable = [];
-      }
+    public function resetIndex(): void
+    {
+        $this->indexTable = [];
+    }
 }
