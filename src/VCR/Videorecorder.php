@@ -4,6 +4,7 @@ namespace VCR;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 use VCR\Event\AfterHttpRequestEvent;
 use VCR\Event\AfterPlaybackEvent;
 use VCR\Event\BeforeHttpRequestEvent;
@@ -100,15 +101,16 @@ class Videorecorder
      */
     private function dispatch(Event $event, $eventName = null): Event
     {
-        if (class_exists(\Symfony\Component\EventDispatcher\Event::class)) {
-            $res = $this->getEventDispatcher()->dispatch($eventName, $event);
+        $dispatcher = $this->getEventDispatcher();
 
-            Assertion::isInstanceOf($res, Event::class);
-
-            return $res;
+        // The `EventDispatcherInterface` of `Symfony\Contracts` is only implemented in Symfony 4.3 or higher
+        if ($dispatcher instanceof ContractsEventDispatcherInterface) {
+            // Symfony 4.3 or higher
+            $res = $dispatcher->dispatch($event, $eventName);
+        } else {
+            // Symfony 4.2 or lower
+            $res = $dispatcher->dispatch($eventName, $event);
         }
-
-        $res = $this->getEventDispatcher()->dispatch($event, $eventName);
 
         Assertion::isInstanceOf($res, Event::class);
 
