@@ -1,6 +1,6 @@
 {
   "Verbose": true,
-  "IgnoreDefaults": true,
+  "IgnoreDefaults": false,
   "Exclude": [
     ".phpunit.result.cache",
     ".php-cs-fixer.cache",
