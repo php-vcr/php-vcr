@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace VCR\LibraryHooks;
 
-use CurlHandle;
-use CurlMultiHandle;
 use VCR\CodeTransform\AbstractCodeTransform;
 use VCR\Request;
 use VCR\Response;
@@ -37,12 +35,12 @@ class CurlHook implements LibraryHook
     protected static array $curlOptions = [];
 
     /**
-     * @var array<int, array> all curl handles which belong to curl_multi handles
+     * @var array<int, array<\CurlHandle>> all curl handles which belong to curl_multi handles
      */
     protected static array $multiHandles = [];
 
     /**
-     * @var array<int, array> last active curl_multi_exec() handles
+     * @var array<\CurlHandle> last active curl_multi_exec() handles
      */
     protected static array $multiExecLastChs = [];
 
@@ -137,7 +135,7 @@ class CurlHook implements LibraryHook
     /**
      * @see http://www.php.net/manual/en/function.curl-init.php
      */
-    public static function curlInit(?string $url = null): CurlHandle|false
+    public static function curlInit(?string $url = null): \CurlHandle|false
     {
         $curlHandle = curl_init($url);
         if (false !== $curlHandle) {
@@ -151,7 +149,7 @@ class CurlHook implements LibraryHook
     /**
      * @see http://www.php.net/manual/en/function.curl-reset.php
      */
-    public static function curlReset(CurlHandle $curlHandle): void
+    public static function curlReset(\CurlHandle $curlHandle): void
     {
         curl_reset($curlHandle);
         self::$requests[(int) $curlHandle] = new Request('GET', null);
@@ -168,7 +166,7 @@ class CurlHook implements LibraryHook
      *               However, if the CURLOPT_RETURNTRANSFER option is set, it will return the
      *               result on success, FALSE on failure.
      */
-    public static function curlExec(CurlHandle $curlHandle)
+    public static function curlExec(\CurlHandle $curlHandle)
     {
         try {
             $request = self::$requests[(int) $curlHandle];
@@ -195,7 +193,7 @@ class CurlHook implements LibraryHook
      *
      * @see http://www.php.net/manual/en/function.curl-multi-add-handle.php
      */
-    public static function curlMultiAddHandle(CurlMultiHandle $multiHandle, CurlHandle $curlHandle): void
+    public static function curlMultiAddHandle(\CurlMultiHandle $multiHandle, \CurlHandle $curlHandle): void
     {
         if (!isset(self::$multiHandles[(int) $multiHandle])) {
             self::$multiHandles[(int) $multiHandle] = [];
@@ -209,7 +207,7 @@ class CurlHook implements LibraryHook
      *
      * @see http://www.php.net/manual/en/function.curl-multi-remove-handle.php
      */
-    public static function curlMultiRemoveHandle(CurlMultiHandle $multiHandle, CurlHandle $curlHandle): void
+    public static function curlMultiRemoveHandle(\CurlMultiHandle $multiHandle, \CurlHandle $curlHandle): void
     {
         if (isset(self::$multiHandles[(int) $multiHandle][(int) $curlHandle])) {
             unset(self::$multiHandles[(int) $multiHandle][(int) $curlHandle]);
@@ -221,7 +219,7 @@ class CurlHook implements LibraryHook
      *
      * @see http://www.php.net/manual/en/function.curl-multi-exec.php
      */
-    public static function curlMultiExec(CurlMultiHandle $multiHandle, ?int &$stillRunning): int
+    public static function curlMultiExec(\CurlMultiHandle $multiHandle, ?int &$stillRunning): int
     {
         if (isset(self::$multiHandles[(int) $multiHandle])) {
             foreach (self::$multiHandles[(int) $multiHandle] as $curlHandle) {
@@ -264,7 +262,7 @@ class CurlHook implements LibraryHook
      *
      * @return string|null return the content of a cURL handle if CURLOPT_RETURNTRANSFER is set
      */
-    public static function curlMultiGetcontent(CurlHandle $curlHandle): ?string
+    public static function curlMultiGetcontent(\CurlHandle $curlHandle): ?string
     {
         return self::$multiReturnValues[(int) $curlHandle] ?? null;
     }
@@ -276,7 +274,7 @@ class CurlHook implements LibraryHook
      *
      * @return mixed
      */
-    public static function curlGetinfo(CurlHandle $curlHandle, int $option = 0)
+    public static function curlGetinfo(\CurlHandle $curlHandle, int $option = 0)
     {
         if (isset(self::$responses[(int) $curlHandle])) {
             return CurlHelper::getCurlOptionFromResponse(
@@ -297,7 +295,7 @@ class CurlHook implements LibraryHook
      *
      * @param mixed $value the value to be set on option
      */
-    public static function curlSetopt(CurlHandle $curlHandle, int $option, $value): bool
+    public static function curlSetopt(\CurlHandle $curlHandle, int $option, $value): bool
     {
         CurlHelper::setCurlOptionOnRequest(self::$requests[(int) $curlHandle], $option, $value);
 
@@ -313,7 +311,7 @@ class CurlHook implements LibraryHook
      *
      * @param array<int, mixed> $options an array specifying which options to set and their values
      */
-    public static function curlSetoptArray(CurlHandle $curlHandle, array $options): void
+    public static function curlSetoptArray(\CurlHandle $curlHandle, array $options): void
     {
         foreach ($options as $option => $value) {
             static::curlSetopt($curlHandle, $option, $value);
@@ -325,7 +323,7 @@ class CurlHook implements LibraryHook
      *
      * @see https://php.net/manual/en/function.curl-error.php
      */
-    public static function curlError(CurlHandle $curlHandle): string
+    public static function curlError(\CurlHandle $curlHandle): string
     {
         if (isset(self::$lastErrors[(int) $curlHandle])) {
             return self::$lastErrors[(int) $curlHandle]->getMessage();
@@ -339,7 +337,7 @@ class CurlHook implements LibraryHook
      *
      * @see https://php.net/manual/en/function.curl-errno.php
      */
-    public static function curlErrno(CurlHandle $curlHandle): int
+    public static function curlErrno(\CurlHandle $curlHandle): int
     {
         if (isset(self::$lastErrors[(int) $curlHandle])) {
             return self::$lastErrors[(int) $curlHandle]->getCode();

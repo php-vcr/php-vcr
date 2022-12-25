@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace VCR\Util;
 
-use CurlHandle;
 use VCR\Request;
 use VCR\Response;
 
@@ -14,7 +13,7 @@ class CurlHelper
      * @var array<int, string> list of cURL info constants
      */
     private static $curlInfoList = [
-        //"certinfo"?
+        // "certinfo"?
         \CURLINFO_HTTP_CODE => 'http_code',
         \CURLINFO_EFFECTIVE_URL => 'url',
         \CURLINFO_TOTAL_TIME => 'total_time',
@@ -48,7 +47,7 @@ class CurlHelper
      *
      * @param array<int, mixed> $curlOptions cURL options which are not stored within the Response
      */
-    public static function handleOutput(Response $response, array $curlOptions, CurlHandle $ch): ?string
+    public static function handleOutput(Response $response, array $curlOptions, \CurlHandle $ch): ?string
     {
         // If there is a header function set, feed the http status and headers to it.
         if (isset($curlOptions[\CURLOPT_HEADERFUNCTION])) {
@@ -84,9 +83,9 @@ class CurlHelper
     /**
      * @param int $option cURL option to get
      *
-     * @throws \BadMethodCallException
-     *
      * @return mixed value of the cURL option
+     *
+     * @throws \BadMethodCallException
      */
     public static function getCurlOptionFromResponse(Response $response, int $option = 0)
     {
@@ -185,7 +184,7 @@ class CurlHelper
      * Makes sure we've properly handled the POST body, such as ensuring that
      * CURLOPT_INFILESIZE is set if CURLOPT_READFUNCTION is set.
      */
-    public static function validateCurlPOSTBody(Request $request, CurlHandle $curlHandle = null): void
+    public static function validateCurlPOSTBody(Request $request, \CurlHandle $curlHandle = null): void
     {
         $readFunction = $request->getCurlOption(\CURLOPT_READFUNCTION);
         if (null === $readFunction) {
@@ -213,7 +212,7 @@ class CurlHelper
      *
      * @return mixed value returned by the callback function
      */
-    private static function callFunction($callback, CurlHandle $curlHandle, $argument)
+    private static function callFunction($callback, \CurlHandle $curlHandle, $argument)
     {
         if (!\is_callable($callback) && \is_array($callback) && 2 === \count($callback)) {
             // This is probably a private or protected method on an object. Try and

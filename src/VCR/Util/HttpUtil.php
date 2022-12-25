@@ -53,7 +53,7 @@ class HttpUtil
         $part = explode(' ', $status, 3);
 
         return [
-            'http_version' => substr(strrchr($part[0], '/'), 1),
+            'http_version' => substr(strrchr($part[0], '/') ?? '', 1),
             'code' => $part[1],
             'message' => $part[2] ?? '',
         ];
@@ -121,8 +121,8 @@ class HttpUtil
     public static function formatAsStatusString(Response $response): string
     {
         return 'HTTP/'.$response->getHttpVersion()
-             .' '.$response->getStatusCode()
-             .' '.$response->getStatusMessage();
+            .' '.$response->getStatusCode()
+            .' '.$response->getStatusMessage();
     }
 
     /**
