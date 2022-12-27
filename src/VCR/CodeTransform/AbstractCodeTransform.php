@@ -20,7 +20,7 @@ abstract class AbstractCodeTransform extends \php_user_filter
      */
     public function register(): void
     {
-        if (! \in_array(static::NAME, stream_get_filters(), true)) {
+        if (!\in_array(static::NAME, stream_get_filters(), true)) {
             $isRegistered = stream_filter_register(static::NAME, static::class);
             Assertion::true(
                 $isRegistered,
@@ -34,8 +34,8 @@ abstract class AbstractCodeTransform extends \php_user_filter
      *
      * @param resource $in
      * @param resource $out
-     * @param int $consumed
-     * @param bool $closing
+     * @param int      $consumed
+     * @param bool     $closing
      *
      * @return int PSFS_PASS_ON
      *
