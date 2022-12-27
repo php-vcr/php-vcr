@@ -35,7 +35,6 @@ abstract class AbstractCodeTransform extends \php_user_filter
      * @param resource $in
      * @param resource $out
      * @param int      $consumed
-     * @param bool     $closing
      *
      * @return int PSFS_PASS_ON
      *
