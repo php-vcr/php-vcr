@@ -10,6 +10,7 @@ use VCR\Cassette;
 use VCR\Configuration;
 use VCR\Request;
 use VCR\Response;
+use VCR\Storage\Yaml;
 use VCR\Util\HttpClient;
 use VCR\VCR;
 use VCR\VCRFactory;
@@ -184,5 +185,56 @@ final class VideorecorderTest extends TestCase
         }
 
         return $cassette;
+    }
+
+
+    public function testPlaybackOfIdenticalRequestsAndMatcher(): void {
+
+        $request1 = new Request('GET', 'https://example.com', ['Request-Version' => '1']);
+        $response1 = new Response('200', [], 'response');
+
+        $request2 = new Request('GET', 'https://example.com', ['Request-Version' => '2']);
+        $response2 = new Response('200', [], 'response 2');
+
+
+        $client = new class([
+             $response1,
+             $response2
+        ]) extends HttpClient {
+            private int $index = 0;
+            public function __construct(private array $sequence)
+            {
+            }
+
+            public function send(Request $request): Response
+            {
+                return $this->sequence[$this->index++];
+            }
+
+        };
+
+        $configuration = new Configuration();
+        $configuration->enableLibraryHooks([]);
+        $configuration->setMode('new_episodes');
+        $configuration->enableRequestMatchers(['body']);
+
+        $videorecorder = new class($configuration, $client, VCRFactory::getInstance()) extends Videorecorder {
+            public function setCassette(Cassette $cassette): void
+            {
+                $this->cassette = $cassette;
+            }
+        };
+
+        vfsStream::setup('test');
+        $storage = new Yaml(vfsStream::url('test/'), 'json_test');
+        $cassette = new Cassette('cassette_name', $configuration, $storage);
+        $videorecorder->setCassette($cassette);
+
+        $this->assertEquals($response1, $videorecorder->handleRequest($request1));
+        $this->assertEquals($response2, $videorecorder->handleRequest($request2));
+
+        $this->assertEquals($response1->toArray(), $cassette->playback($request1, 0)->toArray());
+        $this->assertNotEquals($response1->toArray(), $cassette->playback($request2, 1)->toArray());
+        $this->assertEquals($response2->toArray(), $cassette->playback($request2, 1)->toArray());
     }
 }
