@@ -187,21 +187,20 @@ final class VideorecorderTest extends TestCase
         return $cassette;
     }
 
-
-    public function testPlaybackOfIdenticalRequestsAndMatcher(): void {
-
+    public function testPlaybackOfIdenticalRequestsAndMatcher(): void
+    {
         $request1 = new Request('GET', 'https://example.com', ['Request-Version' => '1']);
         $response1 = new Response('200', [], 'response');
 
         $request2 = new Request('GET', 'https://example.com', ['Request-Version' => '2']);
         $response2 = new Response('200', [], 'response 2');
 
-
-        $client = new class([
-             $response1,
-             $response2
-        ]) extends HttpClient {
+        $client = new class([$response1, $response2]) extends HttpClient {
             private int $index = 0;
+
+            /**
+             * @param Response[] $sequence
+             */
             public function __construct(private array $sequence)
             {
             }
@@ -210,7 +209,6 @@ final class VideorecorderTest extends TestCase
             {
                 return $this->sequence[$this->index++];
             }
-
         };
 
         $configuration = new Configuration();
@@ -233,8 +231,8 @@ final class VideorecorderTest extends TestCase
         $this->assertEquals($response1, $videorecorder->handleRequest($request1));
         $this->assertEquals($response2, $videorecorder->handleRequest($request2));
 
-        $this->assertEquals($response1->toArray(), $cassette->playback($request1, 0)->toArray());
-        $this->assertNotEquals($response1->toArray(), $cassette->playback($request2, 1)->toArray());
-        $this->assertEquals($response2->toArray(), $cassette->playback($request2, 1)->toArray());
+        $this->assertEquals($response1->toArray(), $cassette->playback($request1, 0)?->toArray());
+        $this->assertNotEquals($response1->toArray(), $cassette->playback($request2, 1)?->toArray());
+        $this->assertEquals($response2->toArray(), $cassette->playback($request2, 1)?->toArray());
     }
 }
