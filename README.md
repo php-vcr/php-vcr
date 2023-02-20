@@ -14,7 +14,7 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 
 * Automatically records and replays your HTTP(s) interactions with minimal setup/configuration code.
 * Supports common http functions and extensions
-  * everything using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification (except `$http_response_header` see #96)
+  * everything using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification (except `$http_response_header` see [#96](https://github.com/php-vcr/php-vcr/issues/96))
   * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
   * curl(), by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
 * The same request can receive different responses in different tests -- just use different cassettes.
@@ -121,7 +121,7 @@ composer test
 [Old changelog entries](docs/old-changelog.md)
 
 ## Copyright
-Copyright (c) 2013-2016 Adrian Philipp. Released under the terms of the MIT license. See LICENSE for details.
+Copyright (c) 2013-2023 Adrian Philipp. Released under the terms of the MIT license. See LICENSE for details.
 [Contributors](https://github.com/php-vcr/php-vcr/graphs/contributors)
 
 <!--
