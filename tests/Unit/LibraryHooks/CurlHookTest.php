@@ -226,7 +226,7 @@ final class CurlHookTest extends TestCase
         curl_close($curlHandle);
 
         $this->assertIsArray($info, 'curl_getinfo() should return an array.');
-        $this->assertCount(21, $info, 'curl_getinfo() should return 21 values.');
+        $this->assertCount(22, $info, 'curl_getinfo() should return 22 values.');
         $this->curlHook->disable();
     }
 
