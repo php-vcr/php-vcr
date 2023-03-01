@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\CodeTransform;
 
 use VCR\Util\Assertion;
 
 class SoapCodeTransform extends AbstractCodeTransform
 {
-    const NAME = 'vcr_soap';
+    public const NAME = 'vcr_soap';
 
     /**
      * @var string[]

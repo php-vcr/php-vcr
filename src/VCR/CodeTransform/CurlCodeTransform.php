@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\CodeTransform;
 
 use VCR\Util\Assertion;
 
 class CurlCodeTransform extends AbstractCodeTransform
 {
-    const NAME = 'vcr_curl';
+    public const NAME = 'vcr_curl';
 
     /**
      * @var array<string, string>
@@ -21,6 +23,7 @@ class CurlCodeTransform extends AbstractCodeTransform
         '/(?<!::|->|\w_)\\\?curl_multi_remove_handle\s*\(/i' => '\VCR\LibraryHooks\CurlHook::curl_multi_remove_handle(',
         '/(?<!::|->|\w_)\\\?curl_multi_exec\s*\(/i' => '\VCR\LibraryHooks\CurlHook::curl_multi_exec(',
         '/(?<!::|->|\w_)\\\?curl_multi_info_read\s*\(/i' => '\VCR\LibraryHooks\CurlHook::curl_multi_info_read(',
+        '/(?<!::|->|\w_)\\\?curl_multi_getcontent\s*\(/i' => '\VCR\LibraryHooks\CurlHook::curl_multi_getcontent(',
         '/(?<!::|->|\w_)\\\?curl_reset\s*\(/i' => '\VCR\LibraryHooks\CurlHook::curl_reset(',
         '/(?<!::|->|\w_)\\\?curl_error\s*\(/i' => '\VCR\LibraryHooks\CurlHook::curl_error(',
         '/(?<!::|->|\w_)\\\?curl_errno\s*\(/i' => '\VCR\LibraryHooks\CurlHook::curl_errno(',

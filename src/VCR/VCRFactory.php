@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
+use Assert\Assertion;
 use VCR\LibraryHooks\CurlHook;
 use VCR\LibraryHooks\SoapHook;
 use VCR\Storage\Storage;
@@ -9,10 +12,7 @@ use VCR\Util\StreamProcessor;
 
 class VCRFactory
 {
-    /**
-     * @var Configuration
-     **/
-    protected $config;
+    protected Configuration $config;
 
     /**
      * @var array<string, object>
@@ -24,11 +24,6 @@ class VCRFactory
      */
     protected static $instance;
 
-    /**
-     * Creates a new VCRFactory instance.
-     *
-     * @param Configuration $config
-     */
     protected function __construct(Configuration $config = null)
     {
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
@@ -43,9 +38,6 @@ class VCRFactory
         );
     }
 
-    /**
-     * Provides an instance of the StreamProcessor.
-     */
     protected function createVCRUtilStreamProcessor(): StreamProcessor
     {
         return new StreamProcessor($this->config);
@@ -55,9 +47,17 @@ class VCRFactory
     protected function createStorage(string $cassetteName): Storage
     {
         $dsn = $this->config->getCassettePath();
-        $class = $this->config->getStorage();
+        $className = $this->config->getStorage();
+        Assertion::subclassOf(
+            $className,
+            Storage::class,
+            sprintf('Storage class "%s" is not a subclass of "%s".', $className, Storage::class)
+        );
 
-        return new $class($dsn, $cassetteName);
+        /** @var Storage $storage */
+        $storage = new $className($dsn, $cassetteName);
+
+        return $storage;
     }
 
     protected function createVCRLibraryHooksSoapHook(): SoapHook
@@ -76,13 +76,6 @@ class VCRFactory
         );
     }
 
-    /**
-     * Returns the same VCRFactory instance on ever call (singleton).
-     *
-     * @param Configuration $config (Optional) configuration
-     *
-     * @return VCRFactory
-     */
     public static function getInstance(Configuration $config = null): self
     {
         if (!self::$instance) {

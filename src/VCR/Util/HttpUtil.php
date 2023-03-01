@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use VCR\Response;
@@ -17,7 +19,7 @@ class HttpUtil
     {
         // Collect matching headers into groups
         foreach ($headers as $i => $line) {
-            list($key, $value) = explode(': ', $line, 2);
+            [$key, $value] = explode(': ', $line, 2);
             if (isset($headers[$key])) {
                 if (\is_array($headers[$key])) {
                     $headers[$key][] = $value;
@@ -51,9 +53,9 @@ class HttpUtil
         $part = explode(' ', $status, 3);
 
         return [
-            'http_version' => substr(strrchr($part[0], '/'), 1),
+            'http_version' => substr(strrchr($part[0], '/') ?? '', 1),
             'code' => $part[1],
-            'message' => isset($part[2]) ? $part[2] : '',
+            'message' => $part[2] ?? '',
         ];
     }
 
@@ -68,7 +70,7 @@ class HttpUtil
     {
         $response = str_replace("HTTP/1.1 100 Continue\r\n\r\n", '', $response);
 
-        list($rawHeader, $rawBody) = explode("\r\n\r\n", $response, 2);
+        [$rawHeader, $rawBody] = explode("\r\n\r\n", $response, 2);
 
         // Parse headers and status.
         $headers = self::parseRawHeader($rawHeader);
@@ -90,7 +92,7 @@ class HttpUtil
     /**
      * Returns a list of headers from a key/value paired array.
      *
-     * @param array<string,string|array<string,string>> $headers Headers as key/value pairs
+     * @param array<string,string|array<string,string>|null> $headers Headers as key/value pairs
      *
      * @return string[] List of headers ['Content-Type: text/html', '...'].
      */
@@ -119,8 +121,8 @@ class HttpUtil
     public static function formatAsStatusString(Response $response): string
     {
         return 'HTTP/'.$response->getHttpVersion()
-             .' '.$response->getStatusCode()
-             .' '.$response->getStatusMessage();
+            .' '.$response->getStatusCode()
+            .' '.$response->getStatusMessage();
     }
 
     /**

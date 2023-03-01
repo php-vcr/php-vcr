@@ -1,8 +1,0 @@
-{
-    "require": {
-        "ext-soap": "*"
-    },
-    "autoload": {
-        "classmap": ["src/"]
-    }
-}

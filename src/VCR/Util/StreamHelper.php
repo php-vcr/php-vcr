@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use VCR\Request;
@@ -15,9 +17,7 @@ class StreamHelper
      * If an existing Request is given, the stream context options
      * are set on the specified Request object.
      *
-     * @param resource $context  stream context resource
-     * @param string   $path     path to use as url
-     * @param Request  $existing optional, existing request
+     * @param resource $context stream context resource
      */
     public static function createRequestFromStreamContext($context, string $path, Request $existing = null): Request
     {
@@ -45,15 +45,15 @@ class StreamHelper
         }
 
         if (isset($http['follow_location'])) {
-            $request->setCurlOption(CURLOPT_FOLLOWLOCATION, (bool) $http['follow_location']);
+            $request->setCurlOption(\CURLOPT_FOLLOWLOCATION, (bool) $http['follow_location']);
         }
 
         if (isset($http['max_redirects'])) {
-            $request->setCurlOption(CURLOPT_MAXREDIRS, $http['max_redirects']);
+            $request->setCurlOption(\CURLOPT_MAXREDIRS, $http['max_redirects']);
         }
 
         if (isset($http['timeout'])) {
-            $request->setCurlOption(CURLOPT_TIMEOUT, $http['timeout']);
+            $request->setCurlOption(\CURLOPT_TIMEOUT, $http['timeout']);
         }
 
         // TODO: protocol_version

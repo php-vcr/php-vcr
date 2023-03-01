@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use VCR\CodeTransform\AbstractCodeTransform;
@@ -21,22 +23,19 @@ class StreamProcessor
     /**
      * Constant for a stream which was opened while including a file.
      */
-    const STREAM_OPEN_FOR_INCLUDE = 128;
+    public const STREAM_OPEN_FOR_INCLUDE = 128;
 
     /**
      * Stream protocol which is used when registering this wrapper.
      */
-    const PROTOCOL = 'file';
+    public const PROTOCOL = 'file';
 
-    /**
-     * @var Configuration
-     */
-    protected static $configuration;
+    protected static Configuration $configuration;
 
     /**
      * @var AbstractCodeTransform[] transformers which have been appended to this stream processor
      */
-    protected static $codeTransformers = [];
+    protected static array $codeTransformers = [];
 
     /**
      * @var resource|false resource for the currently opened file
@@ -46,18 +45,12 @@ class StreamProcessor
     /**
      * @see http://www.php.net/manual/en/class.streamwrapper.php#streamwrapper.props.context
      *
-     * @var resource the current context, or NULL if no context was passed to the caller function
+     * @var resource|null the current context, or NULL if no context was passed to the caller function
      */
     public $context;
 
-    /**
-     * @var bool
-     */
-    protected $isIntercepting = false;
+    protected bool $isIntercepting = false;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration = null)
     {
         if ($configuration) {
@@ -82,6 +75,8 @@ class StreamProcessor
      */
     public function restore(): void
     {
+        // stream_wrapper_restore can throw when stream_wrapper was never changed, so we unregister first
+        stream_wrapper_unregister(self::PROTOCOL);
         stream_wrapper_restore(self::PROTOCOL);
     }
 
@@ -101,7 +96,7 @@ class StreamProcessor
         $uri = $this->normalizePath($uri);
 
         foreach ($whiteList as $path) {
-            if (false !== strpos($uri, $path)) {
+            if (str_contains($uri, $path)) {
                 return true;
             }
         }
@@ -119,7 +114,7 @@ class StreamProcessor
         $uri = $this->normalizePath($uri);
 
         foreach (static::$configuration->getBlackList() as $path) {
-            if (false !== strpos($uri, $path)) {
+            if (str_contains($uri, $path)) {
                 return true;
             }
         }
@@ -132,7 +127,7 @@ class StreamProcessor
      */
     protected function isPhpFile(string $uri): bool
     {
-        return 'php' === pathinfo($uri, PATHINFO_EXTENSION);
+        return 'php' === pathinfo($uri, \PATHINFO_EXTENSION);
     }
 
     protected function shouldProcess(string $uri): bool
@@ -140,19 +135,6 @@ class StreamProcessor
         return $this->isWhitelisted($uri) && !$this->isBlacklisted($uri) && $this->isPhpFile($uri);
     }
 
-    /**
-     * Opens a stream and attaches registered filters.
-     *
-     * @param string $path       specifies the URL that was passed to the original function
-     * @param string $mode       the mode used to open the file, as detailed for fopen()
-     * @param int    $options    Holds additional flags set by the streams API.
-     *                           It can hold one or more of the following values OR'd together.
-     * @param string $openedPath if the path is opened successfully, and STREAM_USE_PATH is set in options,
-     *                           opened_path should be set to the full path of the file/resource that was
-     *                           actually opened
-     *
-     * @return bool returns TRUE on success or FALSE on failure
-     */
     public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
     {
         // file_exists catches paths like /dev/urandom that are missed by is_file.
@@ -163,9 +145,9 @@ class StreamProcessor
         $this->restore();
 
         if (isset($this->context)) {
-            $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH), $this->context);
+            $this->resource = fopen($path, $mode, (bool) ($options & \STREAM_USE_PATH), $this->context);
         } else {
-            $this->resource = fopen($path, $mode, (bool) ($options & STREAM_USE_PATH));
+            $this->resource = fopen($path, $mode, (bool) ($options & \STREAM_USE_PATH));
         }
 
         if (false !== $this->resource && $options & self::STREAM_OPEN_FOR_INCLUDE && $this->shouldProcess($path)) {
@@ -195,9 +177,6 @@ class StreamProcessor
      * Tests for end-of-file on a file pointer.
      *
      * @see http://www.php.net/manual/en/streamwrapper.stream-eof.php
-     *
-     * @return bool should return TRUE if the read/write position is at the end of the stream
-     *              and if no more data is available to be read, or FALSE otherwise
      */
     public function stream_eof(): bool
     {
@@ -252,7 +231,7 @@ class StreamProcessor
      *
      * @return bool return TRUE if the position was updated, FALSE otherwise
      */
-    public function stream_seek(int $offset, int $whence = SEEK_SET): bool
+    public function stream_seek(int $offset, int $whence = \SEEK_SET): bool
     {
         if (false === $this->resource) {
             return false;
@@ -316,7 +295,7 @@ class StreamProcessor
     public function url_stat(string $path, int $flags)
     {
         $this->restore();
-        if ($flags & STREAM_URL_STAT_QUIET) {
+        if ($flags & \STREAM_URL_STAT_QUIET) {
             set_error_handler(function () {
                 // Use native error handler
                 return false;
@@ -420,9 +399,9 @@ class StreamProcessor
     {
         $this->restore();
         if (isset($this->context)) {
-            $result = mkdir($path, $mode, (bool) ($options & STREAM_MKDIR_RECURSIVE), $this->context);
+            $result = mkdir($path, $mode, (bool) ($options & \STREAM_MKDIR_RECURSIVE), $this->context);
         } else {
-            $result = mkdir($path, $mode, (bool) ($options & STREAM_MKDIR_RECURSIVE));
+            $result = mkdir($path, $mode, (bool) ($options & \STREAM_MKDIR_RECURSIVE));
         }
         $this->intercept();
 
@@ -504,7 +483,7 @@ class StreamProcessor
             return false;
         }
 
-        $operation = (0 === $operation ? LOCK_EX : $operation);
+        $operation = (0 === $operation ? \LOCK_EX : $operation);
 
         return flock($this->resource, $operation);
     }
@@ -528,19 +507,19 @@ class StreamProcessor
         }
 
         switch ($option) {
-            case STREAM_OPTION_BLOCKING:
+            case \STREAM_OPTION_BLOCKING:
                 return stream_set_blocking($this->resource, (bool) $arg1);
-            case STREAM_OPTION_READ_TIMEOUT:
+            case \STREAM_OPTION_READ_TIMEOUT:
                 return stream_set_timeout($this->resource, $arg1, $arg2);
-            case STREAM_OPTION_WRITE_BUFFER:
+            case \STREAM_OPTION_WRITE_BUFFER:
                 // stream_set_write_buffer returns 0 in case of success
                 return 0 === stream_set_write_buffer($this->resource, $arg1);
-            case STREAM_OPTION_READ_BUFFER:
+            case \STREAM_OPTION_READ_BUFFER:
                 // stream_set_read_buffer returns 0 in case of success
                 return 0 === stream_set_read_buffer($this->resource, $arg1);
-            // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
-            /*case STREAM_OPTION_CHUNK_SIZE:
-                return stream_set_chunk_size($this->resource, $arg1);*/
+                // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
+                /*case STREAM_OPTION_CHUNK_SIZE:
+                    return stream_set_chunk_size($this->resource, $arg1);*/
         }
 
         return false;
@@ -549,13 +528,13 @@ class StreamProcessor
     /**
      * Write to stream.
      *
-     * @throws \BadMethodCallException if called, because this method is not applicable for this stream
-     *
      * @see http://www.php.net/manual/en/streamwrapper.stream-write.php
      *
      * @param string $data should be stored into the underlying stream
      *
      * @return int|false
+     *
+     * @throws \BadMethodCallException if called, because this method is not applicable for this stream
      */
     public function stream_write(string $data)
     {
@@ -605,22 +584,22 @@ class StreamProcessor
         $result = false;
 
         switch ($option) {
-            case STREAM_META_TOUCH:
+            case \STREAM_META_TOUCH:
                 if (empty($value)) {
                     $result = touch($path);
                 } else {
                     $result = touch($path, $value[0], $value[1]);
                 }
                 break;
-            case STREAM_META_OWNER_NAME:
-            case STREAM_META_OWNER:
+            case \STREAM_META_OWNER_NAME:
+            case \STREAM_META_OWNER:
                 $result = chown($path, $value);
                 break;
-            case STREAM_META_GROUP_NAME:
-            case STREAM_META_GROUP:
+            case \STREAM_META_GROUP_NAME:
+            case \STREAM_META_GROUP:
                 $result = chgrp($path, $value);
                 break;
-            case STREAM_META_ACCESS:
+            case \STREAM_META_ACCESS:
                 $result = chmod($path, $value);
                 break;
         }
@@ -673,7 +652,7 @@ class StreamProcessor
     protected function appendFiltersToStream($stream): void
     {
         foreach (static::$codeTransformers as $codeTransformer) {
-            stream_filter_append($stream, $codeTransformer::NAME, STREAM_FILTER_READ);
+            stream_filter_append($stream, $codeTransformer::NAME, \STREAM_FILTER_READ);
         }
     }
 

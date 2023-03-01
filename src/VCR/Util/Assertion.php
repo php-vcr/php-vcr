@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use Assert\Assertion as BaseAssertion;
@@ -9,7 +11,7 @@ class Assertion extends BaseAssertion
 {
     protected static $exceptionClass = 'VCR\VCRException';
 
-    const INVALID_CALLABLE = 910;
+    public const INVALID_CALLABLE = 910;
 
     /**
      * Assert that the value is callable.
