@@ -316,6 +316,7 @@ class CurlHook implements LibraryHook
         foreach ($options as $option => $value) {
             static::curlSetopt($curlHandle, $option, $value);
         }
+        return true;
     }
 
     /**
