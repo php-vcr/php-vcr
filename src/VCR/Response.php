@@ -28,9 +28,6 @@ class Response
      */
     protected $curlInfo = [];
 
-    /**
-     * @var mixed
-     */
     protected $httpVersion;
 
     /**
@@ -38,7 +35,7 @@ class Response
      * @param array<string,string>         $headers
      * @param array<string,mixed>          $curlInfo
      */
-    final public function __construct($status, array $headers = [], ?string $body = null, array $curlInfo = [])
+    final public function __construct($status, array $headers = [], string $body = null, array $curlInfo = [])
     {
         $this->setStatus($status);
         $this->headers = $headers;
@@ -57,11 +54,9 @@ class Response
         // Base64 encode when binary
         if (
             null !== $this->getContentType()
-            &&
-            (
+            && (
                 str_contains($this->getContentType(), 'application/x-gzip')
-                ||
-                'binary' == $this->getHeader('Content-Transfer-Encoding')
+                || 'binary' == $this->getHeader('Content-Transfer-Encoding')
             )
         ) {
             $body = base64_encode($body);
@@ -118,7 +113,7 @@ class Response
     /**
      * @return array<string,mixed>|mixed|null
      */
-    public function getCurlInfo(?string $option = null)
+    public function getCurlInfo(string $option = null)
     {
         if (empty($option)) {
             return $this->curlInfo;
@@ -157,9 +152,6 @@ class Response
         return $this->headers[$key];
     }
 
-    /**
-     * @return mixed
-     */
     public function getHttpVersion()
     {
         return $this->httpVersion;

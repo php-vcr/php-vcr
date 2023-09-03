@@ -36,8 +36,6 @@ class VCR
 
     /**
      * @param mixed[] $parameters
-     *
-     * @return mixed
      */
     public static function __callStatic(string $method, array $parameters)
     {

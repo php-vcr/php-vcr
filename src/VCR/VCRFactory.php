@@ -103,8 +103,6 @@ class VCRFactory
      *
      * @param string  $className class name to get a instance for
      * @param mixed[] $params    constructor arguments for this class
-     *
-     * @return mixed
      */
     public function getOrCreate(string $className, array $params = [])
     {

@@ -30,7 +30,7 @@ final class StreamProcessorTest extends TestCase
     /**
      * @dataProvider streamOpenAppendFilterProvider
      */
-    public function testStreamOpenShouldAppendFilters(bool $expected, int $option, ?bool $shouldProcess = null): void
+    public function testStreamOpenShouldAppendFilters(bool $expected, int $option, bool $shouldProcess = null): void
     {
         $mock = $this->getMockBuilder('VCR\Util\StreamProcessor')
             ->disableOriginalConstructor()
