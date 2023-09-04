@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^8,<8.2",
+        "php": "^8,<8.2|>=8.2.9,<8.3",
         "ext-curl": "*",
         "beberlei/assert": "^3.2.5",
         "symfony/yaml": "^3|^4|^5|^6",
