@@ -6,6 +6,11 @@ parameters:
 			path: src/VCR/Util/HttpUtil.php
 
 		-
+			message: "#^Method VCR\\\\Util\\\\HttpUtil\\:\\:parseHeaders\\(\\) should return array\\<string, string\\> but returns array\\<array\\<int, string\\>\\|string\\>\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpUtil.php
+
+		-
 			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/VCR/Util/HttpUtil.php

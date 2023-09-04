@@ -217,10 +217,7 @@ class Request
         return $this->curlOptions;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCurlOption(int $key)
+    public function getCurlOption(int $key): mixed
     {
         if (empty($this->curlOptions[$key])) {
             return null;
@@ -278,18 +275,12 @@ class Request
         unset($this->headers[$key]);
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function setPostField(string $key, $value): void
+    public function setPostField(string $key, mixed $value): void
     {
         $this->postFields[$key] = $value;
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function setCurlOption(int $key, $value): void
+    public function setCurlOption(int $key, mixed $value): void
     {
         $this->curlOptions[$key] = $value;
     }

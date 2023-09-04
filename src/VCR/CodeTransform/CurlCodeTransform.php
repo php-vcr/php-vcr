@@ -29,9 +29,6 @@ class CurlCodeTransform extends AbstractCodeTransform
         '/(?<!::|->|\w_)\\\?curl_errno\s*\(/i' => '\VCR\LibraryHooks\CurlHook::curl_errno(',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function transformCode(string $code): string
     {
         $transformedCode = preg_replace(array_keys(self::$patterns), array_values(self::$patterns), $code);
