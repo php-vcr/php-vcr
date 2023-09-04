@@ -18,17 +18,14 @@ class Response
     /**
      * @var array<string,string>
      */
-    protected $headers = [];
-    /**
-     * @var string|null
-     */
-    protected $body;
+    protected array $headers = [];
+    protected ?string $body;
     /**
      * @var array<string,mixed>
      */
-    protected $curlInfo = [];
+    protected array $curlInfo = [];
 
-    protected $httpVersion;
+    protected mixed $httpVersion;
 
     /**
      * @param string|array<string, string> $status
@@ -113,7 +110,7 @@ class Response
     /**
      * @return array<string,mixed>|mixed|null
      */
-    public function getCurlInfo(string $option = null)
+    public function getCurlInfo(string $option = null): mixed
     {
         if (empty($option)) {
             return $this->curlInfo;
@@ -152,7 +149,7 @@ class Response
         return $this->headers[$key];
     }
 
-    public function getHttpVersion()
+    public function getHttpVersion(): mixed
     {
         return $this->httpVersion;
     }

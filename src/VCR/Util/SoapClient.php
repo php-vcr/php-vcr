@@ -26,7 +26,7 @@ class SoapClient extends \SoapClient
     /**
      * @param array<string,mixed> $options
      */
-    public function __construct($wsdl, array $options = [])
+    public function __construct(?string $wsdl, array $options = [])
     {
         $this->options = $options;
         parent::__construct($wsdl, $options);

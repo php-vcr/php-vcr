@@ -263,7 +263,7 @@ class CurlHook implements LibraryHook
      *
      * @see http://www.php.net/manual/en/function.curl-getinfo.php
      */
-    public static function curlGetinfo(\CurlHandle $curlHandle, int $option = 0)
+    public static function curlGetinfo(\CurlHandle $curlHandle, int $option = 0): mixed
     {
         if (isset(self::$responses[(int) $curlHandle])) {
             return CurlHelper::getCurlOptionFromResponse(
