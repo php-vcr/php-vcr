@@ -24,6 +24,7 @@
         "symfony/event-dispatcher-contracts": "^1|^2|^3"
     },
     "require-dev": {
+        "ext-soap": "*",
         "guzzlehttp/guzzle": "^7",
         "phpunit/phpunit": "^9.5.10",
         "mikey179/vfsstream": "^1.6.10",
