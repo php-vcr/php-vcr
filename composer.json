@@ -4,9 +4,10 @@
     "license": "MIT",
     "scripts": {
         "test": "./vendor/bin/phpunit",
-        "lint": "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
-        "fix": "./vendor/bin/php-cs-fixer fix --verbose --diff",
-        "phpstan": "phpstan analyse -c phpstan.neon --no-progress -vvv"
+        "cs": "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
+        "cs-fix": "./vendor/bin/php-cs-fixer fix --verbose --diff",
+        "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.neon --no-progress -vvv",
+        "ec": "./vendor/bin/ec"
     },
     "authors": [
         {
@@ -15,24 +16,39 @@
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": "^8,<8.2|>=8.2.9,<8.3",
         "ext-curl": "*",
         "beberlei/assert": "^3.2.5",
-        "symfony/yaml": "~2.1|^3.0|^4.0|^5.0",
-        "symfony/event-dispatcher": "^2.4|^3.0|^4.0|^5.0"
+        "symfony/yaml": "^3|^4|^5|^6",
+        "symfony/event-dispatcher": "^4|^5|^6",
+        "symfony/event-dispatcher-contracts": "^1|^2|^3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.4.0",
-        "mikey179/vfsstream": "^1.6",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-beberlei-assert": "^0.12.0",
-        "thecodingmachine/phpstan-strict-rules": "^0.12",
-        "sebastian/version": "^1.0.3|^2.0",
-        "friendsofphp/php-cs-fixer": "^2.16"
+        "ext-soap": "*",
+        "guzzlehttp/guzzle": "^7",
+        "phpunit/phpunit": "^9.5.10",
+        "mikey179/vfsstream": "^1.6.10",
+        "phpstan/phpstan": "^1",
+        "phpstan/phpstan-beberlei-assert": "^1",
+        "thecodingmachine/phpstan-strict-rules": "^1",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpstan/phpstan-phpunit": "^1",
+        "phpstan/extension-installer": "^1.1",
+        "editorconfig-checker/editorconfig-checker": "^10.3"
     },
     "autoload": {
         "psr-4": {
             "VCR\\": "src/VCR/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VCR\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
         }
     }
 }

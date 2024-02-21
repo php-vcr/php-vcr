@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Storage;
 
 /**
@@ -7,16 +9,10 @@ namespace VCR\Storage;
  */
 class Blackhole implements Storage
 {
-    /**
-     * {@inheritdoc}
-     */
     public function storeRecording(array $recording): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isNew(): bool
     {
         return true;
@@ -33,10 +29,8 @@ class Blackhole implements Storage
         throw new \BadMethodCallException('Not implemented');
     }
 
-    /** @return array<mixed>|null */
-    public function next(): ?array
+    public function next(): void
     {
-        return null;
     }
 
     public function rewind(): void

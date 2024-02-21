@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR;
 
+use Assert\Assertion;
 use VCR\LibraryHooks\CurlHook;
 use VCR\LibraryHooks\SoapHook;
 use VCR\Storage\Storage;
@@ -9,33 +12,18 @@ use VCR\Util\StreamProcessor;
 
 class VCRFactory
 {
-    /**
-     * @var Configuration
-     **/
-    protected $config;
+    protected Configuration $config;
 
     /**
      * @var array<string, object>
      */
-    protected $mapping = [];
+    protected array $mapping = [];
 
-    /**
-     * @var self|null
-     */
-    protected static $instance;
+    protected static ?self $instance = null;
 
-    /**
-     * Creates a new VCRFactory instance.
-     *
-     * @param Configuration $config
-     */
     protected function __construct(Configuration $config = null)
     {
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
-
-        // This constant exists only from PHP 7.3
-        // Once we are no longer supporting 7.2, we can remove this
-        \defined('CURLPROXY_HTTPS') || \define('CURLPROXY_HTTPS', 2);
     }
 
     protected function createVCRVideorecorder(): Videorecorder
@@ -47,9 +35,6 @@ class VCRFactory
         );
     }
 
-    /**
-     * Provides an instance of the StreamProcessor.
-     */
     protected function createVCRUtilStreamProcessor(): StreamProcessor
     {
         return new StreamProcessor($this->config);
@@ -59,9 +44,17 @@ class VCRFactory
     protected function createStorage(string $cassetteName): Storage
     {
         $dsn = $this->config->getCassettePath();
-        $class = $this->config->getStorage();
+        $className = $this->config->getStorage();
+        Assertion::subclassOf(
+            $className,
+            Storage::class,
+            sprintf('Storage class "%s" is not a subclass of "%s".', $className, Storage::class)
+        );
 
-        return new $class($dsn, $cassetteName);
+        /** @var Storage $storage */
+        $storage = new $className($dsn, $cassetteName);
+
+        return $storage;
     }
 
     protected function createVCRLibraryHooksSoapHook(): SoapHook
@@ -80,13 +73,6 @@ class VCRFactory
         );
     }
 
-    /**
-     * Returns the same VCRFactory instance on ever call (singleton).
-     *
-     * @param Configuration $config (Optional) configuration
-     *
-     * @return VCRFactory
-     */
     public static function getInstance(Configuration $config = null): self
     {
         if (!self::$instance) {
@@ -104,7 +90,7 @@ class VCRFactory
      *
      * @return mixed an instance for specified class name and parameters
      */
-    public static function get(string $className, array $params = [])
+    public static function get(string $className, array $params = []): mixed
     {
         return self::getInstance()->getOrCreate($className, $params);
     }
@@ -114,10 +100,8 @@ class VCRFactory
      *
      * @param string  $className class name to get a instance for
      * @param mixed[] $params    constructor arguments for this class
-     *
-     * @return mixed
      */
-    public function getOrCreate(string $className, array $params = [])
+    public function getOrCreate(string $className, array $params = []): mixed
     {
         $key = $className.implode('-', $params);
 

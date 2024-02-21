@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Storage;
 
 /**
@@ -10,9 +12,6 @@ namespace VCR\Storage;
  */
 class Json extends AbstractStorage
 {
-    /**
-     * {@inheritdoc}
-     */
     public function storeRecording(array $recording): void
     {
         fseek($this->handle, -1, \SEEK_END);
@@ -28,9 +27,6 @@ class Json extends AbstractStorage
         fflush($this->handle);
     }
 
-    /**
-     * Parses the next record.
-     */
     public function next(): void
     {
         $this->current = json_decode($this->readNextRecord(), true);
@@ -39,8 +35,6 @@ class Json extends AbstractStorage
 
     /**
      * Returns the next record in raw format.
-     *
-     * @return string next record in raw format
      */
     protected function readNextRecord(): string
     {
@@ -76,9 +70,6 @@ class Json extends AbstractStorage
         return $record;
     }
 
-    /**
-     * Resets the storage to the beginning.
-     */
     public function rewind(): void
     {
         rewind($this->handle);
@@ -86,12 +77,7 @@ class Json extends AbstractStorage
         $this->position = 0;
     }
 
-    /**
-     * Returns true if the current record is valid.
-     *
-     * @return bool true if the current record is valid
-     */
-    public function valid()
+    public function valid(): bool
     {
         if (null === $this->current) {
             $this->next();

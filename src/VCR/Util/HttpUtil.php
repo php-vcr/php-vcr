@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use VCR\Response;
@@ -51,7 +53,7 @@ class HttpUtil
         $part = explode(' ', $status, 3);
 
         return [
-            'http_version' => substr(strrchr($part[0], '/'), 1),
+            'http_version' => substr(strrchr($part[0], '/') ?? '', 1),
             'code' => $part[1],
             'message' => $part[2] ?? '',
         ];
@@ -90,7 +92,7 @@ class HttpUtil
     /**
      * Returns a list of headers from a key/value paired array.
      *
-     * @param array<string,string|array<string,string>> $headers Headers as key/value pairs
+     * @param array<string,string|array<string,string>|null> $headers Headers as key/value pairs
      *
      * @return string[] List of headers ['Content-Type: text/html', '...'].
      */
@@ -119,8 +121,8 @@ class HttpUtil
     public static function formatAsStatusString(Response $response): string
     {
         return 'HTTP/'.$response->getHttpVersion()
-             .' '.$response->getStatusCode()
-             .' '.$response->getStatusMessage();
+            .' '.$response->getStatusCode()
+            .' '.$response->getStatusMessage();
     }
 
     /**

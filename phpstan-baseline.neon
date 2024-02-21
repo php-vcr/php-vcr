@@ -1,0 +1,56 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpUtil.php
+
+		-
+			message: "#^Method VCR\\\\Util\\\\HttpUtil\\:\\:parseHeaders\\(\\) should return array\\<string, string\\> but returns array\\<array\\<int, string\\>\\|string\\>\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpUtil.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpUtil.php
+
+		-
+			message: "#^Method VCR\\\\Util\\\\SoapClient\\:\\:realDoRequest\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: src/VCR/Util/SoapClient.php
+
+		-
+			message: "#^Parameter \\#2 \\$length of function fread expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: "#^Parameter \\#2 \\$size of function ftruncate expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: "#^Cannot call method record\\(\\) on VCR\\\\Cassette\\|null\\.$#"
+			count: 1
+			path: src/VCR/Videorecorder.php
+
+		-
+			message: "#^Parameter \\#3 \\$cassette of class VCR\\\\Event\\\\BeforeRecordEvent constructor expects VCR\\\\Cassette, VCR\\\\Cassette\\|null given\\.$#"
+			count: 1
+			path: src/VCR/Videorecorder.php
+
+		-
+			message: "#^Cannot call method toArray\\(\\) on VCR\\\\Response\\|null\\.$#"
+			count: 5
+			path: tests/Unit/CassetteTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$requestMatchers of method VCR\\\\Request\\:\\:matches\\(\\) expects array\\<callable\\(\\)\\: mixed\\>, array\\{array\\{'some', 'method'\\}\\} given\\.$#"
+			count: 1
+			path: tests/Unit/RequestTest.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:addListener\\(\\)\\.$#"
+			count: 1
+			path: tests/Unit/VCRTest.php

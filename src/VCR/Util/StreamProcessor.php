@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Util;
 
 use VCR\CodeTransform\AbstractCodeTransform;
@@ -28,15 +30,12 @@ class StreamProcessor
      */
     public const PROTOCOL = 'file';
 
-    /**
-     * @var Configuration
-     */
-    protected static $configuration;
+    protected static Configuration $configuration;
 
     /**
      * @var AbstractCodeTransform[] transformers which have been appended to this stream processor
      */
-    protected static $codeTransformers = [];
+    protected static array $codeTransformers = [];
 
     /**
      * @var resource|false resource for the currently opened file
@@ -46,18 +45,12 @@ class StreamProcessor
     /**
      * @see http://www.php.net/manual/en/class.streamwrapper.php#streamwrapper.props.context
      *
-     * @var resource the current context, or NULL if no context was passed to the caller function
+     * @var resource|null the current context, or NULL if no context was passed to the caller function
      */
     public $context;
 
-    /**
-     * @var bool
-     */
-    protected $isIntercepting = false;
+    protected bool $isIntercepting = false;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration = null)
     {
         if ($configuration) {
@@ -103,7 +96,7 @@ class StreamProcessor
         $uri = $this->normalizePath($uri);
 
         foreach ($whiteList as $path) {
-            if (false !== strpos($uri, $path)) {
+            if (str_contains($uri, $path)) {
                 return true;
             }
         }
@@ -121,7 +114,7 @@ class StreamProcessor
         $uri = $this->normalizePath($uri);
 
         foreach (static::$configuration->getBlackList() as $path) {
-            if (false !== strpos($uri, $path)) {
+            if (str_contains($uri, $path)) {
                 return true;
             }
         }
@@ -142,19 +135,6 @@ class StreamProcessor
         return $this->isWhitelisted($uri) && !$this->isBlacklisted($uri) && $this->isPhpFile($uri);
     }
 
-    /**
-     * Opens a stream and attaches registered filters.
-     *
-     * @param string $path       specifies the URL that was passed to the original function
-     * @param string $mode       the mode used to open the file, as detailed for fopen()
-     * @param int    $options    Holds additional flags set by the streams API.
-     *                           It can hold one or more of the following values OR'd together.
-     * @param string $openedPath if the path is opened successfully, and STREAM_USE_PATH is set in options,
-     *                           opened_path should be set to the full path of the file/resource that was
-     *                           actually opened
-     *
-     * @return bool returns TRUE on success or FALSE on failure
-     */
     public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
     {
         // file_exists catches paths like /dev/urandom that are missed by is_file.
@@ -197,9 +177,6 @@ class StreamProcessor
      * Tests for end-of-file on a file pointer.
      *
      * @see http://www.php.net/manual/en/streamwrapper.stream-eof.php
-     *
-     * @return bool should return TRUE if the read/write position is at the end of the stream
-     *              and if no more data is available to be read, or FALSE otherwise
      */
     public function stream_eof(): bool
     {
@@ -540,9 +517,9 @@ class StreamProcessor
             case \STREAM_OPTION_READ_BUFFER:
                 // stream_set_read_buffer returns 0 in case of success
                 return 0 === stream_set_read_buffer($this->resource, $arg1);
-            // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
-            /*case STREAM_OPTION_CHUNK_SIZE:
-                return stream_set_chunk_size($this->resource, $arg1);*/
+                // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
+                /*case STREAM_OPTION_CHUNK_SIZE:
+                    return stream_set_chunk_size($this->resource, $arg1);*/
         }
 
         return false;
@@ -551,13 +528,13 @@ class StreamProcessor
     /**
      * Write to stream.
      *
-     * @throws \BadMethodCallException if called, because this method is not applicable for this stream
-     *
      * @see http://www.php.net/manual/en/streamwrapper.stream-write.php
      *
      * @param string $data should be stored into the underlying stream
      *
      * @return int|false
+     *
+     * @throws \BadMethodCallException if called, because this method is not applicable for this stream
      */
     public function stream_write(string $data)
     {

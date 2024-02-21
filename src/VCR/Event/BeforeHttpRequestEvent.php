@@ -1,19 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VCR\Event;
 
 use VCR\Request;
 
 class BeforeHttpRequestEvent extends Event
 {
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    public function __construct(Request $request)
-    {
-        $this->request = $request;
+    public function __construct(
+        protected Request $request
+    ) {
     }
 
     public function getRequest(): Request
