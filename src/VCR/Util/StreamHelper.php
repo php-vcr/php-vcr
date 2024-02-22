@@ -19,7 +19,7 @@ class StreamHelper
      *
      * @param resource $context stream context resource
      */
-    public static function createRequestFromStreamContext($context, string $path, Request $existing = null): Request
+    public static function createRequestFromStreamContext($context, string $path, ?Request $existing = null): Request
     {
         $http = self::getHttpOptionsFromContext($context);
         $request = $existing;

@@ -186,7 +186,7 @@ class CurlHelper
      * Makes sure we've properly handled the POST body, such as ensuring that
      * CURLOPT_INFILESIZE is set if CURLOPT_READFUNCTION is set.
      */
-    public static function validateCurlPOSTBody(Request $request, \CurlHandle $curlHandle = null): void
+    public static function validateCurlPOSTBody(Request $request, ?\CurlHandle $curlHandle = null): void
     {
         $readFunction = $request->getCurlOption(\CURLOPT_READFUNCTION);
         if (null === $readFunction) {

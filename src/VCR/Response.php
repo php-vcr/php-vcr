@@ -32,7 +32,7 @@ class Response
      * @param array<string,string>         $headers
      * @param array<string,mixed>          $curlInfo
      */
-    final public function __construct($status, array $headers = [], string $body = null, array $curlInfo = [])
+    final public function __construct($status, array $headers = [], ?string $body = null, array $curlInfo = [])
     {
         $this->setStatus($status);
         $this->headers = $headers;
@@ -110,7 +110,7 @@ class Response
     /**
      * @return array<string,mixed>|mixed|null
      */
-    public function getCurlInfo(string $option = null): mixed
+    public function getCurlInfo(?string $option = null): mixed
     {
         if (empty($option)) {
             return $this->curlInfo;
