@@ -133,9 +133,3 @@ jobs:
         with:
           report_paths: "phpunit.xml"
           check_name: "PHPUnit Test Report (${{ matrix.php }}, ${{ matrix.dependencies }}, ${{ matrix.stability }})"
-
-      - name: "Publish Scrutinizer Coverage"
-        uses: "sudo-bot/action-scrutinizer@latest"
-        if: "always()" # always run even if the previous step fails
-        with:
-          cli-args: "--format=php-clover coverage.clover"
