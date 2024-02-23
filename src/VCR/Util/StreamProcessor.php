@@ -51,7 +51,7 @@ class StreamProcessor
 
     protected bool $isIntercepting = false;
 
-    public function __construct(Configuration $configuration = null)
+    public function __construct(?Configuration $configuration = null)
     {
         if ($configuration) {
             static::$configuration = $configuration;
