@@ -42,7 +42,7 @@ class HttpUtilTest extends TestCase
         $this->assertEquals($expectedHeaders, $headers);
     }
 
-    public function testParseResponseNull() : void
+    public function testParseResponseNull(): void
     {
         $raw = null;
         [$status, $headers, $body] = HttpUtil::parseResponse($raw);
