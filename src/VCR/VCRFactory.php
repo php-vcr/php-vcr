@@ -21,7 +21,7 @@ class VCRFactory
 
     protected static ?self $instance = null;
 
-    protected function __construct(Configuration $config = null)
+    protected function __construct(?Configuration $config = null)
     {
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
     }
@@ -59,7 +59,7 @@ class VCRFactory
 
     protected function createVCRLibraryHooksSoapHook(): SoapHook
     {
-        return new LibraryHooks\SoapHook(
+        return new SoapHook(
             $this->getOrCreate('VCR\CodeTransform\SoapCodeTransform'),
             $this->getOrCreate('VCR\Util\StreamProcessor')
         );
@@ -67,13 +67,13 @@ class VCRFactory
 
     protected function createVCRLibraryHooksCurlHook(): CurlHook
     {
-        return new LibraryHooks\CurlHook(
+        return new CurlHook(
             $this->getOrCreate('VCR\CodeTransform\CurlCodeTransform'),
             $this->getOrCreate('VCR\Util\StreamProcessor')
         );
     }
 
-    public static function getInstance(Configuration $config = null): self
+    public static function getInstance(?Configuration $config = null): self
     {
         if (!self::$instance) {
             self::$instance = new self($config);

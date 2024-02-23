@@ -63,7 +63,7 @@ class Videorecorder
         return $this->eventDispatcher;
     }
 
-    private function dispatch(Event $event, string $eventName = null): Event
+    private function dispatch(Event $event, ?string $eventName = null): Event
     {
         $res = $this->getEventDispatcher()->dispatch($event, $eventName);
 

@@ -46,6 +46,11 @@ parameters:
 			path: tests/Unit/CassetteTest.php
 
 		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertCount\\(\\) with arguments 22, array\\{url\\: string, content_type\\: string\\|null, http_code\\: int, header_size\\: int, request_size\\: int, filetime\\: int, ssl_verify_result\\: int, redirect_count\\: int, \\.\\.\\.\\} and 'curl_getinfo\\(\\)…' will always evaluate to false\\.$#"
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
 			message: "#^Parameter \\#2 \\$requestMatchers of method VCR\\\\Request\\:\\:matches\\(\\) expects array\\<callable\\(\\)\\: mixed\\>, array\\{array\\{'some', 'method'\\}\\} given\\.$#"
 			count: 1
 			path: tests/Unit/RequestTest.php
