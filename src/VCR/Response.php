@@ -84,6 +84,7 @@ class Response
         $body = $response['body'] ?? null;
 
         $gzip = isset($response['headers']['Content-Type'])
+            && \is_string($response['headers']['Content-Type'])
             && str_contains($response['headers']['Content-Type'], 'application/x-gzip');
 
         $binary = isset($response['headers']['Content-Transfer-Encoding'])
@@ -137,10 +138,15 @@ class Response
 
     public function getContentType(): ?string
     {
-        return $this->getHeader('Content-Type');
+        $value = $this->getHeader('Content-Type');
+
+        return \is_array($value) ? current($value) : $value;
     }
 
-    public function getHeader(string $key): ?string
+    /**
+     * @return string|array|null
+     */
+    public function getHeader(string $key)
     {
         if (!isset($this->headers[$key])) {
             return null;
