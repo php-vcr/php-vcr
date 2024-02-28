@@ -70,6 +70,10 @@ class HttpUtil
     {
         $response = str_replace("HTTP/1.1 100 Continue\r\n\r\n", '', $response);
 
+        // Support for SOAP requests that get a response with header X-Note: Gateway Ack
+        $response = str_replace("HTTP/1.1 100 Continue\r\n", '', $response);
+        $response = str_replace("X-Note: Gateway Ack\r\n\r\n", '', $response);
+
         [$rawHeader, $rawBody] = explode("\r\n\r\n", $response, 2);
 
         // Parse headers and status.
