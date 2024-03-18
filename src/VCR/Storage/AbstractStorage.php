@@ -58,7 +58,13 @@ abstract class AbstractStorage implements Storage
 
         $handle = fopen($this->filePath, 'r+');
 
-        Assertion::isResource($handle);
+        $message = 'Resource check. Should be overridden by the error_get_last()';
+        if (!$handle) {
+            echo error_get_last();
+            $message = error_get_last()['message'];
+        }
+
+        Assertion::isResource($handle, $message);
 
         $this->handle = $handle;
     }
