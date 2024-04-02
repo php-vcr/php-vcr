@@ -493,14 +493,14 @@ class StreamProcessor
      *
      * @codeCoverageIgnore
      *
-     * @param int $option one of STREAM_OPTION_BLOCKING, STREAM_OPTION_READ_TIMEOUT, STREAM_OPTION_WRITE_BUFFER
-     * @param int $arg1   depending on option
-     * @param int $arg2   depending on option
+     * @param int      $option one of STREAM_OPTION_BLOCKING, STREAM_OPTION_READ_TIMEOUT, STREAM_OPTION_WRITE_BUFFER
+     * @param int      $arg1   depending on option
+     * @param int|null $arg2   depending on option
      *
      * @return bool Returns TRUE on success or FALSE on failure. If option is not implemented,
      *              FALSE should be returned.
      */
-    public function stream_set_option(int $option, int $arg1, int $arg2): bool
+    public function stream_set_option(int $option, int $arg1, ?int $arg2 = null): bool
     {
         if (false === $this->resource) {
             return false;
