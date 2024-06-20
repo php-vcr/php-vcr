@@ -68,9 +68,20 @@ class HttpUtil
      */
     public static function parseResponse(string $response): array
     {
-        $response = str_replace("HTTP/1.1 100 Continue\r\n\r\n", '', $response);
+        $parts = explode("\r\n\r\n", $response);
 
-        [$rawHeader, $rawBody] = explode("\r\n\r\n", $response, 2);
+        $headerIndex = 0;
+        foreach ($parts as $index => $part) {
+            if (str_starts_with($part, 'HTTP/')) {
+                $headerIndex = $index;
+            } else {
+                break;
+            }
+        }
+
+        $rawHeader = $parts[$headerIndex];
+        $bodyParts = \array_slice($parts, $headerIndex + 1);
+        $rawBody = implode('\r\n\r\n', $bodyParts);
 
         // Parse headers and status.
         $headers = self::parseRawHeader($rawHeader);
