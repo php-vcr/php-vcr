@@ -171,7 +171,7 @@ class Videorecorder
             || VCR::MODE_ONCE === $this->config->getMode()
             && false === $this->cassette->isNew()
         ) {
-            throw new \LogicException(sprintf("The request does not match a previously recorded request and the 'mode' is set to '%s'. If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. ".'Please see http://php-vcr.github.io/documentation/configuration/#record-modes.'."\nCassette: %s \n Request: %s", $this->config->getMode(), $this->cassette->getName(), print_r($request->toArray(), true)));
+            throw new \LogicException(\sprintf("The request does not match a previously recorded request and the 'mode' is set to '%s'. If you want to send the request anyway, make sure your 'mode' is set to 'new_episodes'. ".'Please see http://php-vcr.github.io/documentation/configuration/#record-modes.'."\nCassette: %s \n Request: %s", $this->config->getMode(), $this->cassette->getName(), print_r($request->toArray(), true)));
         }
 
         $this->disableLibraryHooks();

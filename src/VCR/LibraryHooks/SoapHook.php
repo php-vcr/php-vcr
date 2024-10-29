@@ -49,7 +49,7 @@ class SoapHook implements LibraryHook
         } else { // >= SOAP_1_2
             $vcrRequest->setHeader(
                 'Content-Type',
-                sprintf('application/soap+xml; charset=utf-8; action="%s"', $action)
+                \sprintf('application/soap+xml; charset=utf-8; action="%s"', $action)
             );
         }
 

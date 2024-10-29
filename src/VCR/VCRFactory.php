@@ -48,7 +48,7 @@ class VCRFactory
         Assertion::subclassOf(
             $className,
             Storage::class,
-            sprintf('Storage class "%s" is not a subclass of "%s".', $className, Storage::class)
+            \sprintf('Storage class "%s" is not a subclass of "%s".', $className, Storage::class)
         );
 
         /** @var Storage $storage */
