@@ -89,7 +89,7 @@ final class RequestTest extends TestCase
                 'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    ],
+                ],
                 'post_fields' => ['para1' => 'val1'],
             ],
             $this->request->toArray()
@@ -107,7 +107,7 @@ final class RequestTest extends TestCase
                 'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    ],
+                ],
                 'post_fields' => ['para1' => 'val1'],
             ],
             $restoredRequest->toArray()
@@ -177,7 +177,7 @@ final class RequestTest extends TestCase
                 'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    ],
+                ],
                 'post_files' => [$file],
             ],
             $restoredRequest->toArray()

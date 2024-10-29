@@ -14,7 +14,7 @@ final class SoapCodeTransformTest extends TestCase
      */
     public function testTransformCode(string $expected, string $code): void
     {
-        $codeTransform = new class() extends SoapCodeTransform {
+        $codeTransform = new class extends SoapCodeTransform {
             // A proxy to access the protected transformCode method.
             public function publicTransformCode(string $code): string
             {
