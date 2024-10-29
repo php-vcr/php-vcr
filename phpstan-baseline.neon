@@ -21,12 +21,17 @@ parameters:
 			path: src/VCR/Util/SoapClient.php
 
 		-
-			message: "#^Parameter \\#2 \\$length of function fread expects int\\<0, max\\>, int given\\.$#"
+			message: "#^Parameter \\#2 \\$length of function fread expects int\\<1, max\\>, int given\\.$#"
 			count: 1
 			path: src/VCR/Util/StreamProcessor.php
 
 		-
 			message: "#^Parameter \\#2 \\$size of function ftruncate expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: "#^Parameter \\#3 \\$microseconds of function stream_set_timeout expects int, int\\|null given\\.$#"
 			count: 1
 			path: src/VCR/Util/StreamProcessor.php
 
@@ -54,6 +59,31 @@ parameters:
 			message: "#^Parameter \\#2 \\$requestMatchers of method VCR\\\\Request\\:\\:matches\\(\\) expects array\\<callable\\(\\)\\: mixed\\>, array\\{array\\{'some', 'method'\\}\\} given\\.$#"
 			count: 1
 			path: tests/Unit/RequestTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/Unit/Util/StreamProcessorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_set_blocking expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/Unit/Util/StreamProcessorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_set_read_buffer expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/Unit/Util/StreamProcessorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_set_timeout expects resource, resource\\|false given\\.$#"
+			count: 2
+			path: tests/Unit/Util/StreamProcessorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_set_write_buffer expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/Unit/Util/StreamProcessorTest.php
 
 		-
 			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:addListener\\(\\)\\.$#"
