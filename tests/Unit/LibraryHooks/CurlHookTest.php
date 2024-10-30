@@ -23,15 +23,13 @@ final class CurlHookTest extends TestCase
 
     protected CurlHook $curlHook;
 
-    protected function setup()
-    : void
+    protected function setup(): void
     {
-        $this->config   = new Configuration();
+        $this->config = new Configuration();
         $this->curlHook = new CurlHook(new CurlCodeTransform(), new StreamProcessor($this->config));
     }
 
-    public function testShouldBeEnabledAfterEnabling()
-    : void
+    public function testShouldBeEnabledAfterEnabling(): void
     {
         $this->assertFalse($this->curlHook->isEnabled(), 'Initially the CurlHook should be disabled.');
 
@@ -42,8 +40,7 @@ final class CurlHookTest extends TestCase
         $this->assertFalse($this->curlHook->isEnabled(), 'After disabling the CurlHook should be disabled.');
     }
 
-    public function testShouldInterceptCallWhenEnabled()
-    : void
+    public function testShouldInterceptCallWhenEnabled(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -60,8 +57,7 @@ final class CurlHookTest extends TestCase
     /**
      * @group uses_internet
      */
-    public function testShouldNotInterceptCallWhenNotEnabled()
-    : void
+    public function testShouldNotInterceptCallWhenNotEnabled(): void
     {
         $curlHandle = curl_init('http://example.com/');
         Assertion::notSame($curlHandle, false);
@@ -76,13 +72,11 @@ final class CurlHookTest extends TestCase
     /**
      * @group uses_internet
      */
-    public function testShouldNotInterceptCallWhenDisabled()
-    : void
+    public function testShouldNotInterceptCallWhenDisabled(): void
     {
         $intercepted = false;
         $this->curlHook->enable(
-            function () use (&$intercepted)
-            : void {
+            function () use (&$intercepted): void {
                 $intercepted = true;
             }
         );
@@ -97,8 +91,7 @@ final class CurlHookTest extends TestCase
         $this->assertFalse($intercepted, 'This request should not have been intercepted.');
     }
 
-    public function testShouldWriteFileOnFileDownload()
-    : void
+    public function testShouldWriteFileOnFileDownload(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -117,8 +110,7 @@ final class CurlHookTest extends TestCase
         $this->assertEquals($this->expectedJsonResponse, $actual, 'Response was not written in file.');
     }
 
-    public function testShouldEchoResponseIfReturnTransferFalse()
-    : void
+    public function testShouldEchoResponseIfReturnTransferFalse(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -135,8 +127,7 @@ final class CurlHookTest extends TestCase
         $this->assertEquals($this->expectedJsonResponse, $actual, 'Response was not written on stdout.');
     }
 
-    public function testShouldPostFieldsAsArray()
-    : void
+    public function testShouldPostFieldsAsArray(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -159,8 +150,7 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldPostFieldsAsArrayUsingSetoptarray()
-    : void
+    public function testShouldPostFieldsAsArrayUsingSetoptarray(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -188,8 +178,7 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoStatusCode()
-    : void
+    public function testShouldReturnCurlInfoStatusCode(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -208,10 +197,9 @@ final class CurlHookTest extends TestCase
     /**
      * @see https://github.com/php-vcr/php-vcr/issues/136
      */
-    public function testShouldReturnCurlInfoStatusCodeAsInteger()
-    : void
+    public function testShouldReturnCurlInfoStatusCodeAsInteger(): void
     {
-        $stringStatusCode  = '200';
+        $stringStatusCode = '200';
         $integerStatusCode = 200;
         $this->curlHook->enable($this->getTestCallback($stringStatusCode));
 
@@ -227,8 +215,7 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    public function testShouldReturnCurlInfoAll()
-    : void
+    public function testShouldReturnCurlInfoAll(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -240,36 +227,31 @@ final class CurlHookTest extends TestCase
         curl_close($curlHandle);
 
         $this->assertIsArray($info, 'curl_getinfo() should return an array.');
-        $this->assertCount(24, $info, 'curl_getinfo() should return 22 values.');
+        $this->assertCount(24, $info, 'curl_getinfo() should return 24 values.');
         $this->curlHook->disable();
     }
 
-
-    public function testShouldHandleCurlOptPrivate()
+    public function testShouldHandleCurlOptPrivate(): void
     {
-
         $curlInfos = ['private' => 'private_data'];
         $this->curlHook->enable(
-            \Closure::fromCallable(function () use ($curlInfos) {
-                return new Response(200, [], $this->expectedJsonResponse, $curlInfos);
-            })
-
+            \Closure::fromCallable(fn () => new Response('200', [], $this->expectedJsonResponse, $curlInfos))
         );
 
         $curlHandle = curl_init('http://example.com');
-        curl_setopt($curlHandle, CURLOPT_PRIVATE, 'private_data');
+        curl_setopt($curlHandle, \CURLOPT_PRIVATE, 'private_data');
 
-        $this->assertEquals('private_data', curl_getinfo($curlHandle, CURLINFO_PRIVATE));
+        $this->assertEquals('private_data', curl_getinfo($curlHandle, \CURLINFO_PRIVATE));
 
         curl_exec($curlHandle);
         curl_close($curlHandle);
 
-        $this->assertEquals('private_data', curl_getinfo($curlHandle, CURLINFO_PRIVATE));
+        $this->assertEquals('private_data', curl_getinfo($curlHandle, \CURLINFO_PRIVATE));
         $this->curlHook->disable();
         $this->curlHook->disable();
     }
 
-    public function testGetCurlOptionFromResponseHandleCertinfo()
+    public function testGetCurlOptionFromResponseHandleCertinfo(): void
     {
         // Set up response status and headers to simulate a real HTTP response
         $status = [
@@ -282,17 +264,14 @@ final class CurlHookTest extends TestCase
         ];
         $body = 'example response';
 
-        $response = new Response($status, $headers, $body);
-
-        $certInfo = CurlHelper::getCurlOptionFromResponse($response, CURLINFO_CERTINFO);
+        $response = new Response(array_map('strval', $status), array_map('strval', $headers), $body);
+        $certInfo = CurlHelper::getCurlOptionFromResponse($response, \CURLINFO_CERTINFO);
 
         $this->assertIsArray($certInfo, 'CURLINFO_CERTINFO should return an array.');
         $this->assertEmpty($certInfo, 'CURLINFO_CERTINFO should be empty for this response.');
     }
 
-
-    public function testShouldReturnCurlInfoAllKeys()
-    : void
+    public function testShouldReturnCurlInfoAllKeys(): void
     {
         $this->curlHook->enable($this->getTestCallback());
 
@@ -330,8 +309,7 @@ final class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotThrowErrorWhenDisabledTwice()
-    : void
+    public function testShouldNotThrowErrorWhenDisabledTwice(): void
     {
         $this->curlHook->disable();
         $this->curlHook->disable();
@@ -340,16 +318,14 @@ final class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotThrowErrorWhenEnabledTwice()
-    : void
+    public function testShouldNotThrowErrorWhenEnabledTwice(): void
     {
         $this->curlHook->enable($this->getTestCallback());
         $this->curlHook->enable($this->getTestCallback());
         $this->curlHook->disable();
     }
 
-    public function testShouldInterceptMultiCallWhenEnabled()
-    : void
+    public function testShouldInterceptMultiCallWhenEnabled(): void
     {
         $testClass = $this;
         $callCount = 0;
@@ -380,9 +356,9 @@ final class CurlHookTest extends TestCase
         $stillRunning = null;
         curl_multi_exec($curlMultiHandle, $stillRunning);
 
-        $lastInfo       = curl_multi_info_read($curlMultiHandle);
+        $lastInfo = curl_multi_info_read($curlMultiHandle);
         $secondLastInfo = curl_multi_info_read($curlMultiHandle);
-        $afterLastInfo  = curl_multi_info_read($curlMultiHandle);
+        $afterLastInfo = curl_multi_info_read($curlMultiHandle);
 
         curl_multi_remove_handle($curlMultiHandle, $curlHandle1);
         curl_multi_remove_handle($curlMultiHandle, $curlHandle2);
@@ -409,13 +385,11 @@ final class CurlHookTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    public function testShouldNotInterceptMultiCallWhenDisabled()
-    : void
+    public function testShouldNotInterceptMultiCallWhenDisabled(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
-            function () use ($testClass)
-            : void {
+            function () use ($testClass): void {
                 $testClass->fail('This request should not have been intercepted.');
             }
         );
@@ -424,7 +398,7 @@ final class CurlHookTest extends TestCase
         $curlHandle = curl_init('http://example.com');
         Assertion::notSame($curlHandle, false);
 
-        $stillRunning    = null;
+        $stillRunning = null;
         $curlMultiHandle = curl_multi_init();
         Assertion::notSame($curlMultiHandle, false);
         curl_multi_add_handle($curlMultiHandle, $curlHandle);
@@ -433,8 +407,7 @@ final class CurlHookTest extends TestCase
         curl_multi_close($curlMultiHandle);
     }
 
-    public function testShouldReturnMultiCallValues()
-    : void
+    public function testShouldReturnMultiCallValues(): void
     {
         $testClass = $this;
         $callCount = 0;
@@ -447,7 +420,7 @@ final class CurlHookTest extends TestCase
                 );
                 ++$callCount;
 
-                return new Response('200', [], $testClass->expectedJsonResponse . $callCount);
+                return new Response('200', [], $testClass->expectedJsonResponse.$callCount);
             }
         );
 
@@ -486,13 +459,13 @@ final class CurlHookTest extends TestCase
 
         $this->assertEquals(3, $callCount, 'Hook should have been called thrice.');
         $this->assertSame(
-            $this->expectedJsonResponse . '1',
+            $this->expectedJsonResponse.'1',
             $returnValue1,
             'When called with the first handle the curl_multi_getcontent should return the body of the first response.'
         );
 
         $this->assertSame(
-            $this->expectedJsonResponse . '2',
+            $this->expectedJsonResponse.'2',
             $returnValue2,
             'When called with the second handle the curl_multi_getcontent should return the body of the second response.'
         );
@@ -500,7 +473,7 @@ final class CurlHookTest extends TestCase
         $this->assertNull($returnValue3, 'When called with the third handle the curl_multi_getcontent should return null.');
 
         $this->assertSame(
-            $this->expectedJsonResponse . '3',
+            $this->expectedJsonResponse.'3',
             $output,
             'The third response was not written on stdout.'
         );
@@ -509,8 +482,7 @@ final class CurlHookTest extends TestCase
     /**
      * @requires PHP 5.5.0
      */
-    public function testShouldResetRequest()
-    : void
+    public function testShouldResetRequest(): void
     {
         $testClass = $this;
         $this->curlHook->enable(
@@ -534,11 +506,10 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    protected function getTestCallback(string $statusCode = '200')
-    : \Closure
+    protected function getTestCallback(string $statusCode = '200'): \Closure
     {
         $testClass = $this;
 
-        return \Closure::fromCallable(fn() => new Response($statusCode, [], $testClass->expectedJsonResponse));
+        return \Closure::fromCallable(fn () => new Response($statusCode, [], $testClass->expectedJsonResponse));
     }
 }

@@ -261,10 +261,12 @@ class CurlHook implements LibraryHook
     /**
      * Retrieves information regarding a specific transfer using cURL.
      *
-     * @param \CurlHandle $curlHandle The cURL handle resource.
-     * @param int $option The cURL information option, default is 0.
-     * @return mixed The information related to the cURL transfer based on the option provided.
-     * @throws \RuntimeException If unable to retrieve information from either response or error.
+     * @param \CurlHandle $curlHandle the cURL handle resource
+     * @param int         $option     the cURL information option, default is 0
+     *
+     * @return mixed the information related to the cURL transfer based on the option provided
+     *
+     * @throws \RuntimeException if unable to retrieve information from either response or error
      *
      * @see http://www.php.net/manual/en/function.curl-getinfo.php
      */
@@ -273,8 +275,8 @@ class CurlHook implements LibraryHook
         $handleId = (int) $curlHandle;
 
         // Special handling for CURLINFO_PRIVATE: check if the response is unavailable
-        if ($option === CURLINFO_PRIVATE && !array_key_exists($handleId, self::$responses)) {
-            return self::getCurlOption($curlHandle, CURLOPT_PRIVATE);
+        if (\CURLINFO_PRIVATE === $option && !\array_key_exists($handleId, self::$responses)) {
+            return self::getCurlOption($curlHandle, \CURLOPT_PRIVATE);
         }
 
         // Return information from the response if available
@@ -290,7 +292,6 @@ class CurlHook implements LibraryHook
         // Throw an exception if neither response nor error info is found
         throw new \RuntimeException('Unexpected error: Unable to retrieve cURL information from response or error logs.');
     }
-
 
     /**
      * Set an option for a cURL transfer.
@@ -353,11 +354,11 @@ class CurlHook implements LibraryHook
     /**
      * Retrieves a registered option for a cURL transfer.
      *
-     * @param \CurlHandle $curlHandle The cURL handle resource, returned by curl_init().
-     * @param int         $curlOption The CURLOPT_XXX option to retrieve.
-     * @param mixed       $default    The default value to return if the option is not set.
+     * @param \CurlHandle $curlHandle the cURL handle resource, returned by curl_init()
+     * @param int         $curlOption the CURLOPT_XXX option to retrieve
+     * @param mixed       $default    the default value to return if the option is not set
      *
-     * @return mixed The option value if set, or the default value if not.
+     * @return mixed the option value if set, or the default value if not
      */
     private static function getCurlOption(\CurlHandle $curlHandle, int $curlOption, mixed $default = false): mixed
     {

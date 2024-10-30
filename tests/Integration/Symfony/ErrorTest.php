@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace VCR\Tests\Integration\Symfony;
 
 use org\bovigo\vfs\vfsStream;
@@ -15,16 +14,15 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
  */
 class ErrorTest extends TestCase
 {
-    const TEST_GET_URL = 'http://localhost:9959';
+    public const TEST_GET_URL = 'http://localhost:9959';
 
-    public function setUp()
-    : void
+    protected function setUp(): void
     {
         vfsStream::setup('testDir');
         \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
-    public function testConnectException()
+    public function testConnectException(): void
     {
         $nonInstrumentedException = null;
         try {

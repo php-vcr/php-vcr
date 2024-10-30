@@ -12,10 +12,11 @@ use PHPUnit\Framework\TestCase;
  */
 class ExampleHttpClientTest extends TestCase
 {
-    const TEST_GET_URL = 'https://api.chew.pro/trbmb';
-    const TEST_POST_URL = 'https://httpbin.org/post';
-    const TEST_POST_BODY = '{"foo":"bar"}';
+    private const TEST_GET_URL = 'https://api.chew.pro/trbmb';
+    private const TEST_POST_URL = 'https://httpbin.org/post';
+    private const TEST_POST_BODY = '{"foo":"bar"}';
 
+    /** @var string[] */
     protected $ignoreHeaders = [
         'Accept',
         'Connect-Time',
@@ -23,14 +24,13 @@ class ExampleHttpClientTest extends TestCase
         'X-Request-Id',
     ];
 
-    public function setUp()
-    : void
+    protected function setUp(): void
     {
         vfsStream::setup('testDir');
         \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
     }
 
-    public function testRequestGET()
+    public function testRequestGET(): void
     {
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('test-cassette.yml');
@@ -44,7 +44,7 @@ class ExampleHttpClientTest extends TestCase
         \VCR\VCR::turnOff();
     }
 
-    public function testRequestPOST()
+    public function testRequestPOST(): void
     {
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('test-cassette.yml');
@@ -58,6 +58,13 @@ class ExampleHttpClientTest extends TestCase
         \VCR\VCR::turnOff();
     }
 
+    /**
+     * @return null[]|null
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     protected function requestGET()
     {
         $exampleClient = new ExampleHttpClient();
@@ -67,19 +74,35 @@ class ExampleHttpClientTest extends TestCase
         return $response;
     }
 
+    /**
+     * @return null[]|null
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     protected function requestPOST()
     {
         $exampleClient = new ExampleHttpClient();
 
         $response = $exampleClient->post(self::TEST_POST_URL, self::TEST_POST_BODY);
         foreach ($this->ignoreHeaders as $header) {
-            unset($response['headers'][$header]);
+            if (false === empty($response['headers'])) {
+                unset($response['headers'][$header]);
+            }
         }
         unset($response['origin']);
 
         return $response;
     }
 
+    /**
+     * @return null[]|null
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     protected function requestPOSTIntercepted()
     {
         \VCR\VCR::turnOn();
@@ -90,13 +113,13 @@ class ExampleHttpClientTest extends TestCase
         return $info;
     }
 
-    protected function assertValidGETResponse($info)
+    protected function assertValidGETResponse(mixed $info): void
     {
         self::assertIsArray($info, 'Response is not an array.');
         self::assertArrayHasKey('0', $info, 'API did not return any value.');
     }
 
-    protected function assertValidPOSTResponse($info)
+    protected function assertValidPOSTResponse(mixed $info): void
     {
         self::assertIsArray($info, 'Response is not an array.');
         self::assertArrayHasKey('url', $info, "Key 'url' not found.");
