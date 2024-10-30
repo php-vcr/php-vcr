@@ -21,11 +21,13 @@
         "beberlei/assert": "^3.2.5",
         "symfony/yaml": "^3|^4|^5|^6|^7",
         "symfony/event-dispatcher": "^4|^5|^6|^7",
-        "symfony/event-dispatcher-contracts": "^1|^2|^3"
+        "symfony/event-dispatcher-contracts": "^1|^2|^3",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "ext-soap": "*",
         "guzzlehttp/guzzle": "^7",
+        "symfony/http-client": "^7.1",
         "phpunit/phpunit": "^9.5.10",
         "mikey179/vfsstream": "^1.6.10",
         "phpstan/phpstan": "^1",
