@@ -27,7 +27,7 @@
     "require-dev": {
         "ext-soap": "*",
         "guzzlehttp/guzzle": "^7",
-        "symfony/http-client": "^7.1",
+        "symfony/http-client": "~v6.0.20",
         "phpunit/phpunit": "^9.5.10",
         "mikey179/vfsstream": "^1.6.10",
         "phpstan/phpstan": "^1",
