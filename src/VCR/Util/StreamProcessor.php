@@ -296,7 +296,7 @@ class StreamProcessor
     {
         $this->restore();
         if ($flags & \STREAM_URL_STAT_QUIET) {
-            set_error_handler(function () {
+            set_error_handler(static function () {
                 // Use native error handler
                 return false;
             });

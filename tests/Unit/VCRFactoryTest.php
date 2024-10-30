@@ -23,7 +23,7 @@ final class VCRFactoryTest extends TestCase
     }
 
     /** @return array<class-string[]> */
-    public function instanceProvider(): array
+    public static function instanceProvider(): array
     {
         return [
             ['VCR\Videorecorder'],
@@ -56,7 +56,7 @@ final class VCRFactoryTest extends TestCase
     }
 
     /** @return array<string[]> */
-    public function storageProvider()
+    public static function storageProvider(): array
     {
         return [
             ['json', 'VCR\Storage\Json'],

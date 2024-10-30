@@ -26,7 +26,7 @@ final class CurlCodeTransformTest extends TestCase
     }
 
     /** @return array<string[]> */
-    public function codeSnippetProvider(): array
+    public static function codeSnippetProvider(): array
     {
         return [
             ['\VCR\LibraryHooks\CurlHook::curl_init(', 'CURL_INIT ('],

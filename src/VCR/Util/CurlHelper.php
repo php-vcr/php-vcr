@@ -223,8 +223,8 @@ class CurlHelper
             $method->setAccessible(true);
 
             return $method->invoke($callback[0], $curlHandle, $argument);
-        } else {
-            return \call_user_func($callback, $curlHandle, $argument);
         }
+
+        return \call_user_func($callback, $curlHandle, $argument);
     }
 }

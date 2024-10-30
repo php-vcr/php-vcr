@@ -272,9 +272,8 @@ class CurlHook implements LibraryHook
             );
         } elseif (isset(self::$lastErrors[(int) $curlHandle])) {
             return self::$lastErrors[(int) $curlHandle]->getInfo();
-        } else {
-            throw new \RuntimeException('Unexpected error, could not find curl_getinfo in response or errors');
         }
+        throw new \RuntimeException('Unexpected error, could not find curl_getinfo in response or errors');
     }
 
     /**

@@ -70,7 +70,7 @@ final class StreamProcessorTest extends TestCase
     }
 
     /** @return array<array<bool|int>> */
-    public function streamOpenAppendFilterProvider(): array
+    public static function streamOpenAppendFilterProvider(): array
     {
         return [
             [true, StreamProcessor::STREAM_OPEN_FOR_INCLUDE, true],
@@ -80,7 +80,7 @@ final class StreamProcessorTest extends TestCase
     }
 
     /** @return array<string[]> */
-    public function streamOpenFileModesWhichDoNotCreateFiles(): array
+    public static function streamOpenFileModesWhichDoNotCreateFiles(): array
     {
         return [
             ['r'],
@@ -96,7 +96,7 @@ final class StreamProcessorTest extends TestCase
     public function testStreamOpenShouldNotFailOnNonExistingFile(string $fileMode): void
     {
         $test = $this;
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test): void {
+        set_error_handler(static function ($errno, $errstr, $errfile, $errline) use ($test): void {
             $test->fail('should not throw errors');
         });
 
@@ -114,7 +114,7 @@ final class StreamProcessorTest extends TestCase
     public function testUrlStatSuccessfully(): void
     {
         $test = $this;
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test): void {
+        set_error_handler(static function ($errno, $errstr, $errfile, $errline) use ($test): void {
             $test->fail('should not throw errors');
         });
 
@@ -164,7 +164,7 @@ final class StreamProcessorTest extends TestCase
     public function testDirOpendirNotFound(): void
     {
         $test = $this;
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($test): bool {
+        set_error_handler(static function ($errno, $errstr, $errfile, $errline) use ($test): bool {
             $test->assertStringContainsString('opendir(not_found', $errstr);
 
             return true;

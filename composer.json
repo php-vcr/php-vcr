@@ -26,7 +26,7 @@
     "require-dev": {
         "ext-soap": "*",
         "guzzlehttp/guzzle": "^7",
-        "phpunit/phpunit": "^9.5.10",
+        "phpunit/phpunit": "^9.5.10|^10.5",
         "mikey179/vfsstream": "^1.6.10",
         "phpstan/phpstan": "^1",
         "phpstan/phpstan-beberlei-assert": "^1",
