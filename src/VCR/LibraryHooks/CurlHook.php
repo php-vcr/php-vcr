@@ -259,22 +259,38 @@ class CurlHook implements LibraryHook
     }
 
     /**
-     * Get information regarding a specific transfer.
+     * Retrieves information regarding a specific transfer using cURL.
+     *
+     * @param \CurlHandle $curlHandle the cURL handle resource
+     * @param int         $option     the cURL information option, default is 0
+     *
+     * @return mixed the information related to the cURL transfer based on the option provided
+     *
+     * @throws \RuntimeException if unable to retrieve information from either response or error
      *
      * @see http://www.php.net/manual/en/function.curl-getinfo.php
      */
     public static function curlGetinfo(\CurlHandle $curlHandle, int $option = 0): mixed
     {
-        if (isset(self::$responses[(int) $curlHandle])) {
-            return CurlHelper::getCurlOptionFromResponse(
-                self::$responses[(int) $curlHandle],
-                $option
-            );
-        } elseif (isset(self::$lastErrors[(int) $curlHandle])) {
-            return self::$lastErrors[(int) $curlHandle]->getInfo();
-        } else {
-            throw new \RuntimeException('Unexpected error, could not find curl_getinfo in response or errors');
+        $handleId = (int) $curlHandle;
+
+        // Special handling for CURLINFO_PRIVATE: check if the response is unavailable
+        if (\CURLINFO_PRIVATE === $option && !\array_key_exists($handleId, self::$responses)) {
+            return self::getCurlOption($curlHandle, \CURLOPT_PRIVATE);
         }
+
+        // Return information from the response if available
+        if (isset(self::$responses[$handleId])) {
+            return CurlHelper::getCurlOptionFromResponse(self::$responses[$handleId], $option);
+        }
+
+        // Fallback to last error info if response is unavailable
+        if (isset(self::$lastErrors[$handleId])) {
+            return self::$lastErrors[$handleId]->getInfo();
+        }
+
+        // Throw an exception if neither response nor error info is found
+        throw new \RuntimeException('Unexpected error: Unable to retrieve cURL information from response or error logs.');
     }
 
     /**
@@ -333,5 +349,21 @@ class CurlHook implements LibraryHook
         }
 
         return 0;
+    }
+
+    /**
+     * Retrieves a registered option for a cURL transfer.
+     *
+     * @param \CurlHandle $curlHandle the cURL handle resource, returned by curl_init()
+     * @param int         $curlOption the CURLOPT_XXX option to retrieve
+     * @param mixed       $default    the default value to return if the option is not set
+     *
+     * @return mixed the option value if set, or the default value if not
+     */
+    private static function getCurlOption(\CurlHandle $curlHandle, int $curlOption, mixed $default = false): mixed
+    {
+        $handleId = (int) $curlHandle;
+
+        return static::$curlOptions[$handleId][$curlOption] ?? $default;
     }
 }
