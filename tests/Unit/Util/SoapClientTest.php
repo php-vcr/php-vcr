@@ -19,7 +19,7 @@ final class SoapClientTest extends TestCase
     {
         $hookMock = $this->getMockBuilder(SoapHook::class)
             ->disableOriginalConstructor()
-            ->setMethods(['isEnabled', 'doRequest'])
+            ->onlyMethods(['isEnabled', 'doRequest'])
             ->getMock();
 
         $hookMock
@@ -85,7 +85,7 @@ final class SoapClientTest extends TestCase
     {
         $client = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
-            ->setMethods(['realDoRequest'])
+            ->onlyMethods(['realDoRequest'])
             ->getMock();
 
         $client

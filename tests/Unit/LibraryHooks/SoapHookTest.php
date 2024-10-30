@@ -29,6 +29,11 @@ final class SoapHookTest extends TestCase
         $this->soapHook = new SoapHook(new SoapCodeTransform(), new StreamProcessor($this->config));
     }
 
+    protected function tearDown(): void
+    {
+        $this->soapHook->disable();
+    }
+
     public function testShouldInterceptCallWhenEnabled(): void
     {
         $this->soapHook->enable($this->getContentCheckCallback());
@@ -38,7 +43,6 @@ final class SoapHookTest extends TestCase
         $client->setLibraryHook($this->soapHook);
         $actual = $client->GetCityWeatherByZIP(['ZIP' => '10013']);
 
-        $this->soapHook->disable();
         $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
         $this->assertTrue($actual->GetCityWeatherByZIPResult->Success, 'Response was not returned.');
     }
@@ -90,7 +94,6 @@ final class SoapHookTest extends TestCase
         $client->GetCityWeatherByZIP(['ZIP' => '10013']);
         $actual = $client->__getLastRequest();
 
-        $this->soapHook->disable();
         $this->assertNotNull($actual, '__getLastRequest() returned NULL.');
     }
 
