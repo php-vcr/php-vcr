@@ -110,13 +110,21 @@ class Response
     /**
      * @return array<string,mixed>|mixed|null
      */
-    public function getCurlInfo(?string $option = null): mixed
+    /**
+     * Returns the cURL transfer information for this response.
+     *
+     * @param string|null $option  if provided, returns the value of the specified cURL option
+     * @param mixed|null  $default the value to return if the specified cURL option is not set
+     *
+     * @return array<string,mixed>|mixed|null the cURL transfer information or the value of the specified option
+     */
+    public function getCurlInfo(?string $option = null, $default = null)
     {
         if (empty($option)) {
             return $this->curlInfo;
         }
         if (!isset($this->curlInfo[$option])) {
-            return null;
+            return $default;
         }
 
         return $this->curlInfo[$option];
