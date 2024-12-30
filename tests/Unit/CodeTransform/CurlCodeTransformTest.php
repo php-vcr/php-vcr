@@ -14,7 +14,7 @@ final class CurlCodeTransformTest extends TestCase
      */
     public function testTransformCode(string $expected, string $code): void
     {
-        $codeTransform = new class() extends CurlCodeTransform {
+        $codeTransform = new class extends CurlCodeTransform {
             // A proxy to access the protected transformCode method.
             public function publicTransformCode(string $code): string
             {

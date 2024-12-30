@@ -46,7 +46,7 @@ final class SoapHookTest extends TestCase
     public function testShouldHandleSOAPVersion11(): void
     {
         $expectedHeaders = [
-            'Content-Type' => 'text/xml; charset=utf-8;',
+            'Content-Type' => 'text/xml; charset=utf-8',
             'SOAPAction' => 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP',
         ];
         $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
