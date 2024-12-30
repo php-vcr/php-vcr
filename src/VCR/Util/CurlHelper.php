@@ -83,7 +83,8 @@ class CurlHelper
 
     /**
      * @param int $option cURL option to get
-     * @param ?string $url The URL
+     + @param ?string $url The URL
+     * 
      * @return mixed value of the cURL option
      *
      * @throws \BadMethodCallException
