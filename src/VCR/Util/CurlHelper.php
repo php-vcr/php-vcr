@@ -63,7 +63,7 @@ class CurlHelper
         $body = $response->getBody();
 
         if (!empty($curlOptions[\CURLOPT_HEADER])) {
-            $body = HttpUtil::formatAsStatusWithHeadersString($response).$body;
+            $body = HttpUtil::formatAsStatusWithHeadersString($response) . $body;
         }
 
         if (isset($curlOptions[\CURLOPT_WRITEFUNCTION])) {
@@ -83,8 +83,8 @@ class CurlHelper
 
     /**
      * @param int $option cURL option to get
-     + @param ?string $url The URL
-     * 
+     * @param ?string $url The URL
+     *
      * @return mixed value of the cURL option
      *
      * @throws \BadMethodCallException
@@ -99,7 +99,7 @@ class CurlHelper
                 }
                 break;
             case \CURLINFO_HTTP_CODE:
-                $info = (int) $response->getStatusCode();
+                $info = (int)$response->getStatusCode();
                 break;
             case \CURLINFO_SIZE_DOWNLOAD:
                 $info = $response->getHeader('Content-Length');
