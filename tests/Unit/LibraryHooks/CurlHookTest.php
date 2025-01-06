@@ -229,7 +229,7 @@ final class CurlHookTest extends TestCase
         $expectedCount = CurlHelper::CURLINFO_ITEMS_COUNT;
 
         $this->assertIsArray($info, 'curl_getinfo() should return an array.');
-        $this->assertCount($expectedCount, $info, 'curl_getinfo() should return '. $expectedCount .' values.');
+        $this->assertCount($expectedCount, $info, 'curl_getinfo() should return '.$expectedCount.' values.');
         $this->curlHook->disable();
     }
 

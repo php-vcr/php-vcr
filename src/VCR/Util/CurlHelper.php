@@ -39,9 +39,9 @@ class CurlHelper
     ];
 
     /**
-     * How many items we expect in the curlinfo array - should correspond to the above list count
+     * How many items we expect in the curlinfo array - should correspond to the above list count.
      */
-    const CURLINFO_ITEMS_COUNT = 22;
+    public const CURLINFO_ITEMS_COUNT = 22;
 
     /**
      * Outputs a response depending on the set cURL option.
@@ -117,7 +117,7 @@ class CurlHelper
             case \CURLINFO_APPCONNECT_TIME:
                 $info = '';
                 break;
-          case \CURLINFO_EFFECTIVE_URL:
+            case \CURLINFO_EFFECTIVE_URL:
                 $info = $url;
                 break;
             default:
