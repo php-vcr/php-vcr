@@ -94,3 +94,8 @@ parameters:
 			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:addListener\\(\\)\\.$#"
 			count: 1
 			path: tests/Unit/VCRTest.php
+
+		-
+			message: "#^Unreachable statement - code above always terminates.#"
+			count: 3
+			path: tests/Integration/Soap/ExampleSoapClientTest.php
