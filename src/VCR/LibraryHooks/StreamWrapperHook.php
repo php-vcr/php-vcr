@@ -17,19 +17,13 @@ class StreamWrapperHook implements LibraryHook
 
     protected string $status = self::DISABLED;
 
-    /**
-     * @var Response
-     */
-    protected $response;
+    protected Response $response;
 
     /**
      * @var resource current stream context
      */
     public $context;
 
-    /**
-     * {@inheritdoc}
-     */
     public function enable(\Closure $requestCallback): void
     {
         self::$requestCallback = $requestCallback;
@@ -42,9 +36,6 @@ class StreamWrapperHook implements LibraryHook
         $this->status = self::ENABLED;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function disable(): void
     {
         self::$requestCallback = null;
@@ -54,9 +45,6 @@ class StreamWrapperHook implements LibraryHook
         $this->status = self::DISABLED;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isEnabled(): bool
     {
         return self::ENABLED == $this->status;

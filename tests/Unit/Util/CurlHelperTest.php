@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace VCR\Tests\Unit\Util;
 
-use CurlHandle;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use VCR\Exceptions\InvalidHostException;
@@ -571,7 +570,7 @@ final class CurlHelperTest extends TestCase
     /**
      * Function used for testing CURLOPT_WRITEFUNCTION.
      */
-    private function privateCurlWriteFunction(CurlHandle $ch, string $body): int
+    private function privateCurlWriteFunction(\CurlHandle $ch, string $body): int
     {
         $this->assertEquals('example response', $body);
 

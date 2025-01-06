@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace VCR\Tests\Unit;
 
-use const CURLOPT_CUSTOMREQUEST;
 use PHPUnit\Framework\TestCase;
 use VCR\Request;
 
@@ -61,7 +60,6 @@ final class RequestTest extends TestCase
         $request = new Request('POST', 'http://example.com', ['User-Agent' => 'Unit-Test']);
         $this->expectException(\BadFunctionCallException::class);
         $this->expectExceptionMessage("Matcher could not be executed. Array\n(\n    [0] => some\n    [1] => method\n)\n");
-        /* @phpstan-ignore-next-line */
         $this->request->matches($request, [['some', 'method']]);
     }
 
@@ -75,7 +73,7 @@ final class RequestTest extends TestCase
                 'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                 ],
+                ],
             ],
             $restoredRequest->toArray()
         );
@@ -91,7 +89,7 @@ final class RequestTest extends TestCase
                 'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    ],
+                ],
                 'post_fields' => ['para1' => 'val1'],
             ],
             $this->request->toArray()
@@ -109,7 +107,7 @@ final class RequestTest extends TestCase
                 'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    ],
+                ],
                 'post_fields' => ['para1' => 'val1'],
             ],
             $restoredRequest->toArray()
@@ -179,7 +177,7 @@ final class RequestTest extends TestCase
                 'headers' => [
                     'User-Agent' => 'Unit-Test',
                     'Host' => 'example.com',
-                    ],
+                ],
                 'post_files' => [$file],
             ],
             $restoredRequest->toArray()
@@ -263,8 +261,8 @@ final class RequestTest extends TestCase
         $this->assertEquals('POST', $postRequest->getMethod());
         $this->assertEquals('GET', $getRequest->getMethod());
 
-        $postRequest->setCurlOption(CURLOPT_CUSTOMREQUEST, 'PUT');
-        $getRequest->setCurlOption(CURLOPT_CUSTOMREQUEST, 'POST');
+        $postRequest->setCurlOption(\CURLOPT_CUSTOMREQUEST, 'PUT');
+        $getRequest->setCurlOption(\CURLOPT_CUSTOMREQUEST, 'POST');
 
         $this->assertEquals('PUT', $postRequest->getMethod());
         $this->assertEquals('POST', $getRequest->getMethod());
@@ -274,8 +272,8 @@ final class RequestTest extends TestCase
     {
         $getRequest = new Request('GET', 'http://example.com');
         $getRequest->setCurlOptions([
-            CURLOPT_CUSTOMREQUEST => 'PUT',
+            \CURLOPT_CUSTOMREQUEST => 'PUT',
         ]);
-        $this->assertEquals('PUT', $getRequest->getCurlOption(CURLOPT_CUSTOMREQUEST));
+        $this->assertEquals('PUT', $getRequest->getCurlOption(\CURLOPT_CUSTOMREQUEST));
     }
 }

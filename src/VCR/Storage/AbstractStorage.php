@@ -68,7 +68,7 @@ abstract class AbstractStorage implements Storage
      *
      * @return array<string,mixed>|null parsed current record
      */
-    public function current(): mixed
+    public function current(): ?array
     {
         return $this->current;
     }

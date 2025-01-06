@@ -1,4 +1,4 @@
-FROM php:8.0-cli-alpine
+FROM php:8.3-cli-alpine
 
 ARG PUID=1000
 ARG PGID=1000
@@ -8,6 +8,8 @@ RUN apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
     # for soap
     libxml2-dev \
+    # for xdebug \
+    linux-headers \
     && \
     apk add --no-cache \
     bash \
@@ -22,9 +24,12 @@ RUN apk add --no-cache --virtual .build-deps \
     # pcov for coverage runs
     pcov && docker-php-ext-enable pcov \
     && \
+    # for debugging
+    pecl install xdebug && docker-php-ext-enable xdebug \
+    && \
     apk del .build-deps
 
-COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 

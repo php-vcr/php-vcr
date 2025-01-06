@@ -19,7 +19,7 @@ class Yaml extends AbstractStorage
 
     protected Dumper $yamlDumper;
 
-    public function __construct(string $cassettePath, string $cassetteName, Parser $parser = null, Dumper $dumper = null)
+    public function __construct(string $cassettePath, string $cassetteName, ?Parser $parser = null, ?Dumper $dumper = null)
     {
         parent::__construct($cassettePath, $cassetteName, '');
 
@@ -27,9 +27,6 @@ class Yaml extends AbstractStorage
         $this->yamlDumper = $dumper ?: new Dumper();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function storeRecording(array $recording): void
     {
         fseek($this->handle, -1, \SEEK_END);

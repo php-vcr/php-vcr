@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace VCR;
 
+use Assert\Assertion;
 use VCR\LibraryHooks\CurlHook;
 use VCR\LibraryHooks\SoapHook;
 use VCR\Storage\Storage;
@@ -16,14 +17,11 @@ class VCRFactory
     /**
      * @var array<string, object>
      */
-    protected $mapping = [];
+    protected array $mapping = [];
 
-    /**
-     * @var self|null
-     */
-    protected static $instance;
+    protected static ?self $instance = null;
 
-    protected function __construct(Configuration $config = null)
+    protected function __construct(?Configuration $config = null)
     {
         $this->config = $config ?: $this->getOrCreate('VCR\Configuration');
     }
@@ -46,14 +44,22 @@ class VCRFactory
     protected function createStorage(string $cassetteName): Storage
     {
         $dsn = $this->config->getCassettePath();
-        $class = $this->config->getStorage();
+        $className = $this->config->getStorage();
+        Assertion::subclassOf(
+            $className,
+            Storage::class,
+            \sprintf('Storage class "%s" is not a subclass of "%s".', $className, Storage::class)
+        );
 
-        return new $class($dsn, $cassetteName);
+        /** @var Storage $storage */
+        $storage = new $className($dsn, $cassetteName);
+
+        return $storage;
     }
 
     protected function createVCRLibraryHooksSoapHook(): SoapHook
     {
-        return new LibraryHooks\SoapHook(
+        return new SoapHook(
             $this->getOrCreate('VCR\CodeTransform\SoapCodeTransform'),
             $this->getOrCreate('VCR\Util\StreamProcessor')
         );
@@ -61,13 +67,13 @@ class VCRFactory
 
     protected function createVCRLibraryHooksCurlHook(): CurlHook
     {
-        return new LibraryHooks\CurlHook(
+        return new CurlHook(
             $this->getOrCreate('VCR\CodeTransform\CurlCodeTransform'),
             $this->getOrCreate('VCR\Util\StreamProcessor')
         );
     }
 
-    public static function getInstance(Configuration $config = null): self
+    public static function getInstance(?Configuration $config = null): self
     {
         if (!self::$instance) {
             self::$instance = new self($config);
@@ -84,7 +90,7 @@ class VCRFactory
      *
      * @return mixed an instance for specified class name and parameters
      */
-    public static function get(string $className, array $params = [])
+    public static function get(string $className, array $params = []): mixed
     {
         return self::getInstance()->getOrCreate($className, $params);
     }
@@ -94,10 +100,8 @@ class VCRFactory
      *
      * @param string  $className class name to get a instance for
      * @param mixed[] $params    constructor arguments for this class
-     *
-     * @return mixed
      */
-    public function getOrCreate(string $className, array $params = [])
+    public function getOrCreate(string $className, array $params = []): mixed
     {
         $key = $className.implode('-', $params);
 

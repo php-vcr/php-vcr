@@ -31,9 +31,12 @@ final class BlackholeTest extends TestCase
         ]);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testNextIsCallable(): void
     {
-        $this->assertNull($this->storage->next());
+        $this->storage->next();
     }
 
     /**

@@ -90,7 +90,7 @@ final class ConfigurationTest extends TestCase
 
     public function testAddRequestMatcherFailsWithNoName(): void
     {
-        $this->expectException(\VCR\VCRException::class);
+        $this->expectException(VCRException::class);
         $this->expectExceptionMessage("A request matchers name must be at least one character long. Found ''");
         $expected = fn ($first, $second) => true;
         $this->config->addRequestMatcher('', $expected);
@@ -123,7 +123,7 @@ final class ConfigurationTest extends TestCase
 
     public function testSetStorageInvalidName(): void
     {
-        $this->expectException(\VCR\VCRException::class);
+        $this->expectException(VCRException::class);
         $this->expectExceptionMessage("Storage 'Does not exist' not available.");
         $this->config->setStorage('Does not exist');
     }
@@ -156,7 +156,7 @@ final class ConfigurationTest extends TestCase
 
     public function testSetModeInvalidName(): void
     {
-        $this->expectException(\VCR\VCRException::class);
+        $this->expectException(VCRException::class);
         $this->expectExceptionMessage("Mode 'invalid' does not exist.");
         $this->config->setMode('invalid');
     }

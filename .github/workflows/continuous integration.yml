@@ -1,0 +1,142 @@
+name: "Continuous Integration"
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  phpstan:
+    name: "PHPStan"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "8.0"
+          extensions: "curl, soap"
+          tools: "composer:v2"
+
+      - name: "Enforce using stable dependencies"
+        run: "composer config minimum-stability stable"
+
+      - name: "Check Composer configuration"
+        run: "composer validate --strict"
+
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          dependency-versions: "highest"
+          composer-options: "--prefer-dist -o"
+
+      - name: "Run PHPStan"
+        run: "composer run-script phpstan"
+
+  editorconfig-checker:
+    name: EditorConfig Checker
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Install EditorConfig Checker"
+        uses: "editorconfig-checker/action-editorconfig-checker@main"
+
+      - name: "Run EditorConfig Checker"
+        run: "editorconfig-checker"
+
+  codestyle:
+    name: "PHP-CS-Fixer"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "8.0"
+          extensions: "curl, soap"
+          tools: "composer:v2"
+
+      - name: "Enforce using stable dependencies"
+        run: "composer config minimum-stability stable"
+
+      - name: "Check Composer configuration"
+        run: "composer validate --strict"
+
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          dependency-versions: "highest"
+          composer-options: "--prefer-dist -o"
+
+      - name: "Run PHP-CS-Fixer"
+        run: "composer run-script cs"
+
+  phpunit:
+    name: "PHPUnit Test"
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - "8.0"
+          - "8.1"
+          - "8.2"
+          - "8.3"
+          - "8.4"
+        dependencies:
+          - "lowest"
+          - "highest"
+        stability:
+          - "stable"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 2
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php }}"
+          extensions: "curl, soap"
+          tools: "composer:v2"
+          coverage: "pcov"
+
+      - name: "Enforce using stable dependencies"
+        run: "composer config minimum-stability stable"
+        if: "${{ matrix.stability == 'stable' }}"
+
+      - name: "Check Composer configuration"
+        run: "composer validate --strict"
+
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          composer-options: "--prefer-dist -o"
+
+      - name: "Run PHPUnit Test"
+        run: "vendor/bin/phpunit --coverage-clover=coverage.clover --log-junit=phpunit.xml"
+
+      - name: "Publish Test Report"
+        uses: "mikepenz/action-junit-report@v2"
+        if: "always()" # always run even if the previous step fails
+        with:
+          report_paths: "phpunit.xml"
+          check_name: "PHPUnit Test Report (${{ matrix.php }}, ${{ matrix.dependencies }}, ${{ matrix.stability }})"
+
+      - name: "Publish Scrutinizer Coverage"
+        uses: "sudo-bot/action-scrutinizer@latest"
+        if: "always()" # always run even if the previous step fails
+        with:
+          cli-args: "--format=php-clover coverage.clover"

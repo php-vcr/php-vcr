@@ -1,19 +1,44 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to an undefined property object\\:\\:\\$data\\.$#"
-			count: 2
-			path: src/VCR/CodeTransform/AbstractCodeTransform.php
+			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/VCR/Util/HttpUtil.php
 
 		-
-			message: "#^Access to an undefined property object\\:\\:\\$datalen\\.$#"
+			message: "#^Method VCR\\\\Util\\\\HttpUtil\\:\\:parseHeaders\\(\\) should return array\\<string, string\\> but returns array\\<array\\<int, string\\>\\|string\\>\\.$#"
 			count: 1
-			path: src/VCR/CodeTransform/AbstractCodeTransform.php
+			path: src/VCR/Util/HttpUtil.php
 
 		-
 			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/VCR/Util/HttpUtil.php
+
+		-
+			message: "#^Method VCR\\\\Util\\\\SoapClient\\:\\:realDoRequest\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: src/VCR/Util/SoapClient.php
+
+		-
+			message: "#^Offset 'uri' does not exist on array\\{timed_out\\: bool, blocked\\: bool, eof\\: bool, unread_bytes\\: int, stream_type\\: string, wrapper_type\\: string, wrapper_data\\: mixed, mode\\: string, \\.\\.\\.\\}\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: "#^Parameter \\#2 \\$length of function fread expects int\\<1, max\\>, int given\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: "#^Parameter \\#2 \\$size of function ftruncate expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: "#^Parameter \\#3 \\$microseconds of function stream_set_timeout expects int, int\\|null given\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
 
 		-
 			message: "#^Cannot call method record\\(\\) on VCR\\\\Cassette\\|null\\.$#"
@@ -25,3 +50,47 @@ parameters:
 			count: 1
 			path: src/VCR/Videorecorder.php
 
+		-
+			message: "#^Cannot call method toArray\\(\\) on VCR\\\\Response\\|null\\.$#"
+			count: 5
+			path: tests/Unit/CassetteTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertCount\\(\\) with arguments 22, array\\{url\\: string, content_type\\: string\\|null, http_code\\: int, header_size\\: int, request_size\\: int, filetime\\: int, ssl_verify_result\\: int, redirect_count\\: int, \\.\\.\\.\\} and 'curl_getinfo\\(\\)…' will always evaluate to false\\.$#"
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$requestMatchers of method VCR\\\\Request\\:\\:matches\\(\\) expects array\\<callable\\(\\)\\: mixed\\>, array\\{array\\{'some', 'method'\\}\\} given\\.$#"
+			count: 1
+			path: tests/Unit/RequestTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/Unit/Util/StreamProcessorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_set_blocking expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/Unit/Util/StreamProcessorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_set_read_buffer expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/Unit/Util/StreamProcessorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_set_timeout expects resource, resource\\|false given\\.$#"
+			count: 2
+			path: tests/Unit/Util/StreamProcessorTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_set_write_buffer expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: tests/Unit/Util/StreamProcessorTest.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:addListener\\(\\)\\.$#"
+			count: 1
+			path: tests/Unit/VCRTest.php

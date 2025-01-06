@@ -24,10 +24,9 @@ class SoapClient extends \SoapClient
     protected string $request;
 
     /**
-     * @param mixed               $wsdl
      * @param array<string,mixed> $options
      */
-    public function __construct($wsdl, array $options = [])
+    public function __construct(?string $wsdl, array $options = [])
     {
         $this->options = $options;
         parent::__construct($wsdl, $options);
@@ -53,17 +52,11 @@ class SoapClient extends \SoapClient
         return $one_way ? null : $this->response;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __getLastRequest(): ?string
     {
         return $this->request ?? null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __getLastResponse(): ?string
     {
         return $this->response ?? null;
