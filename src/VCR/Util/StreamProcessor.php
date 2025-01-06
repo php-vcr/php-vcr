@@ -45,13 +45,13 @@ class StreamProcessor
     /**
      * @see http://www.php.net/manual/en/class.streamwrapper.php#streamwrapper.props.context
      *
-     * @var resource the current context, or NULL if no context was passed to the caller function
+     * @var resource|null the current context, or NULL if no context was passed to the caller function
      */
     public $context;
 
     protected bool $isIntercepting = false;
 
-    public function __construct(Configuration $configuration = null)
+    public function __construct(?Configuration $configuration = null)
     {
         if ($configuration) {
             static::$configuration = $configuration;
@@ -493,14 +493,14 @@ class StreamProcessor
      *
      * @codeCoverageIgnore
      *
-     * @param int $option one of STREAM_OPTION_BLOCKING, STREAM_OPTION_READ_TIMEOUT, STREAM_OPTION_WRITE_BUFFER
-     * @param int $arg1   depending on option
-     * @param int $arg2   depending on option
+     * @param int      $option one of STREAM_OPTION_BLOCKING, STREAM_OPTION_READ_TIMEOUT, STREAM_OPTION_WRITE_BUFFER
+     * @param int      $arg1   depending on option
+     * @param int|null $arg2   depending on option
      *
      * @return bool Returns TRUE on success or FALSE on failure. If option is not implemented,
      *              FALSE should be returned.
      */
-    public function stream_set_option(int $option, int $arg1, int $arg2): bool
+    public function stream_set_option(int $option, int $arg1, ?int $arg2 = null): bool
     {
         if (false === $this->resource) {
             return false;
@@ -517,9 +517,9 @@ class StreamProcessor
             case \STREAM_OPTION_READ_BUFFER:
                 // stream_set_read_buffer returns 0 in case of success
                 return 0 === stream_set_read_buffer($this->resource, $arg1);
-            // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
-            /*case STREAM_OPTION_CHUNK_SIZE:
-                return stream_set_chunk_size($this->resource, $arg1);*/
+                // STREAM_OPTION_CHUNK_SIZE does not exist at all in PHP 7
+                /*case STREAM_OPTION_CHUNK_SIZE:
+                    return stream_set_chunk_size($this->resource, $arg1);*/
         }
 
         return false;
@@ -528,13 +528,13 @@ class StreamProcessor
     /**
      * Write to stream.
      *
-     * @throws \BadMethodCallException if called, because this method is not applicable for this stream
-     *
      * @see http://www.php.net/manual/en/streamwrapper.stream-write.php
      *
      * @param string $data should be stored into the underlying stream
      *
      * @return int|false
+     *
+     * @throws \BadMethodCallException if called, because this method is not applicable for this stream
      */
     public function stream_write(string $data)
     {

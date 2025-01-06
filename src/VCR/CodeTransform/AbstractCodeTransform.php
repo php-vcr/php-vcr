@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace VCR\CodeTransform;
 
-use function stream_get_filters;
 use VCR\Util\Assertion;
 
 /**
@@ -14,6 +13,8 @@ abstract class AbstractCodeTransform extends \php_user_filter
 {
     public const NAME = 'vcr_abstract_filter';
 
+    private string $data = '';
+
     /**
      * Attaches the current filter to a stream.
      */
@@ -21,7 +22,10 @@ abstract class AbstractCodeTransform extends \php_user_filter
     {
         if (!\in_array(static::NAME, stream_get_filters(), true)) {
             $isRegistered = stream_filter_register(static::NAME, static::class);
-            Assertion::true($isRegistered, sprintf('Failed registering stream filter "%s" on stream "%s"', static::class, static::NAME));
+            Assertion::true(
+                $isRegistered,
+                \sprintf('Failed registering stream filter "%s" on stream "%s"', static::class, static::NAME)
+            );
         }
     }
 
@@ -31,7 +35,6 @@ abstract class AbstractCodeTransform extends \php_user_filter
      * @param resource $in
      * @param resource $out
      * @param int      &$consumed
-     * @param bool     $closing
      *
      * @return int PSFS_PASS_ON
      *
@@ -39,11 +42,18 @@ abstract class AbstractCodeTransform extends \php_user_filter
      */
     public function filter($in, $out, &$consumed, bool $closing): int
     {
-        while ($bucket = stream_bucket_make_writeable($in)) {
-            $bucket->data = $this->transformCode($bucket->data);
-            $consumed += $bucket->datalen;
-            stream_bucket_append($out, $bucket);
+        while ($buffer = stream_bucket_make_writeable($in)) {
+            $this->data .= $buffer->data;
+            $consumed += $buffer->datalen;
         }
+
+        if (!$closing) {
+            return \PSFS_FEED_ME;
+        }
+
+        $bucket = stream_bucket_new($this->stream, $this->transformCode($this->data));
+        $this->data = '';
+        stream_bucket_append($out, $bucket);
 
         return \PSFS_PASS_ON;
     }

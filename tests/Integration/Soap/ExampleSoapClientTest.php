@@ -27,6 +27,8 @@ final class ExampleSoapClientTest extends TestCase
 
     public function testCallDirectly(): void
     {
+        $this->markTestSkipped('There is a problem with soap tests: SoapClient::__doRequest(): SSL: Connection reset by peer');
+
         $actual = $this->callSoap();
         $this->assertIsString($actual);
         $this->assertEquals('twelve', $actual);
@@ -34,6 +36,8 @@ final class ExampleSoapClientTest extends TestCase
 
     public function testCallIntercepted(): void
     {
+        $this->markTestSkipped('There is a problem with soap tests: SoapClient::__doRequest(): SSL: Connection reset by peer');
+
         $actual = $this->callSoapIntercepted();
         $this->assertIsString($actual);
         $this->assertEquals('twelve', $actual);
@@ -41,6 +45,8 @@ final class ExampleSoapClientTest extends TestCase
 
     public function testCallDirectlyEqualsIntercepted(): void
     {
+        $this->markTestSkipped('There is a problem with soap tests: SoapClient::__doRequest(): SSL: Connection reset by peer');
+
         $this->assertEquals($this->callSoap(), $this->callSoapIntercepted());
     }
 

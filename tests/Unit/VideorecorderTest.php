@@ -34,10 +34,11 @@ final class VideorecorderTest extends TestCase
         $configuration->enableLibraryHooks([]);
         $videorecorder = $this->getMockBuilder('\VCR\Videorecorder')
             ->setConstructorArgs([$configuration, new HttpClient(), VCRFactory::getInstance()])
-            ->setMethods(['eject'])
+            ->setMethods(['eject', 'resetIndex'])
             ->getMock();
 
         $videorecorder->expects($this->exactly(2))->method('eject');
+        $videorecorder->expects($this->exactly(2))->method('resetIndex');
 
         $videorecorder->turnOn();
         $videorecorder->insertCassette('cassette1');

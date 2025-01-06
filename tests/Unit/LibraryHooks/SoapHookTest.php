@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace VCR\Tests\Unit\LibraryHooks;
 
-use Closure;
 use PHPUnit\Framework\TestCase;
 use VCR\CodeTransform\SoapCodeTransform;
 use VCR\Configuration;
@@ -47,7 +46,7 @@ final class SoapHookTest extends TestCase
     public function testShouldHandleSOAPVersion11(): void
     {
         $expectedHeaders = [
-            'Content-Type' => 'text/xml; charset=utf-8;',
+            'Content-Type' => 'text/xml; charset=utf-8',
             'SOAPAction' => 'http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP',
         ];
         $this->soapHook->enable($this->getHeadersCheckCallback($expectedHeaders));
@@ -95,19 +94,19 @@ final class SoapHookTest extends TestCase
         $this->assertNotNull($actual, '__getLastRequest() returned NULL.');
     }
 
-    protected function getContentCheckCallback(): Closure
+    protected function getContentCheckCallback(): \Closure
     {
         $testClass = $this;
 
-        return Closure::fromCallable(fn () => new Response('200', [], $testClass->expected));
+        return \Closure::fromCallable(fn () => new Response('200', [], $testClass->expected));
     }
 
     /** @param array<mixed> $expectedHeaders */
-    protected function getHeadersCheckCallback(array $expectedHeaders): Closure
+    protected function getHeadersCheckCallback(array $expectedHeaders): \Closure
     {
         $test = $this;
 
-        return Closure::fromCallable(function (Request $request) use ($test, $expectedHeaders) {
+        return \Closure::fromCallable(function (Request $request) use ($test, $expectedHeaders) {
             foreach ($expectedHeaders as $expectedHeaderName => $expectedHeader) {
                 $test->assertEquals($expectedHeader, $request->getHeader($expectedHeaderName));
             }

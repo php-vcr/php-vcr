@@ -44,12 +44,12 @@ class SoapHook implements LibraryHook
         $vcrRequest = new Request('POST', $location);
 
         if (\SOAP_1_1 === $version) {
-            $vcrRequest->setHeader('Content-Type', 'text/xml; charset=utf-8;');
+            $vcrRequest->setHeader('Content-Type', 'text/xml; charset=utf-8');
             $vcrRequest->setHeader('SOAPAction', $action);
         } else { // >= SOAP_1_2
             $vcrRequest->setHeader(
                 'Content-Type',
-                sprintf('application/soap+xml; charset=utf-8; action="%s"', $action)
+                \sprintf('application/soap+xml; charset=utf-8; action="%s"', $action)
             );
         }
 
@@ -67,9 +67,6 @@ class SoapHook implements LibraryHook
         return $response->getBody();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enable(\Closure $requestCallback): void
     {
         self::$requestCallback = $requestCallback;
@@ -85,9 +82,6 @@ class SoapHook implements LibraryHook
         $this->status = self::ENABLED;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function disable(): void
     {
         self::$requestCallback = null;
@@ -95,9 +89,6 @@ class SoapHook implements LibraryHook
         $this->status = self::DISABLED;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isEnabled(): bool
     {
         return self::ENABLED == $this->status;

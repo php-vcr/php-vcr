@@ -26,9 +26,6 @@ class SoapCodeTransform extends AbstractCodeTransform
         '@extends\s+\\\?SoapClient\b@i',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function transformCode(string $code): string
     {
         $transformedCode = preg_replace(self::$patterns, self::$replacements, $code);

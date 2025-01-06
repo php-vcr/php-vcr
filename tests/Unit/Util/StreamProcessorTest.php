@@ -27,6 +27,24 @@ final class StreamProcessorTest extends TestCase
         $this->assertEquals(\strlen($testData), $res);
     }
 
+    public function testSetStreamOptions(): void
+    {
+        $processor = new StreamProcessor();
+        $processor->intercept();
+
+        $handle = fopen('tests/fixtures/file_put_contents', 'w');
+
+        self::assertTrue(stream_set_blocking($handle, true));
+        self::assertFalse(stream_set_timeout($handle, 10));
+        self::assertFalse(stream_set_timeout($handle, 5, 2));
+        self::assertSame(-1, stream_set_write_buffer($handle, 0));
+        self::assertSame(0, stream_set_read_buffer($handle, 0));
+
+        fclose($handle);
+
+        $processor->restore();
+    }
+
     /**
      * @dataProvider streamOpenAppendFilterProvider
      */
@@ -34,7 +52,7 @@ final class StreamProcessorTest extends TestCase
     {
         $mock = $this->getMockBuilder('VCR\Util\StreamProcessor')
             ->disableOriginalConstructor()
-            ->setMethods(['intercept', 'restore', 'appendFiltersToStream', 'shouldProcess'])
+            ->onlyMethods(['intercept', 'restore', 'appendFiltersToStream', 'shouldProcess'])
             ->getMock();
 
         if (null !== $shouldProcess) {
@@ -109,8 +127,22 @@ final class StreamProcessorTest extends TestCase
     public function testUrlStatFileNotFound(): void
     {
         $processor = new StreamProcessor();
-        $this->expectWarning();
-        $processor->url_stat('file_not_found', 0);
+
+        set_error_handler(static function (
+            int $errno,
+            string $errstr,
+            string $errfile = '',
+            int $errline = 0
+        ): void {
+            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+        }, \E_WARNING);
+
+        try {
+            $this->expectException(\ErrorException::class);
+            $processor->url_stat('file_not_found', 0);
+        } finally {
+            restore_error_handler();
+        }
     }
 
     /**
@@ -195,7 +227,7 @@ final class StreamProcessorTest extends TestCase
     {
         return $this->getMockBuilder(StreamProcessor::class)
             ->disableOriginalConstructor()
-            ->setMethods(['intercept', 'restore'])
+            ->onlyMethods(['intercept', 'restore'])
             ->getMock();
     }
 }

@@ -10,10 +10,11 @@ use Assert\Assertion;
  * Singleton interface to a Videorecorder.
  *
  * @method static Configuration configure()
- * @method static void insertCassette(string $cassetteName)
- * @method static void turnOn()
- * @method static void turnOff()
- * @method static void eject()
+ * @method static void          insertCassette(string $cassetteName)
+ * @method static void          turnOn()
+ * @method static void          turnOff()
+ * @method static void          eject()
+ *
  * @mixin Videorecorder
  */
 class VCR
@@ -35,10 +36,8 @@ class VCR
 
     /**
      * @param mixed[] $parameters
-     *
-     * @return mixed
      */
-    public static function __callStatic(string $method, array $parameters)
+    public static function __callStatic(string $method, array $parameters): mixed
     {
         $callable = [VCRFactory::get(Videorecorder::class), $method];
 

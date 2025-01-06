@@ -14,7 +14,7 @@ final class SoapCodeTransformTest extends TestCase
      */
     public function testTransformCode(string $expected, string $code): void
     {
-        $codeTransform = new class() extends SoapCodeTransform {
+        $codeTransform = new class extends SoapCodeTransform {
             // A proxy to access the protected transformCode method.
             public function publicTransformCode(string $code): string
             {
@@ -29,14 +29,14 @@ final class SoapCodeTransformTest extends TestCase
     public function codeSnippetProvider(): array
     {
         return [
-          ['new \VCR\Util\SoapClient(', 'new \SoapClient('],
-          ['new \VCR\Util\SoapClient(', 'new SoapClient('],
-          ['extends \VCR\Util\SoapClient', 'extends \SoapClient'],
-          ["extends \\VCR\\Util\\SoapClient\n", "extends \\SoapClient\n"],
-          ["extends MySoapClientBuilder\n", "extends MySoapClientBuilder\n"],
-          ["extends SoapClientFactory\n", "extends SoapClientFactory\n"],
-          ['new SoapClientExtended(', 'new SoapClientExtended('],
-          ['new \SoapClientExtended(', 'new \SoapClientExtended('],
+            ['new \VCR\Util\SoapClient(', 'new \SoapClient('],
+            ['new \VCR\Util\SoapClient(', 'new SoapClient('],
+            ['extends \VCR\Util\SoapClient', 'extends \SoapClient'],
+            ["extends \\VCR\\Util\\SoapClient\n", "extends \\SoapClient\n"],
+            ["extends MySoapClientBuilder\n", "extends MySoapClientBuilder\n"],
+            ["extends SoapClientFactory\n", "extends SoapClientFactory\n"],
+            ['new SoapClientExtended(', 'new SoapClientExtended('],
+            ['new \SoapClientExtended(', 'new \SoapClientExtended('],
         ];
     }
 }

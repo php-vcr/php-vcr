@@ -1,12 +1,55 @@
 version: "3.8"
 services:
-  workspace:
+  workspace80:
     tty: true
     build:
-      context: resources/docker/workspace
+      context: resources/docker/workspace/8.0
       args:
         PUID: "${PUID:-1000}"
         PGID: "${PGID:-1000}"
     volumes:
       - .:/var/www/html
       - ~/.composer:/home/user/.composer
+  workspace81:
+    tty: true
+    build:
+      context: resources/docker/workspace/8.1
+      args:
+        PUID: "${PUID:-1000}"
+        PGID: "${PGID:-1000}"
+    volumes:
+      - .:/var/www/html
+      - ~/.composer:/home/user/.composer
+  workspace82:
+    tty: true
+    build:
+      context: resources/docker/workspace/8.2
+      args:
+        PUID: "${PUID:-1000}"
+        PGID: "${PGID:-1000}"
+    volumes:
+      - .:/var/www/html
+      - ~/.composer:/home/user/.composer
+  workspace83:
+    tty: true
+    build:
+      context: resources/docker/workspace/8.3
+      args:
+        PUID: "${PUID:-1000}"
+        PGID: "${PGID:-1000}"
+    volumes:
+      - .:/var/www/html
+      - ~/.composer:/home/user/.composer
+  workspace84:
+    tty: true
+    build:
+      context: resources/docker/workspace/8.4
+      args:
+        PUID: "${PUID:-1000}"
+        PGID: "${PGID:-1000}"
+    volumes:
+      - .:/var/www/html
+      - ~/.composer:/home/user/.composer
+
+
+
