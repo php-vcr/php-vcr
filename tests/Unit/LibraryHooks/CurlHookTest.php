@@ -226,7 +226,7 @@ final class CurlHookTest extends TestCase
         curl_close($curlHandle);
 
         $this->assertIsArray($info, 'curl_getinfo() should return an array.');
-        $this->assertCount(22, $info, 'curl_getinfo() should return 22 values.');
+        $this->assertCount(24, $info, 'curl_getinfo() should return 24 values.');
         $this->curlHook->disable();
     }
 
@@ -262,6 +262,41 @@ final class CurlHookTest extends TestCase
         $this->assertArrayHasKey('upload_content_length', $info);
         $this->assertArrayHasKey('starttransfer_time', $info);
         $this->assertArrayHasKey('redirect_time', $info);
+        $this->assertArrayHasKey('private', $info);
+        $this->assertArrayHasKey('certinfo', $info);
+        $this->curlHook->disable();
+    }
+
+    public function testShouldReturnCurlInfoPrivate(): void
+    {
+        $this->curlHook->enable($this->getTestCallback('200', ['private' => 'private data']));
+
+        $curlHandle = curl_init('http://example.com');
+        Assertion::notSame($curlHandle, false);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+        $info = curl_getinfo($curlHandle, \CURLINFO_PRIVATE);
+        curl_close($curlHandle);
+
+        $this->assertEquals('private data', $info, 'CURLINFO_PRIVATE should be true');
+
+        $this->curlHook->disable();
+    }
+
+    public function testShouldReturnCurlInfoCertinfo(): void
+    {
+        $this->curlHook->enable($this->getTestCallback('200', ['certinfo' => [1, 2, 3]]));
+
+        $curlHandle = curl_init('http://example.com');
+        Assertion::notSame($curlHandle, false);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+        $info = curl_getinfo($curlHandle, \CURLINFO_CERTINFO);
+        curl_close($curlHandle);
+
+        $this->assertIsArray($info, 'CURLINFO_CERTINFO should be an array');
+        $this->assertNotEmpty($info, 'CURLINFO_CERTINFO should not be empty');
+
         $this->curlHook->disable();
     }
 
@@ -465,10 +500,13 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
-    protected function getTestCallback(string $statusCode = '200'): \Closure
+    /**
+     * @param array<string, mixed> $curlInfo
+     */
+    protected function getTestCallback(string $statusCode = '200', array $curlInfo = []): \Closure
     {
         $testClass = $this;
 
-        return \Closure::fromCallable(fn () => new Response($statusCode, [], $testClass->expected));
+        return \Closure::fromCallable(fn () => new Response($statusCode, [], $testClass->expected, $curlInfo));
     }
 }
