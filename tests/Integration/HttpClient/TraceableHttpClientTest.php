@@ -7,8 +7,9 @@ namespace VCR\Tests\Integration\HttpClient;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpClient\TraceableHttpClient;
 
-class HttpClientTest extends TestCase
+class TraceableHttpClientTest extends TestCase
 {
     public const TEST_GET_URL = 'https://postman-echo.com/get';
     public const TEST_POST_URL = 'https://postman-echo.com/post';
@@ -25,7 +26,8 @@ class HttpClientTest extends TestCase
         \VCR\VCR::insertCassette('test-cassette.yml');
 
         $client = HttpClient::create();
-        $response = $client->request('GET', self::TEST_GET_URL);
+        $traceableClient = new TraceableHttpClient($client);
+        $response = $traceableClient->request('GET', self::TEST_GET_URL);
 
         $this->assertValidGETResponse(json_decode($response->getContent(), true));
 
@@ -38,7 +40,8 @@ class HttpClientTest extends TestCase
         \VCR\VCR::insertCassette('test-cassette.yml');
 
         $client = HttpClient::create();
-        $response = $client->request('POST', self::TEST_POST_URL);
+        $traceableClient = new TraceableHttpClient($client);
+        $response = $traceableClient->request('POST', self::TEST_POST_URL);
 
         $data = json_decode($response->getContent(), true);
         $this->assertValidGETResponse($data);
@@ -53,7 +56,8 @@ class HttpClientTest extends TestCase
         \VCR\VCR::insertCassette('test-cassette.yml');
 
         $client = HttpClient::create();
-        $response = $client->request('POST', self::TEST_POST_URL, [
+        $traceableClient = new TraceableHttpClient($client);
+        $response = $traceableClient->request('POST', self::TEST_POST_URL, [
             'json' => [
                 'test' => true
             ]
