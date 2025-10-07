@@ -1,0 +1,61 @@
+
+-
+    request:
+        method: GET
+        url: 'https://postman-echo.com/get'
+        headers:
+            Host: postman-echo.com
+    response:
+        status:
+            code: 200
+            message: ''
+        headers:
+            date: 'Tue, 07 Oct 2025 16:12:48 GMT'
+            content-type: 'application/json; charset=utf-8'
+            content-length: '330'
+            server: nginx
+            etag: 'W/"14a-xMJOcADaNfOxZOg+LHxWarzLVJ8"'
+            set-cookie: 'sails.sid=s%3AxIVZvMpiKbn6QPUzuYsjkyhuzsXD0Fq0.XXg%2BSfnMBo6kR4kT4qa0LVomJQxHm4bCENQ4X6jeu5g; Path=/; HttpOnly'
+        body: "{\n  \"args\": {},\n  \"headers\": {\n    \"host\": \"postman-echo.com\",\n    \"x-request-start\": \"t1759853568.696\",\n    \"connection\": \"close\",\n    \"x-forwarded-proto\": \"https\",\n    \"x-forwarded-port\": \"443\",\n    \"x-amzn-trace-id\": \"Root=1-68e53c00-4512ab554689a3111bd5f889\",\n    \"accept\": \"*/*\"\n  },\n  \"url\": \"https://postman-echo.com/get\"\n}"
+        curl_info:
+            url: 'https://postman-echo.com/get'
+            content_type: 'application/json; charset=utf-8'
+            http_code: 200
+            header_size: 302
+            request_size: 56
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.407318
+            namelookup_time: 0.026829
+            connect_time: 0.120821
+            pretransfer_time: 0.311378
+            size_upload: 0.0
+            size_download: 330.0
+            speed_download: 810.0
+            speed_upload: 0.0
+            download_content_length: 330.0
+            upload_content_length: 0.0
+            starttransfer_time: 0.407283
+            redirect_time: 0.0
+            redirect_url: ''
+            primary_ip: 18.210.107.39
+            certinfo: {  }
+            primary_port: 443
+            local_ip: 192.168.1.21
+            local_port: 52846
+            http_version: 3
+            protocol: 2
+            ssl_verifyresult: 0
+            scheme: HTTPS
+            appconnect_time_us: 311026
+            connect_time_us: 120821
+            namelookup_time_us: 26829
+            pretransfer_time_us: 311378
+            redirect_time_us: 0
+            starttransfer_time_us: 407283
+            total_time_us: 407318
+            effective_method: GET
+            capath: /etc/ssl/certs
+            cainfo: /etc/ssl/certs/ca-certificates.crt
+    index: 0

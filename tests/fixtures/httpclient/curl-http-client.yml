@@ -1,0 +1,183 @@
+
+-
+    request:
+        method: GET
+        url: 'https://postman-echo.com/get'
+        headers:
+            Host: postman-echo.com
+    response:
+        status:
+            code: 200
+            message: ''
+        headers:
+            date: 'Tue, 07 Oct 2025 16:12:45 GMT'
+            content-type: 'application/json; charset=utf-8'
+            content-length: '330'
+            server: nginx
+            etag: 'W/"14a-IT9w9h3NHLRdvS6kSWVDiZ8tK/w"'
+            set-cookie: 'sails.sid=s%3AqKeQ79eMNI8JfcwoQyH4EZ8N2_O5jtVE.PQsuQsDBEzPgEf%2BPLzVMLYB4k8BJHdTAEJCY54CEsDw; Path=/; HttpOnly'
+        body: "{\n  \"args\": {},\n  \"headers\": {\n    \"host\": \"postman-echo.com\",\n    \"x-request-start\": \"t1759853565.175\",\n    \"connection\": \"close\",\n    \"x-forwarded-proto\": \"https\",\n    \"x-forwarded-port\": \"443\",\n    \"x-amzn-trace-id\": \"Root=1-68e53bfd-625fd7d2294faf14196a24f7\",\n    \"accept\": \"*/*\"\n  },\n  \"url\": \"https://postman-echo.com/get\"\n}"
+        curl_info:
+            url: 'https://postman-echo.com/get'
+            content_type: 'application/json; charset=utf-8'
+            http_code: 200
+            header_size: 302
+            request_size: 56
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.413283
+            namelookup_time: 0.026387
+            connect_time: 0.121016
+            pretransfer_time: 0.312541
+            size_upload: 0.0
+            size_download: 330.0
+            speed_download: 798.0
+            speed_upload: 0.0
+            download_content_length: 330.0
+            upload_content_length: 0.0
+            starttransfer_time: 0.41323
+            redirect_time: 0.0
+            redirect_url: ''
+            primary_ip: 3.95.46.189
+            certinfo: {  }
+            primary_port: 443
+            local_ip: 192.168.1.21
+            local_port: 46072
+            http_version: 3
+            protocol: 2
+            ssl_verifyresult: 0
+            scheme: HTTPS
+            appconnect_time_us: 312323
+            connect_time_us: 121016
+            namelookup_time_us: 26387
+            pretransfer_time_us: 312541
+            redirect_time_us: 0
+            starttransfer_time_us: 413230
+            total_time_us: 413283
+            effective_method: GET
+            capath: /etc/ssl/certs
+            cainfo: /etc/ssl/certs/ca-certificates.crt
+    index: 0
+-
+    request:
+        method: POST
+        url: 'https://postman-echo.com/post'
+        headers:
+            Host: postman-echo.com
+    response:
+        status:
+            code: 200
+            message: ''
+        headers:
+            date: 'Tue, 07 Oct 2025 16:12:45 GMT'
+            content-type: 'application/json; charset=utf-8'
+            content-length: '430'
+            server: nginx
+            etag: 'W/"1ae-FSOuPW04oFx0I8RTRIvBsQEEpqM"'
+            set-cookie: 'sails.sid=s%3A_NufU1RFJCujxhrPcZ_3YsMqZsqAWpuk.Lpi%2BVFWxOswEZOm6PDLZmbtbQGrdZXCCC29eWa1fEMA; Path=/; HttpOnly'
+        body: "{\n  \"args\": {},\n  \"data\": {},\n  \"files\": {},\n  \"form\": {},\n  \"headers\": {\n    \"host\": \"postman-echo.com\",\n    \"x-request-start\": \"t1759853565.594\",\n    \"connection\": \"close\",\n    \"x-forwarded-proto\": \"https\",\n    \"x-forwarded-port\": \"443\",\n    \"x-amzn-trace-id\": \"Root=1-68e53bfd-60de606849bb61eb528f2129\",\n    \"accept\": \"*/*\",\n    \"content-type\": \"application/json\"\n  },\n  \"json\": null,\n  \"url\": \"https://postman-echo.com/post\"\n}"
+        curl_info:
+            url: 'https://postman-echo.com/post'
+            content_type: 'application/json; charset=utf-8'
+            http_code: 200
+            header_size: 302
+            request_size: 58
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.416302
+            namelookup_time: 0.027026
+            connect_time: 0.124017
+            pretransfer_time: 0.315309
+            size_upload: 0.0
+            size_download: 430.0
+            speed_download: 1032.0
+            speed_upload: 0.0
+            download_content_length: 430.0
+            upload_content_length: 0.0
+            starttransfer_time: 0.416246
+            redirect_time: 0.0
+            redirect_url: ''
+            primary_ip: 3.213.210.224
+            certinfo: {  }
+            primary_port: 443
+            local_ip: 192.168.1.21
+            local_port: 35616
+            http_version: 3
+            protocol: 2
+            ssl_verifyresult: 0
+            scheme: HTTPS
+            appconnect_time_us: 315157
+            connect_time_us: 124017
+            namelookup_time_us: 27026
+            pretransfer_time_us: 315309
+            redirect_time_us: 0
+            starttransfer_time_us: 416246
+            total_time_us: 416302
+            effective_method: POST
+            capath: /etc/ssl/certs
+            cainfo: /etc/ssl/certs/ca-certificates.crt
+    index: 0
+-
+    request:
+        method: POST
+        url: 'https://postman-echo.com/post'
+        headers:
+            Host: postman-echo.com
+            Content-Type: application/json
+        body: '{"test":true}'
+    response:
+        status:
+            code: 200
+            message: ''
+        headers:
+            date: 'Tue, 07 Oct 2025 16:12:46 GMT'
+            content-type: 'application/json; charset=utf-8'
+            content-length: '496'
+            server: nginx
+            etag: 'W/"1f0-7ouGbktQ+tGwLql/LDlBYXEtn5E"'
+            set-cookie: 'sails.sid=s%3AWI_pizRG-5Iis7f36NkXOPvPSscPzX5_.ujYnuYmhcrt0bymSVzH5iPCpb5VP%2FHUdNQR3MDy%2FAow; Path=/; HttpOnly'
+        body: "{\n  \"args\": {},\n  \"data\": {\n    \"test\": true\n  },\n  \"files\": {},\n  \"form\": {},\n  \"headers\": {\n    \"host\": \"postman-echo.com\",\n    \"x-request-start\": \"t1759853566.019\",\n    \"connection\": \"close\",\n    \"content-length\": \"13\",\n    \"x-forwarded-proto\": \"https\",\n    \"x-forwarded-port\": \"443\",\n    \"x-amzn-trace-id\": \"Root=1-68e53bfe-736a803a512d6e4330c4833d\",\n    \"accept\": \"*/*\",\n    \"content-type\": \"application/json\"\n  },\n  \"json\": {\n    \"test\": true\n  },\n  \"url\": \"https://postman-echo.com/post\"\n}"
+        curl_info:
+            url: 'https://postman-echo.com/post'
+            content_type: 'application/json; charset=utf-8'
+            http_code: 200
+            header_size: 304
+            request_size: 123
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.413754
+            namelookup_time: 0.026774
+            connect_time: 0.121138
+            pretransfer_time: 0.314888
+            size_upload: 13.0
+            size_download: 496.0
+            speed_download: 1198.0
+            speed_upload: 31.0
+            download_content_length: 496.0
+            upload_content_length: 13.0
+            starttransfer_time: 0.413713
+            redirect_time: 0.0
+            redirect_url: ''
+            primary_ip: 54.204.252.241
+            certinfo: {  }
+            primary_port: 443
+            local_ip: 192.168.1.21
+            local_port: 47990
+            http_version: 3
+            protocol: 2
+            ssl_verifyresult: 0
+            scheme: HTTPS
+            appconnect_time_us: 314615
+            connect_time_us: 121138
+            namelookup_time_us: 26774
+            pretransfer_time_us: 314888
+            redirect_time_us: 0
+            starttransfer_time_us: 413713
+            total_time_us: 413754
+            effective_method: POST
+            capath: /etc/ssl/certs
+            cainfo: /etc/ssl/certs/ca-certificates.crt
+    index: 0

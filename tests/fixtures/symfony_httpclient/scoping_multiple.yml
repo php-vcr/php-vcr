@@ -1,0 +1,140 @@
+
+-
+    request:
+        method: GET
+        url: 'https://jsonplaceholder.typicode.com/posts/1?'
+        headers:
+            X-Scope: api1
+            Host: jsonplaceholder.typicode.com
+    response:
+        status:
+            code: 200
+            message: ''
+        headers:
+            date: 'Tue, 07 Oct 2025 16:12:48 GMT'
+            content-type: 'application/json; charset=utf-8'
+            content-length: '292'
+            access-control-allow-credentials: 'true'
+            cache-control: max-age=43200
+            etag: 'W/"124-yiKdLzqO5gfBrJFrcdJ8Yq0LGnU"'
+            expires: '-1'
+            nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+            pragma: no-cache
+            report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=9nD1xelvUg9AJRU7RXYBg%2B4wSrr0bi7qe6ALzzB43xA%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1759838625"}],"max_age":3600}'
+            reporting-endpoints: 'heroku-nel="https://nel.heroku.com/reports?s=9nD1xelvUg9AJRU7RXYBg%2B4wSrr0bi7qe6ALzzB43xA%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1759838625"'
+            server: cloudflare
+            vary: 'Origin, Accept-Encoding'
+            via: '2.0 heroku-router'
+            x-content-type-options: nosniff
+            x-powered-by: Express
+            x-ratelimit-limit: '1000'
+            x-ratelimit-remaining: '999'
+            x-ratelimit-reset: '1759838682'
+            age: '14942'
+            cf-cache-status: HIT
+            cf-ray: 98aeaea599e7e1e5-MRS
+            alt-svc: 'h3=":443"; ma=86400'
+        body: "{\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\",\n  \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"\n}"
+        curl_info:
+            url: 'https://jsonplaceholder.typicode.com/posts/1'
+            content_type: 'application/json; charset=utf-8'
+            http_code: 200
+            header_size: 1088
+            request_size: 88
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.075636
+            namelookup_time: 0.001331
+            connect_time: 0.015232
+            pretransfer_time: 0.058186
+            size_upload: 0.0
+            size_download: 292.0
+            speed_download: 3860.0
+            speed_upload: 0.0
+            download_content_length: 292.0
+            upload_content_length: 0.0
+            starttransfer_time: 0.075526
+            redirect_time: 0.0
+            redirect_url: ''
+            primary_ip: '2a06:98c1:3120::2'
+            certinfo: {  }
+            primary_port: 443
+            local_ip: '2a01:cb1d:8000:8400:3b8e:fecd:3770:70c3'
+            local_port: 59224
+            http_version: 3
+            protocol: 2
+            ssl_verifyresult: 0
+            scheme: HTTPS
+            appconnect_time_us: 58088
+            connect_time_us: 15232
+            namelookup_time_us: 1331
+            pretransfer_time_us: 58186
+            redirect_time_us: 0
+            starttransfer_time_us: 75526
+            total_time_us: 75636
+            effective_method: GET
+            capath: /etc/ssl/certs
+            cainfo: /etc/ssl/certs/ca-certificates.crt
+    index: 0
+-
+    request:
+        method: GET
+        url: 'https://postman-echo.com/get?'
+        headers:
+            X-Scope: api2
+            Host: postman-echo.com
+    response:
+        status:
+            code: 200
+            message: ''
+        headers:
+            date: 'Tue, 07 Oct 2025 16:12:49 GMT'
+            content-type: 'application/json; charset=utf-8'
+            content-length: '354'
+            server: nginx
+            etag: 'W/"162-ktUIrpV9sYiwBHUnVbA8PThRNTY"'
+            set-cookie: 'sails.sid=s%3AS5GvYZVPZJnLVI0v-ZGI0laCE3DX4Qve.mOSQj7EV%2BLvCA7pnRslDglRNK%2Fm9zSfpRMlTl3HxbGI; Path=/; HttpOnly'
+        body: "{\n  \"args\": {},\n  \"headers\": {\n    \"host\": \"postman-echo.com\",\n    \"x-request-start\": \"t1759853569.298\",\n    \"connection\": \"close\",\n    \"x-forwarded-proto\": \"https\",\n    \"x-forwarded-port\": \"443\",\n    \"x-amzn-trace-id\": \"Root=1-68e53c01-249550770198317238dcfbc4\",\n    \"accept\": \"*/*\",\n    \"x-scope\": \"api2\"\n  },\n  \"url\": \"https://postman-echo.com/get?\"\n}"
+        curl_info:
+            url: 'https://postman-echo.com/get'
+            content_type: 'application/json; charset=utf-8'
+            http_code: 200
+            header_size: 304
+            request_size: 72
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.433084
+            namelookup_time: 0.034508
+            connect_time: 0.130186
+            pretransfer_time: 0.331455
+            size_upload: 0.0
+            size_download: 354.0
+            speed_download: 817.0
+            speed_upload: 0.0
+            download_content_length: 354.0
+            upload_content_length: 0.0
+            starttransfer_time: 0.433042
+            redirect_time: 0.0
+            redirect_url: ''
+            primary_ip: 3.213.210.224
+            certinfo: {  }
+            primary_port: 443
+            local_ip: 192.168.1.21
+            local_port: 35626
+            http_version: 3
+            protocol: 2
+            ssl_verifyresult: 0
+            scheme: HTTPS
+            appconnect_time_us: 331226
+            connect_time_us: 130186
+            namelookup_time_us: 34508
+            pretransfer_time_us: 331455
+            redirect_time_us: 0
+            starttransfer_time_us: 433042
+            total_time_us: 433084
+            effective_method: GET
+            capath: /etc/ssl/certs
+            cainfo: /etc/ssl/certs/ca-certificates.crt
+    index: 0

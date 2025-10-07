@@ -1,0 +1,82 @@
+
+-
+    request:
+        method: POST
+        url: 'https://jsonplaceholder.typicode.com/posts'
+        headers:
+            Accept: application/json
+            Content-Type: application/json
+            Host: jsonplaceholder.typicode.com
+        body: '{"title":"Test Post","body":"Testing VCR with CurlHttpClient","userId":1}'
+    response:
+        status:
+            code: 201
+            message: ''
+        headers:
+            date: 'Tue, 07 Oct 2025 16:12:49 GMT'
+            content-type: 'application/json; charset=utf-8'
+            content-length: '99'
+            location: 'https://jsonplaceholder.typicode.com/posts/101'
+            access-control-allow-credentials: 'true'
+            access-control-expose-headers: Location
+            cache-control: no-cache
+            etag: 'W/"63-cthoACCZzRoJbtqhh9rLlEetDhA"'
+            expires: '-1'
+            nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+            pragma: no-cache
+            report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=Z5b5EroFrqHqcBCV3elk4AIw1eRvvCMWZpN%2BfpuI8kc%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1759853569"}],"max_age":3600}'
+            reporting-endpoints: 'heroku-nel="https://nel.heroku.com/reports?s=Z5b5EroFrqHqcBCV3elk4AIw1eRvvCMWZpN%2BfpuI8kc%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1759853569"'
+            server: cloudflare
+            vary: 'Origin, X-HTTP-Method-Override, Accept-Encoding'
+            via: '2.0 heroku-router'
+            x-content-type-options: nosniff
+            x-powered-by: Express
+            x-ratelimit-limit: '1000'
+            x-ratelimit-remaining: '996'
+            x-ratelimit-reset: '1759853622'
+            cf-cache-status: DYNAMIC
+            cf-ray: 98aeaeaa1848e1ae-MRS
+            alt-svc: 'h3=":443"; ma=86400'
+        body: "{\n  \"title\": \"Test Post\",\n  \"body\": \"Testing VCR with CurlHttpClient\",\n  \"userId\": 1,\n  \"id\": 101\n}"
+        curl_info:
+            url: 'https://jsonplaceholder.typicode.com/posts'
+            content_type: 'application/json; charset=utf-8'
+            http_code: 201
+            header_size: 1196
+            request_size: 209
+            filetime: -1
+            ssl_verify_result: 0
+            redirect_count: 0
+            total_time: 0.174128
+            namelookup_time: 0.001623
+            connect_time: 0.017818
+            pretransfer_time: 0.060525
+            size_upload: 73.0
+            size_download: 99.0
+            speed_download: 568.0
+            speed_upload: 419.0
+            download_content_length: 99.0
+            upload_content_length: 73.0
+            starttransfer_time: 0.174077
+            redirect_time: 0.0
+            redirect_url: ''
+            primary_ip: '2a06:98c1:3120::2'
+            certinfo: {  }
+            primary_port: 443
+            local_ip: '2a01:cb1d:8000:8400:3b8e:fecd:3770:70c3'
+            local_port: 59254
+            http_version: 3
+            protocol: 2
+            ssl_verifyresult: 0
+            scheme: HTTPS
+            appconnect_time_us: 60410
+            connect_time_us: 17818
+            namelookup_time_us: 1623
+            pretransfer_time_us: 60525
+            redirect_time_us: 0
+            starttransfer_time_us: 174077
+            total_time_us: 174128
+            effective_method: POST
+            capath: /etc/ssl/certs
+            cainfo: /etc/ssl/certs/ca-certificates.crt
+    index: 0
