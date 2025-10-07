@@ -41,12 +41,13 @@ class HttpClient
             throw CurlException::create($ch);
         }
         [$status, $headers, $body] = HttpUtil::parseResponse($result);
+        $curlInfo = curl_getinfo($ch);
 
         return new Response(
             HttpUtil::parseStatus($status),
             HttpUtil::parseHeaders($headers),
             $body,
-            curl_getinfo($ch)
+            $curlInfo
         );
     }
 }

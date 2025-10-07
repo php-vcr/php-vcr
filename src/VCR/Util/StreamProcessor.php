@@ -40,7 +40,7 @@ class StreamProcessor
     /**
      * @var resource|false resource for the currently opened file
      */
-    protected $resource;
+    protected $resource = false;
 
     /**
      * @see http://www.php.net/manual/en/class.streamwrapper.php#streamwrapper.props.context

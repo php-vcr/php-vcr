@@ -7,6 +7,7 @@ namespace VCR\LibraryHooks;
 use VCR\Response;
 use VCR\Util\Assertion;
 use VCR\Util\CurlException;
+use VCR\Util\HttpUtil;
 use VCR\Util\StreamHelper;
 
 class StreamWrapperHook implements LibraryHook
@@ -24,9 +25,23 @@ class StreamWrapperHook implements LibraryHook
      */
     public $context;
 
+    /**
+     * @var array<int,string> HTTP response headers for stream_get_meta_data()
+     *
+     * This public property is automatically included by PHP when stream_get_meta_data()
+     * is called on this stream wrapper. Symfony NativeHttpClient relies on this to
+     * read response headers.
+     */
+    public array $wrapper_data = [];
+
     public function enable(\Closure $requestCallback): void
     {
         self::$requestCallback = $requestCallback;
+
+        // Load the stream_get_meta_data() proxy for Symfony HttpClient compatibility
+        // This must be loaded before Symfony uses it
+        require_once __DIR__.'/StreamMetaDataProxy.php';
+
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', __CLASS__, \STREAM_IS_URL);
 
@@ -64,12 +79,22 @@ class StreamWrapperHook implements LibraryHook
      */
     public function stream_open(string $path, string $mode, int $options, ?string &$opened_path): bool
     {
-        $request = StreamHelper::createRequestFromStreamContext($this->context, $path);
-
         $requestCallback = self::$requestCallback;
-        Assertion::isCallable($requestCallback);
+        Assertion::isCallable($requestCallback, 'Request callback must be set before opening stream');
+
+        $request = StreamHelper::createRequestFromStreamContext($this->context, $path);
+        Assertion::isInstanceOf($request, \VCR\Request::class, 'StreamHelper must return a valid Request object');
+
         try {
             $this->response = $requestCallback($request);
+
+            // Populate wrapper_data for Symfony NativeHttpClient
+            // This must be in the format: ["HTTP/1.1 200 OK", "Header: value", ...]
+            $this->wrapper_data = [];
+            $this->wrapper_data[] = HttpUtil::formatAsStatusString($this->response);
+            foreach (HttpUtil::formatHeadersForCurl($this->response->getHeaders()) as $header) {
+                $this->wrapper_data[] = $header;
+            }
 
             return true;
         } catch (CurlException $e) {
@@ -198,5 +223,23 @@ class StreamWrapperHook implements LibraryHook
     public function stream_metadata(string $path, int $option, $var): bool
     {
         return false;
+    }
+
+    /**
+     * Change stream options.
+     *
+     * @see http://www.php.net/manual/en/streamwrapper.stream-set-option.php
+     *
+     * @param int      $option one of STREAM_OPTION_BLOCKING, STREAM_OPTION_READ_TIMEOUT, STREAM_OPTION_WRITE_BUFFER
+     * @param int      $arg1   depends on option
+     * @param int|null $arg2   depends on option
+     *
+     * @return bool returns TRUE on success or FALSE on failure
+     */
+    public function stream_set_option(int $option, int $arg1, ?int $arg2): bool
+    {
+        // We don't need to actually implement these options for VCR's purposes
+        // Just return true to indicate success
+        return true;
     }
 }

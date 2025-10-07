@@ -30,9 +30,24 @@ class StreamHelper
         }
 
         if (!empty($http['header'])) {
-            $headers = HttpUtil::parseHeaders(HttpUtil::parseRawHeader($http['header']));
+            // Handle both string and array formats
+            // Symfony NativeHttpClient may pass headers as array instead of string
+            if (\is_string($http['header'])) {
+                $headers = HttpUtil::parseHeaders(HttpUtil::parseRawHeader($http['header']));
+            } else {
+                Assertion::isArray($http['header'], 'HTTP headers must be either string or array');
+                $headers = HttpUtil::parseHeaders($http['header']);
+            }
             foreach ($headers as $key => $value) {
                 $request->setHeader($key, $value);
+            }
+
+            // Fix for NativeHttpClient DNS resolution: reconstruct URL with hostname from Host header
+            if (isset($headers['Host'])) {
+                $reconstructedUrl = UrlReconstructor::reconstructFromHostHeader($path, $headers['Host']);
+                if (null !== $reconstructedUrl) {
+                    $request->setUrl($reconstructedUrl);
+                }
             }
         }
 
