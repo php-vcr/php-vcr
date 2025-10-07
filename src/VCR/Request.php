@@ -35,7 +35,7 @@ class Request
     public function __construct(
         protected string $method,
         protected ?string $url,
-        protected array $headers = []
+        protected array $headers = [],
     ) {
         $this->method = $method;
         $this->headers = $headers;

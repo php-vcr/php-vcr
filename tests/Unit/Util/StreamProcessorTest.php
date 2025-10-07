@@ -132,7 +132,7 @@ final class StreamProcessorTest extends TestCase
             int $errno,
             string $errstr,
             string $errfile = '',
-            int $errline = 0
+            int $errline = 0,
         ): void {
             throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
         }, \E_WARNING);

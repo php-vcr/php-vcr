@@ -6,7 +6,6 @@ namespace VCR\Tests\Integration\SymfonyHttpClient\Features;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\CurlHttpClient;
-use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\NativeHttpClient;
 use VCR\VCR;
 

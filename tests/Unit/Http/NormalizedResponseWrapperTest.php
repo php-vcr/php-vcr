@@ -103,6 +103,7 @@ class NormalizedResponseWrapperTest extends TestCase
 
         $normalizer = function (TransportException $e) {
             $message = rtrim($e->getMessage(), '/');
+
             return new TransportException($message);
         };
 
@@ -137,6 +138,7 @@ class NormalizedResponseWrapperTest extends TestCase
 
         $normalizer = function (TransportException $e) {
             $message = str_replace('/"', '"', $e->getMessage());
+
             return new TransportException($message);
         };
 

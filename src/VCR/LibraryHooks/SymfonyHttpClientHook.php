@@ -31,7 +31,7 @@ class SymfonyHttpClientHook implements LibraryHook
 
     public function __construct(
         private AbstractCodeTransform $codeTransformer,
-        private StreamProcessor $processor
+        private StreamProcessor $processor,
     ) {
     }
 

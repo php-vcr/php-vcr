@@ -11,7 +11,7 @@ class BeforePlaybackEvent extends Event
 {
     public function __construct(
         protected Request $request,
-        protected Cassette $cassette
+        protected Cassette $cassette,
     ) {
     }
 

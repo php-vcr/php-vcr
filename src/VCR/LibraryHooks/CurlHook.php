@@ -56,7 +56,7 @@ class CurlHook implements LibraryHook
 
     public function __construct(
         private AbstractCodeTransform $codeTransformer,
-        private StreamProcessor $processor
+        private StreamProcessor $processor,
     ) {
     }
 
@@ -106,22 +106,22 @@ class CurlHook implements LibraryHook
     /**
      * Calls the intercepted curl method if library hook is disabled, otherwise the real one.
      *
-     * @param string $method cURL method to call, example: curl_info()
-     * @param array<int,mixed> $args cURL arguments for this function
+     * @param string           $method cURL method to call, example: curl_info()
+     * @param array<int,mixed> $args   cURL arguments for this function
      *
      * @return mixed cURL function return type
      */
     public static function __callStatic(string $method, array $args)
     {
-        // Call original when disabled
         if (self::DISABLED == static::$status) {
             if ('curl_multi_exec' === $method) {
-                // curl_multi_exec expects to be called with args by reference
-                // which call_user_func_array doesn't do.
                 return curl_multi_exec($args[0], $args[1]);
             }
 
-            /** @var callable $method */
+            if (!\function_exists($method)) {
+                trigger_error("Call to undefined function {$method}()", \E_USER_ERROR);
+            }
+
             return \call_user_func_array($method, $args);
         }
 

@@ -21,7 +21,7 @@ class SoapHook implements LibraryHook
      */
     public function __construct(
         private AbstractCodeTransform $codeTransformer,
-        private StreamProcessor $processor
+        private StreamProcessor $processor,
     ) {
         if (!class_exists('\SoapClient')) {
             throw new \BadMethodCallException('For soap support you need to install the soap extension.');

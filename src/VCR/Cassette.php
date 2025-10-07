@@ -17,7 +17,7 @@ class Cassette
     public function __construct(
         protected string $name,
         protected Configuration $config,
-        protected Storage $storage
+        protected Storage $storage,
     ) {
     }
 

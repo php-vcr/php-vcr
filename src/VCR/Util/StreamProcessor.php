@@ -257,7 +257,9 @@ class StreamProcessor
             return false;
         }
 
-        if (!$this->shouldProcess(stream_get_meta_data($this->resource)['uri'])) {
+        $meta = stream_get_meta_data($this->resource);
+
+        if (!$this->shouldProcess($meta['uri'])) {
             return fstat($this->resource);
         }
 

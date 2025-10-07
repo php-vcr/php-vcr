@@ -24,7 +24,7 @@ use VCR\Http\NormalizedResponseWrapper;
  * - Works with all Symfony HttpClient implementations
  *
  * Usage:
- *   $client = new VCRHttpClient(new CurlHttpClient());
+ * $client = new VCRHttpClient(new CurlHttpClient());
  */
 class VCRHttpClient implements HttpClientInterface
 {
@@ -188,7 +188,7 @@ class VCRHttpClient implements HttpClientInterface
             }
 
             return $videorecorder->hasCassette();
-        } catch (\BadMethodCallException|\RuntimeException $e) {
+        } catch (\BadMethodCallException $e) {
             // VCR not initialized or no cassette
             // We intentionally swallow these exceptions to gracefully handle VCR absence
             return false;
@@ -243,7 +243,7 @@ class VCRHttpClient implements HttpClientInterface
 
         try {
             $videorecorder = VCRFactory::get(Videorecorder::class);
-        } catch (\BadMethodCallException|\RuntimeException $e) {
+        } catch (\BadMethodCallException $e) {
             // VCR not initialized, fall back to real client
             // We intentionally swallow these exceptions to gracefully handle VCR absence
             return $this->client->request($method, $url, $options);

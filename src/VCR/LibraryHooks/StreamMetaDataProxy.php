@@ -27,7 +27,7 @@ use VCR\LibraryHooks\StreamWrapperHook;
  */
 function stream_get_meta_data($stream): array
 {
-    $metadata = \stream_get_meta_data($stream);
+    $metadata = stream_get_meta_data($stream);
 
     // If wrapper_data is a StreamWrapperHook object, extract the actual array
     // StreamWrapperHook has a public $wrapper_data property, so no reflection needed

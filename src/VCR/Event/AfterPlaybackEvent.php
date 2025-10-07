@@ -13,7 +13,7 @@ class AfterPlaybackEvent extends Event
     public function __construct(
         protected Request $request,
         protected Response $response,
-        protected Cassette $cassette
+        protected Cassette $cassette,
     ) {
     }
 

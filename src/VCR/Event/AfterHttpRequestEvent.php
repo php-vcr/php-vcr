@@ -11,7 +11,7 @@ class AfterHttpRequestEvent extends Event
 {
     public function __construct(
         protected Request $request,
-        protected Response $response
+        protected Response $response,
     ) {
     }
 

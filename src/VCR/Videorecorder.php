@@ -45,7 +45,7 @@ class Videorecorder
     public function __construct(
         protected Configuration $config,
         protected HttpClient $client,
-        protected VCRFactory $factory
+        protected VCRFactory $factory,
     ) {
     }
 

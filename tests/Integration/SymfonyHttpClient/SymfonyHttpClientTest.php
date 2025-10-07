@@ -10,7 +10,6 @@ use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\NativeHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Component\HttpClient\RetryableHttpClient;
 use Symfony\Component\HttpClient\TraceableHttpClient;
 use VCR\Tests\Integration\SymfonyHttpClient\Support\JsonPlaceholderClient;
 use VCR\VCR;

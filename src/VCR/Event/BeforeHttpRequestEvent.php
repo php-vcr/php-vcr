@@ -9,7 +9,7 @@ use VCR\Request;
 class BeforeHttpRequestEvent extends Event
 {
     public function __construct(
-        protected Request $request
+        protected Request $request,
     ) {
     }
 
