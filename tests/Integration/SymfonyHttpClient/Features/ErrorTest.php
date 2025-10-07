@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+namespace VCR\Tests\Integration\SymfonyHttpClient\Features;
+
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpClient\Exception\TransportException;
+use Symfony\Component\HttpClient\HttpClient;
+
+final class ErrorTest extends TestCase
+{
+    public const TEST_GET_URL = 'http://localhost:9959';
+
+    protected function setUp(): void
+    {
+        vfsStream::setup('testDir');
+        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'))
+            ->enableLibraryHooks(['symfony_http_client'])  // Enable code transformation hook!
+
+        ;
+    }
+
+    public function testConnectException(): void
+    {
+        $nonInstrumentedException = null;
+        try {
+            $client = HttpClient::create();
+            $response = $client->request('GET', self::TEST_GET_URL);
+            $response->getHeaders(); // Force the request to execute
+        } catch (TransportException $e) {
+            $nonInstrumentedException = $e;
+        }
+        $this->assertNotNull($nonInstrumentedException);
+        $catched = false;
+        \VCR\VCR::turnOn();
+        \VCR\VCR::insertCassette('test-cassette.yml');
+        try {
+            $client = HttpClient::create();
+            $client->request('GET', self::TEST_GET_URL);
+        } catch (TransportException $e) {
+            $catched = true;
+            $this->assertEquals($e->getMessage(), $nonInstrumentedException->getMessage());
+        }
+        $this->assertTrue($catched);
+        \VCR\VCR::turnOff();
+    }
+}
