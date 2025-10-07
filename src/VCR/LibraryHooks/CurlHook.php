@@ -77,6 +77,22 @@ class CurlHook implements LibraryHook
 
     public function disable(): void
     {
+        // Clean up handles where callbacks have been set to NULL to prevent stale state.
+        // Note: isset() returns false for null values, so we use array_key_exists().
+        foreach (self::$curlOptions as $handleId => $options) {
+            $writeIsNull = \array_key_exists(\CURLOPT_WRITEFUNCTION, $options) && null === $options[\CURLOPT_WRITEFUNCTION];
+            $headerIsNull = \array_key_exists(\CURLOPT_HEADERFUNCTION, $options) && null === $options[\CURLOPT_HEADERFUNCTION];
+            $hasNullCallbacks = $writeIsNull || $headerIsNull;
+
+            if ($hasNullCallbacks) {
+                unset(self::$requests[$handleId]);
+                unset(self::$responses[$handleId]);
+                unset(self::$curlOptions[$handleId]);
+                unset(self::$lastErrors[$handleId]);
+                unset(self::$multiReturnValues[$handleId]);
+            }
+        }
+
         self::$requestCallback = null;
 
         static::$status = self::DISABLED;
@@ -90,12 +106,12 @@ class CurlHook implements LibraryHook
     /**
      * Calls the intercepted curl method if library hook is disabled, otherwise the real one.
      *
-     * @param callable&string  $method cURL method to call, example: curl_info()
-     * @param array<int,mixed> $args   cURL arguments for this function
+     * @param string $method cURL method to call, example: curl_info()
+     * @param array<int,mixed> $args cURL arguments for this function
      *
      * @return mixed cURL function return type
      */
-    public static function __callStatic($method, array $args)
+    public static function __callStatic(string $method, array $args)
     {
         // Call original when disabled
         if (self::DISABLED == static::$status) {
@@ -105,6 +121,7 @@ class CurlHook implements LibraryHook
                 return curl_multi_exec($args[0], $args[1]);
             }
 
+            /** @var callable $method */
             return \call_user_func_array($method, $args);
         }
 
@@ -130,8 +147,10 @@ class CurlHook implements LibraryHook
     {
         $curlHandle = curl_init($url);
         if (false !== $curlHandle) {
-            self::$requests[(int) $curlHandle] = new Request('GET', $url);
-            self::$curlOptions[(int) $curlHandle] = [];
+            $handleId = (int) $curlHandle;
+
+            self::$requests[$handleId] = new Request('GET', $url);
+            self::$curlOptions[$handleId] = [];
         }
 
         return $curlHandle;
@@ -146,6 +165,33 @@ class CurlHook implements LibraryHook
         self::$requests[(int) $curlHandle] = new Request('GET', null);
         self::$curlOptions[(int) $curlHandle] = [];
         unset(self::$responses[(int) $curlHandle]);
+        unset(self::$lastErrors[(int) $curlHandle]);
+        unset(self::$multiReturnValues[(int) $curlHandle]);
+    }
+
+    /**
+     * Close a cURL handle.
+     *
+     * @see http://www.php.net/manual/en/function.curl-close.php
+     */
+    public static function curlClose(\CurlHandle $curlHandle): void
+    {
+        $handleId = (int) $curlHandle;
+
+        curl_setopt($curlHandle, \CURLOPT_WRITEFUNCTION, null);
+        curl_setopt($curlHandle, \CURLOPT_HEADERFUNCTION, null);
+
+        unset(self::$requests[$handleId]);
+        unset(self::$responses[$handleId]);
+        unset(self::$curlOptions[$handleId]);
+        unset(self::$lastErrors[$handleId]);
+        unset(self::$multiReturnValues[$handleId]);
+
+        foreach (self::$multiHandles as $multiId => $handles) {
+            unset(self::$multiHandles[$multiId][$handleId]);
+        }
+
+        curl_close($curlHandle);
     }
 
     /**
@@ -160,17 +206,34 @@ class CurlHook implements LibraryHook
     public static function curlExec(\CurlHandle $curlHandle)
     {
         try {
-            $request = self::$requests[(int) $curlHandle];
+            $handleId = (int) $curlHandle;
+
+            if (!isset(self::$requests[$handleId])) {
+                self::$requests[$handleId] = new Request('GET', null);
+            }
+
+            if (!isset(self::$curlOptions[$handleId])) {
+                self::$curlOptions[$handleId] = [];
+            }
+
+            // Snapshot curl options before execution. TraceableHttpClient may set callbacks to NULL
+            // during handleOutput, causing options to be modified mid-execution.
+            $curlOptionsSnapshot = self::$curlOptions[$handleId] ?? [];
+
+            $request = self::$requests[$handleId];
             CurlHelper::validateCurlPOSTBody($request, $curlHandle);
 
             $requestCallback = self::$requestCallback;
             Assertion::isCallable($requestCallback);
-            self::$responses[(int) $curlHandle] = $requestCallback($request);
+            self::$responses[$handleId] = $requestCallback($request);
 
+            // Use snapshot to prevent reading stale data from the real curl handle.
+            // Gzip decompression is handled in CurlHelper::handleOutput().
             return CurlHelper::handleOutput(
-                self::$responses[(int) $curlHandle],
-                self::$curlOptions[(int) $curlHandle],
-                $curlHandle
+                self::$responses[$handleId],
+                $curlOptionsSnapshot,
+                $curlHandle,
+                $curlOptionsSnapshot[\CURLOPT_PRIVATE] ?? null
             );
         } catch (CurlException $e) {
             self::$lastErrors[(int) $curlHandle] = $e;
@@ -221,6 +284,8 @@ class CurlHook implements LibraryHook
             }
         }
 
+        $stillRunning = 0;
+
         return \CURLM_OK;
     }
 
@@ -234,10 +299,17 @@ class CurlHook implements LibraryHook
     public static function curlMultiInfoRead()
     {
         if (!empty(self::$multiExecLastChs)) {
+            $handle = array_pop(self::$multiExecLastChs);
+            $result = \CURLE_OK;
+
+            if (isset(self::$lastErrors[(int) $handle])) {
+                $result = self::$lastErrors[(int) $handle]->getCode();
+            }
+
             $info = [
                 'msg' => \CURLMSG_DONE,
-                'handle' => array_pop(self::$multiExecLastChs),
-                'result' => \CURLE_OK,
+                'handle' => $handle,
+                'result' => $result,
             ];
 
             return $info;
@@ -265,16 +337,34 @@ class CurlHook implements LibraryHook
      */
     public static function curlGetinfo(\CurlHandle $curlHandle, int $option = 0): mixed
     {
-        if (isset(self::$responses[(int) $curlHandle])) {
-            return CurlHelper::getCurlOptionFromResponse(
-                self::$responses[(int) $curlHandle],
+        $handleId = (int) $curlHandle;
+
+        // Special handling for CURLINFO_PRIVATE to return the value we stored.
+        if (\CURLINFO_PRIVATE === $option
+            && isset(self::$curlOptions[$handleId])
+            && isset(self::$curlOptions[$handleId][\CURLOPT_PRIVATE])) {
+            $value = self::$curlOptions[$handleId][\CURLOPT_PRIVATE];
+
+            return $value;
+        }
+        if (isset(self::$responses[$handleId])) {
+            $result = CurlHelper::getCurlOptionFromResponse(
+                self::$responses[$handleId],
                 $option
             );
-        } elseif (isset(self::$lastErrors[(int) $curlHandle])) {
-            return self::$lastErrors[(int) $curlHandle]->getInfo();
-        } else {
-            throw new \RuntimeException('Unexpected error, could not find curl_getinfo in response or errors');
+
+            return $result;
         }
+
+        // Fallback to real curl_getinfo when no VCR response is available yet.
+        if (0 === $option) {
+            $info = curl_getinfo($curlHandle);
+
+            return $info;
+        }
+        $result = curl_getinfo($curlHandle, $option);
+
+        return $result;
     }
 
     /**
@@ -286,9 +376,22 @@ class CurlHook implements LibraryHook
      */
     public static function curlSetopt(\CurlHandle $curlHandle, int $option, $value): bool
     {
-        CurlHelper::setCurlOptionOnRequest(self::$requests[(int) $curlHandle], $option, $value);
+        $handleId = (int) $curlHandle;
 
-        static::$curlOptions[(int) $curlHandle][$option] = $value;
+        if (!isset(self::$requests[$handleId])) {
+            self::$requests[$handleId] = new Request('GET', null);
+        }
+
+        if (!isset(self::$curlOptions[$handleId])) {
+            self::$curlOptions[$handleId] = [];
+        }
+
+        // Note: Symfony HttpClient decompresses gzip responses internally based on the Accept-Encoding
+        // header it sends. When VCR replays a gzipped response, Symfony expects it already decompressed
+        // but receives it compressed, causing a mismatch. We use VCRHttpClient wrapper for proper handling.
+        CurlHelper::setCurlOptionOnRequest(self::$requests[$handleId], $option, $value);
+
+        static::$curlOptions[$handleId][$option] = $value;
 
         return curl_setopt($curlHandle, $option, $value);
     }

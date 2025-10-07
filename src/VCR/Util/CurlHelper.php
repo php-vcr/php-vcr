@@ -13,7 +13,6 @@ class CurlHelper
      * @var array<int, string> list of cURL info constants
      */
     private static $curlInfoList = [
-        // "certinfo"?
         \CURLINFO_HTTP_CODE => 'http_code',
         \CURLINFO_EFFECTIVE_URL => 'url',
         \CURLINFO_TOTAL_TIME => 'total_time',
@@ -36,6 +35,8 @@ class CurlHelper
         \CURLINFO_CONTENT_LENGTH_UPLOAD => 'upload_content_length',
         \CURLINFO_CONTENT_TYPE => 'content_type',
         \CURLINFO_APPCONNECT_TIME => 'appconnect_time',
+        \CURLINFO_PRIVATE => 'private',
+        \CURLINFO_CERTINFO => 'certinfo',
     ];
 
     /**
@@ -47,14 +48,21 @@ class CurlHelper
      * The response header might be passed to a custom function.
      *
      * @param array<int, mixed> $curlOptions cURL options which are not stored within the Response
+     * @param string|null       $privateData CURLOPT_PRIVATE value from snapshot (prevents reading stale data from real handle)
      */
-    public static function handleOutput(Response $response, array $curlOptions, \CurlHandle $ch): ?string
+    public static function handleOutput(Response $response, array $curlOptions, \CurlHandle $ch, ?string $privateData = null): ?string
     {
         // If there is a header function set, feed the http status and headers to it.
         if (isset($curlOptions[\CURLOPT_HEADERFUNCTION])) {
-            $headerList = [HttpUtil::formatAsStatusString($response)];
-            $headerList = array_merge($headerList, HttpUtil::formatHeadersForCurl($response->getHeaders()));
-            $headerList[] = '';
+            $headerList = [HttpUtil::formatAsStatusString($response)."\r\n"];
+
+            // Get headers as-is from the response
+            // Note: For Symfony HttpClient, gzip decompression is handled in VCRHttpClient
+            foreach (HttpUtil::formatHeadersForCurl($response->getHeaders()) as $header) {
+                $headerList[] = $header."\r\n";
+            }
+            $headerList[] = "\r\n"; // Empty line to signal end of headers
+
             foreach ($headerList as $header) {
                 self::callFunction($curlOptions[\CURLOPT_HEADERFUNCTION], $ch, $header);
             }
@@ -66,7 +74,13 @@ class CurlHelper
             $body = HttpUtil::formatAsStatusWithHeadersString($response).$body;
         }
 
-        if (isset($curlOptions[\CURLOPT_WRITEFUNCTION])) {
+        // Handle Symfony HttpClient CURLOPT_PRIVATE state management
+        $noContentExpected = SymfonyHttpClientHelper::expectsNoContent($ch, $privateData);
+
+        if (isset($curlOptions[\CURLOPT_WRITEFUNCTION]) && !$noContentExpected) {
+            // Transition from Headers to Content phase for Symfony HttpClient
+            SymfonyHttpClientHelper::transitionToContentPhase($ch, $privateData);
+
             self::callFunction($curlOptions[\CURLOPT_WRITEFUNCTION], $ch, $body);
         } elseif (isset($curlOptions[\CURLOPT_RETURNTRANSFER]) && true == $curlOptions[\CURLOPT_RETURNTRANSFER]) {
             return $body;
@@ -74,7 +88,8 @@ class CurlHelper
             $fp = $curlOptions[\CURLOPT_FILE];
             fwrite($fp, $body);
             fflush($fp);
-        } else {
+        } elseif (!$noContentExpected) {
+            // Only echo if content is expected
             echo $body;
         }
 
@@ -109,6 +124,12 @@ class CurlHelper
             case \CURLPROXY_HTTPS:
             case \CURLINFO_APPCONNECT_TIME:
                 $info = '';
+                break;
+            case \CURLINFO_PRIVATE:
+                $info = $response->getCurlInfo(self::$curlInfoList[$option]) ?? false;
+                break;
+            case \CURLINFO_CERTINFO:
+                $info = $response->getCurlInfo(self::$curlInfoList[$option]) ?? [];
                 break;
             default:
                 $info = $response->getCurlInfo(self::$curlInfoList[$option]);
