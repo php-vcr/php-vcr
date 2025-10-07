@@ -2,6 +2,7 @@
 coverage/*
 notes.md
 tests/fixtures/cassette*
+tests/fixtures/file_put_contents
 /.php_cs
 composer.lock
 .phpunit.result.cache

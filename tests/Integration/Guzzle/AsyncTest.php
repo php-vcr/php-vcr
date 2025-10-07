@@ -10,8 +10,8 @@ use PHPUnit\Framework\TestCase;
 
 final class AsyncTest extends TestCase
 {
-    public const TEST_GET_URL = 'https://httpbin.org/get';
-    public const TEST_GET_URL_2 = 'https://httpbin.org/get?foo=42';
+    public const TEST_GET_URL = 'https://postman-echo.com/get';
+    public const TEST_GET_URL_2 = 'https://postman-echo.com/get?foo=42';
 
     protected function setUp(): void
     {

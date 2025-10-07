@@ -15,7 +15,14 @@ class ExampleSoapClient
 
     public function call(int $number = 12): string
     {
-        $client = new \SoapClient(self::EXAMPLE_WSDL, ['soap_version' => \SOAP_1_2]);
+        $client = new \SoapClient(self::EXAMPLE_WSDL, [
+            'soap_version' => \SOAP_1_2,
+            'stream_context' => stream_context_create([
+                'socket' => [
+                    'bindto' => '0.0.0.0:0',  // Force IPv4 to avoid IPv6 timeout
+                ],
+            ]),
+        ]);
         $response = $client->NumberToWords(['ubiNum' => $number]);
 
         return trim((string) $response->NumberToWordsResult);
