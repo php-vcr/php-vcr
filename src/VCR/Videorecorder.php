@@ -135,6 +135,16 @@ class Videorecorder
     }
 
     /**
+     * Checks whether a cassette is currently inserted.
+     *
+     * @api
+     */
+    public function hasCassette(): bool
+    {
+        return null !== $this->cassette;
+    }
+
+    /**
      * Records, sends or plays back a intercepted request.
      *
      * If a request was already recorded on a cassette it's response is returned,
@@ -191,7 +201,10 @@ class Videorecorder
     }
 
     /**
-     * @api
+     * Disables all library hooks.
+     *
+     * Note: This method is protected to allow extension by subclasses.
+     * It is part of the internal hook management mechanism.
      */
     protected function disableLibraryHooks(): void
     {
@@ -202,7 +215,10 @@ class Videorecorder
     }
 
     /**
-     * @api
+     * Enables all library hooks.
+     *
+     * Note: This method is protected to allow extension by subclasses.
+     * It is part of the internal hook management mechanism.
      */
     protected function enableLibraryHooks(): void
     {

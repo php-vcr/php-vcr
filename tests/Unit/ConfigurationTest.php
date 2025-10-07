@@ -35,6 +35,7 @@ final class ConfigurationTest extends TestCase
                 'VCR\LibraryHooks\StreamWrapperHook',
                 'VCR\LibraryHooks\CurlHook',
                 'VCR\LibraryHooks\SoapHook',
+                'VCR\LibraryHooks\SymfonyHttpClientHook',
             ],
             $this->config->getLibraryHooks()
         );

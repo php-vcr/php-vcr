@@ -43,6 +43,7 @@ class Configuration
         'stream_wrapper' => 'VCR\LibraryHooks\StreamWrapperHook',
         'curl' => 'VCR\LibraryHooks\CurlHook',
         'soap' => 'VCR\LibraryHooks\SoapHook',
+        'symfony_http_client' => 'VCR\LibraryHooks\SymfonyHttpClientHook',
     ];
 
     /**
@@ -120,7 +121,14 @@ class Configuration
      *
      * @var string[] a blacklist is a list of paths
      */
-    private $blackList = ['src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter'];
+    private $blackList = [
+        'src/VCR/LibraryHooks/',
+        'src/VCR/Util/SoapClient',
+        'tests/VCR/Filter',
+        'var/cache/',
+        'bootstrap/cache/',
+        'cache/',
+    ];
 
     private string $mode = VCR::MODE_NEW_EPISODES;
 
