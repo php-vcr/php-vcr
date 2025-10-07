@@ -1,0 +1,97 @@
+<?php
+
+declare(strict_types=1);
+
+namespace VCR\Tests\Integration\SymfonyHttpClient\Clients;
+
+use PHPUnit\Framework\TestCase;
+use VCR\VCRNativeHttpClient;
+
+class VCRNativeHttpClientTest extends TestCase
+{
+    public const TEST_GET_URL = 'https://postman-echo.com/get';
+    public const TEST_POST_URL = 'https://postman-echo.com/post';
+
+    protected function setUp(): void
+    {
+        \VCR\VCR::configure()->setCassettePath(__DIR__.'/../../../fixtures/httpclient')
+            ->enableLibraryHooks(['symfony_http_client'])
+
+        ;
+    }
+
+    public function testGet(): void
+    {
+        \VCR\VCR::turnOn();
+        \VCR\VCR::insertCassette('vcr-native-http-client.yml');
+
+        $client = new VCRNativeHttpClient();
+        $response = $client->request('GET', self::TEST_GET_URL);
+
+        $this->assertValidGETResponse(json_decode($response->getContent(), true));
+
+        \VCR\VCR::turnOff();
+    }
+
+    public function testPostWithEmptyBody(): void
+    {
+        \VCR\VCR::turnOn();
+        \VCR\VCR::insertCassette('vcr-native-http-client.yml');
+
+        $client = new VCRNativeHttpClient();
+        $response = $client->request('POST', self::TEST_POST_URL);
+
+        $data = json_decode($response->getContent(), true);
+        $this->assertValidGETResponse($data);
+        $this->assertArrayHasKey('json', $data, 'API did not return POST data');
+
+        \VCR\VCR::turnOff();
+    }
+
+    public function testPostWithJson(): void
+    {
+        \VCR\VCR::turnOn();
+        \VCR\VCR::insertCassette('vcr-native-http-client.yml');
+
+        $client = new VCRNativeHttpClient();
+        $response = $client->request('POST', self::TEST_POST_URL, [
+            'json' => [
+                'test' => true,
+            ],
+        ]);
+
+        $data = json_decode($response->getContent(), true);
+        $this->assertValidGETResponse($data);
+        $this->assertArrayHasKey('json', $data, 'API did not return POST data');
+
+        \VCR\VCR::turnOff();
+    }
+
+    public function testWithOptions(): void
+    {
+        \VCR\VCR::turnOn();
+        \VCR\VCR::insertCassette('vcr-native-http-client-options.yml');
+
+        $client = new VCRNativeHttpClient([
+            'timeout' => 30,
+        ]);
+
+        $clientWithOptions = $client->withOptions([
+            'headers' => [
+                'X-Custom-Header' => 'test-value',
+            ],
+        ]);
+
+        $response = $clientWithOptions->request('GET', self::TEST_GET_URL);
+
+        $this->assertValidGETResponse(json_decode($response->getContent(), true));
+
+        \VCR\VCR::turnOff();
+    }
+
+    protected function assertValidGETResponse(mixed $info): void
+    {
+        $this->assertIsArray($info, 'Response is not an array.');
+        $this->assertArrayHasKey('url', $info, 'API did not return any value.');
+    }
+}
