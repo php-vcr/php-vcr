@@ -82,6 +82,8 @@ class Response
     public static function fromArray(array $response): self
     {
         $body = $response['body'] ?? null;
+        $headers = $response['headers'] ?? [];
+        Assertion::isArray($headers, 'Response headers must be an array');
 
         $gzip = isset($response['headers']['Content-Type'])
             && str_contains($response['headers']['Content-Type'], 'application/x-gzip');
@@ -96,7 +98,7 @@ class Response
 
         return new static(
             $response['status'] ?? 200,
-            $response['headers'] ?? [],
+            $headers,
             $body,
             $response['curl_info'] ?? []
         );

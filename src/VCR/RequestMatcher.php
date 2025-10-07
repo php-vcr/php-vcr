@@ -24,8 +24,17 @@ class RequestMatcher
     public static function matchHeaders(Request $storedRequest, Request $request): bool
     {
         // Use array_filter to ignore headers which are null.
+        // Also ignore Accept-Encoding header for Symfony HttpClient compatibility
+        // Symfony adds this header automatically, but VCR handles decompression transparently
 
-        return array_filter($storedRequest->getHeaders()) === array_filter($request->getHeaders());
+        $normalizeHeaders = function (array $headers): array {
+            $normalized = array_filter($headers);
+            unset($normalized['Accept-Encoding']);
+
+            return $normalized;
+        };
+
+        return $normalizeHeaders($storedRequest->getHeaders()) === $normalizeHeaders($request->getHeaders());
     }
 
     public static function matchBody(Request $storedRequest, Request $request): bool

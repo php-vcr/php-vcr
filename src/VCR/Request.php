@@ -83,10 +83,16 @@ class Request
      */
     public static function fromArray(array $request): self
     {
+        Assertion::keyExists($request, 'method', 'Request array must contain "method" key');
+        Assertion::keyExists($request, 'url', 'Request array must contain "url" key');
+
+        $headers = $request['headers'] ?? [];
+        Assertion::isArray($headers, 'Request headers must be an array');
+
         $requestObject = new self(
             $request['method'],
             $request['url'],
-            $request['headers'] ?? []
+            $headers
         );
 
         if (!empty($request['post_fields']) && \is_array($request['post_fields'])) {
