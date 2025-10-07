@@ -26,7 +26,7 @@
     "require-dev": {
         "ext-soap": "*",
         "guzzlehttp/guzzle": "^7",
-        "phpunit/phpunit": "^9.5.10",
+        "phpunit/phpunit": "^9.6",
         "mikey179/vfsstream": "^1.6.10",
         "phpstan/phpstan": "^1",
         "phpstan/phpstan-beberlei-assert": "^1",
@@ -34,7 +34,8 @@
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan-phpunit": "^1",
         "phpstan/extension-installer": "^1.1",
-        "editorconfig-checker/editorconfig-checker": "^10.3"
+        "editorconfig-checker/editorconfig-checker": "^10.3",
+        "symfony/http-client": "^6.4|^7.0"
     },
     "autoload": {
         "psr-4": {
