@@ -16,7 +16,9 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 * Supports common http functions and extensions
   * everything using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification (except `$http_response_header` see [#96](https://github.com/php-vcr/php-vcr/issues/96))
   * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
-  * curl(), by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
+  * curl() and curl_multi() by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
+  * **[Symfony HttpClient](https://symfony.com/doc/current/http_client.html)** (CurlHttpClient, NativeHttpClient) - see [Symfony HttpClient Support](#symfony-httpclient-support)
+  * **[Guzzle](http://guzzlephp.org/)** 6+ HTTP client
 * The same request can receive different responses in different tests -- just use different cassettes.
 * Disables all HTTP requests that you don't explicitly allow by [setting the record mode](http://php-vcr.github.io/documentation/configuration/)
 * [Request matching](http://php-vcr.github.io/documentation/configuration/) is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
@@ -84,6 +86,81 @@ class VCRTest extends TestCase
     }
 }
 ```
+
+## Symfony HttpClient Support
+
+PHP-VCR fully supports Symfony HttpClient through code transformation that automatically wraps your HTTP client instances.
+
+### Automatic Wrapping (Recommended)
+
+Enable the `symfony_http_client` hook to automatically wrap all Symfony HttpClient instances:
+
+``` php
+class SymfonyHttpClientTest extends TestCase
+{
+    protected function setUp(): void
+    {
+        \VCR\VCR::configure()
+            ->setCassettePath('tests/fixtures')
+            ->enableLibraryHooks(['symfony_http_client'])
+            ->setMode('once');
+
+        \VCR\VCR::turnOn();
+    }
+
+    protected function tearDown(): void
+    {
+        \VCR\VCR::eject();
+        \VCR\VCR::turnOff();
+    }
+
+    public function testHttpClientGet(): void
+    {
+        \VCR\VCR::insertCassette('example');
+
+        // Direct instantiation - automatically wrapped by VCR!
+        $client = new \Symfony\Component\HttpClient\CurlHttpClient();
+        $response = $client->request('GET', 'https://api.example.com/data');
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+}
+```
+
+### Manual Wrapping (Alternative)
+
+You can also manually wrap your HTTP client:
+
+``` php
+use VCR\VCRHttpClient;
+use Symfony\Component\HttpClient\CurlHttpClient;
+
+$baseClient = new CurlHttpClient();
+$client = new VCRHttpClient($baseClient);
+
+// Now all requests through $client are recorded/replayed
+$response = $client->request('GET', 'https://api.example.com/data');
+```
+
+### Supported Clients
+
+- `CurlHttpClient` - Uses cURL extension
+- `NativeHttpClient` - Uses PHP streams
+- `MockHttpClient` - No interception needed
+- `TraceableHttpClient` - Wrapped transparently
+- `RetryableHttpClient` - Wrapped transparently
+
+### How It Works
+
+The Symfony HttpClient integration uses code transformation to intercept `new CurlHttpClient()` and `new NativeHttpClient()` calls and automatically wrap them with `VCRHttpClient`. This wrapper:
+
+- Intercepts all HTTP requests
+- Records requests/responses to cassette files
+- Replays recorded responses in subsequent test runs
+- Handles gzip compression/decompression automatically
+- Preserves all Symfony HttpClient features (streaming, async, etc.)
+
+See [docs/HOOK_STRATEGY.md](docs/HOOK_STRATEGY.md) for more details on the interception architecture.
 
 ## Installation
 
