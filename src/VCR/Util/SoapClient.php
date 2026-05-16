@@ -37,7 +37,7 @@ class SoapClient extends \SoapClient
      *
      * Requests will be intercepted if the library hook is enabled.
      */
-    public function __doRequest(string $request, string $location, string $action, int $version, bool $one_way = false): ?string
+    public function __doRequest(string $request, string $location, string $action, int $version, bool $one_way = false, ?string $uriParserClass = null): ?string
     {
         $this->request = $request;
 
