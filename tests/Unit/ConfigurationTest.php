@@ -92,13 +92,13 @@ final class ConfigurationTest extends TestCase
     {
         $this->expectException(VCRException::class);
         $this->expectExceptionMessage("A request matchers name must be at least one character long. Found ''");
-        $expected = fn ($first, $second) => true;
+        $expected = static fn ($first, $second) => true;
         $this->config->addRequestMatcher('', $expected);
     }
 
     public function testAddRequestMatchers(): void
     {
-        $expected = fn () => true;
+        $expected = static fn () => true;
         $this->config->addRequestMatcher('new_matcher', $expected);
         $this->assertContains($expected, $this->config->getRequestMatchers());
     }
@@ -113,7 +113,7 @@ final class ConfigurationTest extends TestCase
     }
 
     /** @return array<string[]> */
-    public function availableStorageProvider(): array
+    public static function availableStorageProvider(): array
     {
         return [
             ['json', 'VCR\Storage\Json'],

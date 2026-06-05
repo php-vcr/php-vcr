@@ -18,7 +18,7 @@ final class TextUtilTest extends TestCase
     }
 
     /** @return array<string, string[]> */
-    public function curlMethodsProvider(): array
+    public static function curlMethodsProvider(): array
     {
         return [
             'curl_multi_add_handler' => ['curlMultiAddHandler', 'curl_multi_add_handler'],

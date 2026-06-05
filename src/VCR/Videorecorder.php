@@ -210,7 +210,7 @@ class Videorecorder
         foreach ($this->config->getLibraryHooks() as $hookClass) {
             $hook = $this->factory->get($hookClass);
             $hook->enable(
-                fn (Request $request) => $self->handleRequest($request)
+                static fn (Request $request) => $self->handleRequest($request)
             );
         }
     }

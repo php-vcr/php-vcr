@@ -11,19 +11,17 @@ use VCR\CodeTransform\AbstractCodeTransform;
 final class AbstractCodeTransformTest extends TestCase
 {
     /**
-     * @param string[] $methods
+     * @param non-empty-string[] $methods
      *
      * @return AbstractCodeTransform&MockObject
      */
     protected function getFilter(array $methods = [])
     {
-        $defaults = array_merge(
-            ['transformCode'],
-            $methods
-        );
+        /** @var list<non-empty-string> $defaults */
+        $defaults = array_values(array_merge(['transformCode'], $methods));
 
         $filter = $this->getMockBuilder(AbstractCodeTransform::class)
-            ->setMethods($defaults)
+            ->onlyMethods($defaults)
             ->getMockForAbstractClass();
 
         if (\in_array('transformCode', $methods)) {

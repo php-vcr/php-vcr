@@ -23,10 +23,15 @@ final class SoapHookTest extends TestCase
 
     protected SoapHook $soapHook;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         $this->config = new Configuration();
         $this->soapHook = new SoapHook(new SoapCodeTransform(), new StreamProcessor($this->config));
+    }
+
+    protected function tearDown(): void
+    {
+        $this->soapHook->disable();
     }
 
     public function testShouldInterceptCallWhenEnabled(): void
@@ -38,7 +43,6 @@ final class SoapHookTest extends TestCase
         $client->setLibraryHook($this->soapHook);
         $actual = $client->GetCityWeatherByZIP(['ZIP' => '10013']);
 
-        $this->soapHook->disable();
         $this->assertInstanceOf('\stdClass', $actual, 'Response was not returned.');
         $this->assertTrue($actual->GetCityWeatherByZIPResult->Success, 'Response was not returned.');
     }
@@ -90,7 +94,6 @@ final class SoapHookTest extends TestCase
         $client->GetCityWeatherByZIP(['ZIP' => '10013']);
         $actual = $client->__getLastRequest();
 
-        $this->soapHook->disable();
         $this->assertNotNull($actual, '__getLastRequest() returned NULL.');
     }
 
@@ -98,7 +101,7 @@ final class SoapHookTest extends TestCase
     {
         $testClass = $this;
 
-        return \Closure::fromCallable(fn () => new Response('200', [], $testClass->expected));
+        return \Closure::fromCallable(static fn () => new Response('200', [], $testClass->expected));
     }
 
     /** @param array<mixed> $expectedHeaders */
@@ -106,7 +109,7 @@ final class SoapHookTest extends TestCase
     {
         $test = $this;
 
-        return \Closure::fromCallable(function (Request $request) use ($test, $expectedHeaders) {
+        return \Closure::fromCallable(static function (Request $request) use ($test, $expectedHeaders) {
             foreach ($expectedHeaders as $expectedHeaderName => $expectedHeader) {
                 $test->assertEquals($expectedHeader, $request->getHeader($expectedHeaderName));
             }

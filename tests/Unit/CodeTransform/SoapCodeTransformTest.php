@@ -26,7 +26,7 @@ final class SoapCodeTransformTest extends TestCase
     }
 
     /** @return array<string[]> */
-    public function codeSnippetProvider(): array
+    public static function codeSnippetProvider(): array
     {
         return [
             ['new \VCR\Util\SoapClient(', 'new \SoapClient('],

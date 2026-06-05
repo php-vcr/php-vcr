@@ -16,14 +16,14 @@ parameters:
 			path: src/VCR/Util/HttpUtil.php
 
 		-
-			message: "#^Method VCR\\\\Util\\\\SoapClient\\:\\:realDoRequest\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: src/VCR/Util/SoapClient.php
-
-		-
 			message: "#^Offset 'uri' does not exist on array\\{timed_out\\: bool, blocked\\: bool, eof\\: bool, unread_bytes\\: int, stream_type\\: string, wrapper_type\\: string, wrapper_data\\: mixed, mode\\: string, \\.\\.\\.\\}\\.$#"
 			count: 1
 			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: "#^Method VCR\\\\Util\\\\SoapClient\\:\\:realDoRequest\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: src/VCR/Util/SoapClient.php
 
 		-
 			message: "#^Parameter \\#2 \\$length of function fread expects int\\<1, max\\>, int given\\.$#"

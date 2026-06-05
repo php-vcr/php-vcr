@@ -32,7 +32,7 @@ final class CurlHelperTest extends TestCase
     /**
      * @return array<string[]>
      */
-    public function getHttpMethodsProvider(): array
+    public static function getHttpMethodsProvider(): array
     {
         return [
             ['CONNECT'],
@@ -177,7 +177,7 @@ final class CurlHelperTest extends TestCase
         $this->expectExceptionMessage('To set a CURLOPT_READFUNCTION, CURLOPT_INFILESIZE must be set.');
         $request = new Request('POST', 'http://example.com');
 
-        $callback = function ($curlHandle, $fileHandle, $size): void {
+        $callback = static function ($curlHandle, $fileHandle, $size): void {
         };
 
         CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_READFUNCTION, $callback);
@@ -190,7 +190,7 @@ final class CurlHelperTest extends TestCase
         $request = new Request('POST', 'http://example.com');
 
         $test = $this;
-        $callback = function ($curlHandle, $fileHandle, $size) use ($test, $expected) {
+        $callback = static function ($curlHandle, $fileHandle, $size) use ($test, $expected) {
             $test->assertNotFalse($curlHandle);
             $test->assertIsResource($fileHandle);
             $test->assertEquals(\strlen($expected), $size);
@@ -250,7 +250,7 @@ final class CurlHelperTest extends TestCase
     {
         $actualHeaders = [];
         $curlOptions = [
-            \CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$actualHeaders): void {
+            \CURLOPT_HEADERFUNCTION => static function ($ch, $header) use (&$actualHeaders): void {
                 $actualHeaders[] = $header;
             },
         ];
@@ -354,7 +354,7 @@ final class CurlHelperTest extends TestCase
         $expectedCh = curl_init();
         $expectedBody = 'example response';
         $curlOptions = [
-            \CURLOPT_WRITEFUNCTION => function ($ch, $body) use ($test, $expectedCh, $expectedBody) {
+            \CURLOPT_WRITEFUNCTION => static function ($ch, $body) use ($test, $expectedCh, $expectedBody) {
                 $test->assertEquals($expectedCh, $ch);
                 $test->assertEquals($expectedBody, $body);
 
@@ -411,7 +411,7 @@ final class CurlHelperTest extends TestCase
     }
 
     /** @return array<mixed> */
-    public function getCurlOptionProvider(): array
+    public static function getCurlOptionProvider(): array
     {
         return [
             [

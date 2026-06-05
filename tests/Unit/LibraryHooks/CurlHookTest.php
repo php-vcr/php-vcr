@@ -22,10 +22,30 @@ final class CurlHookTest extends TestCase
 
     protected CurlHook $curlHook;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         $this->config = new Configuration();
         $this->curlHook = new CurlHook(new CurlCodeTransform(), new StreamProcessor($this->config));
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->curlHook->isEnabled()) {
+            $this->curlHook->disable();
+        }
+
+        // Reset CurlHook static state between tests to prevent integer-ID reuse across
+        // test boundaries. Root cause: CurlHook has no curlClose() implementation, so
+        // self::$responses is never cleared when curl_close() is called. Under PHPUnit 10
+        // with pcov coverage, GC reclaims CurlHandle objects sooner than under PHPUnit 9,
+        // making ID reuse much more likely and exposing this latent state-leak.
+        // TODO: implement CurlHook::curlClose() to clear handle state on curl_close().
+        $reflection = new \ReflectionClass(CurlHook::class);
+        foreach (['requests', 'responses', 'curlOptions', 'multiHandles', 'multiExecLastChs', 'multiReturnValues', 'lastErrors'] as $property) {
+            $prop = $reflection->getProperty($property);
+            $prop->setAccessible(true); // required on PHP 8.0; no-op from PHP 8.1
+            $prop->setValue(null, []);
+        }
     }
 
     public function testShouldBeEnabledAfterEnabling(): void
@@ -75,7 +95,7 @@ final class CurlHookTest extends TestCase
     {
         $intercepted = false;
         $this->curlHook->enable(
-            function () use (&$intercepted): void {
+            static function () use (&$intercepted): void {
                 $intercepted = true;
             }
         );
@@ -130,7 +150,7 @@ final class CurlHookTest extends TestCase
     {
         $testClass = $this;
         $this->curlHook->enable(
-            function (Request $request) use ($testClass) {
+            static function (Request $request) use ($testClass) {
                 $testClass->assertEquals(
                     ['para1' => 'val1', 'para2' => 'val2'],
                     $request->getPostFields(),
@@ -153,7 +173,7 @@ final class CurlHookTest extends TestCase
     {
         $testClass = $this;
         $this->curlHook->enable(
-            function (Request $request) use ($testClass) {
+            static function (Request $request) use ($testClass) {
                 $testClass->assertEquals(
                     ['para1' => 'val1', 'para2' => 'val2'],
                     $request->getPostFields(),
@@ -289,7 +309,7 @@ final class CurlHookTest extends TestCase
         $testClass = $this;
         $callCount = 0;
         $this->curlHook->enable(
-            function (Request $request) use ($testClass, &$callCount) {
+            static function (Request $request) use ($testClass, &$callCount) {
                 $testClass->assertEquals(
                     'example.com',
                     $request->getHost(),
@@ -348,7 +368,7 @@ final class CurlHookTest extends TestCase
     {
         $testClass = $this;
         $this->curlHook->enable(
-            function () use ($testClass): void {
+            static function () use ($testClass): void {
                 $testClass->fail('This request should not have been intercepted.');
             }
         );
@@ -371,7 +391,7 @@ final class CurlHookTest extends TestCase
         $testClass = $this;
         $callCount = 0;
         $this->curlHook->enable(
-            function (Request $request) use ($testClass, &$callCount) {
+            static function (Request $request) use ($testClass, &$callCount) {
                 $testClass->assertEquals(
                     'example.com',
                     $request->getHost(),
@@ -445,7 +465,7 @@ final class CurlHookTest extends TestCase
     {
         $testClass = $this;
         $this->curlHook->enable(
-            function (Request $request) use ($testClass) {
+            static function (Request $request) use ($testClass) {
                 $testClass->assertEquals(
                     'GET',
                     $request->getMethod(),
@@ -469,6 +489,6 @@ final class CurlHookTest extends TestCase
     {
         $testClass = $this;
 
-        return \Closure::fromCallable(fn () => new Response($statusCode, [], $testClass->expected));
+        return \Closure::fromCallable(static fn () => new Response($statusCode, [], $testClass->expected));
     }
 }

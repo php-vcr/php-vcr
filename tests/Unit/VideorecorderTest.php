@@ -34,7 +34,7 @@ final class VideorecorderTest extends TestCase
         $configuration->enableLibraryHooks([]);
         $videorecorder = $this->getMockBuilder('\VCR\Videorecorder')
             ->setConstructorArgs([$configuration, new HttpClient(), VCRFactory::getInstance()])
-            ->setMethods(['eject', 'resetIndex'])
+            ->onlyMethods(['eject', 'resetIndex'])
             ->getMock();
 
         $videorecorder->expects($this->exactly(2))->method('eject');
@@ -144,7 +144,7 @@ final class VideorecorderTest extends TestCase
 
     protected function getClientMock(Request $request, Response $response): HttpClient
     {
-        $client = $this->getMockBuilder(HttpClient::class)->setMethods(['send'])->getMock();
+        $client = $this->getMockBuilder(HttpClient::class)->onlyMethods(['send'])->getMock();
         $client
             ->expects($this->once())
             ->method('send')
@@ -158,7 +158,7 @@ final class VideorecorderTest extends TestCase
     {
         $cassette = $this->getMockBuilder(Cassette::class)
             ->disableOriginalConstructor()
-            ->setMethods(['record', 'playback', 'isNew', 'getName'])
+            ->onlyMethods(['record', 'playback', 'isNew', 'getName'])
             ->getMock();
         $cassette
             ->expects($this->once())
