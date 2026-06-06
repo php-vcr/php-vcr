@@ -82,13 +82,14 @@ class CurlHelper
     }
 
     /**
-     * @param int $option cURL option to get
+     * @param int     $option cURL option to get
+     * @param ?string $url    The URL
      *
      * @return mixed value of the cURL option
      *
      * @throws \BadMethodCallException
      */
-    public static function getCurlOptionFromResponse(Response $response, int $option = 0)
+    public static function getCurlOptionFromResponse(Response $response, int $option = 0, ?string $url = null)
     {
         switch ($option) {
             case 0: // 0 == array of all curl options
@@ -109,6 +110,9 @@ class CurlHelper
             case \CURLPROXY_HTTPS:
             case \CURLINFO_APPCONNECT_TIME:
                 $info = '';
+                break;
+            case \CURLINFO_EFFECTIVE_URL:
+                $info = $url;
                 break;
             default:
                 $info = $response->getCurlInfo(self::$curlInfoList[$option]);
