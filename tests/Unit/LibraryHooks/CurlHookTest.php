@@ -486,6 +486,24 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
+    public function testShouldHandleCurlOptPrivate(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com');
+        Assertion::notSame($curlHandle, false);
+        curl_setopt($curlHandle, \CURLOPT_PRIVATE, 'private');
+
+        $this->assertEquals('private', curl_getinfo($curlHandle, \CURLINFO_PRIVATE));
+
+        curl_exec($curlHandle);
+
+        $this->assertEquals('private', curl_getinfo($curlHandle, \CURLINFO_PRIVATE));
+
+        curl_close($curlHandle);
+        $this->curlHook->disable();
+    }
+
     protected function getTestCallback(string $statusCode = '200'): \Closure
     {
         $testClass = $this;
