@@ -24,7 +24,10 @@ class HttpClient
         Assertion::notSame($ch, false, "Could not init curl with URL '{$request->getUrl()}'");
 
         curl_setopt($ch, \CURLOPT_CUSTOMREQUEST, $request->getMethod());
-        curl_setopt($ch, \CURLOPT_HTTPHEADER, HttpUtil::formatHeadersForCurl($request->getHeaders()));
+        curl_setopt($ch, \CURLOPT_HTTPHEADER, array_map(
+            static fn (string $h): string => rtrim($h, "\r\n"),
+            HttpUtil::formatHeadersForCurl($request->getHeaders())
+        ));
         if (null !== $request->getBody()) {
             curl_setopt($ch, \CURLOPT_POSTFIELDS, $request->getBody());
         }

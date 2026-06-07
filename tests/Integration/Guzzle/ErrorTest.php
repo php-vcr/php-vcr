@@ -37,9 +37,17 @@ final class ErrorTest extends TestCase
             $client->get(self::TEST_GET_URL);
         } catch (ConnectException $e) {
             $catched = true;
-            $this->assertEquals($e->getMessage(), $nonInstrumentedException->getMessage());
+            $this->assertEquals(
+                $this->normalizeConnectExceptionMessage($e->getMessage()),
+                $this->normalizeConnectExceptionMessage($nonInstrumentedException->getMessage())
+            );
         }
         $this->assertTrue($catched);
         \VCR\VCR::turnOff();
+    }
+
+    private function normalizeConnectExceptionMessage(string $message): string
+    {
+        return (string) preg_replace('/ after \d+ ms/', '', $message);
     }
 }
