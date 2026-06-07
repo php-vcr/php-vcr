@@ -50,6 +50,16 @@ services:
     volumes:
       - .:/var/www/html
       - ~/.composer:/home/user/.composer
+  workspace85:
+    tty: true
+    build:
+      context: resources/docker/workspace/8.5
+      args:
+        PUID: "${PUID:-1000}"
+        PGID: "${PGID:-1000}"
+    volumes:
+      - .:/var/www/html
+      - ~/.composer:/home/user/.composer
 
 
 
