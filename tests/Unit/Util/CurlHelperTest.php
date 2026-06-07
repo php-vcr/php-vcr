@@ -266,9 +266,9 @@ final class CurlHelperTest extends TestCase
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
         $expected = [
-            'HTTP/1.1 200 OK',
-            'Content-Length: 0',
-            '',
+            "HTTP/1.1 200 OK\r\n",
+            "Content-Length: 0\r\n",
+            "\r\n",
         ];
         $this->assertEquals($expected, $actualHeaders);
     }
@@ -291,9 +291,9 @@ final class CurlHelperTest extends TestCase
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
         $expected = [
-            'HTTP/1.1 200 OK',
-            'Content-Length: 0',
-            '',
+            "HTTP/1.1 200 OK\r\n",
+            "Content-Length: 0\r\n",
+            "\r\n",
         ];
         $this->assertEquals($expected, $this->headersFound);
     }
@@ -316,9 +316,9 @@ final class CurlHelperTest extends TestCase
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
         $expected = [
-            'HTTP/1.1 200 OK',
-            'Content-Length: 0',
-            '',
+            "HTTP/1.1 200 OK\r\n",
+            "Content-Length: 0\r\n",
+            "\r\n",
         ];
         $this->assertEquals($expected, $this->headersFound);
     }
@@ -341,9 +341,9 @@ final class CurlHelperTest extends TestCase
         CurlHelper::handleOutput($response, $curlOptions, curl_init());
 
         $expected = [
-            'HTTP/1.1 200 OK',
-            'Content-Length: 0',
-            '',
+            "HTTP/1.1 200 OK\r\n",
+            "Content-Length: 0\r\n",
+            "\r\n",
         ];
         $this->assertEquals($expected, $this->headersFound);
     }
