@@ -512,6 +512,20 @@ final class CurlHelperTest extends TestCase
                 \CURLINFO_HEADER_SIZE,
                 290,
             ],
+            'certinfo defaults to empty array when not recorded' => [
+                Response::fromArray(['status' => 200, 'headers' => []]),
+                \CURLINFO_CERTINFO,
+                [],
+            ],
+            'certinfo returns recorded data from cassette' => [
+                Response::fromArray([
+                    'status' => 200,
+                    'headers' => [],
+                    'curl_info' => ['certinfo' => [['Subject' => 'CN=example.com']]],
+                ]),
+                \CURLINFO_CERTINFO,
+                [['Subject' => 'CN=example.com']],
+            ],
         ];
     }
 
@@ -565,6 +579,16 @@ final class CurlHelperTest extends TestCase
     private function privateCurlHeaderFunction($ch, string $header): void
     {
         $this->headersFound[] = $header;
+    }
+
+    public function testGetCurlOptionFromResponseHandleCertinfo(): void
+    {
+        $response = new Response('200', [], 'example response');
+
+        $this->assertEquals(
+            [],
+            CurlHelper::getCurlOptionFromResponse($response, \CURLINFO_CERTINFO)
+        );
     }
 
     /**

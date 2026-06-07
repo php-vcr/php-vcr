@@ -13,7 +13,7 @@ class CurlHelper
      * @var array<int, string> list of cURL info constants
      */
     private static $curlInfoList = [
-        // "certinfo"?
+        \CURLINFO_CERTINFO => 'certinfo',
         \CURLINFO_HTTP_CODE => 'http_code',
         \CURLINFO_EFFECTIVE_URL => 'url',
         \CURLINFO_TOTAL_TIME => 'total_time',
@@ -110,9 +110,8 @@ class CurlHelper
             case \CURLINFO_APPCONNECT_TIME:
                 $info = '';
                 break;
-            case CURLINFO_CERTINFO:
-                $curlInfo = $response->getCurlInfo($option);
-                $info = (!is_null($curlInfo)) ? $curlInfo : [];
+            case \CURLINFO_CERTINFO:
+                $info = $response->getCurlInfo(self::$curlInfoList[\CURLINFO_CERTINFO]) ?? [];
                 break;
             default:
                 $info = $response->getCurlInfo(self::$curlInfoList[$option]);
