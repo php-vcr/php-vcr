@@ -3,7 +3,7 @@
     "description": "Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.",
     "license": "MIT",
     "scripts": {
-        "test": "./vendor/bin/phpunit",
+        "test": "./vendor/bin/phpunit --testsuite Unit && ./vendor/bin/phpunit --testsuite Integration",
         "cs": "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
         "cs-fix": "./vendor/bin/php-cs-fixer fix --verbose --diff",
         "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.neon --no-progress -vvv",
