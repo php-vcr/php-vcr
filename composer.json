@@ -35,7 +35,8 @@
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan-phpunit": "^1",
         "phpstan/extension-installer": "^1.1",
-        "editorconfig-checker/editorconfig-checker": "^10.3"
+        "editorconfig-checker/editorconfig-checker": "^10.3",
+        "phpunit/phpcov": "^8.0|^9.0"
     },
     "autoload": {
         "psr-4": {
