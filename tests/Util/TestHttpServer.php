@@ -57,11 +57,41 @@ final class TestHttpServer
     {
         proc_terminate($this->process);
         proc_close($this->process);
+
+        $counterFile = $this->getCounterFilePath();
+        if (file_exists($counterFile)) {
+            unlink($counterFile);
+        }
     }
 
     public function getBaseUrl(): string
     {
         return "http://127.0.0.1:{$this->port}";
+    }
+
+    public function getRequestCount(): int
+    {
+        $counterFile = $this->getCounterFilePath();
+        if (!file_exists($counterFile)) {
+            return 0;
+        }
+
+        $content = file_get_contents($counterFile);
+
+        return false === $content ? 0 : (int) $content;
+    }
+
+    public function resetRequestCount(): void
+    {
+        $counterFile = $this->getCounterFilePath();
+        if (file_exists($counterFile)) {
+            file_put_contents($counterFile, '0');
+        }
+    }
+
+    private function getCounterFilePath(): string
+    {
+        return sys_get_temp_dir()."/php-vcr-test-counter-{$this->port}";
     }
 
     private static function findFreePort(): int
