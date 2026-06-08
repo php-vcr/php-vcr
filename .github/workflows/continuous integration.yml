@@ -133,7 +133,7 @@ jobs:
         run: "vendor/bin/phpunit --testsuite Integration --coverage-php=coverage/integration.cov --log-junit=phpunit-integration.xml"
 
       - name: "Merge coverage reports"
-        run: "vendor/bin/phpcov merge --clover=coverage.clover coverage/"
+        run: "ls coverage/*.cov 2>/dev/null && vendor/bin/phpcov merge --clover=coverage.clover coverage/ || true"
         if: "always()"
 
       - name: "Publish Test Report"
