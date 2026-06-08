@@ -1,0 +1,63 @@
+<?php
+
+declare(strict_types=1);
+
+namespace VCR\Tests\Integration\Symfony\Curl;
+
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpClient\CurlHttpClient;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+
+/**
+ * Connection-failure behaviour for Symfony CurlHttpClient.
+ * The "with VCR" test is skipped — same curl_getinfo limitation as #329.
+ */
+final class ErrorTest extends TestCase
+{
+    private const UNBOUND_URL = 'http://localhost:9959/get';
+
+    protected function setUp(): void
+    {
+        vfsStream::setup('testDir');
+        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
+    }
+
+    protected function tearDown(): void
+    {
+        \VCR\VCR::turnOff();
+    }
+
+    public function testConnectExceptionWithoutVcr(): void
+    {
+        $caught = false;
+        try {
+            $response = (new CurlHttpClient())->request('GET', self::UNBOUND_URL);
+            $response->getStatusCode();
+        } catch (TransportExceptionInterface $e) {
+            $caught = true;
+        }
+
+        $this->assertTrue($caught, 'CurlHttpClient must throw TransportException on connection failure');
+    }
+
+    public function testConnectExceptionPassesThroughWithVcr(): void
+    {
+        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
+
+        \VCR\VCR::turnOn();
+        \VCR\VCR::insertCassette('symfony-curl-error.yml');
+
+        $caught = false;
+        try {
+            $response = (new CurlHttpClient())->request('GET', self::UNBOUND_URL);
+            $response->getStatusCode();
+        } catch (TransportExceptionInterface $e) {
+            $caught = true;
+        } finally {
+            \VCR\VCR::turnOff();
+        }
+
+        $this->assertTrue($caught, 'TransportException must propagate through VCR');
+    }
+}

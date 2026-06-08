@@ -16,14 +16,14 @@ parameters:
 			path: src/VCR/Util/HttpUtil.php
 
 		-
-			message: "#^Offset 'uri' does not exist on array\\{timed_out\\: bool, blocked\\: bool, eof\\: bool, unread_bytes\\: int, stream_type\\: string, wrapper_type\\: string, wrapper_data\\: mixed, mode\\: string, \\.\\.\\.\\}\\.$#"
-			count: 1
-			path: src/VCR/Util/StreamProcessor.php
-
-		-
 			message: "#^Method VCR\\\\Util\\\\SoapClient\\:\\:realDoRequest\\(\\) should return string but returns string\\|null\\.$#"
 			count: 1
 			path: src/VCR/Util/SoapClient.php
+
+		-
+			message: "#^Offset 'uri' does not exist on array\\{timed_out\\: bool, blocked\\: bool, eof\\: bool, unread_bytes\\: int, stream_type\\: string, wrapper_type\\: string, wrapper_data\\: mixed, mode\\: string, \\.\\.\\.\\}\\.$#"
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
 
 		-
 			message: "#^Parameter \\#2 \\$length of function fread expects int\\<1, max\\>, int given\\.$#"
@@ -49,6 +49,126 @@ parameters:
 			message: "#^Parameter \\#3 \\$cassette of class VCR\\\\Event\\\\BeforeRecordEvent constructor expects VCR\\\\Cassette, VCR\\\\Cassette\\|null given\\.$#"
 			count: 1
 			path: src/VCR/Videorecorder.php
+
+		-
+			message: "#^Method VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Curl\\\\AsyncTest\\:\\:server\\(\\) is unused\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Curl/AsyncTest.php
+
+		-
+			message: "#^Static property VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Curl\\\\AsyncTest\\:\\:\\$baseUrl is never read, only written\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Curl/AsyncTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Curl/AsyncTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 2
+			path: tests/Integration/Symfony/Curl/BasicLifecycleTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Curl/ErrorTest.php
+
+		-
+			message: "#^Method VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Curl\\\\HeadersAndStatusTest\\:\\:server\\(\\) is unused\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Curl/HeadersAndStatusTest.php
+
+		-
+			message: "#^Static property VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Curl\\\\HeadersAndStatusTest\\:\\:\\$baseUrl is never read, only written\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Curl/HeadersAndStatusTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 3
+			path: tests/Integration/Symfony/Curl/HeadersAndStatusTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 3
+			path: tests/Integration/Symfony/Curl/HttpMethodsTest.php
+
+		-
+			message: "#^Method VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Curl\\\\SequentialRequestsTest\\:\\:server\\(\\) is unused\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Curl/SequentialRequestsTest.php
+
+		-
+			message: "#^Static property VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Curl\\\\SequentialRequestsTest\\:\\:\\$baseUrl is never read, only written\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Curl/SequentialRequestsTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Curl/SequentialRequestsTest.php
+
+		-
+			message: "#^Method VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Native\\\\AsyncTest\\:\\:server\\(\\) is unused\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Native/AsyncTest.php
+
+		-
+			message: "#^Static property VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Native\\\\AsyncTest\\:\\:\\$baseUrl is never read, only written\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Native/AsyncTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Native/AsyncTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 2
+			path: tests/Integration/Symfony/Native/BasicLifecycleTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Native/ErrorTest.php
+
+		-
+			message: "#^Method VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Native\\\\HeadersAndStatusTest\\:\\:server\\(\\) is unused\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Native/HeadersAndStatusTest.php
+
+		-
+			message: "#^Static property VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Native\\\\HeadersAndStatusTest\\:\\:\\$baseUrl is never read, only written\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Native/HeadersAndStatusTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 3
+			path: tests/Integration/Symfony/Native/HeadersAndStatusTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 3
+			path: tests/Integration/Symfony/Native/HttpMethodsTest.php
+
+		-
+			message: "#^Method VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Native\\\\SequentialRequestsTest\\:\\:server\\(\\) is unused\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Native/SequentialRequestsTest.php
+
+		-
+			message: "#^Static property VCR\\\\Tests\\\\Integration\\\\Symfony\\\\Native\\\\SequentialRequestsTest\\:\\:\\$baseUrl is never read, only written\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Native/SequentialRequestsTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: tests/Integration/Symfony/Native/SequentialRequestsTest.php
 
 		-
 			message: "#^Cannot call method toArray\\(\\) on VCR\\\\Response\\|null\\.$#"
