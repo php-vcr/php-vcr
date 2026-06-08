@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace VCR\Tests\Integration\Guzzle;
 
 use GuzzleHttp\Client;
-use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
-use VCR\Tests\Util\TestHttpServer;
+use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * Basic GET + POST record/replay/passthrough via CurlHook (default Guzzle handler).
@@ -22,107 +20,37 @@ use VCR\Tests\Util\TestHttpServer;
  *
  * Cassette names prefixed 'guzzle-basic-' to avoid VCRFactory cache collisions.
  */
-final class BasicLifecycleTest extends TestCase
+final class BasicLifecycleTest extends AbstractHttpServerIntegrationTestCase
 {
-    private static ?TestHttpServer $server = null;
-    private static string $baseUrl = '';
-
-    public static function setUpBeforeClass(): void
-    {
-        self::$server = TestHttpServer::start();
-        self::$baseUrl = self::$server->getBaseUrl();
-    }
-
-    public static function tearDownAfterClass(): void
-    {
-        if (null !== self::$server) {
-            self::$server->stop();
-            self::$server = null;
-        }
-    }
-
-    protected function setUp(): void
-    {
-        vfsStream::setup('testDir');
-        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
-    }
-
-    protected function tearDown(): void
-    {
-        \VCR\VCR::turnOff();
-    }
-
-    private function server(): TestHttpServer
-    {
-        $server = self::$server;
-        $this->assertNotNull($server);
-
-        return $server;
-    }
-
     public function testGetRequestRecordAndReplay(): void
     {
         $client = new Client();
-        $countBefore = $this->server()->getRequestCount();
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('guzzle-basic-get.yml');
-        $r1 = $client->get(self::$baseUrl.'/get');
-        \VCR\VCR::turnOff();
-
-        $countAfterRecord = $this->server()->getRequestCount();
-        $this->assertSame($countBefore + 1, $countAfterRecord, 'Record must hit the server');
-        $this->assertSame(200, $r1->getStatusCode());
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('guzzle-basic-get.yml');
-        $r2 = $client->get(self::$baseUrl.'/get');
-        \VCR\VCR::turnOff();
-
-        $this->assertSame($countAfterRecord, $this->server()->getRequestCount(), 'Replay must not hit the server');
-        $this->assertSame(200, $r2->getStatusCode());
+        $this->recordAndReplay(
+            'guzzle-basic-get.yml',
+            fn (): int => $client->get(self::$baseUrl.'/get')->getStatusCode(),
+        );
     }
 
     public function testPassthroughGetRequest(): void
     {
-        $countBefore = $this->server()->getRequestCount();
-
-        $response = (new Client())->get(self::$baseUrl.'/get');
-
-        $this->assertSame($countBefore + 1, $this->server()->getRequestCount(), 'Passthrough must hit the server');
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertPassthrough(
+            fn (): int => (new Client())->get(self::$baseUrl.'/get')->getStatusCode(),
+        );
     }
 
     public function testPostRequestRecordAndReplay(): void
     {
         $client = new Client();
-        $countBefore = $this->server()->getRequestCount();
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('guzzle-basic-post.yml');
-        $r1 = $client->post(self::$baseUrl.'/post', ['body' => 'hello=world']);
-        \VCR\VCR::turnOff();
-
-        $countAfterRecord = $this->server()->getRequestCount();
-        $this->assertSame($countBefore + 1, $countAfterRecord, 'Record must hit the server');
-        $this->assertSame(200, $r1->getStatusCode());
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('guzzle-basic-post.yml');
-        $r2 = $client->post(self::$baseUrl.'/post', ['body' => 'hello=world']);
-        \VCR\VCR::turnOff();
-
-        $this->assertSame($countAfterRecord, $this->server()->getRequestCount(), 'Replay must not hit the server');
-        $this->assertSame(200, $r2->getStatusCode());
+        $this->recordAndReplay(
+            'guzzle-basic-post.yml',
+            fn (): int => $client->post(self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
+        );
     }
 
     public function testPassthroughPostRequest(): void
     {
-        $countBefore = $this->server()->getRequestCount();
-
-        $response = (new Client())->post(self::$baseUrl.'/post', ['body' => 'hello=world']);
-
-        $this->assertSame($countBefore + 1, $this->server()->getRequestCount(), 'Passthrough must hit the server');
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertPassthrough(
+            fn (): int => (new Client())->post(self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
+        );
     }
 }

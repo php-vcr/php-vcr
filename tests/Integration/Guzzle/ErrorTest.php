@@ -6,18 +6,11 @@ namespace VCR\Tests\Integration\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
-use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
+use VCR\Tests\Integration\AbstractIntegrationTestCase;
 
-final class ErrorTest extends TestCase
+final class ErrorTest extends AbstractIntegrationTestCase
 {
     public const TEST_GET_URL = 'http://localhost:9959';
-
-    protected function setUp(): void
-    {
-        vfsStream::setup('testDir');
-        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
-    }
 
     public function testConnectException(): void
     {
@@ -43,7 +36,6 @@ final class ErrorTest extends TestCase
             );
         }
         $this->assertTrue($catched);
-        \VCR\VCR::turnOff();
     }
 
     private function normalizeConnectExceptionMessage(string $message): string
