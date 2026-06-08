@@ -4,29 +4,17 @@ declare(strict_types=1);
 
 namespace VCR\Tests\Integration\Symfony\Curl;
 
-use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use VCR\Tests\Integration\AbstractIntegrationTestCase;
 
 /**
  * Connection-failure behaviour for Symfony CurlHttpClient.
  * The "with VCR" test is skipped — same curl_getinfo limitation as #329.
  */
-final class ErrorTest extends TestCase
+final class ErrorTest extends AbstractIntegrationTestCase
 {
     private const UNBOUND_URL = 'http://localhost:9959/get';
-
-    protected function setUp(): void
-    {
-        vfsStream::setup('testDir');
-        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
-    }
-
-    protected function tearDown(): void
-    {
-        \VCR\VCR::turnOff();
-    }
 
     public function testConnectExceptionWithoutVcr(): void
     {

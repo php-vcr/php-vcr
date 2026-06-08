@@ -4,54 +4,16 @@ declare(strict_types=1);
 
 namespace VCR\Tests\Integration\Symfony\Curl;
 
-use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\CurlHttpClient;
-use VCR\Tests\Util\TestHttpServer;
+use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * Concurrent lazy requests for Symfony CurlHttpClient.
  * Record/replay skipped — same curl_getinfo limitation as #329.
  * Cassette name prefixed 'symfony-curl-async-'.
  */
-final class AsyncTest extends TestCase
+final class AsyncTest extends AbstractHttpServerIntegrationTestCase
 {
-    private static ?TestHttpServer $server = null;
-    private static string $baseUrl = '';
-
-    public static function setUpBeforeClass(): void
-    {
-        self::$server = TestHttpServer::start();
-        self::$baseUrl = self::$server->getBaseUrl();
-    }
-
-    public static function tearDownAfterClass(): void
-    {
-        if (null !== self::$server) {
-            self::$server->stop();
-            self::$server = null;
-        }
-    }
-
-    protected function setUp(): void
-    {
-        vfsStream::setup('testDir');
-        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
-    }
-
-    protected function tearDown(): void
-    {
-        \VCR\VCR::turnOff();
-    }
-
-    private function server(): TestHttpServer
-    {
-        $server = self::$server;
-        $this->assertNotNull($server);
-
-        return $server;
-    }
-
     public function testConcurrentRequestsRecordAndReplay(): void
     {
         $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
