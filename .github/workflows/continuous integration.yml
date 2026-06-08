@@ -126,14 +126,21 @@ jobs:
           dependency-versions: "${{ matrix.dependencies }}"
           composer-options: "--prefer-dist -o"
 
-      - name: "Run PHPUnit Test"
-        run: "vendor/bin/phpunit --coverage-clover=coverage.clover --log-junit=phpunit.xml"
+      - name: "Run PHPUnit Test (Unit)"
+        run: "mkdir -p coverage && vendor/bin/phpunit --testsuite Unit --coverage-php=coverage/unit.cov --log-junit=phpunit-unit.xml"
+
+      - name: "Run PHPUnit Test (Integration)"
+        run: "vendor/bin/phpunit --testsuite Integration --coverage-php=coverage/integration.cov --log-junit=phpunit-integration.xml"
+
+      - name: "Merge coverage reports"
+        run: "ls coverage/*.cov 2>/dev/null && vendor/bin/phpcov merge --clover=coverage.clover coverage/ || true"
+        if: "always()"
 
       - name: "Publish Test Report"
         uses: "mikepenz/action-junit-report@v2"
         if: "always()" # always run even if the previous step fails
         with:
-          report_paths: "phpunit.xml"
+          report_paths: "phpunit-*.xml"
           check_name: "PHPUnit Test Report (${{ matrix.php }}, ${{ matrix.dependencies }}, ${{ matrix.stability }})"
 
       - name: "Publish Scrutinizer Coverage"
