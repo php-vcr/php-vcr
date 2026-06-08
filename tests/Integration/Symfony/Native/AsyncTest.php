@@ -4,54 +4,16 @@ declare(strict_types=1);
 
 namespace VCR\Tests\Integration\Symfony\Native;
 
-use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\NativeHttpClient;
-use VCR\Tests\Util\TestHttpServer;
+use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * Concurrent lazy requests for Symfony NativeHttpClient.
  * Record/replay skipped — NativeHttpClient sends headers as array. See #329.
  * Cassette name prefixed 'symfony-native-async-'.
  */
-final class AsyncTest extends TestCase
+final class AsyncTest extends AbstractHttpServerIntegrationTestCase
 {
-    private static ?TestHttpServer $server = null;
-    private static string $baseUrl = '';
-
-    public static function setUpBeforeClass(): void
-    {
-        self::$server = TestHttpServer::start();
-        self::$baseUrl = self::$server->getBaseUrl();
-    }
-
-    public static function tearDownAfterClass(): void
-    {
-        if (null !== self::$server) {
-            self::$server->stop();
-            self::$server = null;
-        }
-    }
-
-    protected function setUp(): void
-    {
-        vfsStream::setup('testDir');
-        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
-    }
-
-    protected function tearDown(): void
-    {
-        \VCR\VCR::turnOff();
-    }
-
-    private function server(): TestHttpServer
-    {
-        $server = self::$server;
-        $this->assertNotNull($server);
-
-        return $server;
-    }
-
     public function testConcurrentRequestsRecordAndReplay(): void
     {
         $this->markTestSkipped('NativeHttpClient: headers as array in stream context. See #329.');

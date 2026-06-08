@@ -4,127 +4,47 @@ declare(strict_types=1);
 
 namespace VCR\Tests\Integration\Symfony\Native;
 
-use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\NativeHttpClient;
-use VCR\Tests\Util\TestHttpServer;
+use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * Custom headers and non-200 status codes for Symfony NativeHttpClient.
  * Record/replay skipped — NativeHttpClient sends headers as array. See #329.
  * Cassette names prefixed 'symfony-native-headers-'.
  */
-final class HeadersAndStatusTest extends TestCase
+final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
 {
-    private static ?TestHttpServer $server = null;
-    private static string $baseUrl = '';
-
-    public static function setUpBeforeClass(): void
-    {
-        self::$server = TestHttpServer::start();
-        self::$baseUrl = self::$server->getBaseUrl();
-    }
-
-    public static function tearDownAfterClass(): void
-    {
-        if (null !== self::$server) {
-            self::$server->stop();
-            self::$server = null;
-        }
-    }
-
-    protected function setUp(): void
-    {
-        vfsStream::setup('testDir');
-        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
-    }
-
-    protected function tearDown(): void
-    {
-        \VCR\VCR::turnOff();
-    }
-
-    private function server(): TestHttpServer
-    {
-        $server = self::$server;
-        $this->assertNotNull($server);
-
-        return $server;
-    }
-
     public function testCustomRequestHeadersRecordAndReplay(): void
     {
         $this->markTestSkipped('NativeHttpClient: headers as array in stream context. See #329.');
 
-        $countBefore = $this->server()->getRequestCount();
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('symfony-native-headers-custom.yml');
-        $s1 = (new NativeHttpClient())->request('GET', self::$baseUrl.'/get', [
-            'headers' => ['X-Custom-Header' => 'test-value'],
-        ])->getStatusCode();
-        \VCR\VCR::turnOff();
-
-        $countAfterRecord = $this->server()->getRequestCount();
-        $this->assertSame($countBefore + 1, $countAfterRecord, 'Record must hit the server');
-        $this->assertSame(200, $s1);
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('symfony-native-headers-custom.yml');
-        $s2 = (new NativeHttpClient())->request('GET', self::$baseUrl.'/get', [
-            'headers' => ['X-Custom-Header' => 'test-value'],
-        ])->getStatusCode();
-        \VCR\VCR::turnOff();
-
-        $this->assertSame($countAfterRecord, $this->server()->getRequestCount(), 'Replay must not hit the server');
-        $this->assertSame(200, $s2);
+        $this->recordAndReplay(
+            'symfony-native-headers-custom.yml',
+            fn (): int => (new NativeHttpClient())->request('GET', self::$baseUrl.'/get', [
+                'headers' => ['X-Custom-Header' => 'test-value'],
+            ])->getStatusCode(),
+        );
     }
 
     public function testStatus404RecordAndReplay(): void
     {
         $this->markTestSkipped('NativeHttpClient: headers as array in stream context. See #329.');
 
-        $countBefore = $this->server()->getRequestCount();
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('symfony-native-headers-404.yml');
-        $s1 = (new NativeHttpClient())->request('GET', self::$baseUrl.'/status/404')->getStatusCode();
-        \VCR\VCR::turnOff();
-
-        $countAfterRecord = $this->server()->getRequestCount();
-        $this->assertSame($countBefore + 1, $countAfterRecord, 'Record must hit the server');
-        $this->assertSame(404, $s1);
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('symfony-native-headers-404.yml');
-        $s2 = (new NativeHttpClient())->request('GET', self::$baseUrl.'/status/404')->getStatusCode();
-        \VCR\VCR::turnOff();
-
-        $this->assertSame($countAfterRecord, $this->server()->getRequestCount(), 'Replay must not hit the server');
-        $this->assertSame(404, $s2);
+        $this->recordAndReplay(
+            'symfony-native-headers-404.yml',
+            fn (): int => (new NativeHttpClient())->request('GET', self::$baseUrl.'/status/404')->getStatusCode(),
+            404,
+        );
     }
 
     public function testStatus500RecordAndReplay(): void
     {
         $this->markTestSkipped('NativeHttpClient: headers as array in stream context. See #329.');
 
-        $countBefore = $this->server()->getRequestCount();
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('symfony-native-headers-500.yml');
-        $s1 = (new NativeHttpClient())->request('GET', self::$baseUrl.'/status/500')->getStatusCode();
-        \VCR\VCR::turnOff();
-
-        $countAfterRecord = $this->server()->getRequestCount();
-        $this->assertSame($countBefore + 1, $countAfterRecord, 'Record must hit the server');
-        $this->assertSame(500, $s1);
-
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('symfony-native-headers-500.yml');
-        $s2 = (new NativeHttpClient())->request('GET', self::$baseUrl.'/status/500')->getStatusCode();
-        \VCR\VCR::turnOff();
-
-        $this->assertSame($countAfterRecord, $this->server()->getRequestCount(), 'Replay must not hit the server');
-        $this->assertSame(500, $s2);
+        $this->recordAndReplay(
+            'symfony-native-headers-500.yml',
+            fn (): int => (new NativeHttpClient())->request('GET', self::$baseUrl.'/status/500')->getStatusCode(),
+            500,
+        );
     }
 }
