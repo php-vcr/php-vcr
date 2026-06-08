@@ -126,8 +126,11 @@ jobs:
           dependency-versions: "${{ matrix.dependencies }}"
           composer-options: "--prefer-dist -o"
 
-      - name: "Run PHPUnit Test"
-        run: "vendor/bin/phpunit --coverage-clover=coverage.clover --log-junit=phpunit.xml"
+      - name: "Run PHPUnit Test (Unit)"
+        run: "vendor/bin/phpunit --testsuite Unit --coverage-clover=coverage.clover --log-junit=phpunit-unit.xml"
+
+      - name: "Run PHPUnit Test (Integration)"
+        run: "vendor/bin/phpunit --testsuite Integration --log-junit=phpunit.xml"
 
       - name: "Publish Test Report"
         uses: "mikepenz/action-junit-report@v2"
