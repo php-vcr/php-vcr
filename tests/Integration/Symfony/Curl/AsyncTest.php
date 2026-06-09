@@ -9,15 +9,12 @@ use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * Concurrent lazy requests for Symfony CurlHttpClient.
- * Record/replay skipped — same curl_getinfo limitation as #329.
  * Cassette name prefixed 'symfony-curl-async-'.
  */
 final class AsyncTest extends AbstractHttpServerIntegrationTestCase
 {
     public function testConcurrentRequestsRecordAndReplay(): void
     {
-        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
-
         $countBefore = $this->server()->getRequestCount();
         $client = new CurlHttpClient();
 

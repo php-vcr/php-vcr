@@ -9,15 +9,12 @@ use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * PUT / DELETE / PATCH record/replay/passthrough for Symfony CurlHttpClient.
- * Record/replay skipped — same curl_getinfo limitation as #329.
  * Cassette names prefixed 'symfony-curl-methods-'.
  */
 final class HttpMethodsTest extends AbstractHttpServerIntegrationTestCase
 {
     public function testPutRequestRecordAndReplay(): void
     {
-        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
-
         $this->recordAndReplay(
             'symfony-curl-methods-put.yml',
             fn (): int => (new CurlHttpClient())->request('PUT', self::$baseUrl.'/put', ['body' => 'data=1'])->getStatusCode(),
@@ -33,8 +30,6 @@ final class HttpMethodsTest extends AbstractHttpServerIntegrationTestCase
 
     public function testDeleteRequestRecordAndReplay(): void
     {
-        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
-
         $this->recordAndReplay(
             'symfony-curl-methods-delete.yml',
             fn (): int => (new CurlHttpClient())->request('DELETE', self::$baseUrl.'/delete')->getStatusCode(),
@@ -50,8 +45,6 @@ final class HttpMethodsTest extends AbstractHttpServerIntegrationTestCase
 
     public function testPatchRequestRecordAndReplay(): void
     {
-        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
-
         $this->recordAndReplay(
             'symfony-curl-methods-patch.yml',
             fn (): int => (new CurlHttpClient())->request('PATCH', self::$baseUrl.'/patch', ['body' => 'field=value'])->getStatusCode(),
