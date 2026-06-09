@@ -592,6 +592,45 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
+    public function testCurlMultiCloseClearsQueueState(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle1 = curl_init('http://example.com');
+        $curlHandle2 = curl_init('http://example.com');
+        Assertion::notSame($curlHandle1, false);
+        Assertion::notSame($curlHandle2, false);
+
+        $curlMultiHandle = curl_multi_init();
+        Assertion::notSame($curlMultiHandle, false);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle2);
+
+        $stillRunning = null;
+        curl_multi_exec($curlMultiHandle, $stillRunning);
+
+        // Close without draining info_read — curlMultiClose must purge the queue.
+        curl_multi_close($curlMultiHandle);
+        $this->curlHook->disable();
+
+        $reflection = new \ReflectionClass(CurlHook::class);
+
+        $multiExecLastChs = $reflection->getProperty('multiExecLastChs');
+        $multiExecLastChs->setAccessible(true);
+        $this->assertEmpty(
+            $multiExecLastChs->getValue(null),
+            'CurlHook::$multiExecLastChs must be empty after curl_multi_close()'
+        );
+
+        $multiHandles = $reflection->getProperty('multiHandles');
+        $multiHandles->setAccessible(true);
+        $this->assertArrayNotHasKey(
+            (int) $curlMultiHandle,
+            $multiHandles->getValue(null),
+            'CurlHook::$multiHandles must not contain the closed multi handle'
+        );
+    }
+
     public function testShouldReportCompletedHandlesAfterRepeatedMultiExec(): void
     {
         $this->curlHook->enable($this->getTestCallback());
