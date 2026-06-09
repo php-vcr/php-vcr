@@ -95,6 +95,25 @@ final class ResponseTest extends TestCase
         $this->assertEquals($body, $restoredResponse->getBody());
     }
 
+    public function testHttpVersionIsPreservedFromStatusArray(): void
+    {
+        $response = Response::fromArray([
+            'status' => ['http_version' => '2', 'code' => 200, 'message' => 'OK'],
+        ]);
+
+        $this->assertSame('2', $response->getHttpVersion());
+    }
+
+    public function testHttpVersionIsNullWhenNotInStatusArray(): void
+    {
+        // Cassettes recorded without an http_version key must leave the field null
+        // so that the replay layer (HttpUtil::formatAsStatusString) can apply the
+        // fallback — the recording itself must not silently invent a version.
+        $response = Response::fromArray(['status' => ['code' => 200, 'message' => 'OK']]);
+
+        $this->assertNull($response->getHttpVersion());
+    }
+
     public function testGetStatus(): void
     {
         $expectedStatus = '200';
