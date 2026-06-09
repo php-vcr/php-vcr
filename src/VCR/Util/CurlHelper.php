@@ -82,11 +82,13 @@ class CurlHelper
     }
 
     /**
-     * Returns the default value curl_getinfo() produces for a handle that has
-     * not yet been executed, matching real cURL behaviour so that libraries
-     * (e.g. Symfony HttpClient) that call curl_getinfo() before curl_exec() /
-     * curl_multi_exec() receive predictable, type-safe values instead of an
-     * exception.
+     * Returns safe defaults for curl_getinfo() so libraries (e.g. Symfony
+     * HttpClient) that call curl_getinfo() before curl_exec() / curl_multi_exec()
+     * receive predictable, type-safe values instead of an exception.
+     *
+     * Note: Not byte-equivalent to real cURL for all options — unknown
+     * CURLINFO_* constants return false here (matching real cURL's behaviour
+     * for invalid options), not a natural-typed zero.
      */
     public static function getDefaultCurlInfo(int $option, ?string $url): mixed
     {
