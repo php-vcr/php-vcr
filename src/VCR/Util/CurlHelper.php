@@ -153,9 +153,12 @@ class CurlHelper
 
     /**
      * Extracts a specific curl_getinfo() value from a raw info array (as returned
-     * by curl_getinfo() with no option argument). Returns null for unknown options.
+     * by curl_getinfo() with no option argument). Returns false for unknown options,
+     * null when the option is known but the recorded value is null.
      *
      * @param array<string,mixed> $info
+     *
+     * @return mixed false if the option is not in the known list, null if the recorded value is null
      */
     public static function getCurlInfoFromArray(array $info, int $option): mixed
     {
@@ -163,11 +166,13 @@ class CurlHelper
             return $info;
         }
 
-        if (\array_key_exists($option, self::$curlInfoList)) {
-            return $info[self::$curlInfoList[$option]] ?? null;
+        if (!\array_key_exists($option, self::$curlInfoList)) {
+            return false;
         }
 
-        return null;
+        $key = self::$curlInfoList[$option];
+
+        return \array_key_exists($key, $info) ? $info[$key] : null;
     }
 
     /**
