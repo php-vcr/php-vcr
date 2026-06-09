@@ -33,19 +33,6 @@ final class CurlHookTest extends TestCase
         if ($this->curlHook->isEnabled()) {
             $this->curlHook->disable();
         }
-
-        // Reset CurlHook static state between tests to prevent integer-ID reuse across
-        // test boundaries. Root cause: CurlHook has no curlClose() implementation, so
-        // self::$responses is never cleared when curl_close() is called. Under PHPUnit 10
-        // with pcov coverage, GC reclaims CurlHandle objects sooner than under PHPUnit 9,
-        // making ID reuse much more likely and exposing this latent state-leak.
-        // TODO: implement CurlHook::curlClose() to clear handle state on curl_close().
-        $reflection = new \ReflectionClass(CurlHook::class);
-        foreach (['requests', 'responses', 'curlOptions', 'multiHandles', 'multiExecLastChs', 'multiReturnValues', 'lastErrors'] as $property) {
-            $prop = $reflection->getProperty($property);
-            $prop->setAccessible(true); // required on PHP 8.0; no-op from PHP 8.1
-            $prop->setValue(null, []);
-        }
     }
 
     public function testCurlCloseClearsHandleState(): void
