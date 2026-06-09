@@ -10,7 +10,6 @@ use VCR\Tests\Integration\AbstractIntegrationTestCase;
 
 /**
  * Connection-failure behaviour for Symfony CurlHttpClient.
- * The "with VCR" test is skipped — same curl_getinfo limitation as #329.
  */
 final class ErrorTest extends AbstractIntegrationTestCase
 {
@@ -31,8 +30,6 @@ final class ErrorTest extends AbstractIntegrationTestCase
 
     public function testConnectExceptionPassesThroughWithVcr(): void
     {
-        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
-
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('symfony-curl-error.yml');
 

@@ -9,15 +9,12 @@ use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * Sequential multi-request record/replay for Symfony CurlHttpClient.
- * Record/replay skipped — same curl_getinfo limitation as #329.
  * Cassette name prefixed 'symfony-curl-seq-'.
  */
 final class SequentialRequestsTest extends AbstractHttpServerIntegrationTestCase
 {
     public function testSequentialRequestsRecordAndReplay(): void
     {
-        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
-
         $countBefore = $this->server()->getRequestCount();
         $client = new CurlHttpClient();
 

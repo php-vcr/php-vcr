@@ -517,6 +517,39 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
+    public function testCurlGetinfoHttpCodeReturnsZeroBeforeExec(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com');
+        Assertion::notSame($curlHandle, false);
+
+        $this->assertSame(0, curl_getinfo($curlHandle, \CURLINFO_HTTP_CODE));
+
+        curl_close($curlHandle);
+        $this->curlHook->disable();
+    }
+
+    public function testCurlGetinfoAllReturnsDefaultArrayBeforeExec(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com');
+        Assertion::notSame($curlHandle, false);
+
+        $info = curl_getinfo($curlHandle);
+
+        $this->assertIsArray($info);
+        $this->assertSame(0, $info['http_code']);
+        $this->assertSame(0.0, $info['total_time']);
+        $this->assertSame([], $info['certinfo']);
+        $this->assertNull($info['content_type']);
+        $this->assertSame(-1.0, $info['download_content_length']);
+
+        curl_close($curlHandle);
+        $this->curlHook->disable();
+    }
+
     public function testCurlInfoPrivateReturnedBeforeExec(): void
     {
         $this->curlHook->enable($this->getTestCallback());
@@ -557,6 +590,53 @@ final class CurlHookTest extends TestCase
 
         curl_close($curlHandle);
         $this->curlHook->disable();
+    }
+
+    public function testShouldReportCompletedHandlesAfterRepeatedMultiExec(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle1 = curl_init('http://example.com');
+        $curlHandle2 = curl_init('http://example.com');
+        Assertion::notSame($curlHandle1, false);
+        Assertion::notSame($curlHandle2, false);
+
+        $curlMultiHandle = curl_multi_init();
+        Assertion::notSame($curlMultiHandle, false);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle2);
+
+        $stillRunning = null;
+        curl_multi_exec($curlMultiHandle, $stillRunning);
+
+        // Second exec without draining info_read between calls.
+        curl_multi_exec($curlMultiHandle, $stillRunning);
+
+        $info1 = curl_multi_info_read($curlMultiHandle);
+        $info2 = curl_multi_info_read($curlMultiHandle);
+        $info3 = curl_multi_info_read($curlMultiHandle);
+
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle2);
+        curl_multi_close($curlMultiHandle);
+        $this->curlHook->disable();
+
+        $this->assertIsArray($info1, 'First info_read after repeated exec must return info.');
+        $this->assertIsArray($info2, 'Second info_read after repeated exec must return info.');
+        $this->assertFalse($info3, 'Third info_read must return false — no more handles.');
+    }
+
+    public function testCurlGetinfoThrowsForUnknownHandle(): void
+    {
+        // Create a native handle before the hook is enabled so it bypasses
+        // curlInit() and is not registered in the hook's static state.
+        $nativeHandle = curl_init('http://example.com');
+        \assert(false !== $nativeHandle);
+
+        $this->curlHook->enable($this->getTestCallback());
+
+        $this->expectException(\RuntimeException::class);
+        CurlHook::curlGetinfo($nativeHandle);
     }
 
     protected function getTestCallback(string $statusCode = '200'): \Closure

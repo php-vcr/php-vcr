@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace VCR\Tests\Unit\Util;
 
 use PHPUnit\Framework\TestCase;
+use VCR\Response;
 use VCR\Util\HttpUtil;
 
 final class HttpUtilTest extends TestCase
@@ -131,6 +132,23 @@ final class HttpUtilTest extends TestCase
         ];
         $outputArray = HttpUtil::parseHeaders($inputArray);
         $this->assertEquals($excpetedHeaders, $outputArray);
+    }
+
+    public function testFormatAsStatusStringUsesRecordedHttpVersion(): void
+    {
+        $response = Response::fromArray([
+            'status' => ['http_version' => '2', 'code' => 200, 'message' => 'OK'],
+        ]);
+
+        $this->assertSame("HTTP/2 200 OK\r\n", HttpUtil::formatAsStatusString($response));
+    }
+
+    public function testFormatAsStatusStringFallsBackToHttp11WhenVersionIsNull(): void
+    {
+        // Simulates a legacy cassette that has no http_version key.
+        $response = Response::fromArray(['status' => ['code' => 200, 'message' => 'OK']]);
+
+        $this->assertSame("HTTP/1.1 200 OK\r\n", HttpUtil::formatAsStatusString($response));
     }
 
     public function testParseHeadersIncludingColons(): void

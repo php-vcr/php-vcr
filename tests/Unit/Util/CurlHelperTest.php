@@ -581,6 +581,69 @@ final class CurlHelperTest extends TestCase
         $this->headersFound[] = $header;
     }
 
+    /**
+     * @dataProvider getDefaultCurlInfoProvider()
+     */
+    public function testGetDefaultCurlInfo(int $option, mixed $expected, ?string $url = null): void
+    {
+        $this->assertSame($expected, CurlHelper::getDefaultCurlInfo($option, $url));
+    }
+
+    /** @return array<string, mixed> */
+    public static function getDefaultCurlInfoProvider(): array
+    {
+        return [
+            'http_code returns 0' => [\CURLINFO_HTTP_CODE, 0],
+            'redirect_count returns 0' => [\CURLINFO_REDIRECT_COUNT, 0],
+            'header_size returns 0' => [\CURLINFO_HEADER_SIZE, 0],
+            'request_size returns 0' => [\CURLINFO_REQUEST_SIZE, 0],
+            'ssl_verify_result returns 0' => [\CURLINFO_SSL_VERIFYRESULT, 0],
+            'filetime returns -1' => [\CURLINFO_FILETIME, -1],
+            'download_content_length returns -1.0' => [\CURLINFO_CONTENT_LENGTH_DOWNLOAD, -1.0],
+            'upload_content_length returns -1.0' => [\CURLINFO_CONTENT_LENGTH_UPLOAD, -1.0],
+            'size_upload returns 0.0' => [\CURLINFO_SIZE_UPLOAD, 0.0],
+            'size_download returns 0.0' => [\CURLINFO_SIZE_DOWNLOAD, 0.0],
+            'speed_download returns 0.0' => [\CURLINFO_SPEED_DOWNLOAD, 0.0],
+            'speed_upload returns 0.0' => [\CURLINFO_SPEED_UPLOAD, 0.0],
+            'total_time returns 0.0' => [\CURLINFO_TOTAL_TIME, 0.0],
+            'namelookup_time returns 0.0' => [\CURLINFO_NAMELOOKUP_TIME, 0.0],
+            'connect_time returns 0.0' => [\CURLINFO_CONNECT_TIME, 0.0],
+            'pretransfer_time returns 0.0' => [\CURLINFO_PRETRANSFER_TIME, 0.0],
+            'starttransfer_time returns 0.0' => [\CURLINFO_STARTTRANSFER_TIME, 0.0],
+            'redirect_time returns 0.0' => [\CURLINFO_REDIRECT_TIME, 0.0],
+            'appconnect_time returns 0.0' => [\CURLINFO_APPCONNECT_TIME, 0.0],
+            'certinfo returns []' => [\CURLINFO_CERTINFO, []],
+            'content_type returns null' => [\CURLINFO_CONTENT_TYPE, null],
+            'effective_url without url returns empty string' => [\CURLINFO_EFFECTIVE_URL, ''],
+            'effective_url uses provided url' => [\CURLINFO_EFFECTIVE_URL, 'http://example.com', 'http://example.com'],
+            'unknown option returns false' => [999999, false],
+        ];
+    }
+
+    public function testGetDefaultCurlInfoAllReturns23Keys(): void
+    {
+        $info = CurlHelper::getDefaultCurlInfo(0, 'http://example.com');
+
+        $this->assertIsArray($info);
+        $this->assertCount(23, $info);
+        $this->assertSame('http://example.com', $info['url']);
+        $this->assertSame(0, $info['http_code']);
+        $this->assertSame(-1, $info['filetime']);
+        $this->assertSame([], $info['certinfo']);
+        $this->assertNull($info['content_type']);
+        $this->assertSame(-1.0, $info['download_content_length']);
+        $this->assertSame(-1.0, $info['upload_content_length']);
+        $this->assertSame(0.0, $info['total_time']);
+    }
+
+    public function testGetDefaultCurlInfoAllUsesNullUrlWhenNoUrl(): void
+    {
+        $info = CurlHelper::getDefaultCurlInfo(0, null);
+
+        $this->assertIsArray($info);
+        $this->assertSame('', $info['url']);
+    }
+
     public function testGetCurlOptionFromResponseHandleCertinfo(): void
     {
         $response = new Response('200', [], 'example response');

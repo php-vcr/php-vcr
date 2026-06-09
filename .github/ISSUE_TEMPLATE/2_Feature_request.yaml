@@ -1,0 +1,19 @@
+name: 🚀 Feature Request
+description: Ideas, RFCs and proposals for new features or improvements
+type: Feature
+
+body:
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+          description: A clear and concise description of the new feature or improvement.
+      validations:
+          required: true
+    - type: textarea
+      id: example
+      attributes:
+          label: Example
+          description: |
+              A simple example of the new feature in action (include PHP code, YAML cassette excerpt, etc.).
+              If it changes existing behaviour, include a simple before/after comparison.

@@ -9,15 +9,12 @@ use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * Custom headers and non-200 status codes for Symfony CurlHttpClient.
- * Record/replay skipped — same curl_getinfo limitation as #329.
  * Cassette names prefixed 'symfony-curl-headers-'.
  */
 final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
 {
     public function testCustomRequestHeadersRecordAndReplay(): void
     {
-        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
-
         $this->recordAndReplay(
             'symfony-curl-headers-custom.yml',
             fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/get', [
@@ -28,8 +25,6 @@ final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
 
     public function testStatus404RecordAndReplay(): void
     {
-        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
-
         $this->recordAndReplay(
             'symfony-curl-headers-404.yml',
             fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/status/404')->getStatusCode(),
@@ -39,8 +34,6 @@ final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
 
     public function testStatus500RecordAndReplay(): void
     {
-        $this->markTestSkipped('CurlHttpClient: curl_getinfo() before curl_multi_exec. See #329.');
-
         $this->recordAndReplay(
             'symfony-curl-headers-500.yml',
             fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/status/500')->getStatusCode(),
