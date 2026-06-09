@@ -48,6 +48,32 @@ final class CurlHookTest extends TestCase
         }
     }
 
+    public function testCurlCloseClearsHandleState(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com/');
+        Assertion::notSame($curlHandle, false);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+
+        $handleId = (int) $curlHandle;
+        curl_close($curlHandle);
+
+        $reflection = new \ReflectionClass(CurlHook::class);
+        foreach (['requests', 'responses', 'curlOptions', 'lastErrors'] as $property) {
+            $prop = $reflection->getProperty($property);
+            $prop->setAccessible(true);
+            $this->assertArrayNotHasKey(
+                $handleId,
+                $prop->getValue(null),
+                sprintf('CurlHook::$%s must not contain a stale entry after curl_close()', $property)
+            );
+        }
+
+        $this->curlHook->disable();
+    }
+
     public function testShouldBeEnabledAfterEnabling(): void
     {
         $this->assertFalse($this->curlHook->isEnabled(), 'Initially the CurlHook should be disabled.');
