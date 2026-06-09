@@ -54,7 +54,7 @@ final class CurlHookTest extends TestCase
             $this->assertArrayNotHasKey(
                 $handleId,
                 $prop->getValue(null),
-                sprintf('CurlHook::$%s must not contain a stale entry after curl_close()', $property)
+                \sprintf('CurlHook::$%s must not contain a stale entry after curl_close()', $property)
             );
         }
 

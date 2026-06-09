@@ -12,7 +12,9 @@ abstract class AbstractIntegrationTestCase extends TestCase
     protected function setUp(): void
     {
         vfsStream::setup('testDir');
-        \VCR\VCR::configure()->setCassettePath(vfsStream::url('testDir'));
+        \VCR\VCR::configure()
+            ->setCassettePath(vfsStream::url('testDir'))
+            ->enableLibraryHooks(['stream_wrapper', 'curl', 'soap']);
     }
 
     protected function tearDown(): void
