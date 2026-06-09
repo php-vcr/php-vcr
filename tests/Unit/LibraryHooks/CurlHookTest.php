@@ -504,6 +504,39 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
+    public function testCurlGetinfoHttpCodeReturnsZeroBeforeExec(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com');
+        Assertion::notSame($curlHandle, false);
+
+        $this->assertSame(0, curl_getinfo($curlHandle, \CURLINFO_HTTP_CODE));
+
+        curl_close($curlHandle);
+        $this->curlHook->disable();
+    }
+
+    public function testCurlGetinfoAllReturnsDefaultArrayBeforeExec(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com');
+        Assertion::notSame($curlHandle, false);
+
+        $info = curl_getinfo($curlHandle);
+
+        $this->assertIsArray($info);
+        $this->assertSame(0, $info['http_code']);
+        $this->assertSame(0.0, $info['total_time']);
+        $this->assertSame([], $info['certinfo']);
+        $this->assertNull($info['content_type']);
+        $this->assertSame(-1.0, $info['download_content_length']);
+
+        curl_close($curlHandle);
+        $this->curlHook->disable();
+    }
+
     public function testCurlInfoPrivateReturnedBeforeExec(): void
     {
         $this->curlHook->enable($this->getTestCallback());

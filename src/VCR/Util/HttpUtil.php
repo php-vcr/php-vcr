@@ -120,7 +120,7 @@ class HttpUtil
      */
     public static function formatAsStatusString(Response $response): string
     {
-        return 'HTTP/'.$response->getHttpVersion()
+        return 'HTTP/'.($response->getHttpVersion() ?? '1.1')
             .' '.$response->getStatusCode()
             .' '.$response->getStatusMessage()
             ."\r\n";

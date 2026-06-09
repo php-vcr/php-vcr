@@ -132,6 +132,8 @@ class CurlHook implements LibraryHook
         if (false !== $curlHandle) {
             self::$requests[(int) $curlHandle] = new Request('GET', $url);
             self::$curlOptions[(int) $curlHandle] = [];
+            unset(self::$responses[(int) $curlHandle]);
+            unset(self::$lastErrors[(int) $curlHandle]);
         }
 
         return $curlHandle;
@@ -214,7 +216,7 @@ class CurlHook implements LibraryHook
     {
         if (isset(self::$multiHandles[(int) $multiHandle])) {
             foreach (self::$multiHandles[(int) $multiHandle] as $curlHandle) {
-                if (!isset(self::$responses[(int) $curlHandle])) {
+                if (!isset(self::$responses[(int) $curlHandle]) && !isset(self::$lastErrors[(int) $curlHandle])) {
                     self::$multiExecLastChs[] = $curlHandle;
                     self::$multiReturnValues[(int) $curlHandle] = self::curlExec($curlHandle);
                 }
@@ -234,13 +236,16 @@ class CurlHook implements LibraryHook
     public static function curlMultiInfoRead()
     {
         if (!empty(self::$multiExecLastChs)) {
-            $info = [
-                'msg' => \CURLMSG_DONE,
-                'handle' => array_pop(self::$multiExecLastChs),
-                'result' => \CURLE_OK,
-            ];
+            $ch = array_pop(self::$multiExecLastChs);
+            $result = isset(self::$lastErrors[(int) $ch])
+                ? self::$lastErrors[(int) $ch]->getCode()
+                : \CURLE_OK;
 
-            return $info;
+            return [
+                'msg' => \CURLMSG_DONE,
+                'handle' => $ch,
+                'result' => $result,
+            ];
         }
 
         return false;
@@ -267,17 +272,25 @@ class CurlHook implements LibraryHook
     {
         if (\CURLINFO_PRIVATE === $option) {
             return self::$curlOptions[(int) $curlHandle][\CURLOPT_PRIVATE] ?? '';
-        }
-
-        if (isset(self::$responses[(int) $curlHandle])) {
+        } elseif (isset(self::$responses[(int) $curlHandle])) {
             return CurlHelper::getCurlOptionFromResponse(
                 self::$responses[(int) $curlHandle],
                 $option
             );
         } elseif (isset(self::$lastErrors[(int) $curlHandle])) {
-            return self::$lastErrors[(int) $curlHandle]->getInfo();
+            return CurlHelper::getCurlInfoFromArray(
+                self::$lastErrors[(int) $curlHandle]->getInfo(),
+                $option
+            ) ?? CurlHelper::getDefaultCurlInfo(
+                $option,
+                (self::$requests[(int) $curlHandle] ?? null)?->getUrl()
+            );
         }
-        throw new \RuntimeException('Unexpected error, could not find curl_getinfo in response or errors');
+
+        return CurlHelper::getDefaultCurlInfo(
+            $option,
+            (self::$requests[(int) $curlHandle] ?? null)?->getUrl()
+        );
     }
 
     /**

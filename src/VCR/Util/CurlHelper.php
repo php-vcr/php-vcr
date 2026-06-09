@@ -82,6 +82,95 @@ class CurlHelper
     }
 
     /**
+     * Returns the default value curl_getinfo() produces for a handle that has
+     * not yet been executed, matching real cURL behaviour so that libraries
+     * (e.g. Symfony HttpClient) that call curl_getinfo() before curl_exec() /
+     * curl_multi_exec() receive predictable, type-safe values instead of an
+     * exception.
+     */
+    public static function getDefaultCurlInfo(int $option, ?string $url): mixed
+    {
+        switch ($option) {
+            case 0:
+                return [
+                    'url' => $url ?? '',
+                    'content_type' => null,
+                    'http_code' => 0,
+                    'header_size' => 0,
+                    'request_size' => 0,
+                    'filetime' => -1,
+                    'ssl_verify_result' => 0,
+                    'redirect_count' => 0,
+                    'total_time' => 0.0,
+                    'namelookup_time' => 0.0,
+                    'connect_time' => 0.0,
+                    'pretransfer_time' => 0.0,
+                    'size_upload' => 0.0,
+                    'size_download' => 0.0,
+                    'speed_download' => 0.0,
+                    'speed_upload' => 0.0,
+                    'download_content_length' => -1.0,
+                    'upload_content_length' => -1.0,
+                    'starttransfer_time' => 0.0,
+                    'redirect_time' => 0.0,
+                    'certinfo' => [],
+                    'request_header' => '',
+                    'appconnect_time' => 0.0,
+                ];
+            case \CURLINFO_CERTINFO:
+                return [];
+            case \CURLINFO_CONTENT_TYPE:
+                return null;
+            case \CURLINFO_EFFECTIVE_URL:
+                return $url ?? '';
+            case \CURLINFO_FILETIME:
+                return -1;
+            case \CURLINFO_CONTENT_LENGTH_DOWNLOAD:
+            case \CURLINFO_CONTENT_LENGTH_UPLOAD:
+                return -1.0;
+            case \CURLINFO_HTTP_CODE:
+            case \CURLINFO_REDIRECT_COUNT:
+            case \CURLINFO_HEADER_SIZE:
+            case \CURLINFO_REQUEST_SIZE:
+            case \CURLINFO_SSL_VERIFYRESULT:
+                return 0;
+            case \CURLINFO_SIZE_UPLOAD:
+            case \CURLINFO_SIZE_DOWNLOAD:
+            case \CURLINFO_SPEED_DOWNLOAD:
+            case \CURLINFO_SPEED_UPLOAD:
+            case \CURLINFO_TOTAL_TIME:
+            case \CURLINFO_NAMELOOKUP_TIME:
+            case \CURLINFO_CONNECT_TIME:
+            case \CURLINFO_PRETRANSFER_TIME:
+            case \CURLINFO_STARTTRANSFER_TIME:
+            case \CURLINFO_REDIRECT_TIME:
+            case \CURLINFO_APPCONNECT_TIME:
+                return 0.0;
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * Extracts a specific curl_getinfo() value from a raw info array (as returned
+     * by curl_getinfo() with no option argument). Returns null for unknown options.
+     *
+     * @param array<string,mixed> $info
+     */
+    public static function getCurlInfoFromArray(array $info, int $option): mixed
+    {
+        if (0 === $option) {
+            return $info;
+        }
+
+        if (\array_key_exists($option, self::$curlInfoList)) {
+            return $info[self::$curlInfoList[$option]] ?? null;
+        }
+
+        return null;
+    }
+
+    /**
      * @param int $option cURL option to get
      *
      * @return mixed value of the cURL option
