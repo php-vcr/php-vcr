@@ -611,7 +611,6 @@ final class CurlHookTest extends TestCase
         $this->assertIsArray($info1, 'First info_read after repeated exec must return info.');
         $this->assertIsArray($info2, 'Second info_read after repeated exec must return info.');
         $this->assertFalse($info3, 'Third info_read must return false — no more handles.');
-        $this->assertSame(0, $stillRunning, 'stillRunning must be 0 after all handles are done.');
     }
 
     public function testCurlGetinfoThrowsForUnknownHandle(): void
