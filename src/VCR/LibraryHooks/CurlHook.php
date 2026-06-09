@@ -138,6 +138,21 @@ class CurlHook implements LibraryHook
     }
 
     /**
+     * @see https://www.php.net/manual/en/function.curl-close.php
+     */
+    public static function curlClose(\CurlHandle $curlHandle): void
+    {
+        $id = (int) $curlHandle;
+        unset(
+            self::$requests[$id],
+            self::$responses[$id],
+            self::$curlOptions[$id],
+            self::$lastErrors[$id],
+        );
+        curl_close($curlHandle);
+    }
+
+    /**
      * @see http://www.php.net/manual/en/function.curl-reset.php
      */
     public static function curlReset(\CurlHandle $curlHandle): void
