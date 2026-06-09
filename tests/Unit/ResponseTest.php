@@ -27,6 +27,40 @@ final class ResponseTest extends TestCase
         $this->assertEquals([], $response->getHeaders());
     }
 
+    public function testHandleArrayAsHeaderValue(): void
+    {
+        $value = [
+            'one',
+            'two',
+        ];
+
+        $expectedHeaders = [
+            'User-Agent' => 'Unit-Test',
+            'Host' => 'example.com',
+            'Custom-Header' => $value,
+        ];
+
+        $response = Response::fromArray(['headers' => $expectedHeaders]);
+
+        $this->assertEquals($value, $response->getHeader('Custom-Header'));
+    }
+
+    public function testHandleMalformedContentTypeHeader(): void
+    {
+        $expectedHeaders = [
+            'User-Agent' => 'Unit-Test',
+            'Host' => 'example.com',
+            'Content-Type' => [
+                'application/json; charset=utf-8',
+                'application/json; charset=utf-8',
+            ],
+        ];
+
+        $response = Response::fromArray(['headers' => $expectedHeaders]);
+
+        $this->assertEquals('application/json; charset=utf-8', $response->getContentType());
+    }
+
     public function testRestoreHeadersFromArray(): void
     {
         $headers = [
