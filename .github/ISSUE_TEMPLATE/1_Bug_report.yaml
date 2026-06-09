@@ -1,0 +1,84 @@
+name: 🐛 Bug Report
+description: ⚠️ NEVER report security issues — open a private advisory at https://github.com/php-vcr/php-vcr/security/advisories/new instead
+type: Bug
+labels: Bug
+
+body:
+    - type: input
+      id: php-vcr-version
+      attributes:
+          label: php-vcr version
+          description: Output of `composer show php-vcr/php-vcr` or the tag from your `composer.lock`.
+          placeholder: x.y.z
+      validations:
+          required: true
+    - type: dropdown
+      id: php-version
+      attributes:
+          label: PHP version
+          description: Output of `php -v`.
+          options:
+              - "8.0"
+              - "8.1"
+              - "8.2 (>= 8.2.9)"
+              - "8.3"
+              - "8.4"
+              - "8.5"
+              - Other (please mention in Additional context)
+      validations:
+          required: true
+    - type: dropdown
+      id: library-hook
+      attributes:
+          label: Library hook in use
+          description: Which interception mechanism is active during the failing test? See VCR::configure()->enableLibraryHooks().
+          options:
+              - curl
+              - soap
+              - stream_wrapper
+              - Multiple
+              - Not sure
+      validations:
+          required: true
+    - type: dropdown
+      id: storage-backend
+      attributes:
+          label: Storage backend
+          description: "Storage format: yaml / json / blackhole, or a custom implementation."
+          options:
+              - yaml
+              - json
+              - blackhole
+              - Custom
+              - Not sure
+      validations:
+          required: true
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+          description: A clear and concise description of the problem.
+      validations:
+          required: true
+    - type: textarea
+      id: how-to-reproduce
+      attributes:
+          label: How to reproduce
+          description: |
+            ⚠️ This is the most important part of the report ⚠️
+            Without a way to reliably reproduce the issue, there is little chance we will be able to help you and work on a fix.
+            Please share a minimal, runnable PHP snippet plus the relevant cassette (or a redacted version). Mention any non-default configuration: matchers, record mode, request hooks.
+      validations:
+          required: true
+    - type: textarea
+      id: possible-solution
+      attributes:
+          label: Possible Solution
+          description: |
+            Optional: only if you have suggestions on a fix/reason for the bug.
+            Don't hesitate to open a pull request with your solution — it gets faster feedback.
+    - type: textarea
+      id: additional-context
+      attributes:
+          label: Additional Context
+          description: "Optional: any other context: log messages, stack traces, screenshots, related issues."
