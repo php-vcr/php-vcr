@@ -294,10 +294,14 @@ class CurlHook implements LibraryHook
             return $value;
         }
 
-        return CurlHelper::getDefaultCurlInfo(
-            $option,
-            (self::$requests[(int) $curlHandle] ?? null)?->getUrl()
-        );
+        if (isset(self::$requests[(int) $curlHandle])) {
+            return CurlHelper::getDefaultCurlInfo(
+                $option,
+                self::$requests[(int) $curlHandle]->getUrl()
+            );
+        }
+
+        throw new \RuntimeException('Unexpected curl handle: not initialized via curl_init() or already closed');
     }
 
     /**

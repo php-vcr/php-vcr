@@ -147,7 +147,7 @@ class CurlHelper
             case \CURLINFO_APPCONNECT_TIME:
                 return 0.0;
             default:
-                return '';
+                return false;
         }
     }
 

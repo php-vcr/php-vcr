@@ -616,7 +616,7 @@ final class CurlHelperTest extends TestCase
             'content_type returns null' => [\CURLINFO_CONTENT_TYPE, null],
             'effective_url without url returns empty string' => [\CURLINFO_EFFECTIVE_URL, ''],
             'effective_url uses provided url' => [\CURLINFO_EFFECTIVE_URL, 'http://example.com', 'http://example.com'],
-            'unknown option returns empty string' => [999999, ''],
+            'unknown option returns false' => [999999, false],
         ];
     }
 

@@ -579,6 +579,19 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
+    public function testCurlGetinfoThrowsForUnknownHandle(): void
+    {
+        // Create a native handle before the hook is enabled so it bypasses
+        // curlInit() and is not registered in the hook's static state.
+        $nativeHandle = curl_init('http://example.com');
+        \assert(false !== $nativeHandle);
+
+        $this->curlHook->enable($this->getTestCallback());
+
+        $this->expectException(\RuntimeException::class);
+        CurlHook::curlGetinfo($nativeHandle);
+    }
+
     protected function getTestCallback(string $statusCode = '200'): \Closure
     {
         $testClass = $this;
