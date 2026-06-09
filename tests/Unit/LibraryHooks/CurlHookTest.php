@@ -579,6 +579,41 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
+    public function testShouldReportCompletedHandlesAfterRepeatedMultiExec(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle1 = curl_init('http://example.com');
+        $curlHandle2 = curl_init('http://example.com');
+        Assertion::notSame($curlHandle1, false);
+        Assertion::notSame($curlHandle2, false);
+
+        $curlMultiHandle = curl_multi_init();
+        Assertion::notSame($curlMultiHandle, false);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle2);
+
+        $stillRunning = null;
+        curl_multi_exec($curlMultiHandle, $stillRunning);
+
+        // Second exec without draining info_read between calls.
+        curl_multi_exec($curlMultiHandle, $stillRunning);
+
+        $info1 = curl_multi_info_read($curlMultiHandle);
+        $info2 = curl_multi_info_read($curlMultiHandle);
+        $info3 = curl_multi_info_read($curlMultiHandle);
+
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle2);
+        curl_multi_close($curlMultiHandle);
+        $this->curlHook->disable();
+
+        $this->assertIsArray($info1, 'First info_read after repeated exec must return info.');
+        $this->assertIsArray($info2, 'Second info_read after repeated exec must return info.');
+        $this->assertFalse($info3, 'Third info_read must return false — no more handles.');
+        $this->assertSame(0, $stillRunning, 'stillRunning must be 0 after all handles are done.');
+    }
+
     public function testCurlGetinfoThrowsForUnknownHandle(): void
     {
         // Create a native handle before the hook is enabled so it bypasses

@@ -216,12 +216,17 @@ class CurlHook implements LibraryHook
     {
         if (isset(self::$multiHandles[(int) $multiHandle])) {
             foreach (self::$multiHandles[(int) $multiHandle] as $curlHandle) {
-                if (!isset(self::$responses[(int) $curlHandle]) && !isset(self::$lastErrors[(int) $curlHandle])) {
+                $ch = (int) $curlHandle;
+                if (!isset(self::$responses[$ch]) && !isset(self::$lastErrors[$ch])) {
                     self::$multiExecLastChs[] = $curlHandle;
-                    self::$multiReturnValues[(int) $curlHandle] = self::curlExec($curlHandle);
+                    self::$multiReturnValues[$ch] = self::curlExec($curlHandle);
+                } elseif (!\in_array($curlHandle, self::$multiExecLastChs, true)) {
+                    self::$multiExecLastChs[] = $curlHandle;
                 }
             }
         }
+
+        $stillRunning = 0;
 
         return \CURLM_OK;
     }
