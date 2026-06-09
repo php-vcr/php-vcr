@@ -33,19 +33,32 @@ final class CurlHookTest extends TestCase
         if ($this->curlHook->isEnabled()) {
             $this->curlHook->disable();
         }
+    }
 
-        // Reset CurlHook static state between tests to prevent integer-ID reuse across
-        // test boundaries. Root cause: CurlHook has no curlClose() implementation, so
-        // self::$responses is never cleared when curl_close() is called. Under PHPUnit 10
-        // with pcov coverage, GC reclaims CurlHandle objects sooner than under PHPUnit 9,
-        // making ID reuse much more likely and exposing this latent state-leak.
-        // TODO: implement CurlHook::curlClose() to clear handle state on curl_close().
+    public function testCurlCloseClearsHandleState(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com/');
+        Assertion::notSame($curlHandle, false);
+        curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
+        curl_exec($curlHandle);
+
+        $handleId = (int) $curlHandle;
+        curl_close($curlHandle);
+
         $reflection = new \ReflectionClass(CurlHook::class);
-        foreach (['requests', 'responses', 'curlOptions', 'multiHandles', 'multiExecLastChs', 'multiReturnValues', 'lastErrors'] as $property) {
+        foreach (['requests', 'responses', 'curlOptions', 'lastErrors'] as $property) {
             $prop = $reflection->getProperty($property);
-            $prop->setAccessible(true); // required on PHP 8.0; no-op from PHP 8.1
-            $prop->setValue(null, []);
+            $prop->setAccessible(true);
+            $this->assertArrayNotHasKey(
+                $handleId,
+                $prop->getValue(null),
+                \sprintf('CurlHook::$%s must not contain a stale entry after curl_close()', $property)
+            );
         }
+
+        $this->curlHook->disable();
     }
 
     public function testShouldBeEnabledAfterEnabling(): void
@@ -577,6 +590,45 @@ final class CurlHookTest extends TestCase
 
         curl_close($curlHandle);
         $this->curlHook->disable();
+    }
+
+    public function testCurlMultiCloseClearsQueueState(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle1 = curl_init('http://example.com');
+        $curlHandle2 = curl_init('http://example.com');
+        Assertion::notSame($curlHandle1, false);
+        Assertion::notSame($curlHandle2, false);
+
+        $curlMultiHandle = curl_multi_init();
+        Assertion::notSame($curlMultiHandle, false);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle1);
+        curl_multi_add_handle($curlMultiHandle, $curlHandle2);
+
+        $stillRunning = null;
+        curl_multi_exec($curlMultiHandle, $stillRunning);
+
+        // Close without draining info_read — curlMultiClose must purge the queue.
+        curl_multi_close($curlMultiHandle);
+        $this->curlHook->disable();
+
+        $reflection = new \ReflectionClass(CurlHook::class);
+
+        $multiExecLastChs = $reflection->getProperty('multiExecLastChs');
+        $multiExecLastChs->setAccessible(true);
+        $this->assertEmpty(
+            $multiExecLastChs->getValue(null),
+            'CurlHook::$multiExecLastChs must be empty after curl_multi_close()'
+        );
+
+        $multiHandles = $reflection->getProperty('multiHandles');
+        $multiHandles->setAccessible(true);
+        $this->assertArrayNotHasKey(
+            (int) $curlMultiHandle,
+            $multiHandles->getValue(null),
+            'CurlHook::$multiHandles must not contain the closed multi handle'
+        );
     }
 
     public function testShouldReportCompletedHandlesAfterRepeatedMultiExec(): void

@@ -8,8 +8,8 @@ use GuzzleHttp\Client;
 use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
- * Three sequential requests in one cassette — regression for issue #432
- * (stale curl handle state between sequential requests).
+ * Three sequential requests in one cassette via CurlHook (Guzzle handler).
+ *
  * Cassette prefix 'guzzle-seq-' avoids VCRFactory cache collisions.
  */
 final class SequentialRequestsTest extends AbstractHttpServerIntegrationTestCase
@@ -34,9 +34,9 @@ final class SequentialRequestsTest extends AbstractHttpServerIntegrationTestCase
 
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('guzzle-seq.yml');
-        $s1 = $client->get(self::$baseUrl.'/get');
-        $s2 = $client->get(self::$baseUrl.'/get?page=2');
-        $s3 = $client->get(self::$baseUrl.'/get?page=3');
+        $s1 = (new Client())->get(self::$baseUrl.'/get');
+        $s2 = (new Client())->get(self::$baseUrl.'/get?page=2');
+        $s3 = (new Client())->get(self::$baseUrl.'/get?page=3');
         \VCR\VCR::turnOff();
 
         $this->assertSame($countAfterRecord, $this->server()->getRequestCount(), 'Replay must not hit the server');

@@ -130,13 +130,28 @@ class CurlHook implements LibraryHook
     {
         $curlHandle = curl_init($url);
         if (false !== $curlHandle) {
-            self::$requests[(int) $curlHandle] = new Request('GET', $url);
-            self::$curlOptions[(int) $curlHandle] = [];
-            unset(self::$responses[(int) $curlHandle]);
-            unset(self::$lastErrors[(int) $curlHandle]);
+            $id = (int) $curlHandle;
+            self::$requests[$id] = new Request('GET', $url);
+            self::$curlOptions[$id] = [];
+            unset(self::$responses[$id], self::$lastErrors[$id]);
         }
 
         return $curlHandle;
+    }
+
+    /**
+     * @see https://www.php.net/manual/en/function.curl-close.php
+     */
+    public static function curlClose(\CurlHandle $curlHandle): void
+    {
+        $id = (int) $curlHandle;
+        unset(
+            self::$requests[$id],
+            self::$responses[$id],
+            self::$curlOptions[$id],
+            self::$lastErrors[$id],
+        );
+        curl_close($curlHandle);
     }
 
     /**
@@ -202,9 +217,38 @@ class CurlHook implements LibraryHook
      */
     public static function curlMultiRemoveHandle(\CurlMultiHandle $multiHandle, \CurlHandle $curlHandle): void
     {
-        if (isset(self::$multiHandles[(int) $multiHandle][(int) $curlHandle])) {
-            unset(self::$multiHandles[(int) $multiHandle][(int) $curlHandle]);
+        $ch = (int) $curlHandle;
+        if (isset(self::$multiHandles[(int) $multiHandle][$ch])) {
+            unset(self::$multiHandles[(int) $multiHandle][$ch]);
         }
+        self::$multiExecLastChs = array_values(
+            array_filter(
+                self::$multiExecLastChs,
+                static fn (\CurlHandle $handle): bool => (int) $handle !== $ch
+            )
+        );
+        unset(self::$multiReturnValues[$ch]);
+    }
+
+    /**
+     * @see https://www.php.net/manual/en/function.curl-multi-close.php
+     */
+    public static function curlMultiClose(\CurlMultiHandle $multiHandle): void
+    {
+        $multiId = (int) $multiHandle;
+        if (isset(self::$multiHandles[$multiId])) {
+            foreach (array_keys(self::$multiHandles[$multiId]) as $id) {
+                self::$multiExecLastChs = array_values(
+                    array_filter(
+                        self::$multiExecLastChs,
+                        static fn (\CurlHandle $ch): bool => (int) $ch !== $id
+                    )
+                );
+                unset(self::$multiReturnValues[$id]);
+            }
+            unset(self::$multiHandles[$multiId]);
+        }
+        curl_multi_close($multiHandle);
     }
 
     /**
