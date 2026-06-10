@@ -120,7 +120,7 @@ class Configuration
      *
      * @var string[] a blacklist is a list of paths
      */
-    private $blackList = ['src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'tests/VCR/Filter'];
+    private $blackList = ['src/VCR/LibraryHooks/', 'src/VCR/Util/SoapClient', 'src/VCR/Util/StreamProcessor', 'tests/VCR/Filter'];
 
     private string $mode = VCR::MODE_NEW_EPISODES;
 

@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace VCR\Tests\Unit\LibraryHooks;
 
 use PHPUnit\Framework\TestCase;
+use VCR\CodeTransform\StreamWrapperCodeTransform;
+use VCR\Configuration;
 use VCR\LibraryHooks\StreamWrapperHook;
 use VCR\Response;
+use VCR\Util\StreamProcessor;
 
 final class StreamWrapperHookTest extends TestCase
 {
     public function testEnable(): void
     {
-        $streamWrapper = new StreamWrapperHook();
+        $streamWrapper = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
 
         $testClass = $this;
         $streamWrapper->enable(static function ($request) use ($testClass): void {
@@ -24,14 +27,14 @@ final class StreamWrapperHookTest extends TestCase
 
     public function testDisable(): void
     {
-        $streamWrapper = new StreamWrapperHook();
+        $streamWrapper = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
         $streamWrapper->disable();
         $this->assertFalse($streamWrapper->isEnabled());
     }
 
     public function testSeek(): void
     {
-        $hook = new StreamWrapperHook();
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
         $hook->enable(static fn ($request) => new Response('200', [], 'A Test'));
         $hook->stream_open('http://example.com', 'r', 0, $openedPath);
 
@@ -55,9 +58,9 @@ final class StreamWrapperHookTest extends TestCase
 
     public function testStreamGetMetaDataReplacesWrapperDataWithResponseHeaderLines(): void
     {
-        $hook = new StreamWrapperHook();
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
         $hook->enable(static fn ($request) => new Response(
-            ['code' => 200, 'message' => 'OK', 'http_version' => '1.1'],
+            ['code' => '200', 'message' => 'OK', 'http_version' => '1.1'],
             ['Content-Type' => 'text/plain', 'X-Custom' => 'value'],
             'body'
         ));
@@ -91,9 +94,9 @@ final class StreamWrapperHookTest extends TestCase
 
     public function testStreamGetMetaDataUsesDefaultHttpVersionWhenNoneSet(): void
     {
-        $hook = new StreamWrapperHook();
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
         $hook->enable(static fn ($request) => new Response(
-            ['code' => 204, 'message' => 'No Content'],
+            ['code' => '204', 'message' => 'No Content'],
             [],
             ''
         ));

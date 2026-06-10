@@ -7,6 +7,7 @@ namespace VCR;
 use Assert\Assertion;
 use VCR\LibraryHooks\CurlHook;
 use VCR\LibraryHooks\SoapHook;
+use VCR\LibraryHooks\StreamWrapperHook;
 use VCR\Storage\Storage;
 use VCR\Util\StreamProcessor;
 
@@ -69,6 +70,14 @@ class VCRFactory
     {
         return new CurlHook(
             $this->getOrCreate('VCR\CodeTransform\CurlCodeTransform'),
+            $this->getOrCreate('VCR\Util\StreamProcessor')
+        );
+    }
+
+    protected function createVCRLibraryHooksStreamWrapperHook(): StreamWrapperHook
+    {
+        return new StreamWrapperHook(
+            $this->getOrCreate('VCR\CodeTransform\StreamWrapperCodeTransform'),
             $this->getOrCreate('VCR\Util\StreamProcessor')
         );
     }

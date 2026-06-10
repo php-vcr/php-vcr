@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace VCR\LibraryHooks;
 
+use VCR\CodeTransform\AbstractCodeTransform;
 use VCR\Response;
 use VCR\Util\Assertion;
 use VCR\Util\CurlException;
 use VCR\Util\HttpUtil;
 use VCR\Util\StreamHelper;
+use VCR\Util\StreamProcessor;
 
 class StreamWrapperHook implements LibraryHook
 {
     protected static ?\Closure $requestCallback;
+
+    // Static: PHP instantiates a new StreamWrapperHook (no args) for every fopen() call
+    // through the registered stream wrapper, so these cannot be instance properties.
+    protected static ?AbstractCodeTransform $codeTransformer = null;
+
+    protected static ?StreamProcessor $processor = null;
 
     protected int $position = 0;
 
@@ -28,8 +36,30 @@ class StreamWrapperHook implements LibraryHook
      */
     public $context;
 
+    public function __construct(
+        ?AbstractCodeTransform $codeTransformer = null,
+        ?StreamProcessor $processor = null
+    ) {
+        if (null !== $codeTransformer) {
+            self::$codeTransformer = $codeTransformer;
+        }
+        if (null !== $processor) {
+            self::$processor = $processor;
+        }
+    }
+
     public function enable(\Closure $requestCallback): void
     {
+        if (self::ENABLED == $this->status) {
+            return;
+        }
+
+        if (null !== self::$codeTransformer && null !== self::$processor) {
+            self::$codeTransformer->register();
+            self::$processor->appendCodeTransformer(self::$codeTransformer);
+            self::$processor->intercept();
+        }
+
         self::$requestCallback = $requestCallback;
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', __CLASS__, \STREAM_IS_URL);
