@@ -37,6 +37,21 @@ final class StreamHelperTest extends TestCase
                 },
             ],
 
+            'header as array' => [
+                ['header' => ['Content-Type: application/json']],
+                static function (Request $request): void {
+                    Assert::assertEquals('application/json', $request->getHeader('Content-Type'));
+                },
+            ],
+
+            'multiple headers as array' => [
+                ['header' => ['Content-Type: application/json', 'Content-Length: 123']],
+                static function (Request $request): void {
+                    Assert::assertEquals('application/json', $request->getHeader('Content-Type'));
+                    Assert::assertEquals('123', $request->getHeader('Content-Length'));
+                },
+            ],
+
             'user_agent' => [
                 ['user_agent' => 'example'],
                 static function (Request $request): void {
