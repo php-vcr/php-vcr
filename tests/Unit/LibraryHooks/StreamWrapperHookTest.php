@@ -19,6 +19,7 @@ final class StreamWrapperHookTest extends TestCase
             $testClass->assertInstanceOf('\VCR\Request', $request);
         });
         $this->assertTrue($streamWrapper->isEnabled());
+        $streamWrapper->disable();
     }
 
     public function testDisable(): void
@@ -48,5 +49,64 @@ final class StreamWrapperHookTest extends TestCase
 
         // invalid whence
         $this->assertFalse($hook->stream_seek(0, -1));
+
+        $hook->disable();
+    }
+
+    public function testStreamGetMetaDataReplacesWrapperDataWithResponseHeaderLines(): void
+    {
+        $hook = new StreamWrapperHook();
+        $hook->enable(static fn ($request) => new Response(
+            ['code' => 200, 'message' => 'OK', 'http_version' => '1.1'],
+            ['Content-Type' => 'text/plain', 'X-Custom' => 'value'],
+            'body'
+        ));
+
+        $resource = fopen('http://example.com', 'r');
+        $this->assertIsResource($resource);
+
+        $meta = StreamWrapperHook::streamGetMetaData($resource);
+
+        $this->assertIsArray($meta['wrapper_data']);
+        $this->assertSame('HTTP/1.1 200 OK', $meta['wrapper_data'][0]);
+        $this->assertContains('Content-Type: text/plain', $meta['wrapper_data']);
+        $this->assertContains('X-Custom: value', $meta['wrapper_data']);
+
+        fclose($resource);
+        $hook->disable();
+    }
+
+    public function testStreamGetMetaDataPassesThroughForNonVcrStream(): void
+    {
+        $resource = fopen('php://memory', 'r');
+        $this->assertIsResource($resource);
+
+        $expected = stream_get_meta_data($resource);
+        $actual = StreamWrapperHook::streamGetMetaData($resource);
+
+        $this->assertEquals($expected, $actual);
+
+        fclose($resource);
+    }
+
+    public function testStreamGetMetaDataUsesDefaultHttpVersionWhenNoneSet(): void
+    {
+        $hook = new StreamWrapperHook();
+        $hook->enable(static fn ($request) => new Response(
+            ['code' => 204, 'message' => 'No Content'],
+            [],
+            ''
+        ));
+
+        $resource = fopen('http://example.com', 'r');
+        $this->assertIsResource($resource);
+
+        $meta = StreamWrapperHook::streamGetMetaData($resource);
+
+        $this->assertIsArray($meta['wrapper_data']);
+        $this->assertSame('HTTP/1.1 204 No Content', $meta['wrapper_data'][0]);
+
+        fclose($resource);
+        $hook->disable();
     }
 }
