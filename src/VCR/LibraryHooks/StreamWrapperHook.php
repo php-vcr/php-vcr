@@ -7,6 +7,7 @@ namespace VCR\LibraryHooks;
 use VCR\Response;
 use VCR\Util\Assertion;
 use VCR\Util\CurlException;
+use VCR\Util\HttpUtil;
 use VCR\Util\StreamHelper;
 
 class StreamWrapperHook implements LibraryHook
@@ -18,6 +19,9 @@ class StreamWrapperHook implements LibraryHook
     protected string $status = self::DISABLED;
 
     protected Response $response;
+
+    /** @var string[] */
+    protected array $responseHeaders = [];
 
     /**
      * @var resource current stream context
@@ -70,6 +74,7 @@ class StreamWrapperHook implements LibraryHook
         Assertion::isCallable($requestCallback);
         try {
             $this->response = $requestCallback($request);
+            $this->responseHeaders = self::buildResponseHeaderLines($this->response);
 
             return true;
         } catch (CurlException $e) {
@@ -198,5 +203,39 @@ class StreamWrapperHook implements LibraryHook
     public function stream_metadata(string $path, int $option, $var): bool
     {
         return false;
+    }
+
+    /**
+     * Interception target for stream_get_meta_data() under VCR.
+     *
+     * When the stream was opened through this wrapper, PHP puts the wrapper
+     * object into wrapper_data. Replace it with the pre-built HTTP response
+     * header lines that Symfony's NativeResponse::addResponseHeaders() expects.
+     *
+     * @param resource $resource
+     *
+     * @return array<string, mixed>
+     */
+    public static function streamGetMetaData($resource): array
+    {
+        $meta = stream_get_meta_data($resource);
+
+        if (isset($meta['wrapper_data']) && $meta['wrapper_data'] instanceof self) {
+            $meta['wrapper_data'] = $meta['wrapper_data']->responseHeaders;
+        }
+
+        return $meta;
+    }
+
+    /** @return string[] */
+    private static function buildResponseHeaderLines(Response $response): array
+    {
+        $lines = [rtrim(HttpUtil::formatAsStatusString($response), "\r\n")];
+
+        foreach ($response->getHeaders() as $name => $value) {
+            $lines[] = $name.': '.$value;
+        }
+
+        return $lines;
     }
 }
