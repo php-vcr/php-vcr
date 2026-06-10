@@ -30,7 +30,10 @@ class StreamHelper
         }
 
         if (!empty($http['header'])) {
-            $headers = HttpUtil::parseHeaders(HttpUtil::parseRawHeader($http['header']));
+            $rawHeaders = \is_array($http['header'])
+                ? $http['header']
+                : HttpUtil::parseRawHeader($http['header']);
+            $headers = HttpUtil::parseHeaders($rawHeaders);
             foreach ($headers as $key => $value) {
                 $request->setHeader($key, $value);
             }
