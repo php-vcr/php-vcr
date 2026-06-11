@@ -72,6 +72,10 @@ class StreamWrapperHook implements LibraryHook
 
     public function disable(): void
     {
+        if (self::ENABLED !== $this->status) {
+            return;
+        }
+
         self::$requestCallback = null;
         stream_wrapper_restore('http');
         stream_wrapper_restore('https');
