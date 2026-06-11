@@ -10,7 +10,6 @@ use VCR\Tests\Integration\AbstractIntegrationTestCase;
 
 /**
  * Connection-failure behaviour for Symfony NativeHttpClient.
- * The "with VCR" test is skipped — same headers-as-array limitation as #329.
  */
 final class ErrorTest extends AbstractIntegrationTestCase
 {
@@ -31,8 +30,6 @@ final class ErrorTest extends AbstractIntegrationTestCase
 
     public function testConnectExceptionPassesThroughWithVcr(): void
     {
-        $this->markTestSkipped('NativeHttpClient: headers as array in stream context. See #329.');
-
         \VCR\VCR::turnOn();
         \VCR\VCR::insertCassette('symfony-native-error.yml');
 

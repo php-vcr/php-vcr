@@ -4,14 +4,23 @@ declare(strict_types=1);
 
 namespace VCR\LibraryHooks;
 
+use VCR\CodeTransform\AbstractCodeTransform;
 use VCR\Response;
 use VCR\Util\Assertion;
 use VCR\Util\CurlException;
+use VCR\Util\HttpUtil;
 use VCR\Util\StreamHelper;
+use VCR\Util\StreamProcessor;
 
 class StreamWrapperHook implements LibraryHook
 {
     protected static ?\Closure $requestCallback;
+
+    // Static: PHP instantiates a new StreamWrapperHook (no args) for every fopen() call
+    // through the registered stream wrapper, so these cannot be instance properties.
+    protected static ?AbstractCodeTransform $codeTransformer = null;
+
+    protected static ?StreamProcessor $processor = null;
 
     protected int $position = 0;
 
@@ -19,13 +28,38 @@ class StreamWrapperHook implements LibraryHook
 
     protected Response $response;
 
+    /** @var string[] */
+    protected array $responseHeaders = [];
+
     /**
      * @var resource current stream context
      */
     public $context;
 
+    public function __construct(
+        ?AbstractCodeTransform $codeTransformer = null,
+        ?StreamProcessor $processor = null
+    ) {
+        if (null !== $codeTransformer) {
+            self::$codeTransformer = $codeTransformer;
+        }
+        if (null !== $processor) {
+            self::$processor = $processor;
+        }
+    }
+
     public function enable(\Closure $requestCallback): void
     {
+        if (self::ENABLED == $this->status) {
+            return;
+        }
+
+        if (null !== self::$codeTransformer && null !== self::$processor) {
+            self::$codeTransformer->register();
+            self::$processor->appendCodeTransformer(self::$codeTransformer);
+            self::$processor->intercept();
+        }
+
         self::$requestCallback = $requestCallback;
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', __CLASS__, \STREAM_IS_URL);
@@ -38,6 +72,10 @@ class StreamWrapperHook implements LibraryHook
 
     public function disable(): void
     {
+        if (self::ENABLED !== $this->status) {
+            return;
+        }
+
         self::$requestCallback = null;
         stream_wrapper_restore('http');
         stream_wrapper_restore('https');
@@ -70,6 +108,7 @@ class StreamWrapperHook implements LibraryHook
         Assertion::isCallable($requestCallback);
         try {
             $this->response = $requestCallback($request);
+            $this->responseHeaders = self::buildResponseHeaderLines($this->response);
 
             return true;
         } catch (CurlException $e) {
@@ -198,5 +237,47 @@ class StreamWrapperHook implements LibraryHook
     public function stream_metadata(string $path, int $option, $var): bool
     {
         return false;
+    }
+
+    /**
+     * @see https://www.php.net/manual/en/streamwrapper.stream-set-option.php
+     */
+    public function stream_set_option(int $option, int $arg1, ?int $arg2): bool
+    {
+        return false;
+    }
+
+    /**
+     * Interception target for stream_get_meta_data() under VCR.
+     *
+     * When the stream was opened through this wrapper, PHP puts the wrapper
+     * object into wrapper_data. Replace it with the pre-built HTTP response
+     * header lines that Symfony's NativeResponse::addResponseHeaders() expects.
+     *
+     * @param resource $resource
+     *
+     * @return array<string, mixed>
+     */
+    public static function streamGetMetaData($resource): array
+    {
+        $meta = stream_get_meta_data($resource);
+
+        if (isset($meta['wrapper_data']) && $meta['wrapper_data'] instanceof self) {
+            $meta['wrapper_data'] = $meta['wrapper_data']->responseHeaders;
+        }
+
+        return $meta;
+    }
+
+    /** @return string[] */
+    private static function buildResponseHeaderLines(Response $response): array
+    {
+        $lines = [rtrim(HttpUtil::formatAsStatusString($response), "\r\n")];
+
+        foreach ($response->getHeaders() as $name => $value) {
+            $lines[] = $name.': '.$value;
+        }
+
+        return $lines;
     }
 }

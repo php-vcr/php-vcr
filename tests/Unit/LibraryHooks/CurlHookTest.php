@@ -678,6 +678,20 @@ final class CurlHookTest extends TestCase
         CurlHook::curlGetinfo($nativeHandle);
     }
 
+    public function testCurlSetoptPassesThroughForUnregisteredHandle(): void
+    {
+        // Simulates a curl handle created outside VCR (e.g. by Symfony CurlResponse
+        // error-path code loaded via CurlCodeTransform but called from NativeHttpClient).
+        $nativeHandle = curl_init('http://example.com');
+        \assert(false !== $nativeHandle);
+
+        $this->curlHook->enable($this->getTestCallback());
+
+        // Must not throw even though the handle is not in self::$requests.
+        $result = CurlHook::curlSetopt($nativeHandle, \CURLOPT_TIMEOUT, 5);
+        $this->assertTrue($result);
+    }
+
     protected function getTestCallback(string $statusCode = '200'): \Closure
     {
         $testClass = $this;
