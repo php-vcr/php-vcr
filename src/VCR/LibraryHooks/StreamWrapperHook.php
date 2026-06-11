@@ -236,6 +236,14 @@ class StreamWrapperHook implements LibraryHook
     }
 
     /**
+     * @see https://www.php.net/manual/en/streamwrapper.stream-set-option.php
+     */
+    public function stream_set_option(int $option, int $arg1, ?int $arg2): bool
+    {
+        return false;
+    }
+
+    /**
      * Interception target for stream_get_meta_data() under VCR.
      *
      * When the stream was opened through this wrapper, PHP puts the wrapper
