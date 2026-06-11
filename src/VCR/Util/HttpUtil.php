@@ -44,11 +44,20 @@ class HttpUtil
      */
     public static function parseStatus(string $status): array
     {
-        Assertion::startsWith(
-            $status,
-            'HTTP/',
-            "Invalid HTTP status '$status', expected format like: 'HTTP/1.1 200 OK'."
-        );
+        // Pre-check with str_starts_with so that Assertion::startsWith is only
+        // called on the error path. On PHP 8.4, beberlei/assert <3.3.4 calls
+        // mb_strpos() with null offset inside startsWith(), triggering E_DEPRECATED.
+        // Symfony NativeResponse registers its own error handler during stream reads
+        // that converts any E_DEPRECATED into a TransportException — so the deprecation
+        // must never be triggered on the happy path. Keeping Assertion::startsWith on
+        // the error path preserves the Assert\InvalidArgumentException type for callers.
+        if (!str_starts_with($status, 'HTTP/')) {
+            Assertion::startsWith(
+                $status,
+                'HTTP/',
+                "Invalid HTTP status '$status', expected format like: 'HTTP/1.1 200 OK'."
+            );
+        }
 
         $part = explode(' ', $status, 3);
 
