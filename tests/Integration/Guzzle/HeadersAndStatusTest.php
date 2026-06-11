@@ -18,7 +18,7 @@ final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'guzzle-headers-custom.yml',
-            fn (): int => (new Client())->get(self::$baseUrl.'/get', ['headers' => ['X-Custom-Header' => 'test-value']])->getStatusCode(),
+            static fn (): int => (new Client())->get(self::$baseUrl.'/get', ['headers' => ['X-Custom-Header' => 'test-value']])->getStatusCode(),
         );
     }
 
@@ -26,7 +26,7 @@ final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'guzzle-headers-404.yml',
-            fn (): int => (new Client(['http_errors' => false]))->get(self::$baseUrl.'/status/404')->getStatusCode(),
+            static fn (): int => (new Client(['http_errors' => false]))->get(self::$baseUrl.'/status/404')->getStatusCode(),
             404,
         );
     }
@@ -35,7 +35,7 @@ final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'guzzle-headers-500.yml',
-            fn (): int => (new Client(['http_errors' => false]))->get(self::$baseUrl.'/status/500')->getStatusCode(),
+            static fn (): int => (new Client(['http_errors' => false]))->get(self::$baseUrl.'/status/500')->getStatusCode(),
             500,
         );
     }

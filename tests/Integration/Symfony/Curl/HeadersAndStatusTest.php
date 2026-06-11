@@ -17,7 +17,7 @@ final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'symfony-curl-headers-custom.yml',
-            fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/get', [
+            static fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/get', [
                 'headers' => ['X-Custom-Header' => 'test-value'],
             ])->getStatusCode(),
         );
@@ -27,7 +27,7 @@ final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'symfony-curl-headers-404.yml',
-            fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/status/404')->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/status/404')->getStatusCode(),
             404,
         );
     }
@@ -36,7 +36,7 @@ final class HeadersAndStatusTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'symfony-curl-headers-500.yml',
-            fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/status/500')->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/status/500')->getStatusCode(),
             500,
         );
     }

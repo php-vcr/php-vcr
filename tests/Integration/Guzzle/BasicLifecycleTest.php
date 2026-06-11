@@ -18,14 +18,14 @@ final class BasicLifecycleTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'guzzle-basic-get.yml',
-            fn (): int => (new Client())->get(self::$baseUrl.'/get')->getStatusCode(),
+            static fn (): int => (new Client())->get(self::$baseUrl.'/get')->getStatusCode(),
         );
     }
 
     public function testPassthroughGetRequest(): void
     {
         $this->assertPassthrough(
-            fn (): int => (new Client())->get(self::$baseUrl.'/get')->getStatusCode(),
+            static fn (): int => (new Client())->get(self::$baseUrl.'/get')->getStatusCode(),
         );
     }
 
@@ -33,14 +33,14 @@ final class BasicLifecycleTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'guzzle-basic-post.yml',
-            fn (): int => (new Client())->post(self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
+            static fn (): int => (new Client())->post(self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
         );
     }
 
     public function testPassthroughPostRequest(): void
     {
         $this->assertPassthrough(
-            fn (): int => (new Client())->post(self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
+            static fn (): int => (new Client())->post(self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
         );
     }
 }

@@ -18,14 +18,14 @@ final class BasicLifecycleTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'symfony-curl-basic-get.yml',
-            fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/get')->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/get')->getStatusCode(),
         );
     }
 
     public function testPassthroughGetRequest(): void
     {
         $this->assertPassthrough(
-            fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/get')->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('GET', self::$baseUrl.'/get')->getStatusCode(),
         );
     }
 
@@ -33,14 +33,14 @@ final class BasicLifecycleTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'symfony-curl-basic-post.yml',
-            fn (): int => (new CurlHttpClient())->request('POST', self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('POST', self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
         );
     }
 
     public function testPassthroughPostRequest(): void
     {
         $this->assertPassthrough(
-            fn (): int => (new CurlHttpClient())->request('POST', self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('POST', self::$baseUrl.'/post', ['body' => 'hello=world'])->getStatusCode(),
         );
     }
 }
