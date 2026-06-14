@@ -44,7 +44,7 @@ jobs:
         uses: "actions/checkout@v4"
 
       - name: "Install EditorConfig Checker"
-        uses: "editorconfig-checker/action-editorconfig-checker@main"
+        uses: "editorconfig-checker/action-editorconfig-checker@v2.2.0"
 
       - name: "Run EditorConfig Checker"
         run: "editorconfig-checker"
@@ -137,7 +137,7 @@ jobs:
           check_name: "PHPUnit Test Report (${{ matrix.php }}, ${{ matrix.dependencies }}, ${{ matrix.stability }})"
 
       - name: "Publish Scrutinizer Coverage"
-        uses: "sudo-bot/action-scrutinizer@latest"
+        uses: "sudo-bot/action-scrutinizer@48bfd7e039e36318b89618b8eaa643df96c505a4" # @latest
         if: "always()" # always run even if the previous step fails
         with:
           cli-args: "--format=php-clover coverage.clover"
