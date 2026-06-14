@@ -34,7 +34,7 @@ jobs:
         run: "composer validate --strict"
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v3"
+        uses: "ramsey/composer-install@v4"
         with:
           dependency-versions: "highest"
           composer-options: "--prefer-dist -o"
@@ -78,7 +78,7 @@ jobs:
         run: "composer validate --strict"
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v3"
+        uses: "ramsey/composer-install@v4"
         with:
           dependency-versions: "highest"
           composer-options: "--prefer-dist -o"
@@ -128,7 +128,7 @@ jobs:
         run: "composer validate --strict"
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v3"
+        uses: "ramsey/composer-install@v4"
         with:
           dependency-versions: "${{ matrix.dependencies }}"
           composer-options: "--prefer-dist -o"
