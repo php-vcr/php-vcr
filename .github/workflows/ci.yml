@@ -4,6 +4,13 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   phpstan:
     name: "PHPStan"
@@ -11,7 +18,7 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v4"
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -27,7 +34,7 @@ jobs:
         run: "composer validate --strict"
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
         with:
           dependency-versions: "highest"
           composer-options: "--prefer-dist -o"
@@ -41,10 +48,10 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v4"
 
       - name: "Install EditorConfig Checker"
-        uses: "editorconfig-checker/action-editorconfig-checker@main"
+        uses: "editorconfig-checker/action-editorconfig-checker@v2.2.0"
 
       - name: "Run EditorConfig Checker"
         run: "editorconfig-checker"
@@ -55,7 +62,7 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v4"
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -71,7 +78,7 @@ jobs:
         run: "composer validate --strict"
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
         with:
           dependency-versions: "highest"
           composer-options: "--prefer-dist -o"
@@ -101,7 +108,7 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v4"
         with:
           fetch-depth: 2
 
@@ -121,7 +128,7 @@ jobs:
         run: "composer validate --strict"
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
         with:
           dependency-versions: "${{ matrix.dependencies }}"
           composer-options: "--prefer-dist -o"
@@ -130,14 +137,14 @@ jobs:
         run: "vendor/bin/phpunit --coverage-clover=coverage.clover --log-junit=phpunit.xml"
 
       - name: "Publish Test Report"
-        uses: "mikepenz/action-junit-report@v2"
+        uses: "mikepenz/action-junit-report@v6.4.1"
         if: "always()" # always run even if the previous step fails
         with:
           report_paths: "phpunit.xml"
           check_name: "PHPUnit Test Report (${{ matrix.php }}, ${{ matrix.dependencies }}, ${{ matrix.stability }})"
 
       - name: "Publish Scrutinizer Coverage"
-        uses: "sudo-bot/action-scrutinizer@latest"
+        uses: "sudo-bot/action-scrutinizer@48bfd7e039e36318b89618b8eaa643df96c505a4" # @latest
         if: "always()" # always run even if the previous step fails
         with:
           cli-args: "--format=php-clover coverage.clover"
