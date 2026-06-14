@@ -9,15 +9,12 @@ use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * Sequential multi-request record/replay for Symfony NativeHttpClient.
- * Record/replay skipped — NativeHttpClient sends headers as array. See #329.
  * Cassette name prefixed 'symfony-native-seq-'.
  */
 final class SequentialRequestsTest extends AbstractHttpServerIntegrationTestCase
 {
     public function testSequentialRequestsRecordAndReplay(): void
     {
-        $this->markTestSkipped('NativeHttpClient: headers as array in stream context. See #329.');
-
         $countBefore = $this->server()->getRequestCount();
         $client = new NativeHttpClient();
 

@@ -9,15 +9,12 @@ use VCR\Tests\Integration\AbstractHttpServerIntegrationTestCase;
 
 /**
  * Concurrent lazy requests for Symfony NativeHttpClient.
- * Record/replay skipped — NativeHttpClient sends headers as array. See #329.
  * Cassette name prefixed 'symfony-native-async-'.
  */
 final class AsyncTest extends AbstractHttpServerIntegrationTestCase
 {
     public function testConcurrentRequestsRecordAndReplay(): void
     {
-        $this->markTestSkipped('NativeHttpClient: headers as array in stream context. See #329.');
-
         $countBefore = $this->server()->getRequestCount();
         $client = new NativeHttpClient();
 

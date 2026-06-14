@@ -17,14 +17,14 @@ final class HttpMethodsTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'symfony-curl-methods-put.yml',
-            fn (): int => (new CurlHttpClient())->request('PUT', self::$baseUrl.'/put', ['body' => 'data=1'])->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('PUT', self::$baseUrl.'/put', ['body' => 'data=1'])->getStatusCode(),
         );
     }
 
     public function testPassthroughPutRequest(): void
     {
         $this->assertPassthrough(
-            fn (): int => (new CurlHttpClient())->request('PUT', self::$baseUrl.'/put', ['body' => 'data=1'])->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('PUT', self::$baseUrl.'/put', ['body' => 'data=1'])->getStatusCode(),
         );
     }
 
@@ -32,14 +32,14 @@ final class HttpMethodsTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'symfony-curl-methods-delete.yml',
-            fn (): int => (new CurlHttpClient())->request('DELETE', self::$baseUrl.'/delete')->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('DELETE', self::$baseUrl.'/delete')->getStatusCode(),
         );
     }
 
     public function testPassthroughDeleteRequest(): void
     {
         $this->assertPassthrough(
-            fn (): int => (new CurlHttpClient())->request('DELETE', self::$baseUrl.'/delete')->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('DELETE', self::$baseUrl.'/delete')->getStatusCode(),
         );
     }
 
@@ -47,14 +47,14 @@ final class HttpMethodsTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'symfony-curl-methods-patch.yml',
-            fn (): int => (new CurlHttpClient())->request('PATCH', self::$baseUrl.'/patch', ['body' => 'field=value'])->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('PATCH', self::$baseUrl.'/patch', ['body' => 'field=value'])->getStatusCode(),
         );
     }
 
     public function testPassthroughPatchRequest(): void
     {
         $this->assertPassthrough(
-            fn (): int => (new CurlHttpClient())->request('PATCH', self::$baseUrl.'/patch', ['body' => 'field=value'])->getStatusCode(),
+            static fn (): int => (new CurlHttpClient())->request('PATCH', self::$baseUrl.'/patch', ['body' => 'field=value'])->getStatusCode(),
         );
     }
 }

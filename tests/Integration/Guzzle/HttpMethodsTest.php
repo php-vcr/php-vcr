@@ -18,7 +18,7 @@ final class HttpMethodsTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'guzzle-methods-put.yml',
-            fn (): int => (new Client())->put(self::$baseUrl.'/put', ['body' => 'data=1'])->getStatusCode(),
+            static fn (): int => (new Client())->put(self::$baseUrl.'/put', ['body' => 'data=1'])->getStatusCode(),
         );
     }
 
@@ -26,7 +26,7 @@ final class HttpMethodsTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'guzzle-methods-delete.yml',
-            fn (): int => (new Client())->delete(self::$baseUrl.'/delete')->getStatusCode(),
+            static fn (): int => (new Client())->delete(self::$baseUrl.'/delete')->getStatusCode(),
         );
     }
 
@@ -34,7 +34,7 @@ final class HttpMethodsTest extends AbstractHttpServerIntegrationTestCase
     {
         $this->recordAndReplay(
             'guzzle-methods-patch.yml',
-            fn (): int => (new Client())->patch(self::$baseUrl.'/patch', ['body' => 'field=value'])->getStatusCode(),
+            static fn (): int => (new Client())->patch(self::$baseUrl.'/patch', ['body' => 'field=value'])->getStatusCode(),
         );
     }
 }

@@ -13,10 +13,7 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 ## Features
 
 * Automatically records and replays your HTTP(s) interactions with minimal setup/configuration code.
-* Supports common http functions and extensions
-  * everything using [streamWrapper](http://php.net/manual/en/class.streamwrapper.php): fopen(), fread(), file_get_contents(), ... without any modification (except `$http_response_header` see [#96](https://github.com/php-vcr/php-vcr/issues/96))
-  * [SoapClient](http://www.php.net/manual/en/soapclient.soapclient.php) by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
-  * curl(), by adding `\VCR\VCR::turnOn();` in your `tests/bootstrap.php`
+* Supports common http functions and extensions — see [Supported HTTP libraries](#supported-http-libraries) below
 * The same request can receive different responses in different tests -- just use different cassettes.
 * Disables all HTTP requests that you don't explicitly allow by [setting the record mode](http://php-vcr.github.io/documentation/configuration/)
 * [Request matching](http://php-vcr.github.io/documentation/configuration/) is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
@@ -84,6 +81,25 @@ class VCRTest extends TestCase
     }
 }
 ```
+
+## Supported HTTP libraries
+
+All three hooks are **enabled by default** when you call `VCR::turnOn()`. No extra configuration is required.
+
+| Hook name | Intercepted libraries | How it works |
+|---|---|---|
+| `stream_wrapper` | `fopen()`, `fread()`, `file_get_contents()`, `Symfony\Component\HttpClient\NativeHttpClient` | Replaces the `http`/`https` stream wrapper — no source rewriting |
+| `curl` | `curl_*` functions, `Symfony\Component\HttpClient\CurlHttpClient`, Guzzle (curl backend) | Rewrites `curl_*` calls in loaded PHP source via a stream filter |
+| `soap` | `SoapClient` | Rewrites `new SoapClient(…)` in loaded PHP source via a stream filter |
+
+To enable only specific hooks (e.g. when you know your code only uses curl):
+
+```php
+\VCR\VCR::configure()->enableLibraryHooks(['curl']);
+\VCR\VCR::turnOn();
+```
+
+Available hook names: `stream_wrapper`, `curl`, `soap`.
 
 ## Installation
 
