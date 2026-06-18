@@ -8,8 +8,44 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use VCR\Util\StreamProcessor;
 
+/**
+ * Simulates an environment in which routing the existence check back through the
+ * VCR wrapper's own url_stat() makes an existing file look missing (issue #424).
+ */
+final class BrokenUrlStatStreamProcessor extends StreamProcessor
+{
+    public function url_stat(string $path, int $flags)
+    {
+        return false;
+    }
+}
+
 final class StreamProcessorTest extends TestCase
 {
+    /**
+     * When this wrapper is intercepting, including an existing file must still
+     * succeed even if this wrapper's own url_stat() would report it as missing,
+     * because the existence check has to run against the native filesystem.
+     *
+     * @see https://github.com/php-vcr/php-vcr/issues/424
+     */
+    public function testStreamOpenChecksExistenceAgainstNativeFilesystem(): void
+    {
+        $processor = new BrokenUrlStatStreamProcessor();
+        $processor->intercept();
+
+        try {
+            // A path containing ".." just like Composer's classmap autoloader produces.
+            $path = __DIR__.'/../../fixtures/../fixtures/streamprocessor_include_target.php';
+            $result = include $path;
+        } finally {
+            $processor->restore();
+        }
+
+        $this->assertNotFalse($result, 'Including an existing file must not fail while VCR is intercepting.');
+        $this->assertTrue(class_exists(\VCR\Tests\Fixtures\StreamProcessorIncludeTarget::class, false));
+    }
+
     /**
      * test flock with file_put_contents.
      */

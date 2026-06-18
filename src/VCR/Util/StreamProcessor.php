@@ -66,7 +66,7 @@ class StreamProcessor
         if (!$this->isIntercepting) {
             ini_set('opcache.enable', '0');
             stream_wrapper_unregister(self::PROTOCOL);
-            $this->isIntercepting = stream_wrapper_register(self::PROTOCOL, __CLASS__);
+            $this->isIntercepting = stream_wrapper_register(self::PROTOCOL, static::class);
         }
     }
 
@@ -137,12 +137,19 @@ class StreamProcessor
 
     public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
     {
+        // Delegate to the native file wrapper for the rest of this call. This must happen
+        // *before* the existence check below: otherwise file_exists() is routed back through
+        // this wrapper's own url_stat(), and any fragility there (re-entrancy, a strict error
+        // handler, paths containing "..") can make an existing file look missing and abort an
+        // include() with "Failed opening ... for inclusion" (see GitHub issue #424).
+        $this->restore();
+
         // file_exists catches paths like /dev/urandom that are missed by is_file.
         if ('r' === substr($mode, 0, 1) && !file_exists($path)) {
+            $this->intercept();
+
             return false;
         }
-
-        $this->restore();
 
         if (isset($this->context)) {
             $this->resource = fopen($path, $mode, (bool) ($options & \STREAM_USE_PATH), $this->context);
