@@ -38,9 +38,9 @@ class Videorecorder
     protected EventDispatcherInterface $eventDispatcher;
 
     /**
-     * @var array<string, int>
+     * @var Request[]
      */
-    protected array $indexTable = [];
+    protected array $handledRequests = [];
 
     public function __construct(
         protected Configuration $config,
@@ -229,16 +229,19 @@ class Videorecorder
 
     protected function iterateIndex(Request $request): int
     {
-        $hash = $request->getHash();
-        if (!isset($this->indexTable[$hash])) {
-            $this->indexTable[$hash] = -1;
+        $index = 0;
+        foreach ($this->handledRequests as $req) {
+            if ($req->matches($request, $this->config->getRequestMatchers())) {
+                ++$index;
+            }
         }
+        $this->handledRequests[] = $request;
 
-        return ++$this->indexTable[$hash];
+        return $index;
     }
 
     public function resetIndex(): void
     {
-        $this->indexTable = [];
+        $this->handledRequests = [];
     }
 }
