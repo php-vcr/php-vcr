@@ -7,9 +7,13 @@ namespace VCR\Storage;
 /**
  * Backhole storage, the storage that looses everything.
  */
-class Blackhole implements Storage
+class Blackhole implements PurgeableStorage
 {
     public function storeRecording(array $recording): void
+    {
+    }
+
+    public function purge(): void
     {
     }
 

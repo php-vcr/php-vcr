@@ -6,6 +6,7 @@ namespace VCR\Tests\Unit\Storage;
 
 use PHPUnit\Framework\TestCase;
 use VCR\Storage\Blackhole;
+use VCR\Storage\PurgeableStorage;
 
 final class BlackholeTest extends TestCase
 {
@@ -69,5 +70,18 @@ final class BlackholeTest extends TestCase
     public function testIsNewIsAlwaysTrue(): void
     {
         $this->assertTrue($this->storage->isNew());
+    }
+
+    public function testImplementsPurgeableStorage(): void
+    {
+        $this->assertInstanceOf(PurgeableStorage::class, $this->storage);
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testPurgeIsNoOp(): void
+    {
+        $this->storage->purge();
     }
 }
