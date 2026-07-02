@@ -10,6 +10,7 @@ use VCR\Cassette;
 use VCR\Configuration;
 use VCR\Request;
 use VCR\Response;
+use VCR\Storage\Storage;
 use VCR\Util\HttpClient;
 use VCR\VCR;
 use VCR\VCRFactory;
@@ -140,6 +141,101 @@ final class VideorecorderTest extends TestCase
         $videorecorder->setCassette($this->getCassetteMock($request, $response, 'once', false));
 
         $videorecorder->handleRequest($request);
+    }
+
+    public function testInsertCassettePurgesStorageWhenModeIsAll(): void
+    {
+        vfsStream::setup('testDir');
+        $cassetteName = 'purge_test';
+        vfsStream::create([$cassetteName => "- request:\n    url: http://example.com\n  response:\n    status: 200\n"]);
+
+        $factory = VCRFactory::getInstance();
+        $configuration = $factory->get('VCR\Configuration');
+        $configuration->setCassettePath(vfsStream::url('testDir'));
+        $configuration->enableLibraryHooks([]);
+        $configuration->setMode(VCR::MODE_ALL);
+
+        $videorecorder = new Videorecorder($configuration, new HttpClient(), $factory);
+        $videorecorder->turnOn();
+        $videorecorder->insertCassette($cassetteName);
+
+        $content = (string) file_get_contents(vfsStream::url('testDir').'/'.$cassetteName);
+        $this->assertSame('', $content);
+
+        $videorecorder->turnOff();
+    }
+
+    public function testInsertCassetteThrowsExceptionWhenStorageIsNotPurgeableInModeAll(): void
+    {
+        $nonPurgeableStorage = new class implements Storage {
+            public function storeRecording(array $recording): void {}
+
+            public function isNew(): bool { return true; }
+
+            public function current(): ?array { return null; }
+
+            public function key(): int { return 0; }
+
+            public function next(): void {}
+
+            public function rewind(): void {}
+
+            public function valid(): bool { return false; }
+        };
+
+        $configuration = new Configuration();
+        $configuration->enableLibraryHooks([]);
+        $configuration->setMode(VCR::MODE_ALL);
+
+        $videorecorder = new class($configuration, new HttpClient(), VCRFactory::getInstance(), $nonPurgeableStorage) extends Videorecorder {
+            private Storage $nonPurgeableStorage;
+
+            public function __construct(Configuration $config, HttpClient $client, VCRFactory $factory, Storage $storage)
+            {
+                parent::__construct($config, $client, $factory);
+                $this->nonPurgeableStorage = $storage;
+            }
+
+            protected function createStorage(string $cassetteName): Storage
+            {
+                return $this->nonPurgeableStorage;
+            }
+        };
+
+        $videorecorder->turnOn();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessageMatches('/does not support MODE_ALL/');
+        $videorecorder->insertCassette('cassette');
+    }
+
+    public function testHandleRequestSkipsPlaybackAndAlwaysRecordsWhenModeIsAll(): void
+    {
+        $request = new Request('GET', 'http://example.com', ['User-Agent' => 'Unit-Test']);
+        $response = new Response('200', [], 'example response');
+        $client = $this->getClientMock($request, $response);
+        $configuration = new Configuration();
+        $configuration->enableLibraryHooks([]);
+        $configuration->setMode(VCR::MODE_ALL);
+
+        $cassette = $this->getMockBuilder(Cassette::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['record', 'playback', 'isNew', 'getName'])
+            ->getMock();
+        $cassette->expects($this->never())->method('playback');
+        $cassette->expects($this->once())->method('record')->with($request, $response);
+        $cassette->method('getName')->willReturn('foobar');
+
+        $videorecorder = new class($configuration, $client, VCRFactory::getInstance()) extends Videorecorder {
+            public function setCassette(Cassette $cassette): void
+            {
+                $this->cassette = $cassette;
+            }
+        };
+
+        $videorecorder->setCassette($cassette);
+
+        $this->assertEquals($response, $videorecorder->handleRequest($request));
     }
 
     protected function getClientMock(Request $request, Response $response): HttpClient
