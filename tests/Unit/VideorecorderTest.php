@@ -163,6 +163,7 @@ final class VideorecorderTest extends TestCase
         $this->assertSame('', $content);
 
         $videorecorder->turnOff();
+        $configuration->setMode(VCR::MODE_NEW_EPISODES);
     }
 
     public function testInsertCassetteThrowsExceptionWhenStorageIsNotPurgeableInModeAll(): void
