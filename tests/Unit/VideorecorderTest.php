@@ -168,19 +168,38 @@ final class VideorecorderTest extends TestCase
     public function testInsertCassetteThrowsExceptionWhenStorageIsNotPurgeableInModeAll(): void
     {
         $nonPurgeableStorage = new class implements Storage {
-            public function storeRecording(array $recording): void {}
+            public function storeRecording(array $recording): void
+            {
+            }
 
-            public function isNew(): bool { return true; }
+            public function isNew(): bool
+            {
+                return true;
+            }
 
-            public function current(): ?array { return null; }
+            /** @return array<string, mixed>|null */
+            public function current(): ?array
+            {
+                return null;
+            }
 
-            public function key(): int { return 0; }
+            public function key(): int
+            {
+                return 0;
+            }
 
-            public function next(): void {}
+            public function next(): void
+            {
+            }
 
-            public function rewind(): void {}
+            public function rewind(): void
+            {
+            }
 
-            public function valid(): bool { return false; }
+            public function valid(): bool
+            {
+                return false;
+            }
         };
 
         $configuration = new Configuration();

@@ -125,9 +125,7 @@ class Videorecorder
 
         if (VCR::MODE_ALL === $this->config->getMode()) {
             if (!$storage instanceof PurgeableStorage) {
-                throw new \LogicException(
-                    \sprintf('Storage "%s" does not support MODE_ALL: implement PurgeableStorage to enable purge on cassette insert.', \get_class($storage))
-                );
+                throw new \LogicException(\sprintf('Storage "%s" does not support MODE_ALL: implement PurgeableStorage to enable purge on cassette insert.', $storage::class));
             }
             $storage->purge();
         }
