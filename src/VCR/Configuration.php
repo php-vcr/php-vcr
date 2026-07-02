@@ -138,6 +138,7 @@ class Configuration
         VCR::MODE_NEW_EPISODES,
         VCR::MODE_ONCE,
         VCR::MODE_NONE,
+        VCR::MODE_ALL,
     ];
 
     /**

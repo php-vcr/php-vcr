@@ -35,6 +35,12 @@ class VCR
     public const MODE_NONE = 'none';
 
     /**
+     * Never play back recorded interactions; always perform the real request and record fresh.
+     * Purges the cassette on insert so every run captures a clean recording.
+     */
+    public const MODE_ALL = 'all';
+
+    /**
      * @param mixed[] $parameters
      */
     public static function __callStatic(string $method, array $parameters): mixed

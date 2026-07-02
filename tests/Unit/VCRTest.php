@@ -21,6 +21,11 @@ final class VCRTest extends TestCase
         VCR::configure()->setCassettePath('tests/fixtures');
     }
 
+    public function testModeAllConstantIsDefined(): void
+    {
+        $this->assertSame('all', VCR::MODE_ALL);
+    }
+
     public function testUseStaticCallsNotInitialized(): void
     {
         VCR::configure()->enableLibraryHooks(['stream_wrapper']);
