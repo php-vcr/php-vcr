@@ -20,6 +20,18 @@ final class BrokenUrlStatStreamProcessor extends StreamProcessor
     }
 }
 
+/**
+ * Exposes the protected interception state so tests can assert the wrapper is
+ * never left restored after an early return in stream_open().
+ */
+final class InterceptStateStreamProcessor extends StreamProcessor
+{
+    public function isIntercepting(): bool
+    {
+        return $this->isIntercepting;
+    }
+}
+
 final class StreamProcessorTest extends TestCase
 {
     /**
@@ -44,6 +56,26 @@ final class StreamProcessorTest extends TestCase
 
         $this->assertNotFalse($result, 'Including an existing file must not fail while VCR is intercepting.');
         $this->assertTrue(class_exists(\VCR\Tests\Fixtures\StreamProcessorIncludeTarget::class, false));
+    }
+
+    /**
+     * A missing file in read mode returns false, but the wrapper must re-intercept
+     * before returning so it is never left in an inconsistent (restored) state.
+     *
+     * @see https://github.com/php-vcr/php-vcr/issues/424
+     */
+    public function testStreamOpenStaysInterceptingAfterMissingRead(): void
+    {
+        $processor = new InterceptStateStreamProcessor();
+        $processor->intercept();
+
+        try {
+            $result = $processor->stream_open('tests/fixtures/unknown', 'r', StreamProcessor::STREAM_OPEN_FOR_INCLUDE, $fullPath);
+            $this->assertFalse($result);
+            $this->assertTrue($processor->isIntercepting(), 'The wrapper must stay intercepting after a missing read.');
+        } finally {
+            $processor->restore();
+        }
     }
 
     /**
