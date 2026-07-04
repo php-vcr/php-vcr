@@ -109,6 +109,7 @@ final class StreamProcessorTest extends TestCase
         self::assertSame(0, stream_set_read_buffer($handle, 0));
 
         fclose($handle);
+        unlink('tests/fixtures/file_put_contents');
 
         $processor->restore();
     }
