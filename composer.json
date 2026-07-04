@@ -13,6 +13,11 @@
         {
             "name": "Adrian Philipp",
             "email": "mail@adrian-philipp.com"
+        },
+        {
+            "name": "Daniel Hürtgen",
+            "email": "daniel@higidi.com",
+            "role": "Maintainer"
         }
     ],
     "require": {
