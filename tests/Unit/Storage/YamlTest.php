@@ -6,6 +6,7 @@ namespace VCR\Tests\Unit\Storage;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use VCR\Storage\PurgeableStorage;
 use VCR\Storage\Yaml;
 
 final class YamlTest extends TestCase
@@ -123,6 +124,47 @@ final class YamlTest extends TestCase
         $this->assertCount(2, $actual, 'More that two recordings stores.');
         $this->assertEquals($expected, $actual[0], 'Storing and reading first recording failed.');
         $this->assertEquals($expected, $actual[1], 'Storing and reading second recording failed.');
+    }
+
+    public function testImplementsPurgeableStorage(): void
+    {
+        $this->assertInstanceOf(PurgeableStorage::class, $this->yamlObject);
+    }
+
+    public function testPurgeEmptiesStorage(): void
+    {
+        $this->yamlObject->storeRecording(['request' => 'r', 'response' => 's']);
+
+        $before = [];
+        foreach ($this->yamlObject as $recording) {
+            $before[] = $recording;
+        }
+        $this->assertCount(1, $before, 'Storage should contain the recording before purge.');
+
+        $this->yamlObject->purge();
+
+        $actual = [];
+        foreach ($this->yamlObject as $recording) {
+            $actual[] = $recording;
+        }
+        $this->assertEmpty($actual);
+        $this->assertTrue($this->yamlObject->isNew());
+    }
+
+    public function testPurgeAllowsSubsequentRecording(): void
+    {
+        $this->yamlObject->storeRecording(['request' => 'old', 'response' => 'old']);
+        $this->yamlObject->purge();
+
+        $expected = ['request' => 'new', 'response' => 'new'];
+        $this->yamlObject->storeRecording($expected);
+
+        $actual = [];
+        foreach ($this->yamlObject as $recording) {
+            $actual[] = $recording;
+        }
+        $this->assertCount(1, $actual);
+        $this->assertEquals($expected, $actual[0]);
     }
 
     /** @param array<mixed> $expected */

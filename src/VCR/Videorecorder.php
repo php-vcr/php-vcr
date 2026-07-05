@@ -12,6 +12,8 @@ use VCR\Event\BeforeHttpRequestEvent;
 use VCR\Event\BeforePlaybackEvent;
 use VCR\Event\BeforeRecordEvent;
 use VCR\Event\Event;
+use VCR\Storage\PurgeableStorage;
+use VCR\Storage\Storage;
 use VCR\Util\Assertion;
 use VCR\Util\HttpClient;
 
@@ -119,7 +121,14 @@ class Videorecorder
             $this->eject();
         }
 
-        $storage = $this->factory->get('Storage', [$cassetteName]);
+        $storage = $this->createStorage($cassetteName);
+
+        if (VCR::MODE_ALL === $this->config->getMode()) {
+            if (!$storage instanceof PurgeableStorage) {
+                throw new \LogicException(\sprintf('Storage "%s" does not support MODE_ALL: implement PurgeableStorage to enable purge on cassette insert.', $storage::class));
+            }
+            $storage->purge();
+        }
 
         $this->cassette = new Cassette($cassetteName, $this->config, $storage);
         $this->enableLibraryHooks();
@@ -151,20 +160,23 @@ class Videorecorder
             throw new \BadMethodCallException('Invalid http request. No cassette inserted. Please make sure to insert a cassette in your unit test using '."VCR::insertCassette('name');");
         }
 
-        $this->dispatch(new BeforePlaybackEvent($request, $this->cassette), VCREvents::VCR_BEFORE_PLAYBACK);
-
         // Add an index to the request to allow recording identical requests and play them back in the same sequence.
         $index = $this->iterateIndex($request);
-        $response = $this->cassette->playback($request, $index);
 
-        // Playback succeeded and the recorded response can be returned.
-        if (!empty($response)) {
-            $this->dispatch(
-                new AfterPlaybackEvent($request, $response, $this->cassette),
-                VCREvents::VCR_AFTER_PLAYBACK
-            );
+        if (VCR::MODE_ALL !== $this->config->getMode()) {
+            $this->dispatch(new BeforePlaybackEvent($request, $this->cassette), VCREvents::VCR_BEFORE_PLAYBACK);
 
-            return $response;
+            $response = $this->cassette->playback($request, $index);
+
+            // Playback succeeded and the recorded response can be returned.
+            if (!empty($response)) {
+                $this->dispatch(
+                    new AfterPlaybackEvent($request, $response, $this->cassette),
+                    VCREvents::VCR_AFTER_PLAYBACK
+                );
+
+                return $response;
+            }
         }
 
         if (VCR::MODE_NONE === $this->config->getMode()
@@ -188,6 +200,14 @@ class Videorecorder
         }
 
         return $response;
+    }
+
+    /**
+     * @return Storage<array>
+     */
+    protected function createStorage(string $cassetteName): Storage
+    {
+        return $this->factory->get('Storage', [$cassetteName]);
     }
 
     /**

@@ -101,6 +101,29 @@ To enable only specific hooks (e.g. when you know your code only uses curl):
 
 Available hook names: `stream_wrapper`, `curl`, `soap`.
 
+## Record modes
+
+The record mode controls how VCR behaves when a cassette is inserted.
+
+| Mode | Constant | Behaviour |
+|---|---|---|
+| `new_episodes` | `VCR::MODE_NEW_EPISODES` | **Default.** Plays back recorded interactions; performs real HTTP for any request that has no recording and records the response. |
+| `once` | `VCR::MODE_ONCE` | Plays back recorded interactions. Allows new requests only when the cassette is new (first run). Throws on a miss after that. |
+| `none` | `VCR::MODE_NONE` | Read-only. Plays back recorded interactions only. Throws on any request that has no recording. |
+| `all` | `VCR::MODE_ALL` | **Re-record mode.** Never plays back. Always performs the real HTTP request and records the response fresh. The cassette is purged on insert so every run starts clean. |
+
+```php
+// Re-record an existing cassette from scratch
+\VCR\VCR::configure()->setMode(\VCR\VCR::MODE_ALL);
+\VCR\VCR::turnOn();
+\VCR\VCR::insertCassette('my_cassette'); // existing recordings are purged
+file_get_contents('http://example.com');  // hits network, recorded fresh
+\VCR\VCR::eject();
+\VCR\VCR::turnOff();
+```
+
+> **Note:** A run under `MODE_ALL` that performs no HTTP request leaves an empty cassette — this is inherent to the fresh re-record semantics.
+
 ## Installation
 
 Simply run the following command:

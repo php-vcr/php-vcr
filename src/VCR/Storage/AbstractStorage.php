@@ -12,7 +12,7 @@ use VCR\Util\Assertion;
  * A Storage can be iterated using standard loops.
  * New recordings can be stored.
  */
-abstract class AbstractStorage implements Storage
+abstract class AbstractStorage implements PurgeableStorage
 {
     /**
      * @var resource
@@ -20,6 +20,8 @@ abstract class AbstractStorage implements Storage
     protected $handle;
 
     protected string $filePath;
+
+    protected string $defaultContent;
 
     /**
      * @var array<string,mixed>|null current parsed record
@@ -40,6 +42,8 @@ abstract class AbstractStorage implements Storage
      */
     public function __construct(string $cassettePath, string $cassetteName, string $defaultContent = '[]')
     {
+        $this->defaultContent = $defaultContent;
+
         Assertion::directory($cassettePath, "Cassette path '{$cassettePath}' is not existing or not a directory");
 
         $this->filePath = rtrim($cassettePath, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR.$cassetteName;
@@ -81,6 +85,21 @@ abstract class AbstractStorage implements Storage
     public function isNew(): bool
     {
         return $this->isNew;
+    }
+
+    public function purge(): void
+    {
+        ftruncate($this->handle, 0);
+        rewind($this->handle);
+        if ('' !== $this->defaultContent) {
+            fwrite($this->handle, $this->defaultContent);
+            rewind($this->handle);
+        }
+        $this->position = 0;
+        $this->current = null;
+        $this->isEOF = false;
+        $this->isValidPosition = true;
+        $this->isNew = true;
     }
 
     public function __destruct()

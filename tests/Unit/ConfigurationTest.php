@@ -6,6 +6,7 @@ namespace VCR\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use VCR\Configuration;
+use VCR\VCR;
 use VCR\VCRException;
 
 final class ConfigurationTest extends TestCase
@@ -159,5 +160,11 @@ final class ConfigurationTest extends TestCase
         $this->expectException(VCRException::class);
         $this->expectExceptionMessage("Mode 'invalid' does not exist.");
         $this->config->setMode('invalid');
+    }
+
+    public function testSetModeAllIsAccepted(): void
+    {
+        $this->config->setMode(VCR::MODE_ALL);
+        $this->assertSame(VCR::MODE_ALL, $this->config->getMode());
     }
 }

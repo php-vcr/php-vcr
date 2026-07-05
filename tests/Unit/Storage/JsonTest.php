@@ -7,6 +7,7 @@ namespace VCR\Tests\Unit\Storage;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use VCR\Storage\Json;
+use VCR\Storage\PurgeableStorage;
 
 final class JsonTest extends TestCase
 {
@@ -123,6 +124,47 @@ final class JsonTest extends TestCase
         $jsonObject->storeRecording($stored);
 
         $this->assertJson((string) file_get_contents($filePath));
+    }
+
+    public function testImplementsPurgeableStorage(): void
+    {
+        $this->assertInstanceOf(PurgeableStorage::class, $this->jsonObject);
+    }
+
+    public function testPurgeEmptiesStorage(): void
+    {
+        $this->jsonObject->storeRecording(['request' => 'r', 'response' => 's']);
+
+        $before = [];
+        foreach ($this->jsonObject as $recording) {
+            $before[] = $recording;
+        }
+        $this->assertCount(1, $before, 'Storage should contain the recording before purge.');
+
+        $this->jsonObject->purge();
+
+        $actual = [];
+        foreach ($this->jsonObject as $recording) {
+            $actual[] = $recording;
+        }
+        $this->assertEmpty($actual);
+        $this->assertTrue($this->jsonObject->isNew());
+    }
+
+    public function testPurgeAllowsSubsequentRecording(): void
+    {
+        $this->jsonObject->storeRecording(['request' => 'old', 'response' => 'old']);
+        $this->jsonObject->purge();
+
+        $expected = ['request' => 'new', 'response' => 'new'];
+        $this->jsonObject->storeRecording($expected);
+
+        $actual = [];
+        foreach ($this->jsonObject as $recording) {
+            $actual[] = $recording;
+        }
+        $this->assertCount(1, $actual);
+        $this->assertEquals($expected, $actual[0]);
     }
 
     /** @param array<mixed> $expected */
