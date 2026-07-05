@@ -54,6 +54,11 @@ class CurlHook implements LibraryHook
      */
     protected static array $lastErrors = [];
 
+    /**
+     * @var array<int, \WeakReference<\CurlHandle>> live references keyed by spl_object_id to detect handle-ID reuse
+     */
+    protected static array $handleRefs = [];
+
     public function __construct(
         private AbstractCodeTransform $codeTransformer,
         private StreamProcessor $processor
@@ -133,6 +138,7 @@ class CurlHook implements LibraryHook
             $id = (int) $curlHandle;
             self::$requests[$id] = new Request('GET', $url);
             self::$curlOptions[$id] = [];
+            self::$handleRefs[$id] = \WeakReference::create($curlHandle);
             unset(self::$responses[$id], self::$lastErrors[$id]);
         }
 
@@ -150,6 +156,7 @@ class CurlHook implements LibraryHook
             self::$responses[$id],
             self::$curlOptions[$id],
             self::$lastErrors[$id],
+            self::$handleRefs[$id],
         );
         curl_close($curlHandle);
     }
@@ -160,9 +167,11 @@ class CurlHook implements LibraryHook
     public static function curlReset(\CurlHandle $curlHandle): void
     {
         curl_reset($curlHandle);
-        self::$requests[(int) $curlHandle] = new Request('GET', null);
-        self::$curlOptions[(int) $curlHandle] = [];
-        unset(self::$responses[(int) $curlHandle]);
+        $id = (int) $curlHandle;
+        self::$requests[$id] = new Request('GET', null);
+        self::$curlOptions[$id] = [];
+        self::$handleRefs[$id] = \WeakReference::create($curlHandle);
+        unset(self::$responses[$id]);
     }
 
     /**
@@ -319,38 +328,40 @@ class CurlHook implements LibraryHook
      */
     public static function curlGetinfo(\CurlHandle $curlHandle, int $option = 0): mixed
     {
+        $id = (int) $curlHandle;
+        $ref = self::$handleRefs[$id] ?? null;
+        if (null === $ref || $ref->get() !== $curlHandle) {
+            throw new \RuntimeException('Unexpected curl handle: not initialized via curl_init() or already closed');
+        }
+
         if (\CURLINFO_PRIVATE === $option) {
-            return self::$curlOptions[(int) $curlHandle][\CURLOPT_PRIVATE] ?? '';
-        } elseif (isset(self::$responses[(int) $curlHandle])) {
+            return self::$curlOptions[$id][\CURLOPT_PRIVATE] ?? '';
+        } elseif (isset(self::$responses[$id])) {
             return CurlHelper::getCurlOptionFromResponse(
-                self::$responses[(int) $curlHandle],
+                self::$responses[$id],
                 $option
             );
         }
 
-        if (isset(self::$lastErrors[(int) $curlHandle])) {
+        if (isset(self::$lastErrors[$id])) {
             $value = CurlHelper::getCurlInfoFromArray(
-                self::$lastErrors[(int) $curlHandle]->getInfo(),
+                self::$lastErrors[$id]->getInfo(),
                 $option
             );
             if (false === $value) {
                 return CurlHelper::getDefaultCurlInfo(
                     $option,
-                    (self::$requests[(int) $curlHandle] ?? null)?->getUrl()
+                    (self::$requests[$id] ?? null)?->getUrl()
                 );
             }
 
             return $value;
         }
 
-        if (isset(self::$requests[(int) $curlHandle])) {
-            return CurlHelper::getDefaultCurlInfo(
-                $option,
-                self::$requests[(int) $curlHandle]->getUrl()
-            );
-        }
-
-        throw new \RuntimeException('Unexpected curl handle: not initialized via curl_init() or already closed');
+        return CurlHelper::getDefaultCurlInfo(
+            $option,
+            self::$requests[$id]->getUrl()
+        );
     }
 
     /**
