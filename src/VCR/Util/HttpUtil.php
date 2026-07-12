@@ -77,9 +77,33 @@ class HttpUtil
      */
     public static function parseResponse(string $response): array
     {
-        $response = str_replace("HTTP/1.1 100 Continue\r\n\r\n", '', $response);
+        $responseOffset = 0;
+        $separatorOffset = strpos($response, "\r\n\r\n");
+        while (false !== $separatorOffset) {
+            $rawHeader = substr($response, $responseOffset, $separatorOffset - $responseOffset);
+            $headerLines = explode("\r\n", $rawHeader);
+            $statusLine = array_shift($headerLines);
+            if (1 !== preg_match('/^HTTP\/\S+ (\d{3})(?: [^\r\n]*)?$/D', $statusLine, $matches)) {
+                break;
+            }
 
-        [$rawHeader, $rawBody] = explode("\r\n\r\n", $response, 2);
+            $statusCode = (int) $matches[1];
+            $isInformational = 100 <= $statusCode && 200 > $statusCode;
+            $isProxyAcknowledgement = 200 <= $statusCode && 300 > $statusCode && [] === $headerLines;
+            if (!$isInformational && !$isProxyAcknowledgement) {
+                break;
+            }
+
+            $nextResponseOffset = $separatorOffset + 4;
+            if ($nextResponseOffset !== strpos($response, 'HTTP/', $nextResponseOffset)) {
+                break;
+            }
+
+            $responseOffset = $nextResponseOffset;
+            $separatorOffset = strpos($response, "\r\n\r\n", $responseOffset);
+        }
+
+        [$rawHeader, $rawBody] = explode("\r\n\r\n", substr($response, $responseOffset), 2);
 
         // Parse headers and status.
         $headers = self::parseRawHeader($rawHeader);
