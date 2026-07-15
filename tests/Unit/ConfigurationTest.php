@@ -167,4 +167,15 @@ final class ConfigurationTest extends TestCase
         $this->config->setMode(VCR::MODE_ALL);
         $this->assertSame(VCR::MODE_ALL, $this->config->getMode());
     }
+
+    public function testRecordIdenticalRequestsDefaultsToTrue(): void
+    {
+        $this->assertTrue($this->config->getRecordIdenticalRequests());
+    }
+
+    public function testSetRecordIdenticalRequests(): void
+    {
+        $this->config->setRecordIdenticalRequests(false);
+        $this->assertFalse($this->config->getRecordIdenticalRequests());
+    }
 }
