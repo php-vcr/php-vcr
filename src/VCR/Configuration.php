@@ -124,6 +124,8 @@ class Configuration
 
     private string $mode = VCR::MODE_NEW_EPISODES;
 
+    private bool $recordIdenticalRequests = true;
+
     /**
      * List of available modes.
      *
@@ -321,6 +323,18 @@ class Configuration
     {
         Assertion::choice($mode, $this->availableModes, "Mode '{$mode}' does not exist.");
         $this->mode = $mode;
+
+        return $this;
+    }
+
+    public function getRecordIdenticalRequests(): bool
+    {
+        return $this->recordIdenticalRequests;
+    }
+
+    public function setRecordIdenticalRequests(bool $recordIdenticalRequests): self
+    {
+        $this->recordIdenticalRequests = $recordIdenticalRequests;
 
         return $this;
     }

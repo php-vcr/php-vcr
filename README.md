@@ -124,6 +124,18 @@ file_get_contents('http://example.com');  // hits network, recorded fresh
 
 > **Note:** A run under `MODE_ALL` that performs no HTTP request leaves an empty cassette — this is inherent to the fresh re-record semantics.
 
+## Recording identical requests
+
+By default php-vcr records identical requests separately and replays them in
+the same order they were made (each gets an incrementing `index` in the
+cassette). If your test issues an identical request a variable number of times
+across runs, disable this so every identical request replays the first
+recorded response:
+
+```php
+\VCR\VCR::configure()->setRecordIdenticalRequests(false);
+```
+
 ## Installation
 
 Simply run the following command:

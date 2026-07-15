@@ -131,15 +131,48 @@ final class CassetteTest extends TestCase
     /**
      * @param array<int,array<string,int|string|array<string,mixed>|null>> $recordings
      */
-    protected function createCassetteWithRecordings(array $recordings): Cassette
+    protected function createCassetteWithRecordings(array $recordings, ?Configuration $configuration = null): Cassette
     {
         $storage = new Yaml(vfsStream::url('test/'), 'json_test');
 
         foreach ($recordings as $recording) {
             $storage->storeRecording($recording);
         }
-        $configuration = new Configuration();
+        $configuration ??= new Configuration();
 
         return new Cassette('cassette_name', $configuration, $storage);
+    }
+
+    /**
+     * Ensure that with recordIdenticalRequests disabled, identical requests all
+     * replay the first matching recording regardless of the requested index.
+     */
+    public function testPlaybackOfIdenticalRequestsIgnoresIndexWhenDisabled(): void
+    {
+        $request1 = new Request('GET', 'https://example.com');
+        $response1 = new Response('200', [], 'response1');
+
+        $request2 = new Request('GET', 'https://example.com');
+        $response2 = new Response('200', [], 'response2');
+
+        $recordings = [
+            [
+                'request' => $request1->toArray(),
+                'response' => $response1->toArray(),
+                'index' => 0,
+            ],
+            [
+                'request' => $request2->toArray(),
+                'response' => $response2->toArray(),
+                'index' => 1,
+            ],
+        ];
+
+        $configuration = new Configuration();
+        $configuration->setRecordIdenticalRequests(false);
+        $cassette = $this->createCassetteWithRecordings($recordings, $configuration);
+
+        $this->assertEquals($response1->toArray(), $cassette->playback($request1, 0)?->toArray());
+        $this->assertEquals($response1->toArray(), $cassette->playback($request2, 1)?->toArray());
     }
 }
