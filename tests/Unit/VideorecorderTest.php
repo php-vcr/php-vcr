@@ -26,6 +26,61 @@ final class VideorecorderTest extends TestCase
         );
     }
 
+    /**
+     * @see https://github.com/php-vcr/php-vcr/issues/350
+     */
+    public function testTurnOffRestoresStreamWrapperWhenRequested(): void
+    {
+        $configuration = new Configuration();
+        $configuration->enableLibraryHooks([]);
+        $factory = VCRFactory::getInstance();
+        $processor = $factory->get('VCR\Util\StreamProcessor');
+        $processor->intercept();
+
+        $reflection = new \ReflectionObject($processor);
+        $property = $reflection->getProperty('isIntercepting');
+        $property->setAccessible(true);
+        $this->assertTrue($property->getValue($processor), 'Sanity: intercept() must set the flag.');
+
+        $videorecorder = new Videorecorder($configuration, new HttpClient(), $factory);
+        $videorecorder->turnOn();
+        $videorecorder->turnOff(true);
+
+        $this->assertFalse(
+            $property->getValue($processor),
+            'turnOff(true) must restore the shared StreamProcessor file:// wrapper (issue #350).'
+        );
+
+        $processor->restore();
+    }
+
+    /**
+     * @see https://github.com/php-vcr/php-vcr/issues/350
+     */
+    public function testTurnOffDoesNotRestoreStreamWrapperByDefault(): void
+    {
+        $configuration = new Configuration();
+        $configuration->enableLibraryHooks([]);
+        $factory = VCRFactory::getInstance();
+        $processor = $factory->get('VCR\Util\StreamProcessor');
+        $processor->intercept();
+
+        $reflection = new \ReflectionObject($processor);
+        $property = $reflection->getProperty('isIntercepting');
+        $property->setAccessible(true);
+
+        $videorecorder = new Videorecorder($configuration, new HttpClient(), $factory);
+        $videorecorder->turnOn();
+        $videorecorder->turnOff();
+
+        $this->assertTrue(
+            $property->getValue($processor),
+            'turnOff() without arguments must not change existing behavior — the fix for issue #350 is opt-in.'
+        );
+
+        $processor->restore();
+    }
+
     public function testInsertCassetteEjectExisting(): void
     {
         vfsStream::setup('testDir');

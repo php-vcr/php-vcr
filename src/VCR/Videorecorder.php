@@ -90,10 +90,15 @@ class Videorecorder
     /**
      * @api
      */
-    public function turnOff(): void
+    public function turnOff(bool $restoreStreamWrappers = false): void
     {
         if ($this->isOn) {
             $this->disableLibraryHooks();
+
+            if ($restoreStreamWrappers) {
+                $this->factory->get('VCR\Util\StreamProcessor')->restore();
+            }
+
             $this->eject();
             $this->isOn = false;
         }
