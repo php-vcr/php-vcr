@@ -79,6 +79,23 @@ final class StreamProcessorTest extends TestCase
     }
 
     /**
+     * @see https://github.com/php-vcr/php-vcr/issues/350
+     */
+    public function testRestoreResetsInterceptingState(): void
+    {
+        $processor = new InterceptStateStreamProcessor();
+        $processor->intercept();
+        $this->assertTrue($processor->isIntercepting(), 'Sanity: intercept() must set the flag.');
+
+        $processor->restore();
+
+        $this->assertFalse(
+            $processor->isIntercepting(),
+            'restore() must reset isIntercepting so a later intercept() re-registers the wrapper.'
+        );
+    }
+
+    /**
      * test flock with file_put_contents.
      */
     public function testFlockWithFilePutContents(): void

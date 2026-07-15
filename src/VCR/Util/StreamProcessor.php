@@ -78,6 +78,7 @@ class StreamProcessor
         // stream_wrapper_restore can throw when stream_wrapper was never changed, so we unregister first
         stream_wrapper_unregister(self::PROTOCOL);
         stream_wrapper_restore(self::PROTOCOL);
+        $this->isIntercepting = false;
     }
 
     /**
