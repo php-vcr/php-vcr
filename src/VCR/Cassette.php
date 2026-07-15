@@ -35,7 +35,9 @@ class Cassette
             // always match this record if the request matches
             $recording['index'] ??= $index;
 
-            if ($storedRequest->matches($request, $this->getRequestMatchers()) && $index == $recording['index']) {
+            $indexMatches = !$this->config->getRecordIdenticalRequests() || $index == $recording['index'];
+
+            if ($storedRequest->matches($request, $this->getRequestMatchers()) && $indexMatches) {
                 return Response::fromArray($recording['response']);
             }
         }
