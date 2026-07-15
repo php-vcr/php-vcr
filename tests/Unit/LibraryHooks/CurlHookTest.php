@@ -375,6 +375,29 @@ final class CurlHookTest extends TestCase
         $this->assertFalse($afterLastInfo, 'Multi info called the last time should return false.');
     }
 
+    public function testCurlMultiAddHandleReturnsCurlmOk(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com');
+        Assertion::notSame($curlHandle, false);
+        $curlMultiHandle = curl_multi_init();
+        Assertion::notSame($curlMultiHandle, false);
+
+        $result = curl_multi_add_handle($curlMultiHandle, $curlHandle);
+
+        curl_multi_remove_handle($curlMultiHandle, $curlHandle);
+        curl_multi_close($curlMultiHandle);
+        $this->curlHook->disable();
+
+        $this->assertSame(
+            \CURLM_OK,
+            $result,
+            'curl_multi_add_handle() must return CURLM_OK so callers checking the return value '
+            .'(e.g. Guzzle >= 7.14) do not treat a successful add as a failure.'
+        );
+    }
+
     /**
      * @doesNotPerformAssertions
      */

@@ -201,13 +201,15 @@ class CurlHook implements LibraryHook
      *
      * @see http://www.php.net/manual/en/function.curl-multi-add-handle.php
      */
-    public static function curlMultiAddHandle(\CurlMultiHandle $multiHandle, \CurlHandle $curlHandle): void
+    public static function curlMultiAddHandle(\CurlMultiHandle $multiHandle, \CurlHandle $curlHandle): int
     {
         if (!isset(self::$multiHandles[(int) $multiHandle])) {
             self::$multiHandles[(int) $multiHandle] = [];
         }
 
         self::$multiHandles[(int) $multiHandle][(int) $curlHandle] = $curlHandle;
+
+        return \CURLM_OK;
     }
 
     /**
