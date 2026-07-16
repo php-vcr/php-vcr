@@ -97,6 +97,26 @@ final class HttpUtilTest extends TestCase
         $this->assertEquals($expectedHeaders, $headers);
     }
 
+    public function testParseResponseAfterProxyAcknowledgements(): void
+    {
+        $raw = "HTTP/1.0 200 Connection established\r\n\r\nHTTP/2 200\r\n\r\nHTTP/1.1 201 Created\r\nContent-Type: text/plain\r\nContent-Length: 15\r\n\r\nfirst\r\n\r\nsecond";
+        [$status, $headers, $body] = HttpUtil::parseResponse($raw);
+
+        $this->assertEquals('HTTP/1.1 201 Created', $status);
+        $this->assertEquals(['Content-Type: text/plain', 'Content-Length: 15'], $headers);
+        $this->assertEquals("first\r\n\r\nsecond", $body);
+    }
+
+    public function testParseResponsePreservesBodyStartingWithHttpStatusLine(): void
+    {
+        $raw = "HTTP/1.1 200 OK\r\nContent-Type: message/http\r\nContent-Length: 35\r\n\r\nHTTP/1.1 404 Not Found\r\n\r\nreal body";
+        [$status, $headers, $body] = HttpUtil::parseResponse($raw);
+
+        $this->assertEquals('HTTP/1.1 200 OK', $status);
+        $this->assertEquals(['Content-Type: message/http', 'Content-Length: 35'], $headers);
+        $this->assertEquals("HTTP/1.1 404 Not Found\r\n\r\nreal body", $body);
+    }
+
     public function testParseHeadersBasic(): void
     {
         $inputArray = [
