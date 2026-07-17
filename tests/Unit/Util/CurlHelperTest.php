@@ -110,6 +110,26 @@ final class CurlHelperTest extends TestCase
         $this->assertEquals(['Host' => 'example.com'], $request->getHeaders());
     }
 
+    public function testSetCurlOptionOnRequestSetHeaderWithoutValueSemicolonNotation(): void
+    {
+        $request = new Request('GET', 'http://example.com');
+        $headers = ['Host: example.com', 'SOAPAction;'];
+
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_HTTPHEADER, $headers);
+
+        $this->assertEquals(['Host' => 'example.com', 'SOAPAction' => ''], $request->getHeaders());
+    }
+
+    public function testSetCurlOptionOnRequestSetHeaderWithoutValueColonNotation(): void
+    {
+        $request = new Request('GET', 'http://example.com');
+        $headers = ['Host: example.com', 'Accept:'];
+
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_HTTPHEADER, $headers);
+
+        $this->assertEquals(['Host' => 'example.com', 'Accept' => ''], $request->getHeaders());
+    }
+
     public function testSetCurlOptionOnRequestSetMultipleHeadersTwice(): void
     {
         $request = new Request('GET', 'http://example.com');
