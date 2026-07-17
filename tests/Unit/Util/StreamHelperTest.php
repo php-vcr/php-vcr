@@ -104,4 +104,49 @@ final class StreamHelperTest extends TestCase
         $request = StreamHelper::createRequestFromStreamContext($context, 'http://example.com');
         $testCallback($request);
     }
+
+    /**
+     * @dataProvider resolveUrlProvider
+     */
+    public function testResolveUrl(string $base, string $location, string $expected): void
+    {
+        $this->assertSame($expected, StreamHelper::resolveUrl($base, $location));
+    }
+
+    /**
+     * @return array<string,array{string,string,string}>
+     */
+    public static function resolveUrlProvider(): array
+    {
+        return [
+            'absolute' => ['http://example.com/a', 'https://other.com/b', 'https://other.com/b'],
+            'scheme relative' => ['https://example.com/a', '//cdn.example.com/b', 'https://cdn.example.com/b'],
+            'absolute path' => ['http://example.com/a/b', '/c/d', 'http://example.com/c/d'],
+            'relative path' => ['http://example.com/a/b', 'c', 'http://example.com/a/c'],
+            'relative root' => ['http://example.com', 'c', 'http://example.com/c'],
+            'with port' => ['http://example.com:8080/a/b', '/c', 'http://example.com:8080/c'],
+        ];
+    }
+
+    public function testShouldFollowLocationDefaultsToTrue(): void
+    {
+        $this->assertTrue(StreamHelper::shouldFollowLocation(null));
+    }
+
+    public function testShouldFollowLocationHonorsContextDisable(): void
+    {
+        $context = stream_context_create(['http' => ['follow_location' => 0]]);
+        $this->assertFalse(StreamHelper::shouldFollowLocation($context));
+    }
+
+    public function testMaxRedirectsDefaultsTo20(): void
+    {
+        $this->assertSame(20, StreamHelper::maxRedirects(null));
+    }
+
+    public function testMaxRedirectsHonorsContext(): void
+    {
+        $context = stream_context_create(['http' => ['max_redirects' => 5]]);
+        $this->assertSame(5, StreamHelper::maxRedirects($context));
+    }
 }

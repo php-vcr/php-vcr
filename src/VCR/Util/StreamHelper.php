@@ -65,6 +65,65 @@ class StreamHelper
     }
 
     /**
+     * Resolves a possibly-relative Location value against a base URL.
+     */
+    public static function resolveUrl(string $base, string $location): string
+    {
+        if (1 === preg_match('#^[a-z][a-z0-9+.-]*://#i', $location)) {
+            return $location;
+        }
+
+        $parts = parse_url($base);
+        $scheme = $parts['scheme'] ?? 'http';
+
+        if (str_starts_with($location, '//')) {
+            return $scheme.':'.$location;
+        }
+
+        $host = $parts['host'] ?? '';
+        $port = isset($parts['port']) ? ':'.$parts['port'] : '';
+        $authority = $scheme.'://'.$host.$port;
+
+        if (str_starts_with($location, '/')) {
+            return $authority.$location;
+        }
+
+        $basePath = $parts['path'] ?? '/';
+        $lastSlash = strrpos($basePath, '/');
+        $dir = false === $lastSlash ? '/' : substr($basePath, 0, $lastSlash + 1);
+
+        return $authority.$dir.$location;
+    }
+
+    /**
+     * Whether redirects should be followed for the given stream context.
+     *
+     * Mirrors PHP's native http wrapper default (follow_location = 1).
+     *
+     * @param resource|null $context
+     */
+    public static function shouldFollowLocation($context): bool
+    {
+        $http = self::getHttpOptionsFromContext($context);
+
+        return (bool) ($http['follow_location'] ?? 1);
+    }
+
+    /**
+     * Maximum number of redirects to follow for the given stream context.
+     *
+     * Mirrors PHP's native http wrapper default (max_redirects = 20).
+     *
+     * @param resource|null $context
+     */
+    public static function maxRedirects($context): int
+    {
+        $http = self::getHttpOptionsFromContext($context);
+
+        return (int) ($http['max_redirects'] ?? 20);
+    }
+
+    /**
      * Returns HTTP options from current stream context.
      *
      * @see http://php.net/manual/en/context.http.php
