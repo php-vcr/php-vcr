@@ -293,7 +293,7 @@ class StreamWrapperHook implements LibraryHook
 
             try {
                 $response = $requestCallback($next);
-            } catch (\Exception $e) {
+            } catch (\LogicException $e) {
                 // The redirect target is not available (e.g. a legacy cassette that
                 // only recorded the redirect). Fall back to the redirect response.
                 break;
