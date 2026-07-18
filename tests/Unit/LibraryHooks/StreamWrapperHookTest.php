@@ -112,4 +112,131 @@ final class StreamWrapperHookTest extends TestCase
         fclose($resource);
         $hook->disable();
     }
+
+    public function testFollowsRedirectByDefault(): void
+    {
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
+        $calls = 0;
+        $hook->enable(static function ($request) use (&$calls) {
+            ++$calls;
+            if (1 === $calls) {
+                return new Response('301', ['Location' => 'http://example.com/final'], 'moved');
+            }
+
+            return new Response('200', [], 'final body');
+        });
+        $hook->stream_open('http://example.com/start', 'r', 0, $openedPath);
+
+        $this->assertSame(2, $calls);
+        $this->assertSame('final body', $hook->stream_read(100));
+        $hook->disable();
+    }
+
+    public function testDoesNotFollowWhenContextDisablesFollowLocation(): void
+    {
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
+        $calls = 0;
+        $hook->enable(static function ($request) use (&$calls) {
+            ++$calls;
+
+            return new Response('301', ['Location' => 'http://example.com/final'], 'moved');
+        });
+        $hook->context = stream_context_create(['http' => ['follow_location' => 0]]);
+        $hook->stream_open('http://example.com/start', 'r', 0, $openedPath);
+
+        $this->assertSame(1, $calls);
+        $this->assertSame('moved', $hook->stream_read(100));
+        $hook->disable();
+    }
+
+    public function testFollowsWhenContextExplicitlyEnablesFollowLocation(): void
+    {
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
+        $calls = 0;
+        $hook->enable(static function ($request) use (&$calls) {
+            ++$calls;
+            if (1 === $calls) {
+                return new Response('301', ['Location' => 'http://example.com/final'], 'moved');
+            }
+
+            return new Response('200', [], 'final body');
+        });
+        $hook->context = stream_context_create(['http' => ['follow_location' => 1]]);
+        $hook->stream_open('http://example.com/start', 'r', 0, $openedPath);
+
+        $this->assertSame(2, $calls);
+        $this->assertSame('final body', $hook->stream_read(100));
+        $hook->disable();
+    }
+
+    public function testDoesNotFollowNonRedirectResponseWithLocationHeader(): void
+    {
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
+        $calls = 0;
+        $hook->enable(static function ($request) use (&$calls) {
+            ++$calls;
+
+            // 200 with a stray Location header must not trigger a follow.
+            return new Response('200', ['Location' => 'http://example.com/final'], 'body');
+        });
+        $hook->stream_open('http://example.com/start', 'r', 0, $openedPath);
+
+        $this->assertSame(1, $calls);
+        $this->assertSame('body', $hook->stream_read(100));
+        $hook->disable();
+    }
+
+    public function testFallsBackToRedirectResponseWhenHopUnavailable(): void
+    {
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
+        $calls = 0;
+        $hook->enable(static function ($request) use (&$calls) {
+            ++$calls;
+            if (1 === $calls) {
+                return new Response('301', ['Location' => 'http://example.com/final'], 'moved');
+            }
+
+            throw new \LogicException('no recorded response for the redirect target');
+        });
+        $hook->stream_open('http://example.com/start', 'r', 0, $openedPath);
+
+        $this->assertSame(2, $calls);
+        $this->assertSame('moved', $hook->stream_read(100));
+        $hook->disable();
+    }
+
+    public function testFollowsRelativeRedirect(): void
+    {
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
+        $seen = [];
+        $hook->enable(static function ($request) use (&$seen) {
+            $seen[] = $request->getUrl();
+            if (1 === \count($seen)) {
+                return new Response('302', ['Location' => '/target'], 'moved');
+            }
+
+            return new Response('200', [], 'ok');
+        });
+        $hook->stream_open('http://example.com/a/b', 'r', 0, $openedPath);
+
+        $this->assertSame(['http://example.com/a/b', 'http://example.com/target'], $seen);
+        $this->assertSame('ok', $hook->stream_read(100));
+        $hook->disable();
+    }
+
+    public function testStopsAfterMaxRedirects(): void
+    {
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
+        $calls = 0;
+        $hook->enable(static function ($request) use (&$calls) {
+            ++$calls;
+
+            return new Response('301', ['Location' => 'http://example.com/loop'], 'loop');
+        });
+        $hook->stream_open('http://example.com/loop', 'r', 0, $openedPath);
+
+        // 1 initial request + 20 follows (default max_redirects)
+        $this->assertSame(21, $calls);
+        $hook->disable();
+    }
 }

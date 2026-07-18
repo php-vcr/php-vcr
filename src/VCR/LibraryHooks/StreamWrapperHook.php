@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace VCR\LibraryHooks;
 
 use VCR\CodeTransform\AbstractCodeTransform;
+use VCR\Request;
 use VCR\Response;
 use VCR\Util\Assertion;
 use VCR\Util\CurlException;
@@ -14,6 +15,8 @@ use VCR\Util\StreamProcessor;
 
 class StreamWrapperHook implements LibraryHook
 {
+    private const REDIRECT_STATUS_CODES = [301, 302, 303, 307, 308];
+
     protected static ?\Closure $requestCallback;
 
     // Static: PHP instantiates a new StreamWrapperHook (no args) for every fopen() call
@@ -103,17 +106,20 @@ class StreamWrapperHook implements LibraryHook
     public function stream_open(string $path, string $mode, int $options, ?string &$opened_path): bool
     {
         $request = StreamHelper::createRequestFromStreamContext($this->context, $path);
+        $request->setCurlOption(\CURLOPT_FOLLOWLOCATION, false);
 
         $requestCallback = self::$requestCallback;
         Assertion::isCallable($requestCallback);
         try {
-            $this->response = $requestCallback($request);
-            $this->responseHeaders = self::buildResponseHeaderLines($this->response);
-
-            return true;
+            $response = $requestCallback($request);
         } catch (CurlException $e) {
             return false;
         }
+
+        $this->response = $this->followRedirects($request, $response, $requestCallback);
+        $this->responseHeaders = self::buildResponseHeaderLines($this->response);
+
+        return true;
     }
 
     /**
@@ -267,6 +273,62 @@ class StreamWrapperHook implements LibraryHook
         }
 
         return $meta;
+    }
+
+    private function followRedirects(Request $request, Response $response, \Closure $requestCallback): Response
+    {
+        if (!StreamHelper::shouldFollowLocation($this->context)) {
+            return $response;
+        }
+
+        $maxRedirects = StreamHelper::maxRedirects($this->context);
+        $redirects = 0;
+
+        while ($redirects < $maxRedirects
+            && \in_array($response->getStatusCode(), self::REDIRECT_STATUS_CODES, true)
+            && null !== ($location = self::locationHeader($response))
+        ) {
+            $url = StreamHelper::resolveUrl((string) $request->getUrl(), $location);
+            $next = self::buildRedirectRequest($request, $response->getStatusCode(), $url);
+
+            try {
+                $response = $requestCallback($next);
+            } catch (\LogicException $e) {
+                // The redirect target is not available (e.g. a legacy cassette that
+                // only recorded the redirect). Fall back to the redirect response.
+                break;
+            }
+
+            $request = $next;
+            ++$redirects;
+        }
+
+        return $response;
+    }
+
+    private static function locationHeader(Response $response): ?string
+    {
+        foreach ($response->getHeaders() as $name => $value) {
+            if (0 === strcasecmp($name, 'Location')) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    private static function buildRedirectRequest(Request $request, int $statusCode, string $url): Request
+    {
+        if (\in_array($statusCode, [307, 308], true)) {
+            $redirect = new Request($request->getMethod(), $url);
+            if (null !== $request->getBody()) {
+                $redirect->setBody($request->getBody());
+            }
+
+            return $redirect;
+        }
+
+        return new Request('GET', $url);
     }
 
     /** @return string[] */
