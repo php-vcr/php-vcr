@@ -107,6 +107,26 @@ final class HttpUtilTest extends TestCase
         $this->assertEquals("first\r\n\r\nsecond", $body);
     }
 
+    public function testParseResponseEmpty(): void
+    {
+        $raw = '';
+        [$status, $headers, $body] = HttpUtil::parseResponse($raw);
+
+        $this->assertEquals('', $status);
+        $this->assertEquals([], $headers);
+        $this->assertEquals('', $body);
+    }
+
+    public function testParseResponseWithoutBodySeparator(): void
+    {
+        $raw = 'HTTP/1.1 404 Not Found';
+        [$status, $headers, $body] = HttpUtil::parseResponse($raw);
+
+        $this->assertEquals('HTTP/1.1 404 Not Found', $status);
+        $this->assertEquals([], $headers);
+        $this->assertEquals('', $body);
+    }
+
     public function testParseResponsePreservesBodyStartingWithHttpStatusLine(): void
     {
         $raw = "HTTP/1.1 200 OK\r\nContent-Type: message/http\r\nContent-Length: 35\r\n\r\nHTTP/1.1 404 Not Found\r\n\r\nreal body";
