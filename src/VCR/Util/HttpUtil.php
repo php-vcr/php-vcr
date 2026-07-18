@@ -103,7 +103,7 @@ class HttpUtil
             $separatorOffset = strpos($response, "\r\n\r\n", $responseOffset);
         }
 
-        [$rawHeader, $rawBody] = explode("\r\n\r\n", substr($response, $responseOffset), 2);
+        [$rawHeader, $rawBody] = array_pad(explode("\r\n\r\n", substr($response, $responseOffset), 2), 2, '');
 
         // Parse headers and status.
         $headers = self::parseRawHeader($rawHeader);
