@@ -52,6 +52,13 @@ final class StreamHelperTest extends TestCase
                 },
             ],
 
+            'duplicate header line uses first value' => [
+                ['header' => "Set-Cookie: a=1\r\nSet-Cookie: b=2"],
+                static function (Request $request): void {
+                    Assert::assertEquals('a=1', $request->getHeader('Set-Cookie'));
+                },
+            ],
+
             'user_agent' => [
                 ['user_agent' => 'example'],
                 static function (Request $request): void {

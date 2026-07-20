@@ -310,7 +310,8 @@ class StreamWrapperHook implements LibraryHook
     {
         foreach ($response->getHeaders() as $name => $value) {
             if (0 === strcasecmp($name, 'Location')) {
-                return $value;
+                // A repeated Location header is malformed; the first occurrence wins.
+                return \is_array($value) ? $value[0] : $value;
             }
         }
 
@@ -337,7 +338,9 @@ class StreamWrapperHook implements LibraryHook
         $lines = [rtrim(HttpUtil::formatAsStatusString($response), "\r\n")];
 
         foreach ($response->getHeaders() as $name => $value) {
-            $lines[] = $name.': '.$value;
+            foreach (\is_array($value) ? $value : [$value] as $singleValue) {
+                $lines[] = $name.': '.$singleValue;
+            }
         }
 
         return $lines;

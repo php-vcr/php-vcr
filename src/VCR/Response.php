@@ -16,7 +16,7 @@ class Response
     protected string $statusMessage = '';
 
     /**
-     * @var array<string,string>
+     * @var array<string, string|list<string>>
      */
     protected array $headers = [];
     protected ?string $body;
@@ -28,9 +28,9 @@ class Response
     protected mixed $httpVersion = null;
 
     /**
-     * @param string|array<string, string> $status
-     * @param array<string,string>         $headers
-     * @param array<string,mixed>          $curlInfo
+     * @param string|array<string, string>       $status
+     * @param array<string, string|list<string>> $headers
+     * @param array<string,mixed>                $curlInfo
      */
     final public function __construct($status, array $headers = [], ?string $body = null, array $curlInfo = [])
     {
@@ -83,11 +83,11 @@ class Response
     {
         $body = $response['body'] ?? null;
 
-        $gzip = isset($response['headers']['Content-Type'])
-            && str_contains($response['headers']['Content-Type'], 'application/x-gzip');
+        $contentType = self::firstHeaderValue($response['headers']['Content-Type'] ?? null);
+        $gzip = null !== $contentType && str_contains($contentType, 'application/x-gzip');
 
-        $binary = isset($response['headers']['Content-Transfer-Encoding'])
-            && 'binary' == $response['headers']['Content-Transfer-Encoding'];
+        $contentTransferEncoding = self::firstHeaderValue($response['headers']['Content-Transfer-Encoding'] ?? null);
+        $binary = 'binary' == $contentTransferEncoding;
 
         // Base64 decode when binary
         if ($gzip || $binary) {
@@ -108,6 +108,14 @@ class Response
     }
 
     /**
+     * @param string|list<string>|null $value
+     */
+    private static function firstHeaderValue($value): ?string
+    {
+        return \is_array($value) ? (reset($value) ?: null) : $value;
+    }
+
+    /**
      * @return array<string,mixed>|mixed|null
      */
     public function getCurlInfo(?string $option = null): mixed
@@ -123,7 +131,7 @@ class Response
     }
 
     /**
-     * @return array<string,string>
+     * @return array<string, string|list<string>>
      */
     public function getHeaders(): array
     {
@@ -142,11 +150,7 @@ class Response
 
     public function getHeader(string $key): ?string
     {
-        if (!isset($this->headers[$key])) {
-            return null;
-        }
-
-        return $this->headers[$key];
+        return self::firstHeaderValue($this->headers[$key] ?? null);
     }
 
     public function getHttpVersion(): mixed
