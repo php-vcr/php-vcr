@@ -546,6 +546,14 @@ final class CurlHelperTest extends TestCase
                 \CURLINFO_CERTINFO,
                 [['Subject' => 'CN=example.com']],
             ],
+            'size_download uses first value for a duplicated Content-Length header' => [
+                Response::fromArray([
+                    'status' => 200,
+                    'headers' => ['Content-Length' => ['123', '123']],
+                ]),
+                \CURLINFO_SIZE_DOWNLOAD,
+                '123',
+            ],
         ];
     }
 
