@@ -35,7 +35,9 @@ class StreamHelper
                 : HttpUtil::parseRawHeader($http['header']);
             $headers = HttpUtil::parseHeaders($rawHeaders);
             foreach ($headers as $key => $value) {
-                $request->setHeader($key, $value);
+                // A repeated header line collapses to a list; Request only models a single
+                // value per header, so the first occurrence wins.
+                $request->setHeader($key, \is_array($value) ? $value[0] : $value);
             }
         }
 
