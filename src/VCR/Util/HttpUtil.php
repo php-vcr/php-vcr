@@ -13,7 +13,8 @@ class HttpUtil
      *
      * @param string[] $headers List of headers. Example: ['Content-Type: text/html', '...']
      *
-     * @return array<string,string> Key/value pairs of headers, e.g. ['Content-Type' => 'text/html']
+     * @return array<string, string|list<string>> Key/value pairs of headers, e.g. ['Content-Type' => 'text/html'];
+     *                                            a header repeated in the raw list becomes a list of its values.
      */
     public static function parseHeaders(array $headers): array
     {
@@ -125,7 +126,7 @@ class HttpUtil
     /**
      * Returns a list of headers from a key/value paired array.
      *
-     * @param array<string,string|array<string,string>|null> $headers Headers as key/value pairs
+     * @param array<string, string|list<string>|null> $headers Headers as key/value pairs
      *
      * @return string[] List of headers ['Content-Type: text/html\r\n', '...'].
      */
