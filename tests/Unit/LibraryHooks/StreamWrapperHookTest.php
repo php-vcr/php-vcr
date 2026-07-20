@@ -79,6 +79,29 @@ final class StreamWrapperHookTest extends TestCase
         $hook->disable();
     }
 
+    public function testStreamGetMetaDataEmitsOneLinePerDuplicateHeaderValue(): void
+    {
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
+        $hook->enable(static fn ($request) => new Response(
+            ['code' => '200', 'message' => 'OK', 'http_version' => '1.1'],
+            ['Set-Cookie' => ['a=1; Path=/', 'b=2; Path=/']],
+            'body'
+        ));
+
+        $resource = fopen('http://example.com', 'r');
+        $this->assertIsResource($resource);
+
+        $meta = StreamWrapperHook::streamGetMetaData($resource);
+
+        $this->assertIsArray($meta['wrapper_data']);
+        $this->assertContains('Set-Cookie: a=1; Path=/', $meta['wrapper_data']);
+        $this->assertContains('Set-Cookie: b=2; Path=/', $meta['wrapper_data']);
+        $this->assertNotContains('Set-Cookie: Array', $meta['wrapper_data']);
+
+        fclose($resource);
+        $hook->disable();
+    }
+
     public function testStreamGetMetaDataPassesThroughForNonVcrStream(): void
     {
         $resource = fopen('php://memory', 'r');
@@ -121,6 +144,25 @@ final class StreamWrapperHookTest extends TestCase
             ++$calls;
             if (1 === $calls) {
                 return new Response('301', ['Location' => 'http://example.com/final'], 'moved');
+            }
+
+            return new Response('200', [], 'final body');
+        });
+        $hook->stream_open('http://example.com/start', 'r', 0, $openedPath);
+
+        $this->assertSame(2, $calls);
+        $this->assertSame('final body', $hook->stream_read(100));
+        $hook->disable();
+    }
+
+    public function testFollowsRedirectWithDuplicateLocationHeader(): void
+    {
+        $hook = new StreamWrapperHook(new StreamWrapperCodeTransform(), new StreamProcessor(new Configuration()));
+        $calls = 0;
+        $hook->enable(static function ($request) use (&$calls) {
+            ++$calls;
+            if (1 === $calls) {
+                return new Response('301', ['Location' => ['http://example.com/final', 'http://example.com/decoy']], 'moved');
             }
 
             return new Response('200', [], 'final body');
