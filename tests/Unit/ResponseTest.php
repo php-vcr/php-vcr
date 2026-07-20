@@ -150,6 +150,78 @@ final class ResponseTest extends TestCase
         $this->assertEquals($expectedCurlOptions, $response->getCurlInfo());
     }
 
+    public function testGetHeaderReturnsFirstValueForDuplicateHeader(): void
+    {
+        $response = Response::fromArray([
+            'headers' => [
+                'Set-Cookie' => ['a=1; Path=/', 'b=2; Path=/'],
+            ],
+        ]);
+
+        $this->assertSame('a=1; Path=/', $response->getHeader('Set-Cookie'));
+    }
+
+    public function testGetHeadersPreservesAllValuesForDuplicateHeader(): void
+    {
+        $values = ['a=1; Path=/', 'b=2; Path=/'];
+
+        $response = Response::fromArray([
+            'headers' => ['Set-Cookie' => $values],
+        ]);
+
+        $this->assertSame($values, $response->getHeaders()['Set-Cookie']);
+    }
+
+    public function testGetContentTypeReturnsFirstValueForDuplicateContentType(): void
+    {
+        $response = Response::fromArray([
+            'headers' => [
+                'Content-Type' => ['application/json; charset=utf-8', 'application/json; charset=utf-8'],
+            ],
+        ]);
+
+        $this->assertSame('application/json; charset=utf-8', $response->getContentType());
+    }
+
+    public function testFromArrayDetectsGzipWithDuplicateContentType(): void
+    {
+        $body = 'this is an example body';
+        $responseArray = [
+            'headers' => ['Content-Type' => ['application/x-gzip', 'application/x-gzip']],
+            'body' => base64_encode($body),
+        ];
+
+        $response = Response::fromArray($responseArray);
+
+        $this->assertEquals($body, $response->getBody());
+    }
+
+    public function testFromArrayDetectsBinaryWithDuplicateContentTransferEncoding(): void
+    {
+        $body = 'this is an example body';
+        $responseArray = [
+            'headers' => ['Content-Transfer-Encoding' => ['binary', 'binary']],
+            'body' => base64_encode($body),
+        ];
+
+        $response = Response::fromArray($responseArray);
+
+        $this->assertEquals($body, $response->getBody());
+    }
+
+    public function testToArrayHandlesDuplicateContentTransferEncoding(): void
+    {
+        $body = 'this is an example body';
+        $response = new Response('200', [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Transfer-Encoding' => ['binary', 'binary'],
+        ], $body);
+
+        $responseArray = $response->toArray();
+
+        $this->assertEquals(base64_encode($body), $responseArray['body']);
+    }
+
     public function testToArray(): void
     {
         $expectedArray = [
