@@ -22,7 +22,7 @@ final class AsyncTest extends AbstractHttpServerIntegrationTestCase
         // Verifies two async requests on different URLs don't deadlock.
         // Regression for https://github.com/php-vcr/php-vcr/issues/211
 
-        $this->assertValidGETResponse(\GuzzleHttp\json_decode($response->getBody()->getContents(), true));
+        $this->assertValidGETResponse(json_decode($response->getBody()->getContents(), true, 512, \JSON_THROW_ON_ERROR));
     }
 
     protected function assertValidGETResponse(mixed $info): void
