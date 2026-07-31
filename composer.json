@@ -30,7 +30,7 @@
     },
     "require-dev": {
         "ext-soap": "*",
-        "guzzlehttp/guzzle": "^7",
+        "guzzlehttp/guzzle": "^7|^8",
         "symfony/http-client": "^5.4|^6.0|^7.0",
         "phpunit/phpunit": "^9.5.10|^10.5|^11.0",
         "mikey179/vfsstream": "^1.6.10",
