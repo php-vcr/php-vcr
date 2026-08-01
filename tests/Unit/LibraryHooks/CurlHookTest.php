@@ -210,6 +210,25 @@ final class CurlHookTest extends TestCase
         $this->curlHook->disable();
     }
 
+    public function testShouldReturnTrueFromSetoptArray(): void
+    {
+        $this->curlHook->enable($this->getTestCallback());
+
+        $curlHandle = curl_init('http://example.com');
+        Assertion::notSame($curlHandle, false);
+        $result = curl_setopt_array(
+            $curlHandle,
+            [
+                \CURLOPT_RETURNTRANSFER => true,
+            ]
+        );
+        curl_close($curlHandle);
+
+        $this->assertTrue($result, 'curl_setopt_array() should return true on success.');
+
+        $this->curlHook->disable();
+    }
+
     public function testShouldReturnCurlInfoStatusCode(): void
     {
         $this->curlHook->enable($this->getTestCallback());
