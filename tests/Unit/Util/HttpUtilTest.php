@@ -97,6 +97,22 @@ final class HttpUtilTest extends TestCase
         $this->assertEquals($expectedHeaders, $headers);
     }
 
+    public function testParseContinueWithHeaderPlusResponse(): void
+    {
+        $raw = "HTTP/1.1 100 Continue\r\nX-Note: Gateway Ack\r\n\r\nHTTP/1.1 200 OK\r\nX-Backside-Transport: OK OK,OK OK\r\nContent-Type: text/xml\r\nContent-Length: 5\r\n\r\n<xml>";
+        [$status, $headers, $body] = HttpUtil::parseResponse($raw);
+
+        $expectedHeaders = [
+            'X-Backside-Transport: OK OK,OK OK',
+            'Content-Type: text/xml',
+            'Content-Length: 5',
+        ];
+
+        $this->assertEquals('HTTP/1.1 200 OK', $status);
+        $this->assertEquals('<xml>', $body);
+        $this->assertEquals($expectedHeaders, $headers);
+    }
+
     public function testParseResponseAfterProxyAcknowledgements(): void
     {
         $raw = "HTTP/1.0 200 Connection established\r\n\r\nHTTP/2 200\r\n\r\nHTTP/1.1 201 Created\r\nContent-Type: text/plain\r\nContent-Length: 15\r\n\r\nfirst\r\n\r\nsecond";
