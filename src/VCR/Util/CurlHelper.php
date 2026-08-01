@@ -235,6 +235,11 @@ class CurlHelper
             case \CURLOPT_CUSTOMREQUEST:
                 $request->setCurlOption(\CURLOPT_CUSTOMREQUEST, $value);
                 break;
+            case \CURLOPT_NOBODY:
+                if (true == $value && 'GET' === $request->getMethod()) {
+                    $request->setMethod('HEAD');
+                }
+                break;
             case \CURLOPT_POST:
                 if (true == $value) {
                     $request->setMethod('POST');
