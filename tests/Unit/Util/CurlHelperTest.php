@@ -579,6 +579,25 @@ final class CurlHelperTest extends TestCase
         $this->assertEquals('DELETE', $request->getMethod());
     }
 
+    public function testSetCurlOptionNoBodySetsMethodToHead(): void
+    {
+        $request = new Request('GET', 'http://example.com');
+
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_NOBODY, true);
+
+        $this->assertEquals('HEAD', $request->getMethod());
+    }
+
+    public function testSetCurlOptionNoBodyDoesNotOverridePostMethod(): void
+    {
+        $request = new Request('GET', 'http://example.com');
+
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_POST, true);
+        CurlHelper::setCurlOptionOnRequest($request, \CURLOPT_NOBODY, true);
+
+        $this->assertEquals('POST', $request->getMethod());
+    }
+
     /**
      * Function used for testing CURLOPT_HEADERFUNCTION.
      *
