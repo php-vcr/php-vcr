@@ -94,7 +94,7 @@ rewriting source.
 ## Whitelist/blacklist
 
 Scanning every loaded file for `curl`/`soap` calls has a cost. Narrow it with
-[`setWhiteList()`/`setBlackList()`](../reference/configuration.md#white--blacklist) — paths are matched as
+[`setWhiteList()`/`setBlackList()`](../reference/configuration.md#white---blacklist) — paths are matched as
 substrings, and a file is only scanned if it's in the whitelist (or the whitelist is empty) **and** not in
 the blacklist. The default blacklist excludes php-vcr's own internals, to avoid infinite recursion.
 

@@ -19,7 +19,7 @@ the ones listed.
 ## Why this matters
 
 - **Speed:** the `curl`/`soap` hooks scan every file loaded via `include`/`require` for rewritable calls.
-  Disabling a hook you don't need (or narrowing the [whitelist/blacklist](../reference/configuration.md#white--blacklist))
+  Disabling a hook you don't need (or narrowing the [whitelist/blacklist](../reference/configuration.md#white---blacklist))
   cuts down what gets scanned.
 - **Scoping:** if your codebase only ever talks HTTP through `ext-curl`, there's no reason to also intercept
   `SoapClient` — one fewer mechanism to think about when debugging why a request wasn't recorded.

@@ -50,9 +50,11 @@ hook that parses it as such; a raw form-urlencoded body sent via `file_get_conte
 > it is, by default — this breaks replay. The cassette now stores the *redacted* body, but on replay the real
 > incoming request still carries the *original* secret, so `body` no longer matches and playback fails. Drop
 > `body`/`post_fields` from the enabled matchers whenever you redact body content:
+>
 > ```php
 > \VCR\VCR::configure()->enableRequestMatchers(['method', 'url', 'host']);
 > ```
+>
 > This was verified directly — redacting the body without narrowing the matchers reproducibly breaks replay
 > with a stream-wrapper error; narrowing the matchers first fixes it.
 

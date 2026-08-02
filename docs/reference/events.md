@@ -17,26 +17,31 @@
 All event classes live in `VCR\Event\` and extend Symfony's base `Event`. Constants live on `VCR\VCREvents`.
 
 ## `VCR_BEFORE_PLAYBACK`
+
 - **Constant value:** `vcr.before_playback`
 - **Dispatched:** before php-vcr attempts to find a matching recording.
 - **Event class:** `BeforePlaybackEvent` — `getRequest(): Request`, `getCassette(): Cassette`
 
 ## `VCR_AFTER_PLAYBACK`
+
 - **Constant value:** `vcr.after_playback`
 - **Dispatched:** after a recording was successfully found and returned.
 - **Event class:** `AfterPlaybackEvent` — `getRequest(): Request`, `getResponse(): Response`, `getCassette(): Cassette`
 
 ## `VCR_BEFORE_HTTP_REQUEST`
+
 - **Constant value:** `vcr.before_http_request`
 - **Dispatched:** right before a real HTTP request is sent (no match was found, or mode is `all`).
 - **Event class:** `BeforeHttpRequestEvent` — `getRequest(): Request`
 
 ## `VCR_AFTER_HTTP_REQUEST`
+
 - **Constant value:** `vcr.after_http_request`
 - **Dispatched:** right after the real HTTP response comes back, before it's recorded.
 - **Event class:** `AfterHttpRequestEvent` — `getRequest(): Request`, `getResponse(): Response`
 
 ## `VCR_BEFORE_RECORD`
+
 - **Constant value:** `vcr.before_record`
 - **Dispatched:** right before the request/response pair is written to the cassette.
 - **Event class:** `BeforeRecordEvent` — `getRequest(): Request`, `getResponse(): Response`, `getCassette(): Cassette`

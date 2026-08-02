@@ -81,7 +81,7 @@ php-vcr's documentation is a projection of the **current** codebase — never wr
 
 ### Structure
 
-```
+```text
 docs/
   index.md, getting-started.md, requirements.md, upgrading.md
   guides/    — explanation: how a mechanism works and why (how-vcr-works, cassettes, record-modes, request-matching)
@@ -105,6 +105,7 @@ would have shipped as broken advice otherwise.
 ### Page anatomy
 
 Every page:
+
 1. Opens with a one-line summary of what it covers.
 2. Shows a minimal runnable example **before** any prose.
 3. In guides only: explains the concept. Reference pages skip prose entirely.

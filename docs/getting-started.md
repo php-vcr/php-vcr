@@ -3,7 +3,7 @@
 > One-liner: install php-vcr, turn it on as early as possible, insert a cassette, make requests — first run
 > records, every run after that replays.
 
-**On this page:** [Requirements](#requirements) · [Install](#install) · [Turn it on — early](#turn-it-on-early) · [Record, then replay](#record-then-replay) · [Next steps](#next-steps)
+**On this page:** [Requirements](#requirements) · [Install](#install) · [Turn it on — early](#turn-it-on--early) · [Record, then replay](#record-then-replay) · [Next steps](#next-steps)
 
 ## Requirements
 

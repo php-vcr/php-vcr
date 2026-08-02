@@ -12,6 +12,7 @@ work with [`MODE_ALL`](../guides/record-modes.md#all).
 - **Default.**
 - One YAML list entry per recording, appended as it's recorded — streamed one record at a time rather than
   parsed whole into memory.
+
 ```yaml
 -
     request:
@@ -25,12 +26,14 @@ work with [`MODE_ALL`](../guides/record-modes.md#all).
         body: 'Hello, php-vcr!'
     index: 0
 ```
+
 > **⚠️ Warning:** very large requests/responses can hit a PCRE backtrack-limit segfault in Symfony's YAML
 > parser. Raise `pcre.backtrack_limit` in `php.ini`, or switch to `json`.
 
 ## `json`
 
 - Pretty-printed JSON array, parsed/written incrementally (character-by-character) rather than all at once.
+
 ```json
 [
     {
@@ -45,8 +48,10 @@ work with [`MODE_ALL`](../guides/record-modes.md#all).
 
 - Discards everything. `storeRecording()` and `purge()` are no-ops, `isNew()` always returns `true`, and the
   iterator is always empty — nothing is ever replayed.
+
 > **📌 Note:** unlike `yaml`/`json`, Blackhole never touches the filesystem at all — no cassette file is
 > created, even after `insertCassette()`.
+
 - Useful for smoke-testing library-hook behaviour without leaving cassette files behind.
 
 ## Cassette file naming

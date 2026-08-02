@@ -17,6 +17,7 @@ Restrict which hooks are active via
   (`stream_wrapper_unregister` + `stream_wrapper_register`). No source rewriting involved.
 - **Works anywhere:** since the interception is a global protocol substitution, it doesn't matter where in
   your code the call is written — including directly in a script's top level.
+
 ```php
 \VCR\VCR::configure()->enableLibraryHooks(['stream_wrapper']);
 \VCR\VCR::turnOn();
@@ -30,6 +31,7 @@ file_get_contents('http://example.com'); // intercepted, no matter where this li
   direct `ext-curl` usage, `Symfony\Component\HttpClient\CurlHttpClient`, and Guzzle's curl backend.
 - **Mechanism:** rewrites `curl_*` calls in PHP source **as it's loaded via `include`/`require`**, using a
   stream filter on the `file://` wrapper.
+
 > **⚠️ Warning:** this only rewrites code loaded through `include`/`require` — **not** the top-level script
 > PHP was invoked with. In a real test suite (PHPUnit, Codeception, …) this is never an issue, since test
 > code is always loaded via the autoloader. See [How VCR works](../guides/how-vcr-works.md) for why.

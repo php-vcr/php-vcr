@@ -92,7 +92,7 @@ Details and how to change this: [Cassettes → identical requests](docs/guides/c
 Simply run the following command:
 
 ``` bash
-$ composer require --dev php-vcr/php-vcr
+composer require --dev php-vcr/php-vcr
 ```
 
 ## Dependencies
@@ -104,10 +104,10 @@ requirements and the tested HTTP library matrix: [Requirements](docs/requirement
 
 Full documentation lives in [`docs/`](docs/index.md):
 
-- [Getting Started](docs/getting-started.md) · [How VCR works](docs/guides/how-vcr-works.md)
-- [Cassettes](docs/guides/cassettes.md) · [Record Modes](docs/guides/record-modes.md) · [Request Matching](docs/guides/request-matching.md)
-- How-to: [PHPUnit](docs/howto/use-with-phpunit.md) · [Codeception](docs/howto/use-with-codeception.md) · [Filter sensitive data](docs/howto/filter-sensitive-data.md) · [SOAP](docs/howto/record-soap.md)
-- Reference: [Configuration](docs/reference/configuration.md) · [Events](docs/reference/events.md) · [Storage backends](docs/reference/storage-backends.md)
+* [Getting Started](docs/getting-started.md) · [How VCR works](docs/guides/how-vcr-works.md)
+* [Cassettes](docs/guides/cassettes.md) · [Record Modes](docs/guides/record-modes.md) · [Request Matching](docs/guides/request-matching.md)
+* How-to: [PHPUnit](docs/howto/use-with-phpunit.md) · [Codeception](docs/howto/use-with-codeception.md) · [Filter sensitive data](docs/howto/filter-sensitive-data.md) · [SOAP](docs/howto/record-soap.md)
+* Reference: [Configuration](docs/reference/configuration.md) · [Events](docs/reference/events.md) · [Storage backends](docs/reference/storage-backends.md)
 
 ## Contributing
 

@@ -1,0 +1,14 @@
+{
+  "config": {
+    "extends": ".markdownlint.jsonc"
+  },
+  "globs": [
+    "docs/**/*.md",
+    "README.md",
+    "CONTRIBUTING.md"
+  ],
+  "ignores": [
+    // Historical changelog stub predating this documentation effort — out of scope to reformat.
+    "docs/old-changelog.md"
+  ]
+}

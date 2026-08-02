@@ -71,6 +71,7 @@ file_get_contents('http://example.com'); // always a real request, always re-rec
 
 > **⚠️ Warning:** a run under `all` that performs no HTTP request leaves an **empty** cassette — that's
 > inherent to "purge first, then re-record," not a bug.
+
 - **Requires** a storage that implements `PurgeableStorage` — all three built-in backends
   ([`yaml`](../reference/storage-backends.md#yaml), [`json`](../reference/storage-backends.md#json),
   [`blackhole`](../reference/storage-backends.md#blackhole)) do.
