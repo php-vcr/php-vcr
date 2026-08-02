@@ -2,11 +2,13 @@
 
 [![Continuous Integration](https://github.com/php-vcr/php-vcr/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/php-vcr/php-vcr/actions/workflows/ci.yml)
 [![Code Coverage](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/coverage.png?s=15cf1644c8cf37a868e03cfba809a5e24c78f285)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/php-vcr/php-vcr/badges/quality-score.png?s=4f638dbca5eb51fb9c87a1dd45c5df94687d85bd)](https://scrutinizer-ci.com/g/php-vcr/php-vcr/)
+[![Latest Version](https://img.shields.io/packagist/v/php-vcr/php-vcr.svg)](https://packagist.org/packages/php-vcr/php-vcr)
+[![PHP Version](https://img.shields.io/badge/php-%5E8.0-777bb4.svg)](composer.json)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 
 This is a port of the [VCR](http://github.com/vcr/vcr) Ruby library to PHP.
 
-Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests. A bit of documentation can be found on the [php-vcr website](http://php-vcr.github.io).
+Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests. Full documentation lives in [`docs/`](docs/index.md).
 
 Disclaimer: Doing this in PHP is not as easy as in programming languages which support monkey patching (I'm looking at you, Ruby)
 
@@ -15,14 +17,19 @@ Disclaimer: Doing this in PHP is not as easy as in programming languages which s
 * Automatically records and replays your HTTP(s) interactions with minimal setup/configuration code.
 * Supports common http functions and extensions — see [Supported HTTP libraries](#supported-http-libraries) below
 * The same request can receive different responses in different tests -- just use different cassettes.
-* Disables all HTTP requests that you don't explicitly allow by [setting the record mode](http://php-vcr.github.io/documentation/configuration/)
-* [Request matching](http://php-vcr.github.io/documentation/configuration/) is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
+* Disables all HTTP requests that you don't explicitly allow by [setting the record mode](docs/guides/record-modes.md)
+* [Request matching](docs/guides/request-matching.md) is configurable based on HTTP method, URI, host, path, body and headers, or you can easily
   implement a custom request matcher to handle any need.
 * The recorded requests and responses are stored on disk in a serialization format of your choice
-  (currently YAML and JSON are built in, and you can easily implement your own custom serializer)
-* Supports PHPUnit annotations.
+  (currently YAML and JSON are built in)
 
 ## Usage example
+
+> **⚠️ Turn VCR on as soon as possible** — right after Composer's autoloader, before any code that calls
+> `curl_*` or uses `SoapClient` **gets loaded**. That call is what registers the interception; turn it back
+> off right afterwards (`VCR::turnOn(); VCR::turnOff();` in your bootstrap file) if you don't want hooks live
+> for the whole run — each test can cheaply call `turnOn()` again only when it actually wants a cassette.
+> Details: [How VCR works](docs/guides/how-vcr-works.md).
 
 Using static method calls:
 
@@ -47,94 +54,38 @@ class VCRTest extends TestCase
         // Turn off VCR to stop intercepting requests
         \VCR\VCR::turnOff();
     }
-
-    public function testShouldThrowExceptionIfNoCasettePresent()
-    {
-        $this->setExpectedException(
-            'BadMethodCallException',
-            "Invalid http request. No cassette inserted. Please make sure to insert "
-            . "a cassette in your unit test using VCR::insertCassette('name');"
-        );
-        \VCR\VCR::turnOn();
-        // If there is no cassette inserted, a request throws an exception
-        file_get_contents('http://example.com');
-    }
 }
 ```
 
-You can use annotations in PHPUnit by using [phpunit-testlistener-vcr](https://github.com/php-vcr/phpunit-testlistener-vcr):
+Forgetting to insert a cassette throws immediately, instead of silently hitting the network:
 
 ``` php
-class VCRTest extends TestCase
+public function testShouldThrowExceptionIfNoCasettePresent()
 {
-    /**
-     * @vcr unittest_annotation_test
-     */
-    public function testInterceptsWithAnnotations()
-    {
-        // Requests are intercepted and stored into  tests/fixtures/unittest_annotation_test.
-        $result = file_get_contents('http://google.com');
-
-        $this->assertEquals('This is a annotation test dummy.', $result, 'Call was not intercepted (using annotations).');
-
-        // VCR is automatically turned on and off.
-    }
+    $this->expectException(\BadMethodCallException::class);
+    $this->expectExceptionMessage(
+        "Invalid http request. No cassette inserted. Please make sure to insert "
+        . "a cassette in your unit test using VCR::insertCassette('name');"
+    );
+    \VCR\VCR::turnOn();
+    file_get_contents('http://example.com');
 }
 ```
 
 ## Supported HTTP libraries
 
-All three hooks are **enabled by default** when you call `VCR::turnOn()`. No extra configuration is required.
-
-| Hook name | Intercepted libraries | How it works |
-|---|---|---|
-| `stream_wrapper` | `fopen()`, `fread()`, `file_get_contents()`, `Symfony\Component\HttpClient\NativeHttpClient` | Replaces the `http`/`https` stream wrapper — no source rewriting |
-| `curl` | `curl_*` functions, `Symfony\Component\HttpClient\CurlHttpClient`, Guzzle (curl backend) | Rewrites `curl_*` calls in loaded PHP source via a stream filter |
-| `soap` | `SoapClient` | Rewrites `new SoapClient(…)` in loaded PHP source via a stream filter |
-
-To enable only specific hooks (e.g. when you know your code only uses curl):
-
-```php
-\VCR\VCR::configure()->enableLibraryHooks(['curl']);
-\VCR\VCR::turnOn();
-```
-
-Available hook names: `stream_wrapper`, `curl`, `soap`.
+All three hooks (`stream_wrapper`, `curl`, `soap`) are **enabled by default** when you call `VCR::turnOn()`.
+Full interception details and how to enable only specific hooks: [Library Hooks](docs/reference/library-hooks.md).
 
 ## Record modes
 
-The record mode controls how VCR behaves when a cassette is inserted.
-
-| Mode | Constant | Behaviour |
-|---|---|---|
-| `new_episodes` | `VCR::MODE_NEW_EPISODES` | **Default.** Plays back recorded interactions; performs real HTTP for any request that has no recording and records the response. |
-| `once` | `VCR::MODE_ONCE` | Plays back recorded interactions. Allows new requests only when the cassette is new (first run). Throws on a miss after that. |
-| `none` | `VCR::MODE_NONE` | Read-only. Plays back recorded interactions only. Throws on any request that has no recording. |
-| `all` | `VCR::MODE_ALL` | **Re-record mode.** Never plays back. Always performs the real HTTP request and records the response fresh. The cassette is purged on insert so every run starts clean. |
-
-```php
-// Re-record an existing cassette from scratch
-\VCR\VCR::configure()->setMode(\VCR\VCR::MODE_ALL);
-\VCR\VCR::turnOn();
-\VCR\VCR::insertCassette('my_cassette'); // existing recordings are purged
-file_get_contents('http://example.com');  // hits network, recorded fresh
-\VCR\VCR::eject();
-\VCR\VCR::turnOff();
-```
-
-> **Note:** A run under `MODE_ALL` that performs no HTTP request leaves an empty cassette — this is inherent to the fresh re-record semantics.
+The record mode controls how VCR behaves when a cassette is inserted: `new_episodes` (default), `once`,
+`none`, `all`. Full behaviour per mode: [Record Modes](docs/guides/record-modes.md).
 
 ## Recording identical requests
 
-By default php-vcr records identical requests separately and replays them in
-the same order they were made (each gets an incrementing `index` in the
-cassette). If your test issues an identical request a variable number of times
-across runs, disable this so every identical request replays the first
-recorded response:
-
-```php
-\VCR\VCR::configure()->setRecordIdenticalRequests(false);
-```
+By default php-vcr records identical requests separately and replays them in the same order they were made.
+Details and how to change this: [Cassettes → identical requests](docs/guides/cassettes.md#identical-requests).
 
 ## Installation
 
@@ -146,21 +97,28 @@ $ composer require --dev php-vcr/php-vcr
 
 ## Dependencies
 
-PHP-VCR depends on:
+PHP-VCR depends on PHP 8 and the curl extension, plus a few Composer packages Composer installs for you. Full
+requirements and the tested HTTP library matrix: [Requirements](docs/requirements.md).
 
-  * PHP 8
-  * Curl extension
-  * [symfony/event-dispatcher](https://github.com/symfony/event-dispatcher)
-  * [symfony/yaml](https://github.com/symfony/yaml)
-  * [beberlei/assert](https://github.com/beberlei/assert)
+## Documentation
 
-Composer installs all dependencies except extensions like curl.
+Full documentation lives in [`docs/`](docs/index.md):
+
+- [Getting Started](docs/getting-started.md) · [How VCR works](docs/guides/how-vcr-works.md)
+- [Cassettes](docs/guides/cassettes.md) · [Record Modes](docs/guides/record-modes.md) · [Request Matching](docs/guides/request-matching.md)
+- How-to: [PHPUnit](docs/howto/use-with-phpunit.md) · [Codeception](docs/howto/use-with-codeception.md) · [Filter sensitive data](docs/howto/filter-sensitive-data.md) · [SOAP](docs/howto/record-soap.md)
+- Reference: [Configuration](docs/reference/configuration.md) · [Events](docs/reference/events.md) · [Storage backends](docs/reference/storage-backends.md)
+
+## Contributing
+
+Bug reports, feature requests and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for how
+this repository is set up, the pre-push checks, and why documentation is part of every change.
 
 ## Run tests
 
 In order to run all tests you need to get development dependencies using composer:
 
-``` php
+``` bash
 composer install
 composer test
 ```
@@ -172,7 +130,8 @@ composer test
 [Old changelog entries](docs/old-changelog.md)
 
 ## Copyright
-Copyright (c) 2013-2023 Adrian Philipp. Released under the terms of the MIT license. See LICENSE for details.
+
+Copyright (c) 2013-2026 Adrian Philipp. Released under the terms of the MIT license. See LICENSE for details.
 [Contributors](https://github.com/php-vcr/php-vcr/graphs/contributors)
 
 <!--
