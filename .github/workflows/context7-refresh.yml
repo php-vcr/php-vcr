@@ -7,24 +7,19 @@ on:
       - "context7.json"
       - "README.md"
       - "docs/**"
-  release:
-    types: ["published"]
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+
+concurrency:
+  group: "context7-refresh"
+  cancel-in-progress: true
 
 jobs:
   refresh:
     name: "Request library refresh"
-    if: "github.event_name != 'release'"
     runs-on: "ubuntu-latest"
-    permissions:
-      contents: read
-    concurrency:
-      group: "context7-refresh"
-      cancel-in-progress: true
     steps:
       - name: "Request Context7 refresh"
         env:
@@ -39,44 +34,3 @@ jobs:
             -H "Authorization: Bearer $CONTEXT7_API_KEY" \
             -H "Content-Type: application/json" \
             --data '{"libraryName":"/php-vcr/php-vcr"}'
-
-  record-version:
-    name: "Record released version"
-    if: "github.event_name == 'release'"
-    runs-on: "ubuntu-latest"
-    concurrency:
-      group: "context7-version-${{ github.event.release.tag_name }}"
-      cancel-in-progress: false
-    steps:
-      - name: "Checkout code"
-        uses: "actions/checkout@v7"
-        with:
-          fetch-depth: 0
-
-      - name: "Add release tag to previousVersions"
-        id: "patch"
-        env:
-          TAG: "${{ github.event.release.tag_name }}"
-        run: |
-          present=$(jq --arg tag "$TAG" '(.previousVersions // []) | index($tag) != null' context7.json)
-          if [ "$present" = "true" ]; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          jq --arg tag "$TAG" '.previousVersions = ((.previousVersions // []) + [$tag])' context7.json > context7.json.tmp
-          mv context7.json.tmp context7.json
-          echo "changed=true" >> "$GITHUB_OUTPUT"
-
-      - name: "Open pull request"
-        if: "steps.patch.outputs.changed == 'true'"
-        uses: "peter-evans/create-pull-request@v7"
-        with:
-          commit-message: "chore: record ${{ github.event.release.tag_name }} in context7.json"
-          branch: "context7-version/${{ github.event.release.tag_name }}"
-          title: "chore: record ${{ github.event.release.tag_name }} in context7.json"
-          body: >
-            Automated: adds `${{ github.event.release.tag_name }}` to `previousVersions` in
-            `context7.json` so Context7 also indexes this release. Merging this to master will
-            trigger the existing Context7 refresh via the `context7.json` push path.
-          add-paths: "context7.json"
-          labels: "Documentation"
