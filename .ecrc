@@ -7,6 +7,10 @@
     ".idea",
     ".git",
     "vendor/",
-    "tests/fixtures"
+    "tests/fixtures",
+    "website/node_modules",
+    "website/build",
+    "website/.docusaurus",
+    "website/pnpm-lock.yaml"
   ]
 }

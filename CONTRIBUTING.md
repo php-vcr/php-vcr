@@ -124,6 +124,26 @@ The documentation has its own consistent look, applied on every page: emoji-pref
 Mermaid diagrams for flows (rendered natively by GitHub), `<details>` blocks for long or optional content, and
 a breadcrumb/prev-next footer. Keep new pages visually consistent with existing ones.
 
+### Previewing the rendered site
+
+`docs/` is the single source of truth and stays readable directly on GitHub — the rendered, searchable,
+versioned site is generated from it by a Docusaurus app in [`website/`](website/), using
+[pnpm](https://pnpm.io/) (not npm/yarn):
+
+```bash
+cd website
+pnpm install --frozen-lockfile
+pnpm start     # live preview at http://localhost:3000/php-vcr/
+pnpm build     # production build, fails on broken links (onBrokenLinks: 'throw')
+```
+
+Any pull request touching `docs/**` or `website/**` gets an automatic PR-preview deployment; the bot comment
+on the PR links to it once the build finishes — check the rendered result there, not just the raw Markdown.
+
+Released versions are frozen as snapshots under `website/versioned_docs/` and selectable via the version
+dropdown in the navbar; `docs/` itself always reflects the unreleased `Next` version. Don't hand-edit
+`versioned_docs/` — snapshots are cut by the `docs-version` GitHub Action.
+
 ## Commits
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `chore:`, `docs:`,

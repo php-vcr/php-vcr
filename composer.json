@@ -1,6 +1,7 @@
 {
     "name": "php-vcr/php-vcr",
     "description": "Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.",
+    "homepage": "https://php-vcr.github.io/php-vcr/",
     "license": "MIT",
     "scripts": {
         "test": "./vendor/bin/phpunit",

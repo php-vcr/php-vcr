@@ -8,7 +8,7 @@
 
 This is a port of the [VCR](http://github.com/vcr/vcr) Ruby library to PHP.
 
-Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests. Full documentation lives in [`docs/`](docs/index.md).
+Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests. Full documentation lives at [php-vcr.github.io/php-vcr](https://php-vcr.github.io/php-vcr/) — or browse the raw Markdown in [`docs/`](docs/index.md).
 
 Disclaimer: Doing this in PHP is not as easy as in programming languages which support monkey patching (I'm looking at you, Ruby)
 
@@ -102,7 +102,9 @@ requirements and the tested HTTP library matrix: [Requirements](docs/requirement
 
 ## Documentation
 
-Full documentation lives in [`docs/`](docs/index.md):
+Full documentation — searchable, versioned, dark mode — lives at
+[php-vcr.github.io/php-vcr](https://php-vcr.github.io/php-vcr/). Or browse the raw Markdown directly in
+[`docs/`](docs/index.md):
 
 * [Getting Started](docs/getting-started.md) · [How VCR works](docs/guides/how-vcr-works.md)
 * [Cassettes](docs/guides/cassettes.md) · [Record Modes](docs/guides/record-modes.md) · [Request Matching](docs/guides/request-matching.md)

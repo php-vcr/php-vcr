@@ -1,0 +1,54 @@
+name: "Deploy Docs"
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - "docs/**"
+      - "website/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "docs-deploy"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: "Build and Deploy"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v7"
+        with:
+          fetch-depth: 0
+
+      - name: "Install pnpm"
+        uses: "pnpm/action-setup@v4"
+        with:
+          package_json_file: "website/package.json"
+
+      - name: "Install Node"
+        uses: "actions/setup-node@v4"
+        with:
+          node-version: "24"
+          cache: "pnpm"
+          cache-dependency-path: "website/pnpm-lock.yaml"
+
+      - name: "Install dependencies"
+        working-directory: "website"
+        run: "pnpm install --frozen-lockfile"
+
+      - name: "Build docs site"
+        working-directory: "website"
+        run: "pnpm build"
+
+      - name: "Deploy to GitHub Pages"
+        uses: "peaceiris/actions-gh-pages@v4"
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          publish_dir: "./website/build"
+          keep_files: true

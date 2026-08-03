@@ -15,7 +15,7 @@ Every entry, once one exists, follows the same shape:
 - What changed, and the concrete before/after code change needed.
 
 New entries land here in the same PR as the breaking change itself — see the documentation requirement in
-[CONTRIBUTING.md](../CONTRIBUTING.md).
+[CONTRIBUTING.md](https://github.com/php-vcr/php-vcr/blob/master/CONTRIBUTING.md).
 
 ## Current status
 

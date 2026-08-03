@@ -1,3 +1,7 @@
 # Illustrative placeholder domains used inside PHP code samples — not real endpoints, never resolvable.
 http://api.example.com/soap
 http://api.example.com/wsdl
+
+# The rendered docs site this repo's own docs-deploy workflow publishes — doesn't exist yet on the PR
+# that introduces it (only goes live after merge, once that workflow runs on master).
+https://php-vcr.github.io/php-vcr/

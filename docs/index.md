@@ -1,7 +1,7 @@
 # php-vcr Documentation
 
-You're in the docs. Full pitch, badges and a 30-second example live in the [README](../README.md) — this page
-is just the map.
+You're in the docs. Full pitch, badges and a 30-second example live in the
+[README](https://github.com/php-vcr/php-vcr#readme) — this page is just the map.
 
 | | |
 |---|---|
@@ -15,4 +15,5 @@ is just the map.
 | 📖 **Reference** | [VCR facade](reference/vcr-facade.md) · [Configuration](reference/configuration.md) · [Request matchers](reference/request-matchers.md) · [Library hooks](reference/library-hooks.md) · [Storage backends](reference/storage-backends.md) · [Events](reference/events.md) · [Request/Response](reference/request-response.md) |
 | 🆙 **[Upgrading](upgrading.md)** | Breaking changes by version. |
 
-Contributing to php-vcr, including how to write documentation? See [CONTRIBUTING.md](../CONTRIBUTING.md).
+Contributing to php-vcr, including how to write documentation? See
+[CONTRIBUTING.md](https://github.com/php-vcr/php-vcr/blob/master/CONTRIBUTING.md).
