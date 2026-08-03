@@ -5,6 +5,7 @@
 [![Latest Version](https://img.shields.io/packagist/v/php-vcr/php-vcr.svg)](https://packagist.org/packages/php-vcr/php-vcr)
 [![PHP Version](https://img.shields.io/badge/php-%5E8.0-777bb4.svg)](composer.json)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+[![Context7](https://img.shields.io/badge/Context7-Docs-blue)](https://context7.com/php-vcr/php-vcr)
 
 This is a port of the [VCR](http://github.com/vcr/vcr) Ruby library to PHP.
 
