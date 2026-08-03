@@ -4,13 +4,16 @@
   "public_key": "pk_92jsmLsI1DcGaCpXfwPeI",
   "projectTitle": "PHP-VCR",
   "description": "Records HTTP interactions to cassettes and replays them for fast, deterministic, offline test suites. Port of the Ruby VCR library to PHP.",
-  "folders": ["docs"],
+  "folders": ["docs", "README.md"],
   "excludeFolders": [],
-  "excludeFiles": [],
+  "excludeFiles": ["old-changelog.md"],
   "rules": [
     "Call VCR::turnOn() before any code using curl_* or SoapClient is loaded, and VCR::insertCassette() before making requests",
     "Always call VCR::eject() and VCR::turnOff() after the test to detach the cassette and disable interception",
     "Record modes are once (default), new_episodes, and none — set via VCR::configure()->setMode()",
-    "Storage formats are yaml and json, configured via VCR::configure()->setStorage()"
+    "Storage formats are yaml and json, configured via VCR::configure()->setStorage()",
+    "By default requests are matched by method and url only — enable additional matchers (host, headers, body, post_fields, query_string) via VCR::configure()->enableRequestMatchers([...])",
+    "Redacting a request body in a VCR_BEFORE_RECORD listener breaks replay unless the body/post_fields matchers are also narrowed to ignore the redacted parts",
+    "When using the curl or soap library hooks, call VCR::turnOn(); VCR::turnOff(); once at bootstrap, right after the Composer autoloader and before any application code is included — this registers the file:// stream wrapper that rewrites curl_*/SoapClient calls in code loaded later; skipping it means the hooks never intercept those calls"
   ]
 }

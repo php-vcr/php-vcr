@@ -1,0 +1,36 @@
+name: "Refresh Context7 index"
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - "context7.json"
+      - "README.md"
+      - "docs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "context7-refresh"
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    name: "Request library refresh"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Request Context7 refresh"
+        env:
+          CONTEXT7_API_KEY: ${{ secrets.CONTEXT7_API_KEY }}
+        run: |
+          if [ -z "$CONTEXT7_API_KEY" ]; then
+            echo "CONTEXT7_API_KEY not set — skipping refresh."
+            exit 0
+          fi
+          curl --fail-with-body --retry 3 -X POST \
+            --url https://context7.com/api/v1/refresh \
+            -H "Authorization: Bearer $CONTEXT7_API_KEY" \
+            -H "Content-Type: application/json" \
+            --data '{"libraryName":"/php-vcr/php-vcr"}'
