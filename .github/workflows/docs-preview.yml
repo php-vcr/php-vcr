@@ -43,6 +43,8 @@ jobs:
 
       - name: "Build docs site"
         working-directory: "website"
+        env:
+          DOCS_BASE_URL: "/php-vcr/pr-preview/pr-${{ github.event.number }}/"
         run: "pnpm build"
 
       - name: "Deploy preview"

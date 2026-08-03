@@ -12,7 +12,8 @@ const config = {
   },
 
   url: 'https://php-vcr.github.io',
-  baseUrl: '/php-vcr/',
+  // Overridden by PR-preview builds, which are deployed to a per-PR subpath instead of /php-vcr/.
+  baseUrl: process.env.DOCS_BASE_URL || '/php-vcr/',
 
   organizationName: 'php-vcr',
   projectName: 'php-vcr',
