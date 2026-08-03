@@ -1,0 +1,90 @@
+name: "Docs Version Snapshot"
+
+on:
+  release:
+    types: ["published"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version label to cut (e.g. 1.12.0)"
+        required: true
+      ref:
+        description: "Git ref to snapshot docs/ from (defaults to master)"
+        required: false
+        default: "master"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: "docs-version-${{ github.event.release.tag_name || inputs.version }}"
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    name: "Cut Versioned Snapshot"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Determine version and ref"
+        id: "vars"
+        env:
+          EVENT_NAME: "${{ github.event_name }}"
+          RELEASE_TAG: "${{ github.event.release.tag_name }}"
+          INPUT_VERSION: "${{ inputs.version }}"
+          INPUT_REF: "${{ inputs.ref }}"
+        run: |
+          if [ "$EVENT_NAME" = "release" ]; then
+            version="$RELEASE_TAG"
+            ref="$RELEASE_TAG"
+          else
+            version="$INPUT_VERSION"
+            ref="${INPUT_REF:-master}"
+          fi
+          version="${version#v}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: "Checkout code"
+        uses: "actions/checkout@v7"
+        with:
+          ref: "${{ steps.vars.outputs.ref }}"
+          fetch-depth: 0
+
+      - name: "Install pnpm"
+        uses: "pnpm/action-setup@v4"
+        with:
+          package_json_file: "website/package.json"
+
+      - name: "Install Node"
+        uses: "actions/setup-node@v4"
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: "website/pnpm-lock.yaml"
+
+      - name: "Install dependencies"
+        working-directory: "website"
+        run: "pnpm install --frozen-lockfile"
+
+      - name: "Cut docs version"
+        working-directory: "website"
+        env:
+          VERSION: "${{ steps.vars.outputs.version }}"
+        run: "pnpm docusaurus docs:version \"$VERSION\""
+
+      - name: "Open pull request with the snapshot"
+        uses: "peter-evans/create-pull-request@v7"
+        with:
+          commit-message: "docs: cut versioned snapshot for ${{ steps.vars.outputs.version }}"
+          branch: "docs-version/${{ steps.vars.outputs.version }}"
+          title: "docs: versioned snapshot for ${{ steps.vars.outputs.version }}"
+          body: >
+            Automated docs version snapshot, cut from `${{ steps.vars.outputs.ref }}` by the
+            docs-version workflow.
+          add-paths: |
+            website/versioned_docs/**
+            website/versioned_sidebars/**
+            website/versions.json
+          labels: "Documentation"
