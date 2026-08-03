@@ -17,3 +17,8 @@ body:
           description: |
               A simple example of the new feature in action (include PHP code, YAML cassette excerpt, etc.).
               If it changes existing behaviour, include a simple before/after comparison.
+    - type: textarea
+      id: documentation-impact
+      attributes:
+          label: Documentation impact
+          description: Which `docs/` page(s) would this feature add or change? See CONTRIBUTING.md.

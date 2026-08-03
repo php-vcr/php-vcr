@@ -82,3 +82,8 @@ body:
       attributes:
           label: Additional Context
           description: "Optional: any other context: log messages, stack traces, screenshots, related issues."
+    - type: textarea
+      id: documentation-impact
+      attributes:
+          label: Documentation impact
+          description: Does the fix change documented behaviour? Which `docs/` page(s) need updating? See CONTRIBUTING.md.

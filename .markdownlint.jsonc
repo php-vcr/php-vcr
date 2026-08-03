@@ -1,0 +1,12 @@
+{
+  // @PSR12/@Symfony-equivalent pragmatism for docs: keep the checks that catch real mistakes,
+  // relax the ones that would fight this project's documentation conventions.
+  "default": true,
+  "MD013": false, // line length — prose and tables shouldn't be force-wrapped
+  "MD033": false, // inline HTML — needed for <details> collapsibles
+  "MD041": false, // first line must be a top-level heading — some pages open with a badge/table
+  "MD024": {
+    // duplicate headings — reference pages reuse headings like "## Getting set up" style entries
+    "siblings_only": true
+  }
+}

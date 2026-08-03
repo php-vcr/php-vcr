@@ -5,6 +5,7 @@
 | BC break?        | yes / no <!-- yes is only mergeable into a major release -->
 | Deprecation?     | yes / no <!-- if yes, document the replacement and removal target -->
 | New dependency?  | yes / no <!-- if yes, justify and link to the discussion -->
+| Docs updated?    | yes / no / n/a <!-- behaviour-changing PRs MUST update docs/ — see CONTRIBUTING.md -->
 | License          | MIT
 
 <!--
@@ -18,6 +19,7 @@ Contributor guidelines:
 - 🐳 Verify locally on the Docker matrix — list the workspaces you actually ran
   (e.g. workspace80 lowest/highest, workspace84 lowest/highest)
 - 📝 Conventional Commits (feat/fix/chore/refactor/docs/...), one logical change per commit, every commit green
+- 📚 Behaviour changes update `docs/` in the same PR — see CONTRIBUTING.md
 - 🔒 No breaking changes outside of a major release
 - 🏷️ Carry over the milestone and labels from the linked issue(s). Type labels:
   Bug, Feature, Enhancement, Deprecation, BC Break, Security, Documentation, CI, Dependencies
