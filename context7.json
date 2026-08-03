@@ -1,0 +1,16 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "url": "https://context7.com/php-vcr/php-vcr",
+  "public_key": "pk_92jsmLsI1DcGaCpXfwPeI",
+  "projectTitle": "PHP-VCR",
+  "description": "Records HTTP interactions to cassettes and replays them for fast, deterministic, offline test suites. Port of the Ruby VCR library to PHP.",
+  "folders": ["docs"],
+  "excludeFolders": [],
+  "excludeFiles": [],
+  "rules": [
+    "Call VCR::turnOn() before any code using curl_* or SoapClient is loaded, and VCR::insertCassette() before making requests",
+    "Always call VCR::eject() and VCR::turnOff() after the test to detach the cassette and disable interception",
+    "Record modes are once (default), new_episodes, and none — set via VCR::configure()->setMode()",
+    "Storage formats are yaml and json, configured via VCR::configure()->setStorage()"
+  ]
+}
