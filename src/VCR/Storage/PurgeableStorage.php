@@ -12,9 +12,8 @@ namespace VCR\Storage;
  */
 interface PurgeableStorage extends Storage, PurgeableStorageInterface
 {
-    // Extends Storage (in addition to PurgeableStorageInterface) to maintain the type hierarchy:
-    // VCRFactory::createStorage() asserts that storage classes are subclasses of Storage.
-    // Concrete implementations (Yaml, Json, Blackhole) extend AbstractStorage which implements
-    // PurgeableStorage; they must remain subtypes of Storage for VCRFactory's runtime check.
-    // Removing Storage from the hierarchy would break type assertions without compile-time signal.
+    // Extends Storage (in addition to PurgeableStorageInterface) purely for backwards compatibility:
+    // pre-1.12 user code may type-hint against Storage or check "instanceof \VCR\Storage\Storage".
+    // Dropping Storage from this hierarchy would silently break that code, since Yaml/Json/Blackhole
+    // are the concrete classes such checks target.
 }

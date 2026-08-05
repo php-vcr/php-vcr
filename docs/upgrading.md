@@ -52,6 +52,10 @@ string.
 built-in storages (`Yaml`, `Json`, `Blackhole`) satisfy both interface generations, so existing
 `instanceof PurgeableStorage` checks keep working unchanged.
 
+If you previously injected a custom storage by subclassing `Configuration` and overriding `getStorage()`,
+switch to `setStorageFactory()` — the class name returned by `getStorage()` is no longer used to construct the
+storage, so an overridden `getStorage()` is now silently ignored.
+
 ## Current status
 
 php-vcr has stayed within the `1.x` line since its first release — no major version bump has happened yet, so

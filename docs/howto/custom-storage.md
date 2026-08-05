@@ -19,7 +19,7 @@ needs.
 ## In-memory storage
 
 The smallest possible backend — no dependencies, storage lives in a plain PHP array. It shows the full
-`\VCR\Storage\StorageInterface` contract: the four `\Iterator` methods (`current()`, `key()`, `next()`,
+`\VCR\Storage\StorageInterface` contract: the five `\Iterator` methods (`current()`, `key()`, `next()`,
 `rewind()`, `valid()`) plus `storeRecording()` and `isNew()`.
 
 ```php
