@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace VCR;
 
-use VCR\Storage\Storage;
+use VCR\Storage\StorageInterface;
 
 /**
  * A Cassette records and plays back pairs of Requests and Responses in a Storage.
@@ -12,12 +12,12 @@ use VCR\Storage\Storage;
 class Cassette
 {
     /**
-     * @param Storage<array> $storage
+     * @param StorageInterface<array> $storage
      */
     public function __construct(
         protected string $name,
         protected Configuration $config,
-        protected Storage $storage
+        protected StorageInterface $storage
     ) {
     }
 

@@ -12,8 +12,8 @@ use VCR\Event\BeforeHttpRequestEvent;
 use VCR\Event\BeforePlaybackEvent;
 use VCR\Event\BeforeRecordEvent;
 use VCR\Event\Event;
-use VCR\Storage\PurgeableStorage;
-use VCR\Storage\Storage;
+use VCR\Storage\PurgeableStorageInterface;
+use VCR\Storage\StorageInterface;
 use VCR\Util\Assertion;
 use VCR\Util\HttpClient;
 
@@ -129,8 +129,8 @@ class Videorecorder
         $storage = $this->createStorage($cassetteName);
 
         if (VCR::MODE_ALL === $this->config->getMode()) {
-            if (!$storage instanceof PurgeableStorage) {
-                throw new \LogicException(\sprintf('Storage "%s" does not support MODE_ALL: implement PurgeableStorage to enable purge on cassette insert.', $storage::class));
+            if (!$storage instanceof PurgeableStorageInterface) {
+                throw new \LogicException(\sprintf('Storage "%s" does not support MODE_ALL: implement PurgeableStorageInterface to enable purge on cassette insert.', $storage::class));
             }
             $storage->purge();
         }
@@ -208,9 +208,9 @@ class Videorecorder
     }
 
     /**
-     * @return Storage<array>
+     * @return StorageInterface<array>
      */
-    protected function createStorage(string $cassetteName): Storage
+    protected function createStorage(string $cassetteName): StorageInterface
     {
         return $this->factory->get('Storage', [$cassetteName]);
     }

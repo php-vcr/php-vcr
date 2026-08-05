@@ -6,6 +6,8 @@ namespace VCR\Tests\Unit;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use VCR\Storage\StorageFactoryInterface;
+use VCR\Storage\StorageInterface;
 use VCR\VCRFactory;
 
 final class VCRFactoryTest extends TestCase
@@ -62,5 +64,34 @@ final class VCRFactoryTest extends TestCase
             ['json', 'VCR\Storage\Json'],
             ['yaml', 'VCR\Storage\Yaml'],
         ];
+    }
+
+    public function testCreateStorageUsesTheConfiguredStorageFactory(): void
+    {
+        $expectedStorage = $this->createMock(StorageInterface::class);
+        $storageFactory = new class($expectedStorage) implements StorageFactoryInterface {
+            private StorageInterface $storage;
+
+            public function __construct(StorageInterface $storage)
+            {
+                $this->storage = $storage;
+            }
+
+            public function create(string $cassettePath, string $cassetteName): StorageInterface
+            {
+                return $this->storage;
+            }
+        };
+
+        $configuration = VCRFactory::get('VCR\Configuration');
+        $configuration->setStorageFactory($storageFactory);
+
+        try {
+            $instance = VCRFactory::get('Storage', [(string) random_int(0, getrandmax())]);
+
+            $this->assertSame($expectedStorage, $instance);
+        } finally {
+            $configuration->setStorage('yaml');
+        }
     }
 }
