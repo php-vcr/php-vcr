@@ -32,4 +32,4 @@ the ones listed.
 > fixes it. `stream_wrapper` has no such restriction.
 
 ---
-← [Custom request matcher](custom-request-matcher.md) · Next: [Record SOAP requests](record-soap.md) →
+← [Custom storage](custom-storage.md) · Next: [Record SOAP requests](record-soap.md) →

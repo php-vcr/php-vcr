@@ -38,4 +38,4 @@ Now a request only replays if the method, path, **and** the custom header all ag
 (other headers, body, query string) is ignored for matching purposes.
 
 ---
-← [Filter sensitive data](filter-sensitive-data.md) · Next: [Select library hooks](select-library-hooks.md) →
+← [Filter sensitive data](filter-sensitive-data.md) · Next: [Custom storage](custom-storage.md) →
