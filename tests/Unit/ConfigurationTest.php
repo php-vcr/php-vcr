@@ -6,6 +6,11 @@ namespace VCR\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use VCR\Configuration;
+use VCR\Storage\BlackholeStorageFactory;
+use VCR\Storage\JsonStorageFactory;
+use VCR\Storage\StorageFactoryInterface;
+use VCR\Storage\StorageInterface;
+use VCR\Storage\YamlStorageFactory;
 use VCR\VCR;
 use VCR\VCRException;
 
@@ -135,6 +140,41 @@ final class ConfigurationTest extends TestCase
         $this->assertContains('Iterator', (array) class_implements($class));
         $this->assertContains('Traversable', (array) class_implements($class));
         $this->assertContains('VCR\Storage\AbstractStorage', (array) class_parents($class));
+    }
+
+    public function testDefaultStorageFactoryIsYaml(): void
+    {
+        $this->assertInstanceOf(YamlStorageFactory::class, $this->config->getStorageFactory());
+    }
+
+    public function testSetStorageFactoryIsFluentAndReturnsTheSameInstance(): void
+    {
+        $factory = new JsonStorageFactory();
+
+        $this->assertSame($this->config, $this->config->setStorageFactory($factory));
+        $this->assertSame($factory, $this->config->getStorageFactory());
+    }
+
+    public function testSetStorageSelectsTheMatchingBuiltinFactory(): void
+    {
+        $this->config->setStorage('blackhole');
+
+        $this->assertInstanceOf(BlackholeStorageFactory::class, $this->config->getStorageFactory());
+    }
+
+    public function testGetStorageThrowsForACustomStorageFactory(): void
+    {
+        $this->config->setStorageFactory(new class implements StorageFactoryInterface {
+            public function create(string $cassettePath, string $cassetteName): StorageInterface
+            {
+                throw new \LogicException('Not needed for this test.');
+            }
+        });
+
+        $this->expectException(VCRException::class);
+        $this->expectExceptionMessage('Please use getStorageFactory() instead.');
+
+        $this->config->getStorage();
     }
 
     public function testWhitelist(): void

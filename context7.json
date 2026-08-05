@@ -11,7 +11,8 @@
     "Call VCR::turnOn() before any code using curl_* or SoapClient is loaded, and VCR::insertCassette() before making requests",
     "Always call VCR::eject() and VCR::turnOff() after the test to detach the cassette and disable interception",
     "Record modes are once (default), new_episodes, and none — set via VCR::configure()->setMode()",
-    "Storage formats are yaml and json, configured via VCR::configure()->setStorage()",
+    "Built-in storage formats are yaml (default), json, and blackhole, selected via VCR::configure()->setStorage() — deprecated since 1.12 in favor of setStorageFactory()",
+    "Inject a custom storage backend (e.g. database-backed) via VCR::configure()->setStorageFactory(new MyFactory()), implementing StorageFactoryInterface::create(): StorageInterface",
     "By default requests are matched by method and url only — enable additional matchers (host, headers, body, post_fields, query_string) via VCR::configure()->enableRequestMatchers([...])",
     "Redacting a request body in a VCR_BEFORE_RECORD listener breaks replay unless the body/post_fields matchers are also narrowed to ignore the redacted parts",
     "With curl/soap hooks, call VCR::turnOn(); VCR::turnOff(); once at bootstrap, right after the autoloader — this registers the stream wrapper that later rewrites curl_*/SoapClient calls; skipping it disables interception"

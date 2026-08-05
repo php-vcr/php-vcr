@@ -30,7 +30,7 @@
 - **Params:** `$cassetteName` — file name (no extension needed) relative to the configured cassette path.
   May contain path separators to nest cassettes in subfolders.
 - **Throws:** `\LogicException` if [`mode`](configuration.md#mode) is `all` and the configured storage doesn't
-  implement `PurgeableStorage`.
+  implement `PurgeableStorageInterface`.
 - Creates the storage + cassette, purges it first if mode is `all`, and enables library hooks.
 
 ```php

@@ -7,13 +7,13 @@ namespace VCR\Storage;
 /**
  * Storage that can be purged, i.e. reset to its empty/default state.
  *
- * Under record mode "all" the cassette is purged on insert so every run
- * starts from a clean recording.
+ * @deprecated since 1.12, use {@see PurgeableStorageInterface}. Kept as a
+ *             backwards-compatible alias, removed in the next major.
  */
-interface PurgeableStorage extends Storage
+interface PurgeableStorage extends Storage, PurgeableStorageInterface
 {
-    /**
-     * Purge all stored recordings and reset the storage to its empty state.
-     */
-    public function purge(): void;
+    // Extends Storage (in addition to PurgeableStorageInterface) purely for backwards compatibility:
+    // pre-1.12 user code may type-hint against Storage or check "instanceof \VCR\Storage\Storage".
+    // Dropping Storage from this hierarchy would silently break that code, since Yaml/Json/Blackhole
+    // are the concrete classes such checks target.
 }

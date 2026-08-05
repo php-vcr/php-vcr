@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace VCR;
 
+use VCR\Storage\Blackhole;
+use VCR\Storage\BlackholeStorageFactory;
+use VCR\Storage\Json;
+use VCR\Storage\JsonStorageFactory;
+use VCR\Storage\StorageFactoryInterface;
+use VCR\Storage\StorageInterface;
+use VCR\Storage\Yaml;
+use VCR\Storage\YamlStorageFactory;
 use VCR\Util\Assertion;
 
 /**
@@ -16,6 +24,28 @@ use VCR\Util\Assertion;
  */
 class Configuration
 {
+    /**
+     * Storage names accepted by the deprecated setStorage().
+     *
+     * @var array<string, class-string<StorageFactoryInterface>>
+     */
+    private const DEPRECATED_STORAGE_FACTORIES = [
+        'blackhole' => BlackholeStorageFactory::class,
+        'json' => JsonStorageFactory::class,
+        'yaml' => YamlStorageFactory::class,
+    ];
+
+    /**
+     * Storage class the deprecated getStorage() reports per built-in factory.
+     *
+     * @var array<class-string<StorageFactoryInterface>, class-string<StorageInterface>>
+     */
+    private const DEPRECATED_STORAGE_CLASSES = [
+        BlackholeStorageFactory::class => Blackhole::class,
+        JsonStorageFactory::class => Json::class,
+        YamlStorageFactory::class => Yaml::class,
+    ];
+
     private string $cassettePath = 'tests/fixtures';
 
     /**
@@ -46,30 +76,12 @@ class Configuration
     ];
 
     /**
-     * Name of the enabled storage.
+     * Factory creating the Storage for an inserted cassette.
      *
-     * Only one storage can be enabled at a time.
-     * By default YAML is enabled.
-     *
-     * @var string enabled storage name
+     * Only one factory is active at a time. Created lazily in
+     * getStorageFactory() so the default stays a plain YAML storage.
      */
-    private $enabledStorage = 'yaml';
-
-    /**
-     * List of enabled storages.
-     *
-     * Format:
-     * array(
-     *  'name' => 'class name'
-     * )
-     *
-     * @var array<string, class-string> List of available storages
-     */
-    private $availableStorages = [
-        'blackhole' => 'VCR\Storage\Blackhole',
-        'json' => 'VCR\Storage\Json',
-        'yaml' => 'VCR\Storage\Yaml',
-    ];
+    private ?StorageFactoryInterface $storageFactory = null;
 
     /**
      * A value of null means all RequestMatchers are enabled.
@@ -223,13 +235,50 @@ class Configuration
     /**
      * Returns the class name of the storage to use.
      *
-     * Objects are created in the VCRFactory.
-     *
      * @return string class name of the storage to use
+     *
+     * @throws VCRException if a custom storage factory is configured, whose
+     *                      storage class cannot be resolved up front
+     *
+     * @deprecated since 1.12, use {@see self::getStorageFactory()}. Removed in
+     *             the next major.
      */
     public function getStorage(): string
     {
-        return $this->availableStorages[$this->enabledStorage];
+        $factoryClass = \get_class($this->getStorageFactory());
+
+        if (!isset(self::DEPRECATED_STORAGE_CLASSES[$factoryClass])) {
+            throw new VCRException(\sprintf('Cannot resolve a storage class name for storage factory "%s". Please use getStorageFactory() instead.', $factoryClass), 0);
+        }
+
+        return self::DEPRECATED_STORAGE_CLASSES[$factoryClass];
+    }
+
+    /**
+     * Returns the StorageFactory used to create a Storage per cassette.
+     *
+     * Defaults to a YAML storage when no factory was configured.
+     */
+    public function getStorageFactory(): StorageFactoryInterface
+    {
+        if (null === $this->storageFactory) {
+            $this->storageFactory = new YamlStorageFactory();
+        }
+
+        return $this->storageFactory;
+    }
+
+    /**
+     * Sets the StorageFactory used to create a Storage per cassette.
+     *
+     * Implement StorageFactoryInterface to plug in a custom storage backend
+     * together with its own dependencies.
+     */
+    public function setStorageFactory(StorageFactoryInterface $storageFactory): self
+    {
+        $this->storageFactory = $storageFactory;
+
+        return $this;
     }
 
     /**
@@ -285,13 +334,17 @@ class Configuration
 
     /**
      * @throws VCRException if a invalid storage name is given
+     *
+     * @deprecated since 1.12, use {@see self::setStorageFactory()}. Removed in
+     *             the next major.
      */
     public function setStorage(string $storageName): self
     {
-        Assertion::keyExists($this->availableStorages, $storageName, "Storage '{$storageName}' not available.");
-        $this->enabledStorage = $storageName;
+        Assertion::keyExists(self::DEPRECATED_STORAGE_FACTORIES, $storageName, "Storage '{$storageName}' not available.");
 
-        return $this;
+        $factoryClass = self::DEPRECATED_STORAGE_FACTORIES[$storageName];
+
+        return $this->setStorageFactory(new $factoryClass());
     }
 
     /**

@@ -10,7 +10,7 @@
 \VCR\VCR::turnOn();
 ```
 
-**On this page:** [cassette-path](#cassette-path) · [mode](#mode) · [storage](#storage) · [library-hooks](#library-hooks) · [request-matchers](#request-matchers) · [white/blacklist](#white---blacklist) · [record-identical-requests](#record-identical-requests)
+**On this page:** [cassette-path](#cassette-path) · [mode](#mode) · [storage-factory](#storage-factory) · [storage](#storage) · [library-hooks](#library-hooks) · [request-matchers](#request-matchers) · [white/blacklist](#white---blacklist) · [record-identical-requests](#record-identical-requests)
 
 Every entry below follows the same shape: **Values · Default · Description · Example · Notes**.
 
@@ -39,11 +39,36 @@ Every entry below follows the same shape: **Values · Default · Description · 
 \VCR\VCR::configure()->setMode(\VCR\VCR::MODE_ONCE);
 ```
 
+## `storage-factory`
+
+> **🆕 Since 1.12**
+
+- **Setter/Getter:** `setStorageFactory(StorageFactoryInterface $storageFactory): self` /
+  `getStorageFactory(): StorageFactoryInterface`
+- **Values:** any `StorageFactoryInterface` implementation — the three built-ins are
+  `\VCR\Storage\YamlStorageFactory`, `\VCR\Storage\JsonStorageFactory`, `\VCR\Storage\BlackholeStorageFactory`
+- **Default:** `YamlStorageFactory`, created lazily on the first `getStorageFactory()` call
+- Which [storage backend](storage-backends.md) serializes cassettes to disk. Implement your own factory to plug
+  in a custom backend (e.g. a database) — see [Custom storage backend](../howto/custom-storage.md).
+
+```php
+\VCR\VCR::configure()->setStorageFactory(new \VCR\Storage\JsonStorageFactory());
+```
+
+> **💡 Tip:** switch to `JsonStorageFactory` if you hit a segfault recording very large requests/responses —
+> that's a known PCRE backtrack-limit issue with the YAML parser (raise `pcre.backtrack_limit` in `php.ini`, or
+> use JSON).
+
 ## `storage`
 
 - **Setter/Getter:** `setStorage(string $name): self` / `getStorage(): string` (returns the resolved class name)
+
+> **🗑️ Deprecated since 1.12** — use [`storage-factory`](#storage-factory) instead.
+
 - **Values:** `yaml` · `json` · `blackhole`
 - **Default:** `yaml`
+- **Throws:** `getStorage()` throws `VCRException` if a custom (non-built-in) storage factory is configured — its
+  class name can't be resolved ahead of time; use [`getStorageFactory()`](#storage-factory) instead.
 - Which [storage backend](storage-backends.md) serializes cassettes to disk.
 
 ```php

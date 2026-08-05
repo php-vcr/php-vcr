@@ -7,17 +7,9 @@ namespace VCR\Storage;
 /**
  * Interface for reading and storing records.
  *
- * A Storage can be iterated using standard loops.
- * New recordings can be stored.
- *
- * @phpstan-extends \Iterator<int, array>
+ * @deprecated since 1.12, use {@see StorageInterface}. Kept as a
+ *             backwards-compatible alias, removed in the next major.
  */
-interface Storage extends \Iterator
+interface Storage extends StorageInterface
 {
-    /**
-     * @param array<string,int|string|array<string,mixed>|null> $recording
-     */
-    public function storeRecording(array $recording): void;
-
-    public function isNew(): bool;
 }

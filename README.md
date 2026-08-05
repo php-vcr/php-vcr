@@ -109,7 +109,7 @@ Full documentation — searchable, versioned, dark mode — lives at
 
 * [Getting Started](docs/getting-started.md) · [How VCR works](docs/guides/how-vcr-works.md)
 * [Cassettes](docs/guides/cassettes.md) · [Record Modes](docs/guides/record-modes.md) · [Request Matching](docs/guides/request-matching.md)
-* How-to: [PHPUnit](docs/howto/use-with-phpunit.md) · [Codeception](docs/howto/use-with-codeception.md) · [Filter sensitive data](docs/howto/filter-sensitive-data.md) · [SOAP](docs/howto/record-soap.md)
+* How-to: [PHPUnit](docs/howto/use-with-phpunit.md) · [Codeception](docs/howto/use-with-codeception.md) · [Filter sensitive data](docs/howto/filter-sensitive-data.md) · [SOAP](docs/howto/record-soap.md) · [Storage factory / custom storage](docs/howto/custom-storage.md)
 * Reference: [Configuration](docs/reference/configuration.md) · [Events](docs/reference/events.md) · [Storage backends](docs/reference/storage-backends.md)
 
 ## Contributing

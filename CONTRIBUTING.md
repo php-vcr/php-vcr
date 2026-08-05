@@ -85,7 +85,7 @@ php-vcr's documentation is a projection of the **current** codebase — never wr
 docs/
   index.md, getting-started.md, requirements.md, upgrading.md
   guides/    — explanation: how a mechanism works and why (how-vcr-works, cassettes, record-modes, request-matching)
-  howto/     — task recipes (use-with-phpunit, use-with-codeception, filter-sensitive-data, custom-request-matcher, select-library-hooks, record-soap)
+  howto/     — task recipes (use-with-phpunit, use-with-codeception, filter-sensitive-data, custom-request-matcher, custom-storage, select-library-hooks, record-soap)
   reference/ — exhaustive lookup, one page per surface (vcr-facade, configuration, request-matchers, library-hooks, storage-backends, events, request-response)
 ```
 
