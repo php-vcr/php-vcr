@@ -250,8 +250,8 @@ storage must be able to reset itself. That requires implementing `\VCR\Storage\P
 throws:
 
 ```text
-LogicException: Storage "InMemoryStorage" does not support MODE_ALL: implement PurgeableStorageInterface to
-enable purge on cassette insert.
+LogicException: Storage "App\Storage\InMemoryStorage" does not support MODE_ALL: implement
+PurgeableStorageInterface to enable purge on cassette insert.
 ```
 
 `PdoStorage` already implements `PurgeableStorageInterface` and its `purge()` deletes every row for the
