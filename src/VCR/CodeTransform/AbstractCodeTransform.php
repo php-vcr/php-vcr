@@ -44,7 +44,7 @@ abstract class AbstractCodeTransform extends \php_user_filter
     {
         while ($buffer = stream_bucket_make_writeable($in)) {
             $this->data .= $buffer->data;
-            $consumed += $buffer->datalen;
+            $consumed += (int) $buffer->datalen;
         }
 
         if (!$closing) {

@@ -134,7 +134,7 @@ class StreamWrapperHook implements LibraryHook
      */
     public function stream_read(int $count): string
     {
-        $ret = substr($this->response->getBody(), $this->position ?? 0, $count);
+        $ret = substr($this->response->getBody(), $this->position, $count);
         $this->position += \strlen($ret);
 
         return $ret;

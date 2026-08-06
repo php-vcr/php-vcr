@@ -17,7 +17,7 @@ final class CurlHelperTest extends TestCase
     private $headersFound;
 
     /**
-     * @dataProvider getHttpMethodsProvider()
+     * @dataProvider getHttpMethodsProvider
      */
     public function testSetCurlOptionMethods(string $method): void
     {
@@ -417,7 +417,7 @@ final class CurlHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider getCurlOptionProvider()
+     * @dataProvider getCurlOptionProvider
      *
      * @param int   $curlOption              cURL option to get
      * @param mixed $expectedCurlOptionValue Expected value of cURL option
@@ -629,7 +629,7 @@ final class CurlHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider getDefaultCurlInfoProvider()
+     * @dataProvider getDefaultCurlInfoProvider
      */
     public function testGetDefaultCurlInfo(int $option, mixed $expected, ?string $url = null): void
     {
