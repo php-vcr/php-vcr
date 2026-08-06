@@ -6,4 +6,4 @@ parameters:
 	paths:
 		- src
 		- tests
-	reportUnmatchedIgnoredErrors: false
+	reportUnmatchedIgnoredErrors: true
