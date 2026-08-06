@@ -7,7 +7,7 @@
         "test": "./vendor/bin/phpunit",
         "cs": "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
         "cs-fix": "./vendor/bin/php-cs-fixer fix --verbose --diff",
-        "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.neon --no-progress -vvv",
+        "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.dist.neon --no-progress -vvv",
         "ec": "./vendor/bin/ec"
     },
     "authors": [

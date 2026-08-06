@@ -1,5 +1,6 @@
 **/vendor/*
 coverage/*
+/phpstan.neon
 notes.md
 tests/fixtures/cassette*
 /.php_cs
