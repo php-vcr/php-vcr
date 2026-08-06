@@ -1,91 +1,385 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
+			message: '#^Call to function is_callable\(\) with callable\(\)\: mixed will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/VCR/Request.php
+
+		-
+			message: '#^Parameter \#3 \$value of function curl_setopt expects non\-empty\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/VCR/Util/HttpClient.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
 			count: 1
 			path: src/VCR/Util/HttpUtil.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
+			message: '#^Parameter \#1 \$string of function substr expects string, string\|false given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/VCR/Util/HttpUtil.php
 
 		-
-			message: "#^Method VCR\\\\Util\\\\SoapClient\\:\\:realDoRequest\\(\\) should return string but returns string\\|null\\.$#"
+			message: '#^Method VCR\\Util\\SoapClient\:\:realDoRequest\(\) should return string but returns string\|null\.$#'
+			identifier: return.type
 			count: 1
 			path: src/VCR/Util/SoapClient.php
 
 		-
-			message: "#^Offset 'uri' does not exist on array\\{timed_out\\: bool, blocked\\: bool, eof\\: bool, unread_bytes\\: int, stream_type\\: string, wrapper_type\\: string, wrapper_data\\: mixed, mode\\: string, \\.\\.\\.\\}\\.$#"
+			message: '#^Offset ''uri'' might not exist on array\{timed_out\: bool, blocked\: bool, eof\: bool, unread_bytes\: int, stream_type\: string, wrapper_type\: string, wrapper_data\: mixed, mode\: string, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
 			count: 1
 			path: src/VCR/Util/StreamProcessor.php
 
 		-
-			message: "#^Parameter \\#2 \\$length of function fread expects int\\<1, max\\>, int given\\.$#"
+			message: '#^Parameter \#2 \$length of function fread expects int\<1, max\>, int given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/VCR/Util/StreamProcessor.php
 
 		-
-			message: "#^Parameter \\#2 \\$size of function ftruncate expects int\\<0, max\\>, int given\\.$#"
+			message: '#^Parameter \#2 \$operation of function flock expects int\<0, 7\>, int\<min, \-1\>\|int\<1, max\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/VCR/Util/StreamProcessor.php
 
 		-
-			message: "#^Parameter \\#3 \\$microseconds of function stream_set_timeout expects int, int\\|null given\\.$#"
+			message: '#^Parameter \#2 \$size of function ftruncate expects int\<0, max\>, int given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/VCR/Util/StreamProcessor.php
 
 		-
-			message: "#^Cannot call method record\\(\\) on VCR\\\\Cassette\\|null\\.$#"
+			message: '#^Parameter \#3 \$microseconds of function stream_set_timeout expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/VCR/Util/StreamProcessor.php
+
+		-
+			message: '#^Cannot call method record\(\) on VCR\\Cassette\|null\.$#'
+			identifier: method.nonObject
 			count: 1
 			path: src/VCR/Videorecorder.php
 
 		-
-			message: "#^Parameter \\#3 \\$cassette of class VCR\\\\Event\\\\BeforeRecordEvent constructor expects VCR\\\\Cassette, VCR\\\\Cassette\\|null given\\.$#"
+			message: '#^Parameter \#3 \$cassette of class VCR\\Event\\BeforeRecordEvent constructor expects VCR\\Cassette, VCR\\Cassette\|null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/VCR/Videorecorder.php
 
 		-
-			message: "#^Cannot call method toArray\\(\\) on VCR\\\\Response\\|null\\.$#"
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with 1 will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/Soap/ExampleSoapClientTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/Soap/ExampleSoapClientTest.php
+
+		-
+			message: '#^Cannot call method toArray\(\) on VCR\\Response\|null\.$#'
+			identifier: method.nonObject
 			count: 5
 			path: tests/Unit/CassetteTest.php
 
 		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertCount\\(\\) with arguments 23, array\\{url\\: string, content_type\\: string\\|null, http_code\\: int, header_size\\: int, request_size\\: int, filetime\\: int, ssl_verify_result\\: int, redirect_count\\: int, \\.\\.\\.\\} and 'curl_getinfo\\(\\)…' will always evaluate to false\\.$#"
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Request'' and VCR\\Request will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/AfterHttpRequestEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Response'' and VCR\\Response will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/AfterHttpRequestEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Cassette'' and VCR\\Cassette will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/AfterPlaybackEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Request'' and VCR\\Request will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/AfterPlaybackEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Response'' and VCR\\Response will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/AfterPlaybackEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Request'' and VCR\\Request will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/BeforeHttpRequestEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Cassette'' and VCR\\Cassette will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/BeforePlaybackEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Request'' and VCR\\Request will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/BeforePlaybackEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Cassette'' and VCR\\Cassette will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/BeforeRecordEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Request'' and VCR\\Request will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/BeforeRecordEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Response'' and VCR\\Response will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Event/BeforeRecordEventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''certinfo'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
 			count: 1
 			path: tests/Unit/LibraryHooks/CurlHookTest.php
 
 		-
-			message: "#^Parameter \\#2 \\$requestMatchers of method VCR\\\\Request\\:\\:matches\\(\\) expects array\\<callable\\(\\)\\: mixed\\>, array\\{array\\{'some', 'method'\\}\\} given\\.$#"
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''connect_time'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''content_type'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''download_content…'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''filetime'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''header_size'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''http_code'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''namelookup_time'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''pretransfer_time'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''redirect_count'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''redirect_time'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''request_size'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''size_download'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''size_upload'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''speed_download'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''speed_upload'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''ssl_verify_result'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''starttransfer_time'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''total_time'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''upload_content…'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) with ''url'' and array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertCount\(\) with arguments 23, array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\} and ''curl_getinfo\(\)…'' will always evaluate to false\.$#'
+			identifier: method.impossibleType
+			count: 1
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Call to static method Assert\\Assertion\:\:notSame\(\) with CurlMultiHandle and false will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 6
+			path: tests/Unit/LibraryHooks/CurlHookTest.php
+
+		-
+			message: '#^Parameter \#2 \$requestMatchers of method VCR\\Request\:\:matches\(\) expects array\<callable\(\)\: mixed\>, array\{array\{''some'', ''method''\}\} given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/Unit/RequestTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, resource\\|false given\\.$#"
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\PurgeableStorage'' and VCR\\Storage\\Blackhole will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/BlackholeTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\PurgeableStorage'' and VCR\\Storage\\Json will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/JsonTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\PurgeableStorage'' and VCR\\Storage\\Yaml will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/YamlTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\LibraryHooks\\\\SoapHook'' and VCR\\LibraryHooks\\SoapHook will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 2
+			path: tests/Unit/Util/SoapClientTest.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fclose expects resource, resource\|false given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/Unit/Util/StreamProcessorTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$stream of function stream_set_blocking expects resource, resource\\|false given\\.$#"
+			message: '#^Parameter \#1 \$stream of function stream_set_blocking expects resource, resource\|false given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/Unit/Util/StreamProcessorTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$stream of function stream_set_read_buffer expects resource, resource\\|false given\\.$#"
+			message: '#^Parameter \#1 \$stream of function stream_set_read_buffer expects resource, resource\|false given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/Unit/Util/StreamProcessorTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$stream of function stream_set_timeout expects resource, resource\\|false given\\.$#"
+			message: '#^Parameter \#1 \$stream of function stream_set_timeout expects resource, resource\|false given\.$#'
+			identifier: argument.type
 			count: 2
 			path: tests/Unit/Util/StreamProcessorTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$stream of function stream_set_write_buffer expects resource, resource\\|false given\\.$#"
+			message: '#^Parameter \#1 \$stream of function stream_set_write_buffer expects resource, resource\|false given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/Unit/Util/StreamProcessorTest.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:addListener\\(\\)\\.$#"
+			message: '#^Call to an undefined method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface\:\:addListener\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: tests/Unit/VCRTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertSame\(\) with ''all'' and ''all'' will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/VCRTest.php
+
+		-
+			message: '#^Parameter \#3 \$value of function curl_setopt expects bool, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/VCRTest.php
+
+		-
+			message: '#^Parameter \#3 \$value of function curl_setopt expects non\-empty\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/VCRTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Videorecorder'' and VCR\\Videorecorder will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/VideorecorderTest.php
