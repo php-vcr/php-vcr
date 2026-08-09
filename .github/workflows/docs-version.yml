@@ -75,7 +75,7 @@ jobs:
         run: "pnpm docusaurus docs:version \"$VERSION\""
 
       - name: "Open pull request with the snapshot"
-        uses: "peter-evans/create-pull-request@v7"
+        uses: "peter-evans/create-pull-request@v8"
         with:
           commit-message: "docs: cut versioned snapshot for ${{ steps.vars.outputs.version }}"
           branch: "docs-version/${{ steps.vars.outputs.version }}"
