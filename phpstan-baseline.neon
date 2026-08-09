@@ -301,16 +301,34 @@ parameters:
 			path: tests/Unit/RequestTest.php
 
 		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\StorageFactoryInterface'' and VCR\\Storage\\BlackholeStorageFactory will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/BlackholeStorageFactoryTest.php
+
+		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\PurgeableStorage'' and VCR\\Storage\\Blackhole will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 1
 			path: tests/Unit/Storage/BlackholeTest.php
 
 		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\StorageFactoryInterface'' and VCR\\Storage\\JsonStorageFactory will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/JsonStorageFactoryTest.php
+
+		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\PurgeableStorage'' and VCR\\Storage\\Json will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 1
 			path: tests/Unit/Storage/JsonTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\StorageFactoryInterface'' and VCR\\Storage\\YamlStorageFactory will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/YamlStorageFactoryTest.php
 
 		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\PurgeableStorage'' and VCR\\Storage\\Yaml will always evaluate to true\.$#'
