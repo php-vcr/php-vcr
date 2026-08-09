@@ -401,3 +401,27 @@ parameters:
 			identifier: method.alreadyNarrowedType
 			count: 1
 			path: tests/Unit/VideorecorderTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''RuntimeException'' and VCR\\Storage\\Encryption\\DecryptionFailedException will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/Encryption/DecryptionFailedExceptionTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\Encryption\\\\CipherInterface'' and VCR\\Storage\\Encryption\\SodiumCipher will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/Encryption/SodiumCipherTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''RuntimeException'' and VCR\\Storage\\Encryption\\UnsupportedSchemeException will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/Encryption/UnsupportedSchemeExceptionTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotInstanceOf\(\) with arguments ''VCR\\\\Storage\\\\Encryption\\\\DecryptionFailedException'', VCR\\Storage\\Encryption\\UnsupportedSchemeException and ''.*'' will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/Encryption/UnsupportedSchemeExceptionTest.php
