@@ -7,7 +7,7 @@
         "test": "./vendor/bin/phpunit",
         "cs": "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
         "cs-fix": "./vendor/bin/php-cs-fixer fix --verbose --diff",
-        "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.neon --no-progress -vvv",
+        "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.dist.neon --no-progress -vvv",
         "ec": "./vendor/bin/ec"
     },
     "authors": [
@@ -35,11 +35,11 @@
         "symfony/http-client": "^5.4|^6.0|^7.0",
         "phpunit/phpunit": "^9.5.10|^10.5|^11.0",
         "mikey179/vfsstream": "^1.6.10",
-        "phpstan/phpstan": "^1",
-        "phpstan/phpstan-beberlei-assert": "^1",
-        "thecodingmachine/phpstan-strict-rules": "^1",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-beberlei-assert": "^2.0",
+        "thecodingmachine/phpstan-strict-rules": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.0",
-        "phpstan/phpstan-phpunit": "^1",
+        "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/extension-installer": "^1.1",
         "editorconfig-checker/editorconfig-checker": "^10.3"
     },

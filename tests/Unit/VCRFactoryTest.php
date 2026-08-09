@@ -15,7 +15,7 @@ final class VCRFactoryTest extends TestCase
     /**
      * @dataProvider instanceProvider
      *
-     * @covers \VCR\VCRFactory::createVCRVideorecorder()
+     * @covers \VCR\VCRFactory::createVCRVideorecorder
      *
      * @param class-string $instance
      */

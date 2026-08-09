@@ -73,7 +73,6 @@ final class Router
         $url = 'http://'.$host.$uri;
 
         header('Content-Type: application/json');
-        /** @var array<string, mixed> $args */
         echo json_encode(['url' => $url, 'args' => $args, 'headers' => self::getRequestHeaders()], \JSON_THROW_ON_ERROR);
     }
 
@@ -90,7 +89,6 @@ final class Router
         $body = (string) file_get_contents('php://input');
 
         header('Content-Type: application/json');
-        /** @var array<string, mixed> $args */
         echo json_encode([
             'url' => $url,
             'method' => $method,
