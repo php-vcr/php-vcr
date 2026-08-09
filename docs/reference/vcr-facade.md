@@ -65,7 +65,7 @@
 ## Mode constants
 
 | Constant | Value | See |
-|---|---|---|
+| --- | --- | --- |
 | `VCR::MODE_NEW_EPISODES` | `'new_episodes'` | [Record Modes](../guides/record-modes.md#new_episodes) |
 | `VCR::MODE_ONCE` | `'once'` | [Record Modes](../guides/record-modes.md#once) |
 | `VCR::MODE_NONE` | `'none'` | [Record Modes](../guides/record-modes.md#none) |
