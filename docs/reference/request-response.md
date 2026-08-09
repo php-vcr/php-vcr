@@ -11,7 +11,7 @@ new Request(string $method, ?string $url, array $headers = [])
 ```
 
 | Getters | Setters |
-|---|---|
+| --- | --- |
 | `getMethod()` (honours `CURLOPT_CUSTOMREQUEST`) | `setMethod(string)` (uppercases) |
 | `getUrl()` | `setUrl(?string)` (also sets the `Host` header) |
 | `getHost()` (host:port; throws `InvalidHostException` if unparsable) | — |
@@ -39,7 +39,7 @@ new Response($status, array $headers = [], ?string $body = null, array $curlInfo
 ```
 
 | Getters |
-|---|
+| --- |
 | `getStatusCode(): int`, `getStatusMessage(): string`, `getHttpVersion(): mixed` |
 | `getHeaders(): array`, `getHeader(string $key): ?string` |
 | `getContentType(): ?string` |

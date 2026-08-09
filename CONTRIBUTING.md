@@ -167,7 +167,7 @@ greens = good, greys/blues = neutral).
 **Type** — exactly one per issue/PR:
 
 | Label | Meaning |
-|---|---|
+| --- | --- |
 | `Bug` | Defect in shipped behaviour. |
 | `Feature` | New, user-visible capability. |
 | `Enhancement` | Refinement of existing behaviour/internals, no new surface. |
