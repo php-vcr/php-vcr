@@ -23,6 +23,10 @@ final class EncryptedStorageTest extends TestCase
 
     protected function setUp(): void
     {
+        if (!\extension_loaded('sodium')) {
+            $this->markTestSkipped('The encrypted storage requires ext-sodium, which is not loaded.');
+        }
+
         vfsStream::setup('testDir');
         $this->cipher = new SodiumCipher(
             EncryptionKey::fromBinary(str_repeat("\x2a", \SODIUM_CRYPTO_KDF_KEYBYTES))

@@ -107,7 +107,8 @@ opaque `vcr:enc:v1:...` value, while `method` and `url` stay readable:
 `\VCR\Storage\Encryption\EncryptionPolicy` decides which fields are encrypted. Unless a custom policy is
 passed as the third argument to `EncryptedStorageFactory::withKey()`, it encrypts:
 
-- **Fields:** `request.body` · `request.post_fields` · `request.post_files` · `response.body`
+- **Fields:** `request.body` · `request.post_fields` · `request.post_files` · `response.body` ·
+  `response.curl_info.request_header`
 - **Headers** (matched case-insensitively, in both the request and the response):
   `Authorization` · `Proxy-Authorization` · `Cookie` · `Set-Cookie` · `X-Api-Key`
 
@@ -126,6 +127,8 @@ passed as the third argument to `EncryptedStorageFactory::withKey()`, it encrypt
 >   keeps a re-recorded cassette byte-identical instead of producing a spurious diff).
 > - A cassette written with a since-lost key cannot be decrypted again — keep the key itself out of the
 >   repository, and keep a backup of it.
+> - Other `curl_info` sub-fields besides `request_header` (e.g. timing data) are not covered by the default
+>   policy — they generally don't carry secrets.
 
 Works with both `yaml` and `json` as the wrapped backend.
 

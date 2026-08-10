@@ -62,6 +62,8 @@ Every entry below follows the same shape: **Values · Default · Description · 
 Wrap another factory with `\VCR\Storage\EncryptedStorageFactory` to encrypt sensitive fields on disk (see
 [Storage Backends → encrypted](storage-backends.md#encrypted)):
 
+> **🆕 Since 1.13**
+
 ```php
 $key = \VCR\Storage\Encryption\EncryptionKey::fromBase64($_SERVER['VCR_CASSETTE_KEY']);
 

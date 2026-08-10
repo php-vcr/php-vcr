@@ -16,6 +16,10 @@ final class EncryptionPolicyTest extends TestCase
 
     protected function setUp(): void
     {
+        if (!\extension_loaded('sodium')) {
+            $this->markTestSkipped('The encrypted storage requires ext-sodium, which is not loaded.');
+        }
+
         $this->cipher = new SodiumCipher(
             EncryptionKey::fromBinary(str_repeat("\x2a", \SODIUM_CRYPTO_KDF_KEYBYTES))
         );
@@ -234,5 +238,40 @@ final class EncryptionPolicyTest extends TestCase
         $this->expectException(DecryptionFailedException::class);
 
         $policy->decrypt($encrypted, $other);
+    }
+
+    public function testEncryptsTheOutboundCurlRequestHeaderTrace(): void
+    {
+        $recording = $this->recording();
+        $recording['response']['curl_info'] = [
+            'request_header' => "GET / HTTP/1.1\r\nAuthorization: Bearer secret\r\n\r\n",
+        ];
+
+        $encrypted = (new EncryptionPolicy())->encrypt($recording, $this->cipher);
+
+        $this->assertStringStartsWith('vcr:enc:v1:', $encrypted['response']['curl_info']['request_header']);
+        $this->assertStringNotContainsString('Bearer secret', $encrypted['response']['curl_info']['request_header']);
+
+        $restored = (new EncryptionPolicy())->decrypt($encrypted, $this->cipher);
+
+        $this->assertSame(
+            "GET / HTTP/1.1\r\nAuthorization: Bearer secret\r\n\r\n",
+            $restored['response']['curl_info']['request_header']
+        );
+    }
+
+    public function testHeaderNamesContainingDotsAreHandledCorrectly(): void
+    {
+        $policy = new EncryptionPolicy([], ['X.Api.Secret']);
+        $recording = $this->recording();
+        $recording['request']['headers']['X.Api.Secret'] = 'top-secret';
+
+        $encrypted = $policy->encrypt($recording, $this->cipher);
+
+        $this->assertStringStartsWith('vcr:enc:v1:', $encrypted['request']['headers']['X.Api.Secret']);
+
+        $restored = $policy->decrypt($encrypted, $this->cipher);
+
+        $this->assertSame('top-secret', $restored['request']['headers']['X.Api.Secret']);
     }
 }

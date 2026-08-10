@@ -19,6 +19,10 @@ final class SodiumCipherTest extends TestCase
 
     protected function setUp(): void
     {
+        if (!\extension_loaded('sodium')) {
+            $this->markTestSkipped('The encrypted storage requires ext-sodium, which is not loaded.');
+        }
+
         $this->key = EncryptionKey::fromBinary(str_repeat("\x2a", \SODIUM_CRYPTO_KDF_KEYBYTES));
         $this->cipher = new SodiumCipher($this->key);
     }

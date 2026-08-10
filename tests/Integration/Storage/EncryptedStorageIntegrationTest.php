@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace VCR\Tests\Integration\Storage;
 
 use org\bovigo\vfs\vfsStream;
+use VCR\LibraryHooks\StreamWrapperHook;
 use VCR\Storage\EncryptedStorageFactory;
 use VCR\Storage\Encryption\DecryptionFailedException;
 use VCR\Storage\Encryption\EncryptionKey;
@@ -46,16 +47,47 @@ final class EncryptedStorageIntegrationTest extends AbstractHttpServerIntegratio
             ],
         ]);
 
-        file_get_contents(self::$baseUrl.'/post', false, $context);
-
-        return 200;
+        return $this->performAndReadStatus(self::$baseUrl.'/post', $context);
     }
 
     private function get(): int
     {
-        file_get_contents(self::$baseUrl.'/get?token='.self::SECRET);
+        return $this->performAndReadStatus(self::$baseUrl.'/get?token='.self::SECRET, stream_context_create());
+    }
 
-        return 200;
+    /**
+     * @param resource $context
+     */
+    private function performAndReadStatus(string $url, $context): int
+    {
+        $stream = fopen($url, 'r', false, $context);
+
+        if (false === $stream) {
+            throw new \RuntimeException(\sprintf('Unable to open a stream to "%s".', $url));
+        }
+
+        // StreamWrapperHook::streamGetMetaData() reports the real response header lines whether
+        // the stream was served by VCR's own wrapper (replay) or PHP's native http wrapper
+        // (recording, since library hooks are disabled around the real outbound request).
+        $meta = StreamWrapperHook::streamGetMetaData($stream);
+        fclose($stream);
+
+        /** @var string[] $responseHeaders */
+        $responseHeaders = \is_array($meta['wrapper_data'] ?? null) ? $meta['wrapper_data'] : [];
+
+        return $this->statusFromResponseHeaders($responseHeaders);
+    }
+
+    /**
+     * @param string[] $responseHeaders
+     */
+    private function statusFromResponseHeaders(array $responseHeaders): int
+    {
+        if (!isset($responseHeaders[0]) || !preg_match('#^HTTP/\S+\s+(\d{3})#', $responseHeaders[0], $matches)) {
+            throw new \RuntimeException('Unable to determine the HTTP status code from the response headers.');
+        }
+
+        return (int) $matches[1];
     }
 
     private function cassettePath(string $cassette): string
@@ -161,15 +193,23 @@ final class EncryptedStorageIntegrationTest extends AbstractHttpServerIntegratio
 
         $this->recordAndReplay('plaintext-post', fn (): int => $this->post());
 
+        // A distinct cassette name avoids VCRFactory's per-name Storage cache, which would
+        // otherwise hand back the already-cached plain Yaml storage from the phase above, same
+        // reasoning as testReplayingWithTheWrongKeyFails.
+        file_put_contents($this->cassettePath('plaintext-post-replay'), $this->cassetteContents('plaintext-post'));
+
         VCR::configure()->setStorageFactory(
             EncryptedStorageFactory::withKey(new YamlStorageFactory(), $this->key)
         );
 
+        $countBefore = $this->server()->getRequestCount();
+
         VCR::turnOn();
-        VCR::insertCassette('plaintext-post');
+        VCR::insertCassette('plaintext-post-replay');
         $status = $this->post();
         VCR::turnOff();
 
+        $this->assertSame($countBefore, $this->server()->getRequestCount(), 'Replay must not hit the server.');
         $this->assertSame(200, $status, 'Cassettes recorded before encryption must keep working.');
     }
 

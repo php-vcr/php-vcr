@@ -22,6 +22,10 @@ final class EncryptedStorageFactoryTest extends TestCase
 
     protected function setUp(): void
     {
+        if (!\extension_loaded('sodium')) {
+            $this->markTestSkipped('The encrypted storage requires ext-sodium, which is not loaded.');
+        }
+
         vfsStream::setup('testDir');
         $this->key = EncryptionKey::fromBinary(str_repeat("\x2a", \SODIUM_CRYPTO_KDF_KEYBYTES));
     }

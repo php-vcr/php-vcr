@@ -17,6 +17,7 @@ class EncryptionPolicy
         'request.post_fields',
         'request.post_files',
         'response.body',
+        'response.curl_info.request_header',
     ];
 
     public const DEFAULT_HEADER_NAMES = [
@@ -60,10 +61,9 @@ class EncryptionPolicy
      */
     public function encrypt(array $recording, CipherInterface $cipher): array
     {
-        foreach ($this->resolvePaths($recording) as $path) {
-            $recording = $this->replace($recording, $path, function ($value) use ($cipher, $path) {
-                return $cipher->encrypt($this->tag($value, $path), $path);
-            });
+        foreach ($this->resolvePaths($recording) as $segments) {
+            $path = implode('.', $segments);
+            $recording = $this->replace($recording, $segments, fn ($value) => $cipher->encrypt($this->tag($value, $path), $path));
         }
 
         return $recording;
@@ -76,8 +76,9 @@ class EncryptionPolicy
      */
     public function decrypt(array $recording, CipherInterface $cipher): array
     {
-        foreach ($this->resolvePaths($recording) as $path) {
-            $recording = $this->replace($recording, $path, function ($value) use ($cipher, $path) {
+        foreach ($this->resolvePaths($recording) as $segments) {
+            $path = implode('.', $segments);
+            $recording = $this->replace($recording, $segments, function ($value) use ($cipher, $path) {
                 if (!\is_string($value) || !$cipher->isEncrypted($value)) {
                     return $value;
                 }
@@ -90,13 +91,19 @@ class EncryptionPolicy
     }
 
     /**
+     * Resolves every field this policy covers for the given recording into its segment path.
+     *
+     * Header names are carried through as a single opaque segment rather than being dot-joined,
+     * since HTTP header names are themselves allowed to contain literal dots (e.g. "X.Api.Secret")
+     * and re-splitting a joined string on "." would misinterpret such a name as several segments.
+     *
      * @param array<string,mixed> $recording
      *
-     * @return string[]
+     * @return array<int, string[]>
      */
     private function resolvePaths(array $recording): array
     {
-        $paths = $this->fieldPaths;
+        $paths = array_map(static fn (string $fieldPath): array => explode('.', $fieldPath), $this->fieldPaths);
 
         foreach (self::HEADER_CONTAINERS as $container) {
             $headers = $recording[$container]['headers'] ?? null;
@@ -107,7 +114,7 @@ class EncryptionPolicy
 
             foreach (array_keys($headers) as $name) {
                 if (\in_array(strtolower((string) $name), $this->headerNames, true)) {
-                    $paths[] = $container.'.headers.'.$name;
+                    $paths[] = [$container, 'headers', (string) $name];
                 }
             }
         }
@@ -117,13 +124,13 @@ class EncryptionPolicy
 
     /**
      * @param array<string,mixed>    $recording
+     * @param string[]               $segments
      * @param \Closure(mixed): mixed $transform
      *
      * @return array<string,mixed>
      */
-    private function replace(array $recording, string $path, \Closure $transform): array
+    private function replace(array $recording, array $segments, \Closure $transform): array
     {
-        $segments = explode('.', $path);
         $lastIndex = \count($segments) - 1;
         $cursor = &$recording;
 
@@ -149,10 +156,7 @@ class EncryptionPolicy
         return $recording;
     }
 
-    /**
-     * @param mixed $value
-     */
-    private function tag($value, string $path): string
+    private function tag(mixed $value, string $path): string
     {
         if (\is_string($value)) {
             return self::TAG_STRING.$value;
@@ -167,10 +171,7 @@ class EncryptionPolicy
         return self::TAG_JSON.$encoded;
     }
 
-    /**
-     * @return mixed
-     */
-    private function untag(string $plaintext, string $path)
+    private function untag(string $plaintext, string $path): mixed
     {
         $tag = substr($plaintext, 0, 2);
         $payload = substr($plaintext, 2);
