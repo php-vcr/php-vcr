@@ -443,3 +443,9 @@ parameters:
 			identifier: method.alreadyNarrowedType
 			count: 1
 			path: tests/Unit/Storage/EncryptedStorageTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\StorageFactoryInterface'' and VCR\\Storage\\EncryptedStorageFactory will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/EncryptedStorageFactoryTest.php

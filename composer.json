@@ -43,6 +43,9 @@
         "phpstan/extension-installer": "^1.1",
         "editorconfig-checker/editorconfig-checker": "^10.3"
     },
+    "suggest": {
+        "ext-sodium": "Required for the encrypted storage decorator"
+    },
     "autoload": {
         "psr-4": {
             "VCR\\": "src/VCR/"
