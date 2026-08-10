@@ -425,3 +425,21 @@ parameters:
 			identifier: method.alreadyNarrowedType
 			count: 1
 			path: tests/Unit/Storage/Encryption/UnsupportedSchemeExceptionTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\StorageInterface'' and VCR\\Storage\\EncryptedStorage will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/EncryptedStorageTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\PurgeableStorageInterface'' and VCR\\Storage\\PurgeableEncryptedStorage will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/EncryptedStorageTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''VCR\\\\Storage\\\\EncryptedStorage'' and VCR\\Storage\\PurgeableEncryptedStorage will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Storage/EncryptedStorageTest.php
