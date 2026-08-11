@@ -1,47 +1,61 @@
 # Use with PHPUnit
 
-> One-liner: call VCR manually per test — turn it on, insert a cassette, turn it off.
+> **One-liner:** use the [`angelov/phpunit-php-vcr`](https://github.com/angelov/phpunit-php-vcr) PHPUnit extension to automatically manage PHP-VCR and cassettes with the `#[UseCassette]` attribute.
 
-**On this page:** [Manual lifecycle](#manual-lifecycle)
+**On this page:** [Installation](#installation) · [Recording requests](#recording-requests)
 
-## Manual lifecycle
+## Installation
+
+Install the PHPUnit integration:
+
+```bash
+composer require --dev angelov/phpunit-php-vcr
+```
+
+Then register the extension in your `phpunit.xml`:
+
+```xml
+<extensions>
+    <bootstrap class="\Angelov\PHPUnitPHPVcr\Extension">
+        <parameter name="cassettesPath" value="tests/fixtures" />
+    </bootstrap>
+</extensions>
+```
+
+The extension automatically configures and manages PHP-VCR for your tests. Additional configuration options (record modes, storage, request matchers, library hooks, etc.) are available in the project's documentation.
+
+## Recording requests
+
+Declare the `#[UseCassette]` attribute on either a test class or an individual test method.
 
 ```php
+use Angelov\PHPUnitPHPVcr\UseCassette;
 use PHPUnit\Framework\TestCase;
 
+#[UseCassette('example.yml')]
 class ExampleTest extends TestCase
 {
     public function testShouldInterceptStreamWrapper(): void
     {
-        \VCR\VCR::turnOn();
-        \VCR\VCR::insertCassette('example');
-
         $result = file_get_contents('http://example.com');
+
         $this->assertNotEmpty($result);
-
-        \VCR\VCR::eject();
-        \VCR\VCR::turnOff();
-    }
-
-    public function testThrowsWithoutACassette(): void
-    {
-        \VCR\VCR::turnOn();
-
-        $this->expectException(\BadMethodCallException::class);
-        file_get_contents('http://example.com'); // no cassette inserted -> throws
     }
 }
 ```
 
-`turnOn()`/`turnOff()` per test keeps hooks scoped to the tests that need them — cheaper than leaving VCR on
-for the whole suite, and it means a test forgetting to insert a cassette fails loudly instead of silently
-reusing whatever the previous test left behind.
+The extension automatically:
 
-> **📌 Note:** [`php-vcr/phpunit-testlistener-vcr`](https://github.com/php-vcr/phpunit-testlistener-vcr) used
-> to offer a `@vcr` annotation as a shortcut for this. It implements PHPUnit's `TestListener` interface and
-> the `<listeners>` XML config element — both were removed in PHPUnit 10, and the package only ever declared
-> support for PHPUnit 7/8. It doesn't work on the PHPUnit 9.5.10+/10.5+/11.0+ versions php-vcr itself targets,
-> so it isn't documented here until it's updated to the newer Extension/Event API.
+- turns PHP-VCR on before each test,
+- inserts the requested cassette,
+- ejects the cassette after the test,
+- turns PHP-VCR off again.
+
+If the attribute is declared on a method, only that test uses the cassette. Method-level attributes override class-level ones.
+
+> **📌 Note:** The integration also supports PHPUnit data providers, separate cassettes per data set, and additional configuration options. See the project README for the full documentation:
+>
+> https://github.com/angelov/phpunit-php-vcr
 
 ---
 ← [Request Matching](../guides/request-matching.md) · Next: [Use with Codeception](use-with-codeception.md) →
