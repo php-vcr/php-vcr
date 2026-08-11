@@ -15,6 +15,7 @@
     "Inject a custom storage backend (e.g. database-backed) via VCR::configure()->setStorageFactory(new MyFactory()), implementing StorageFactoryInterface::create(): StorageInterface",
     "By default requests are matched by method and url only — enable additional matchers (host, headers, body, post_fields, query_string) via VCR::configure()->enableRequestMatchers([...])",
     "Redacting a request body in a VCR_BEFORE_RECORD listener breaks replay unless the body/post_fields matchers are also narrowed to ignore the redacted parts",
-    "With curl/soap hooks, call VCR::turnOn(); VCR::turnOff(); once at bootstrap, right after the autoloader — this registers the stream wrapper that later rewrites curl_*/SoapClient calls; skipping it disables interception"
+    "With curl/soap hooks, call VCR::turnOn(); VCR::turnOff(); once at bootstrap, right after the autoloader — this registers the stream wrapper that later rewrites curl_*/SoapClient calls; skipping it disables interception",
+    "Encrypt sensitive cassette fields (bodies, Authorization/Cookie/etc. headers) at rest via VCR::configure()->setStorageFactory(EncryptedStorageFactory::withKey(new YamlStorageFactory(), $key)); requires ext-sodium"
   ]
 }

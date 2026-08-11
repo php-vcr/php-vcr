@@ -59,6 +59,19 @@ Every entry below follows the same shape: **Values · Default · Description · 
 > that's a known PCRE backtrack-limit issue with the YAML parser (raise `pcre.backtrack_limit` in `php.ini`, or
 > use JSON).
 
+Wrap another factory with `\VCR\Storage\EncryptedStorageFactory` to encrypt sensitive fields on disk (see
+[Storage Backends → encrypted](storage-backends.md#encrypted)):
+
+> **🆕 Since 1.13**
+
+```php
+$key = \VCR\Storage\Encryption\EncryptionKey::fromBase64($_SERVER['VCR_CASSETTE_KEY']);
+
+\VCR\VCR::configure()->setStorageFactory(
+    \VCR\Storage\EncryptedStorageFactory::withKey(new \VCR\Storage\YamlStorageFactory(), $key)
+);
+```
+
 ## `storage`
 
 - **Setter/Getter:** `setStorage(string $name): self` / `getStorage(): string` (returns the resolved class name)
