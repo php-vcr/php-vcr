@@ -72,6 +72,21 @@ $key = \VCR\Storage\Encryption\EncryptionKey::fromBase64($_SERVER['VCR_CASSETTE_
 );
 ```
 
+Wrap another factory with `\VCR\Storage\RedactingStorageFactory` to redact sensitive fields declaratively — it
+redacts on write and restores reversible rules' redaction on read, before matchers run, so replay isn't broken
+(see [Storage Backends → redacting](storage-backends.md#redacting)):
+
+> **🆕 Since 1.13**
+
+```php
+$rules = \VCR\Storage\Redaction\RedactionRules::create()
+    ->filterSensitiveData('<<AUTH_TOKEN>>', getenv('API_TOKEN'));
+
+\VCR\VCR::configure()->setStorageFactory(
+    \VCR\Storage\RedactingStorageFactory::withRules(new \VCR\Storage\YamlStorageFactory(), $rules)
+);
+```
+
 ## `storage`
 
 - **Setter/Getter:** `setStorage(string $name): self` / `getStorage(): string` (returns the resolved class name)

@@ -272,4 +272,4 @@ ever supported the three built-in names. They're deprecated in favour of `setSto
 ```
 
 ---
-← [Custom matcher](custom-request-matcher.md) · Next: [Select library hooks](select-library-hooks.md) →
+← [Custom redaction rule](custom-redaction-rule.md) · Next: [Select library hooks](select-library-hooks.md) →

@@ -13,9 +13,12 @@
     "Record modes are once (default), new_episodes, and none — set via VCR::configure()->setMode()",
     "Built-in storage formats are yaml (default), json, and blackhole, selected via VCR::configure()->setStorage() — deprecated since 1.12 in favor of setStorageFactory()",
     "Inject a custom storage backend (e.g. database-backed) via VCR::configure()->setStorageFactory(new MyFactory()), implementing StorageFactoryInterface::create(): StorageInterface",
-    "By default requests are matched by method and url only — enable additional matchers (host, headers, body, post_fields, query_string) via VCR::configure()->enableRequestMatchers([...])",
-    "Redacting a request body in a VCR_BEFORE_RECORD listener breaks replay unless the body/post_fields matchers are also narrowed to ignore the redacted parts",
+    "All 8 request matchers (method, url, host, headers, body, post_fields, query_string, soap_operation) are enabled by default — narrow them via VCR::configure()->enableRequestMatchers([...])",
+    "Redacting a request body via a VCR_BEFORE_RECORD listener breaks replay unless the body/post_fields matchers are also narrowed to ignore the redacted parts",
     "With curl/soap hooks, call VCR::turnOn(); VCR::turnOff(); once at bootstrap, right after the autoloader — this registers the stream wrapper that later rewrites curl_*/SoapClient calls; skipping it disables interception",
-    "Encrypt sensitive cassette fields (bodies, Authorization/Cookie/etc. headers) at rest via VCR::configure()->setStorageFactory(EncryptedStorageFactory::withKey(new YamlStorageFactory(), $key)); requires ext-sodium"
+    "Encrypt sensitive cassette fields (bodies, Authorization/Cookie/etc. headers) at rest via VCR::configure()->setStorageFactory(EncryptedStorageFactory::withKey(new YamlStorageFactory(), $key)); requires ext-sodium",
+    "Declaratively redact sensitive fields via VCR::configure()->setStorageFactory(RedactingStorageFactory::withRules(new YamlStorageFactory(), $rules)); reversible rules restore on read before matchers run, so replay isn't broken",
+    "Field redaction rules (header/queryParameter/postField/host) take the REAL secret as source: the cassette stores a derived placeholder, restored before matching. Omitting the source blanks the value and needs allowIrreversibleRequestRedaction().",
+    "Every replay re-resolves a redaction rule's source, so the secret must be available in every environment that reads the cassette, not just the one that recorded it — otherwise playback fails with MissingSecretException naming the placeholder"
   ]
 }
