@@ -45,8 +45,10 @@ All event classes live in `VCR\Event\` and extend Symfony's base `Event`. Consta
 - **Constant value:** `vcr.before_record`
 - **Dispatched:** right before the request/response pair is written to the cassette.
 - **Event class:** `BeforeRecordEvent` — `getRequest(): Request`, `getResponse(): Response`, `getCassette(): Cassette`
-- **Common use:** redact secrets before they hit disk — mutate the `Request`/`Response` object in your
-  listener (they're passed by reference). See [Filter sensitive data](../howto/filter-sensitive-data.md).
+- **Common use:** redact secrets before they hit disk — mutate the `Request` object in your listener (it's
+  passed by reference). `Response` exposes only getters, so nothing on the response side can be changed
+  through this event; use a [declarative redaction rule](../howto/filter-sensitive-data.md) instead for
+  response-side secrets.
 
 ---
 ← [Storage Backends](storage-backends.md) · Next: [Request/Response](request-response.md) →
