@@ -68,6 +68,15 @@ Replace `body` with `body_json` to get order-insensitive JSON matching:
 > matchers are ANDed and `body` already rejects any body it would reject. Leaving `body` enabled
 > alongside it keeps the strict raw-string comparison in force.
 
+> **⚠️ Warning**
+> Decoding is only reached when two bodies differ as strings *and* both start with `{` or `[`.
+> Identical bodies and non-JSON bodies (XML, binary uploads, form-encoded payloads) are settled by the
+> same string comparison `body` uses, so the default matcher set costs nothing extra. When decoding
+> does happen it is paid once per recording examined, against both bodies — on a 200 KiB payload that
+> is milliseconds per recording, so a cassette holding many large JSON recordings will notice.
+> Narrowing the enabled matchers so cheaper ones (`method`, `url`, `host`) reject non-candidates first
+> keeps that cost off the hot path.
+
 ## `post_fields`
 
 - **Compares:** `Request::getPostFields()` — parsed POST field array

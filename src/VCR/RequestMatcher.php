@@ -39,8 +39,18 @@ class RequestMatcher
      */
     public static function matchBodyJson(Request $storedRequest, Request $request): bool
     {
-        $storedJson = self::decodeJsonBody($storedRequest->getBody());
-        $json = self::decodeJsonBody($request->getBody());
+        $storedBody = $storedRequest->getBody();
+        $body = $request->getBody();
+
+        // Identical bodies are semantically equal by definition. Checking this
+        // first keeps the default matcher set — where `body` has already proven
+        // the strings equal before this matcher runs — free of any decoding.
+        if ($storedBody === $body) {
+            return true;
+        }
+
+        $storedJson = self::decodeJsonBody($storedBody);
+        $json = self::decodeJsonBody($body);
 
         if (null === $storedJson || null === $json) {
             return self::matchBody($storedRequest, $request);
@@ -89,7 +99,21 @@ class RequestMatcher
      */
     private static function decodeJsonBody(?string $body): array|\stdClass|null
     {
-        if (null === $body || '' === trim($body)) {
+        if (null === $body) {
+            return null;
+        }
+
+        // Reject anything that cannot be a JSON object or array before paying for
+        // a decode. strspn() walks the leading whitespace without copying the
+        // body, which matters when it is a large upload: a multi-megabyte binary
+        // or XML body is dismissed on its first byte.
+        $offset = strspn($body, " \t\n\r\0\x0B");
+
+        if ($offset === \strlen($body)) {
+            return null;
+        }
+
+        if ('{' !== $body[$offset] && '[' !== $body[$offset]) {
             return null;
         }
 
@@ -104,8 +128,9 @@ class RequestMatcher
             return null;
         }
 
-        // A bare scalar body has no ordering ambiguity, so the raw string
-        // comparison of matchBody() is both correct and cheaper.
+        // The leading-character check above already guarantees this, but
+        // json_decode() is typed as mixed and the guard keeps the return type
+        // honest without trusting that guarantee.
         if (!\is_array($decoded) && !$decoded instanceof \stdClass) {
             return null;
         }

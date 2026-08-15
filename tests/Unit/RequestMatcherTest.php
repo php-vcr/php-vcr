@@ -190,6 +190,12 @@ final class RequestMatcherTest extends TestCase
             'identical invalid json' => ['{"a":1', '{"a":1', 'Invalid JSON falls back to a string comparison'],
             'identical whitespace only' => ['   ', '   ', 'A whitespace only body falls back to a string comparison'],
             'identical non json bodies' => ['plain text', 'plain text', 'Non JSON bodies fall back to a string comparison'],
+            'identical bodies with leading whitespace' => [
+                "  \n{\"a\":1}",
+                "  \n{\"a\":1}",
+                'Identical bodies match without being decoded',
+            ],
+            'leading whitespace is ignored' => ["\n\t {\"a\":1,\"b\":2}", '{"b":2,"a":1}', 'Leading whitespace is ignored'],
         ];
     }
 
@@ -223,6 +229,8 @@ final class RequestMatcherTest extends TestCase
                 'Integers beyond PHP_INT_MAX are compared exactly',
             ],
             'scalar bodies' => ['5', '5.0', 'Bare scalar bodies fall back to a string comparison'],
+            'xml bodies' => ['<a><b/></a>', '<a><c/></a>', 'XML bodies fall back to a string comparison'],
+            'binary bodies' => ["\x00\x01\x02", "\x00\x01\x03", 'Binary bodies fall back to a string comparison'],
         ];
     }
 
