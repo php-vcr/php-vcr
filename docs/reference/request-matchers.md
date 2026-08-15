@@ -3,9 +3,9 @@
 > One-liner: matching decides whether an incoming request "is" a recorded one. All enabled matchers must
 > agree (AND) — see [Request Matching](../guides/request-matching.md) for the concept.
 
-**On this page:** [method](#method) · [url](#url) · [host](#host) · [headers](#headers) · [body](#body) · [post_fields](#post_fields) · [query_string](#query_string) · [soap_operation](#soap_operation) · [Custom matchers](#custom-matchers)
+**On this page:** [method](#method) · [url](#url) · [host](#host) · [headers](#headers) · [body](#body) · [body_json](#body_json) · [post_fields](#post_fields) · [query_string](#query_string) · [soap_operation](#soap_operation) · [Custom matchers](#custom-matchers)
 
-All 8 are enabled by default. Configure a subset via
+All 9 are enabled by default. Configure a subset via
 [`enableRequestMatchers()`](configuration.md#request-matchers).
 
 ## `method`
@@ -39,6 +39,34 @@ All 8 are enabled by default. Configure a subset via
 ## `body`
 
 - **Compares:** the raw request body string
+
+## `body_json`
+
+> **🆕 Since 1.13**
+
+- **Compares:** the request body decoded as JSON, structurally — object key order is ignored, array
+  element order is significant, and scalars are compared strictly.
+- Falls back to the same raw-string comparison as [`body`](#body) when either body is empty, invalid
+  JSON, or a bare scalar.
+
+```php
+// {"model":"a","stream":false}  vs.  {"stream":false,"model":"a"}  -> match
+// ["a","b"]                     vs.  ["b","a"]                     -> no match
+// {"n":1}                       vs.  {"n":"1"}                     -> no match
+// {}                            vs.  []                            -> no match
+```
+
+Replace `body` with `body_json` to get order-insensitive JSON matching:
+
+```php
+\VCR\VCR::configure()
+    ->enableRequestMatchers(['method', 'url', 'host', 'query_string', 'body_json']);
+```
+
+> **📌 Note**
+> Like every built-in, `body_json` is part of the default set — where it changes nothing, because
+> matchers are ANDed and `body` already rejects any body it would reject. Leaving `body` enabled
+> alongside it keeps the strict raw-string comparison in force.
 
 ## `post_fields`
 

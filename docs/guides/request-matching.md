@@ -7,8 +7,8 @@
 
 ## The default: everything must agree
 
-By default, all 8 built-in matchers are enabled — method, URL path, host, headers, body, post fields, query
-string, SOAP operation. An incoming request only matches a recording if **every enabled matcher** returns
+By default, all 9 built-in matchers are enabled — method, URL path, host, headers, body, JSON body, post
+fields, query string, SOAP operation. An incoming request only matches a recording if **every enabled matcher** returns
 `true` (logical AND, see [`Request::matches()`](../reference/request-response.md#request)). That's the
 strictest possible interpretation of "same request", and it's the safest default: nothing replays unless it's
 genuinely the same call.
@@ -25,6 +25,16 @@ identify the request for your use case:
 
 Now two requests that only differ in headers or body replay the same recording. See the full list and exact
 semantics of each in the [Request Matchers reference](../reference/request-matchers.md).
+
+Dropping `body` is a blunt instrument when the variation is only in how a JSON payload is serialised — a
+reordered key, a reformatted document. Swap it for
+[`body_json`](../reference/request-matchers.md#body_json) instead, which compares the body as a JSON
+document rather than as a string, and keeps rejecting bodies that actually differ:
+
+```php
+\VCR\VCR::configure()
+    ->enableRequestMatchers(['method', 'url', 'host', 'query_string', 'body_json']);
+```
 
 ## Custom matchers
 
