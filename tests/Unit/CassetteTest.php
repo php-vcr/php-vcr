@@ -47,6 +47,35 @@ final class CassetteTest extends TestCase
         $this->assertEquals($response->toArray(), $this->cassette->playback($request)?->toArray());
     }
 
+    public function testPlaybackWithBodyJsonMatcherIgnoresObjectKeyOrder(): void
+    {
+        $config = new Configuration();
+        $config->enableRequestMatchers(['method', 'url', 'host', 'query_string', 'body_json']);
+        $cassette = new Cassette('test', $config, new Yaml(vfsStream::url('test/'), 'body_json_test'));
+
+        $recordedRequest = new Request('POST', 'https://example.com/api');
+        $recordedRequest->setBody('{"model":"a","stream":false}');
+        $response = new Response('200', [], 'sometest');
+        $cassette->record($recordedRequest, $response);
+
+        $reorderedRequest = new Request('POST', 'https://example.com/api');
+        $reorderedRequest->setBody('{"stream":false,"model":"a"}');
+
+        $this->assertEquals(
+            $response->toArray(),
+            $cassette->playback($reorderedRequest)?->toArray(),
+            'A body with reordered object keys should replay'
+        );
+
+        $differentRequest = new Request('POST', 'https://example.com/api');
+        $differentRequest->setBody('{"model":"b","stream":false}');
+
+        $this->assertNull(
+            $cassette->playback($differentRequest),
+            'A body with a different value should not replay'
+        );
+    }
+
     public function testHasResponseNotFound(): void
     {
         $request = new Request('GET', 'https://example.com');

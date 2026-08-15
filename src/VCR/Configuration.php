@@ -110,6 +110,10 @@ class Configuration
         'post_fields' => [RequestMatcher::class, 'matchPostFields'],
         'query_string' => [RequestMatcher::class, 'matchQueryString'],
         'soap_operation' => [RequestMatcher::class, 'matchSoapOperation'],
+        // Listed last on purpose: matchers are ANDed and evaluation short-circuits
+        // on the first failure, so `body` rejects a differing body before this
+        // matcher ever decodes it.
+        'body_json' => [RequestMatcher::class, 'matchBodyJson'],
     ];
 
     /**
