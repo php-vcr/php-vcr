@@ -141,6 +141,91 @@ final class RequestMatcherTest extends TestCase
         $this->assertFalse(RequestMatcher::matchBody($first, $second), 'Bodies are different.');
     }
 
+    /**
+     * @dataProvider matchingJsonBodiesProvider
+     */
+    public function testMatchingBodyJsonMatches(?string $storedBody, ?string $body, string $message): void
+    {
+        $this->assertTrue(
+            RequestMatcher::matchBodyJson(
+                $this->createRequestWithBody($storedBody),
+                $this->createRequestWithBody($body)
+            ),
+            $message
+        );
+    }
+
+    /**
+     * @dataProvider nonMatchingJsonBodiesProvider
+     */
+    public function testMatchingBodyJsonDoesNotMatch(?string $storedBody, ?string $body, string $message): void
+    {
+        $this->assertFalse(
+            RequestMatcher::matchBodyJson(
+                $this->createRequestWithBody($storedBody),
+                $this->createRequestWithBody($body)
+            ),
+            $message
+        );
+    }
+
+    /**
+     * @return array<string, array{0: string|null, 1: string|null, 2: string}>
+     */
+    public static function matchingJsonBodiesProvider(): array
+    {
+        return [
+            'identical bodies' => ['{"a":1,"b":2}', '{"a":1,"b":2}', 'Identical JSON bodies match'],
+            'reordered object keys' => ['{"a":1,"b":2}', '{"b":2,"a":1}', 'Object key order is ignored'],
+            'reformatted body' => ['{"a":1,"b":2}', "{\n  \"a\" : 1,\n  \"b\" : 2\n}", 'Formatting is ignored'],
+            'reordered nested object keys' => [
+                '{"o":{"x":1,"y":{"p":true,"q":null}}}',
+                '{"o":{"y":{"q":null,"p":true},"x":1}}',
+                'Object key order is ignored at any depth',
+            ],
+            'identical arrays' => ['["a","b"]', '["a","b"]', 'Arrays in the same order match'],
+            'empty objects' => ['{}', '{}', 'Empty objects match'],
+            'both bodies unset' => [null, null, 'Two absent bodies match'],
+            'both bodies empty' => ['', '', 'Two empty bodies match'],
+            'identical invalid json' => ['{"a":1', '{"a":1', 'Invalid JSON falls back to a string comparison'],
+            'identical whitespace only' => ['   ', '   ', 'A whitespace only body falls back to a string comparison'],
+            'identical non json bodies' => ['plain text', 'plain text', 'Non JSON bodies fall back to a string comparison'],
+        ];
+    }
+
+    /**
+     * @return array<string, array{0: string|null, 1: string|null, 2: string}>
+     */
+    public static function nonMatchingJsonBodiesProvider(): array
+    {
+        return [
+            'reordered array elements' => ['["a","b"]', '["b","a"]', 'Array element order is significant'],
+            'reordered nested array elements' => [
+                '{"m":[{"r":"a"},{"r":"b"}]}',
+                '{"m":[{"r":"b"},{"r":"a"}]}',
+                'Array element order is significant at any depth',
+            ],
+            'integer against string' => ['{"a":1}', '{"a":"1"}', 'Scalar types are compared strictly'],
+            'integer against float' => ['{"a":1}', '{"a":1.0}', 'Integers and floats are different'],
+            'integer against boolean' => ['{"a":1}', '{"a":true}', 'Integers and booleans are different'],
+            'null against empty string' => ['{"a":null}', '{"a":""}', 'Null and an empty string are different'],
+            'object against array' => ['{}', '[]', 'An object is not an array'],
+            'numeric keys object against array' => ['{"0":"a"}', '["a"]', 'An object with numeric keys is not an array'],
+            'extra key' => ['{"a":1}', '{"a":1,"b":2}', 'An extra key is a mismatch'],
+            'missing key' => ['{"a":1,"b":2}', '{"a":1}', 'A missing key is a mismatch'],
+            'longer array' => ['["a"]', '["a","b"]', 'A different array length is a mismatch'],
+            'different invalid json' => ['not json', 'also not json', 'Invalid JSON falls back to a string comparison'],
+            'only one side is json' => ['{"a":1}', 'plain text', 'A JSON body does not match a non JSON body'],
+            'absent against empty object' => [null, '{}', 'An absent body does not match an empty object'],
+            'big integers beyond php int max' => [
+                '{"id":9223372036854775808}',
+                '{"id":9223372036854775809}',
+                'Integers beyond PHP_INT_MAX are compared exactly',
+            ],
+            'scalar bodies' => ['5', '5.0', 'Bare scalar bodies fall back to a string comparison'],
+        ];
+    }
+
     public function testMatchingSoapOperation(): void
     {
         $storedRequest = Request::fromArray([
@@ -173,5 +258,16 @@ final class RequestMatcherTest extends TestCase
             'body' => '{}',
         ]);
         $this->assertTrue(RequestMatcher::matchSoapOperation($storedRequest, $request), 'Operation is not SOAP message');
+    }
+
+    private function createRequestWithBody(?string $body): Request
+    {
+        $request = new Request('POST', 'http://example.com', []);
+
+        if (null !== $body) {
+            $request->setBody($body);
+        }
+
+        return $request;
     }
 }

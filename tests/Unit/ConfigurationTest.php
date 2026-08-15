@@ -6,6 +6,7 @@ namespace VCR\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use VCR\Configuration;
+use VCR\Request;
 use VCR\Storage\BlackholeStorageFactory;
 use VCR\Storage\JsonStorageFactory;
 use VCR\Storage\StorageFactoryInterface;
@@ -85,6 +86,65 @@ final class ConfigurationTest extends TestCase
             ],
             $this->config->getRequestMatchers()
         );
+    }
+
+    public function testEnableBodyJsonRequestMatcher(): void
+    {
+        $this->config->enableRequestMatchers(['body_json']);
+        $this->assertEquals(
+            [
+                ['VCR\RequestMatcher', 'matchBodyJson'],
+            ],
+            $this->config->getRequestMatchers()
+        );
+    }
+
+    /**
+     * The `body_json` matcher joins the default matcher set, where it is ANDed with
+     * `body`. Because it can only ever accept what `body` already accepts, the
+     * default matching outcome must stay exactly as it was before it existed.
+     *
+     * @dataProvider defaultMatcherSetBodyProvider
+     */
+    public function testDefaultMatcherSetOutcomeIsUnchangedByBodyJson(?string $storedBody, ?string $body): void
+    {
+        $matchersWithoutBodyJson = [
+            'method', 'url', 'host', 'headers', 'body', 'post_fields', 'query_string', 'soap_operation',
+        ];
+
+        $storedRequest = new Request('POST', 'http://example.com', []);
+        $request = new Request('POST', 'http://example.com', []);
+
+        if (null !== $storedBody) {
+            $storedRequest->setBody($storedBody);
+        }
+
+        if (null !== $body) {
+            $request->setBody($body);
+        }
+
+        $withBodyJson = $storedRequest->matches($request, $this->config->getRequestMatchers());
+
+        $this->config->enableRequestMatchers($matchersWithoutBodyJson);
+        $withoutBodyJson = $storedRequest->matches($request, $this->config->getRequestMatchers());
+
+        $this->assertSame($withoutBodyJson, $withBodyJson);
+    }
+
+    /**
+     * @return array<string, array{0: string|null, 1: string|null}>
+     */
+    public static function defaultMatcherSetBodyProvider(): array
+    {
+        return [
+            'identical bodies' => ['{"a":1,"b":2}', '{"a":1,"b":2}'],
+            'reordered object keys' => ['{"a":1,"b":2}', '{"b":2,"a":1}'],
+            'reordered array elements' => ['["a","b"]', '["b","a"]'],
+            'different bodies' => ['{"a":1}', '{"a":2}'],
+            'invalid json' => ['{"a":1', '{"a":1'],
+            'non json bodies' => ['plain text', 'plain text'],
+            'absent bodies' => [null, null],
+        ];
     }
 
     public function testEnableRequestMatchersFailsWithNoExistingName(): void
