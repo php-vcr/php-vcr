@@ -308,10 +308,10 @@ class StreamProcessor
                 // Use native error handler
                 return false;
             });
-            $result = @stat($path);
+            $result = $flags & \STREAM_URL_STAT_LINK ? @lstat($path) : @stat($path);
             restore_error_handler();
         } else {
-            $result = stat($path);
+            $result = $flags & \STREAM_URL_STAT_LINK ? lstat($path) : stat($path);
         }
         $this->intercept();
 

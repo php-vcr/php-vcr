@@ -240,6 +240,24 @@ final class StreamProcessorTest extends TestCase
         $processor->url_stat('file_not_found', \STREAM_URL_STAT_QUIET);
     }
 
+    public function testUrlStatResolvesLink(): void
+    {
+        $processor = new StreamProcessor();
+        $stat = $processor->url_stat('tests/fixtures/streamprocessor_data_link', 0);
+        $this->assertIsArray($stat);
+        $modeType = $stat['mode'] & 0170000;
+        $this->assertSame(0100000, $modeType);
+    }
+
+    public function testUrlStatLinkReturnsLink(): void
+    {
+        $processor = new StreamProcessor();
+        $stat = $processor->url_stat('tests/fixtures/streamprocessor_data_link', \STREAM_URL_STAT_LINK);
+        $this->assertIsArray($stat);
+        $modeType = $stat['mode'] & 0170000;
+        $this->assertSame(0120000, $modeType);
+    }
+
     public function testDirOpendir(): void
     {
         $processor = new StreamProcessor();
