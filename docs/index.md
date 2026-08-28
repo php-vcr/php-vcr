@@ -4,7 +4,7 @@ You're in the docs. Full pitch, badges and a 30-second example live in the
 [README](https://github.com/php-vcr/php-vcr#readme) — this page is just the map.
 
 | | |
-|---|---|
+| --- | --- |
 | 📦 **[Getting Started](getting-started.md)** | Install, turn VCR on, record your first cassette. |
 | 🧭 **[Requirements](requirements.md)** | PHP/extension support matrix, tested HTTP libraries. |
 | 🔍 **[How VCR works](guides/how-vcr-works.md)** | The two interception mechanisms — and why bootstrap order matters. |

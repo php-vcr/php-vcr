@@ -3,7 +3,10 @@ includes:
 
 parameters:
 	level: 8
+	phpVersion:
+		min: 80000
+		max: 80500
 	paths:
 		- src
 		- tests
-	reportUnmatchedIgnoredErrors: false
+	reportUnmatchedIgnoredErrors: true

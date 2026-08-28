@@ -33,7 +33,7 @@ contract — see [Custom storage backend](howto/custom-storage.md) for why a fac
 string.
 
 | Deprecated | Replacement |
-|---|---|
+| --- | --- |
 | `Configuration::setStorage('json')` | `Configuration::setStorageFactory(new \VCR\Storage\JsonStorageFactory())` |
 | `Configuration::getStorage()` | `Configuration::getStorageFactory()` |
 | `VCR\Storage\Storage` | `VCR\Storage\StorageInterface` |

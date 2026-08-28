@@ -3,7 +3,9 @@
 > One-liner: mutate the `Request` in a `VCR_BEFORE_RECORD` listener before it's written to disk — but redacting
 > the body means you must also stop matching on it, or replay breaks.
 
-**On this page:** [Redact a header](#redact-a-header) · [Redact the body](#redact-the-body) · [What you can't redact this way](#what-you-cant-redact-this-way)
+**On this page:** [Redact a header](#redact-a-header) · [Redact the body](#redact-the-body) ·
+[What you can't redact this way](#what-you-cant-redact-this-way) ·
+[Encrypt instead of redacting](#encrypt-instead-of-redacting)
 
 Cassettes are plain files that typically end up committed to your repo — don't let an auth token, API key, or
 cookie leak into one. `VCR_BEFORE_RECORD` fires with the real `Request`/`Response` right before they're
@@ -65,6 +67,29 @@ hook that parses it as such; a raw form-urlencoded body sent via `file_get_conte
 back *in the response body* (rather than being sent in the request), this event can't strip it before it's
 written to the cassette. In that case, either have your test server/fixture avoid echoing the secret back, or
 post-process the cassette file after recording.
+
+## Encrypt instead of redacting
+
+> **🆕 Since 1.13**
+
+Redaction has a sharp edge, [documented above](#redact-the-body): once the body on disk no longer matches the
+body of the real incoming request, the `body`/`post_fields` matchers must be narrowed too, or replay breaks.
+The [`encrypted` storage backend](../reference/storage-backends.md#encrypted) sidesteps this entirely — it
+decrypts a recording in `current()`, which runs before `Cassette::playback()` applies the matchers, so matching
+always sees plaintext while only ciphertext ever reaches disk:
+
+```php
+$key = \VCR\Storage\Encryption\EncryptionKey::fromBase64($_SERVER['VCR_CASSETTE_KEY']);
+
+\VCR\VCR::configure()->setStorageFactory(
+    \VCR\Storage\EncryptedStorageFactory::withKey(new \VCR\Storage\YamlStorageFactory(), $key)
+);
+```
+
+This also covers the response-body case above, which redaction through `VCR_BEFORE_RECORD` can't reach at
+all — `response.body` is encrypted by default. See [Storage Backends → encrypted](../reference/storage-backends.md#encrypted)
+for the full configuration, the fields covered by default, and its limitations (query-string secrets stay
+readable, and a lost key makes a cassette unrecoverable).
 
 ---
 ← [Use with Codeception](use-with-codeception.md) · Next: [Custom request matcher](custom-request-matcher.md) →

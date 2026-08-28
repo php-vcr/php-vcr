@@ -18,7 +18,7 @@ allowed dependency versions.
 ## Extensions
 
 | Extension | Required | Why |
-|---|---|---|
+| --- | --- | --- |
 | `curl` | Always | Used both by the `curl` hook and internally to perform real HTTP requests when recording. |
 | `soap` | Only for the `soap` hook | `SoapHook` throws `BadMethodCallException` at construction if `SoapClient` doesn't exist. |
 | `xml` (`ext-dom`) | Only for the `soap` hook | Same constructor check, via `DOMDocument`. |
@@ -40,7 +40,7 @@ php-vcr intercepts at the level of PHP's stream wrapper and `curl_*`/`SoapClient
 any library built on top of them — these are the ones actually exercised by the test suite:
 
 | Library | Hook | Notes |
-|---|---|---|
+| --- | --- | --- |
 | `file_get_contents()`, `fopen()`, `fread()`, … | `stream_wrapper` | Any function that goes through PHP's `http`/`https` stream wrapper. |
 | `Symfony\Component\HttpClient\NativeHttpClient` | `stream_wrapper` | Uses stream wrappers under the hood. |
 | `ext-curl` (`curl_init`/`curl_exec`/`curl_multi_*`/…) | `curl` | Direct curl function calls. |

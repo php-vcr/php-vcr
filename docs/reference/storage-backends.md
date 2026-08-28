@@ -2,11 +2,12 @@
 
 > One-liner: cassettes are files on disk, serialized as YAML (default), JSON, or nowhere at all (Blackhole).
 
-**On this page:** [yaml](#yaml) · [json](#json) · [blackhole](#blackhole) ·
+**On this page:** [yaml](#yaml) · [json](#json) · [blackhole](#blackhole) · [encrypted](#encrypted) ·
 [Custom storage backend](#custom-storage-backend) · [Cassette file naming](#cassette-file-naming)
 
-Select via [`setStorageFactory()`](configuration.md#storage-factory). All three implement
-`PurgeableStorageInterface`, so all three work with [`MODE_ALL`](../guides/record-modes.md#all).
+Select via [`setStorageFactory()`](configuration.md#storage-factory). `yaml`, `json`, and `blackhole`
+implement `PurgeableStorageInterface` directly, so all three work with [`MODE_ALL`](../guides/record-modes.md#all);
+`encrypted` wraps one of them and works with `MODE_ALL` whenever the wrapped backend does.
 
 ## `yaml`
 
@@ -57,6 +58,79 @@ Select via [`setStorageFactory()`](configuration.md#storage-factory). All three 
 > created, even after `insertCassette()`.
 
 - Useful for smoke-testing library-hook behaviour without leaving cassette files behind.
+
+## `encrypted`
+
+> **🆕 Since 1.13**
+
+- **Factory:** `\VCR\Storage\EncryptedStorageFactory` — wraps another storage factory so every cassette it
+  writes has its sensitive fields encrypted, and every cassette it reads is decrypted before request matching
+  runs.
+- Requires `ext-sodium`; encrypts with XChaCha20-Poly1305, keyed by a 32-byte `EncryptionKey`.
+- `method`, `url`, and status stay in plaintext on purpose — the cassette is still reviewable in a diff.
+
+```php
+$key = \VCR\Storage\Encryption\EncryptionKey::fromBase64($_SERVER['VCR_CASSETTE_KEY']);
+
+\VCR\VCR::configure()->setStorageFactory(
+    \VCR\Storage\EncryptedStorageFactory::withKey(new \VCR\Storage\YamlStorageFactory(), $key)
+);
+```
+
+Generate a key once and keep it outside the repository — losing it makes every cassette encrypted with it
+unrecoverable:
+
+```php
+$key = \VCR\Storage\Encryption\EncryptionKey::generate();
+echo $key->toBase64(); // store this, e.g. as the VCR_CASSETTE_KEY environment variable
+```
+
+A recorded cassette looks like this — the request body and the `Authorization` header are replaced by an
+opaque `vcr:enc:v1:...` value, while `method` and `url` stay readable:
+
+```yaml
+-
+    request:
+        method: POST
+        url: 'http://example.com/post'
+        headers:
+            Authorization: 'vcr:enc:v1:lQDi6mIvZalIRRBCbPFAC5kslFL6PZh3YQfc+ojigif6k/rdDP+zcqsB10UMQEXM0sZS...'
+        body: 'vcr:enc:v1:FGnejCxN3ST4WPgtgd5ZY+QnqmY2zVx63Kf7QJ/9OLGUFX+7yVeifQr3gfLztL8tPD6MXsll1RFsig=='
+    response:
+        status: { code: 200, message: OK }
+        body: 'vcr:enc:v1:lQVZ9S4OFm/oOyNLaSjv2vDKl0ifq8ZbBxl9nvXLQHAwyYSN/jvZjF5qvhiOTm0agNjjz6pH5BoFegy...'
+    index: 0
+```
+
+### Policy defaults
+
+`\VCR\Storage\Encryption\EncryptionPolicy` decides which fields are encrypted. Unless a custom policy is
+passed as the third argument to `EncryptedStorageFactory::withKey()`, it encrypts:
+
+- **Fields:** `request.body` · `request.post_fields` · `request.post_files` · `response.body` ·
+  `response.curl_info.request_header`
+- **Headers** (matched case-insensitively, in both the request and the response):
+  `Authorization` · `Proxy-Authorization` · `Cookie` · `Set-Cookie` · `X-Api-Key`
+
+```php
+\VCR\Storage\EncryptedStorageFactory::withKey(
+    new \VCR\Storage\YamlStorageFactory(),
+    $key,
+    new \VCR\Storage\Encryption\EncryptionPolicy(['response.body'], [])
+);
+```
+
+> **⚠️ Limitations**
+>
+> - Secrets in the query string stay in plaintext — `url` is intentionally left readable.
+> - Identical values in the same field produce identical ciphertext, the cost of a deterministic nonce (it
+>   keeps a re-recorded cassette byte-identical instead of producing a spurious diff).
+> - A cassette written with a since-lost key cannot be decrypted again — keep the key itself out of the
+>   repository, and keep a backup of it.
+> - Other `curl_info` sub-fields besides `request_header` (e.g. timing data) are not covered by the default
+>   policy — they generally don't carry secrets.
+
+Works with both `yaml` and `json` as the wrapped backend.
 
 ## Custom storage backend
 

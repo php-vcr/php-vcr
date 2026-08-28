@@ -122,7 +122,9 @@ inventing a new structure.
 
 The documentation has its own consistent look, applied on every page: emoji-prefixed callouts (as above),
 Mermaid diagrams for flows (rendered natively by GitHub), `<details>` blocks for long or optional content, and
-a breadcrumb/prev-next footer. Keep new pages visually consistent with existing ones.
+a breadcrumb/prev-next footer. Tables use the compact style — a single space padding every pipe, including
+the delimiter row (`| --- | --- |`, not `|---|---|`) — per the pinned `MD060` rule in `.markdownlint.jsonc`.
+Keep new pages visually consistent with existing ones.
 
 ### Previewing the rendered site
 
@@ -167,7 +169,7 @@ greens = good, greys/blues = neutral).
 **Type** — exactly one per issue/PR:
 
 | Label | Meaning |
-|---|---|
+| --- | --- |
 | `Bug` | Defect in shipped behaviour. |
 | `Feature` | New, user-visible capability. |
 | `Enhancement` | Refinement of existing behaviour/internals, no new surface. |

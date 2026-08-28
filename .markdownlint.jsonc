@@ -8,5 +8,9 @@
   "MD024": {
     // duplicate headings — reference pages reuse headings like "## Getting set up" style entries
     "siblings_only": true
+  },
+  "MD060": {
+    // table column style — delimiter rows padded like the header/body rows
+    "style": "compact"
   }
 }
