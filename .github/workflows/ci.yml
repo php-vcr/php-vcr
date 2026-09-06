@@ -52,7 +52,7 @@ jobs:
         uses: "actions/checkout@v7"
 
       - name: "Install EditorConfig Checker"
-        uses: "editorconfig-checker/action-editorconfig-checker@v2.2.0"
+        uses: "editorconfig-checker/action-editorconfig-checker@v3.0.0"
 
       - name: "Run EditorConfig Checker"
         run: "editorconfig-checker"
