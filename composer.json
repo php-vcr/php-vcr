@@ -41,7 +41,7 @@
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/extension-installer": "^1.1",
-        "editorconfig-checker/editorconfig-checker": "^10.3"
+        "editorconfig-checker/editorconfig-checker": "^11.0"
     },
     "suggest": {
         "ext-sodium": "Required for the encrypted storage decorator"
